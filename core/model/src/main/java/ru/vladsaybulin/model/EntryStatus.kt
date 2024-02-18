@@ -11,3 +11,8 @@ enum class EntryStatus(val serializedName: String) {
 
     None("")
 }
+
+fun String?.asEntryType() = when (this) {
+    null -> EntryStatus.None
+    else -> EntryStatus.entries.firstOrNull { it.serializedName == this } ?: EntryStatus.None
+}

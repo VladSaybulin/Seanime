@@ -11,3 +11,8 @@ enum class AnimeKind(val serializedName: String) {
     Cv("cv"),
     None("")
 }
+
+fun String?.asAnimeKind() = when(this) {
+    null -> AnimeKind.None
+    else -> AnimeKind.entries.firstOrNull { it.serializedName == this } ?: AnimeKind.None
+}

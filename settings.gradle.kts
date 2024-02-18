@@ -17,3 +17,4 @@ rootProject.name = "Shikimori"
 include(":app")
 include(":core:model")
 include(":core:network-retrofit")
+include(":core:database")
