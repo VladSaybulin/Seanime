@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Shikimori"
 include(":app")
- 
+include(":core:model")
