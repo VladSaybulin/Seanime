@@ -4,8 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ru.vladsaybulin.model.AnimeKind
 import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.network.retrofit.utils.AnimeKindSerializer
-import ru.vladsaybulin.network.retrofit.utils.EntryStatusSerializer
+import ru.vladsaybulin.network.retrofit.utils.serializers.AnimeKindSerializer
+import ru.vladsaybulin.network.retrofit.utils.serializers.EntryStatusSerializer
 
 @Serializable
 data class AnimeDto(

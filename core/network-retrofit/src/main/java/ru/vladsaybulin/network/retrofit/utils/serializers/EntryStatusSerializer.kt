@@ -1,4 +1,4 @@
-package ru.vladsaybulin.network.retrofit.utils
+package ru.vladsaybulin.network.retrofit.utils.serializers
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
