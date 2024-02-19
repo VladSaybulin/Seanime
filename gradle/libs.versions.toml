@@ -20,7 +20,7 @@ retrofit = "2.9.0"
 kotlinx-serializetion-json = "1.6.3"
 ksp = "1.9.22-1.0.17"
 room = "2.6.1"
-hilt = "2.44"
+hilt = "2.50"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
