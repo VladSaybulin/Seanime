@@ -25,9 +25,12 @@ android {
 dependencies {
 
     implementation(project(":core:model"))
+    implementation(project(":core:network-common"))
 
     implementation(libs.core.ktx)
+
     implementation(libs.retrofit)
+    implementation(libs.retrofit.converterfactory)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)

@@ -1,4 +1,4 @@
-package ru.vladsaybulin.network.common
+package ru.vladsaybulin.network.common.di
 
 import javax.inject.Qualifier
 
