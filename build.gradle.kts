@@ -8,5 +8,6 @@ plugins {
     alias(libs.plugins.dagger.hilt) apply false
     alias(libs.plugins.kapt) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.protobuf) apply false
 }
 true // Needed to make the Suppress annotation work for the plugins block
