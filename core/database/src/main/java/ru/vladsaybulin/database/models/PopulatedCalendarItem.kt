@@ -2,6 +2,8 @@ package ru.vladsaybulin.database.models
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import ru.vladsaybulin.model.Anime
+import ru.vladsaybulin.model.CalendarItem
 
 class PopulatedCalendarItem(
     @Embedded
@@ -14,3 +16,23 @@ class PopulatedCalendarItem(
     )
     val animeDbo: AnimeDbo
 )
+
+fun PopulatedCalendarItem.asExternalModel() =
+    CalendarItem(
+        anime = Anime(
+            id = animeDbo.id,
+            originalName = animeDbo.originalName,
+            russianName = animeDbo.russianName,
+            poster = animeDbo.poster?.asExternalModel(),
+            kind = animeDbo.kind,
+            status = animeDbo.status,
+            score = animeDbo.score,
+            episodes = animeDbo.episodes,
+            episodesAired = animeDbo.episodesAired,
+            airedOn = animeDbo.airedOn?.asExternalModel(),
+            releasedOn = animeDbo.releasedOn?.asExternalModel()
+        ),
+        nextEpisode = calendarItemDbo.nextEpisode,
+        nextEpisodeAt = calendarItemDbo.nextEpisodeAt,
+        duration = calendarItemDbo.duration
+    )

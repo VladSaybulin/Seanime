@@ -3,12 +3,15 @@ package ru.vladsaybulin.database.models
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import ru.vladsaybulin.model.AnimeKind
 import ru.vladsaybulin.model.EntryStatus
 
 @Entity(tableName = "animes")
 data class AnimeDbo(
-    @ColumnInfo("id") val id: Long,
+    @PrimaryKey
+    @ColumnInfo("id")
+    val id: Long,
     @ColumnInfo("name") val originalName: String,
     @ColumnInfo("russian_name") val russianName: String,
     @Embedded("image") val poster: PosterDbo?,

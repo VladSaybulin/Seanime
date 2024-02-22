@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.protobuf)
-    alias(libs.plugins.kapt)
     alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.kapt)
 }
 
 android {
-    namespace = "ru.vladsaybulin.datastore"
+    namespace = "ru.vladsaybulin.data"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -36,32 +35,15 @@ dependencies {
 
     implementation(libs.core.ktx)
 
-    implementation(libs.datastore)
-    implementation(libs.protobuf.kotlin.lite)
-
     implementation(libs.dagger.hilt.android)
     kapt(libs.dagger.hilt.compiler)
 
     implementation(libs.kotlinx.datetime)
 
     implementation(project(":core:common"))
+    implementation(project(":core:database"))
+    implementation(project(":core:datastore"))
     implementation(project(":core:model"))
-}
-
-protobuf {
-    protoc {
-        artifact = libs.protobuf.protoc.get().toString()
-    }
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                register("java") {
-                    option("lite")
-                }
-                register("kotlin") {
-                    option("lite")
-                }
-            }
-        }
-    }
+    implementation(project(":core:network-common"))
+    implementation(project(":core:network-retrofit"))
 }

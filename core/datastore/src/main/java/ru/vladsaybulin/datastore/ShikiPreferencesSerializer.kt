@@ -7,18 +7,19 @@ import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
 
-class AuthPreferencesSerializer @Inject constructor() : Serializer<AuthPreferences> {
-    override val defaultValue: AuthPreferences = AuthPreferences.getDefaultInstance()
+class ShikiPreferencesSerializer @Inject constructor() : Serializer<ShikiPreferences> {
 
-    override suspend fun readFrom(input: InputStream): AuthPreferences =
+    override val defaultValue: ShikiPreferences = ShikiPreferences.getDefaultInstance()
+
+    override suspend fun readFrom(input: InputStream): ShikiPreferences =
         try {
             // readFrom is already called on the data store background thread
-            AuthPreferences.parseFrom(input)
+            ShikiPreferences.parseFrom(input)
         } catch (exception: InvalidProtocolBufferException) {
             throw CorruptionException("Cannot read proto.", exception)
         }
 
-    override suspend fun writeTo(t: AuthPreferences, output: OutputStream) {
+    override suspend fun writeTo(t: ShikiPreferences, output: OutputStream) {
         // writeTo is already called on the data store background thread
         t.writeTo(output)
     }

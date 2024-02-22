@@ -16,6 +16,8 @@ import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.network.di.ApplicationScope
 import ru.vladsaybulin.datastore.AuthPreferences
 import ru.vladsaybulin.datastore.AuthPreferencesSerializer
+import ru.vladsaybulin.datastore.ShikiPreferences
+import ru.vladsaybulin.datastore.ShikiPreferencesSerializer
 import javax.inject.Singleton
 
 @Module
@@ -34,7 +36,22 @@ class DatastoreModule {
             serializer = userPreferencesSerializer,
             scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
         ) {
-            context.dataStoreFile("shiki_preferences.pb")
+            context.dataStoreFile("auth_preferences.proto.pb")
+        }
+
+    @Provides
+    @Singleton
+    internal fun providesShikiPreferencesDataStore(
+        @ApplicationContext context: Context,
+        @Dispatcher(IO) ioDispatcher: CoroutineDispatcher,
+        @ApplicationScope scope: CoroutineScope,
+        shikiPreferencesSerializer: ShikiPreferencesSerializer,
+    ): DataStore<ShikiPreferences> =
+        DataStoreFactory.create(
+            serializer = shikiPreferencesSerializer,
+            scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
+        ) {
+            context.dataStoreFile("shiki_preferences.proto.pb")
         }
 
 }

@@ -10,6 +10,6 @@ data class Anime(
     val score: Float,
     val episodes: Int,
     val episodesAired: Int,
-    val airedOn: IncompleteDate,
-    val releasedOn: IncompleteDate
+    val airedOn: IncompleteDate?,
+    val releasedOn: IncompleteDate?
 )
