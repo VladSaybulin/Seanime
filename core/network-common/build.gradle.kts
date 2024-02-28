@@ -1,42 +1,13 @@
 plugins {
-    alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.kapt)
-    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.shikimori.android.library)
+    alias(libs.plugins.shikimori.android.hilt)
 }
 
 android {
     namespace = "ru.vladsaybulin.network.common"
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }
 
 dependencies {
-
-    implementation(libs.core.ktx)
-
-    implementation(libs.retrofit)
-
-    implementation(libs.dagger.hilt.android)
-    kapt(libs.dagger.hilt.compiler)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 }
