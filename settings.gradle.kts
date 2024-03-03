@@ -17,10 +17,10 @@ dependencyResolutionManagement {
 rootProject.name = "Shikimori"
 include(":app")
 include(":core:model")
-include(":core:network-retrofit")
+include(":core:network:common")
+include(":core:network:retrofit")
 include(":core:database")
 include(":core:common")
-include(":core:network-common")
 include(":core:datastore")
 include(":core:data")
 include(":core:designsystem")

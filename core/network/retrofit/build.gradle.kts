@@ -11,7 +11,7 @@ android {
 dependencies {
 
     implementation(project(":core:model"))
-    implementation(project(":core:network-common"))
+    implementation(project(":core:network:common"))
 
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
