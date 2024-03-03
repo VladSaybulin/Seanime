@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="anime_kind_tv">TV-сериал</string>
+    <string name="anime_kind_movie">Фильм</string>
+    <string name="anime_kind_ona">ONA</string>
+    <string name="anime_kind_ova">OVA</string>
+    <string name="anime_kind_music">Клип</string>
+    <string name="anime_kind_special">Спешл</string>
+    <string name="anime_kind_pv">Промо</string>
+    <string name="anime_kind_cv">CV</string>
+    <string name="anime_status_ongoing">Онгоинг</string>
+    <string name="anime_status_released">Вышло</string>
+    <string name="anime_status_anons">Анонс</string>
+    <string name="episodes">%1$s эп.</string>
+    <string name="aired_of_episodes">%1$s/%2$s эп.</string>
+    <string name="aired_of_unknown_episodes">%1/- эп.</string>
+</resources>
