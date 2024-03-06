@@ -1,0 +1,39 @@
+package ru.vladsaybulin.feature.calendar
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import ru.vladsaybulin.core.domain.GetCalendarDaysUseCase
+import ru.vladsaybulin.data.repository.CalendarRepository
+import ru.vladsaybulin.model.CalendarDay
+import javax.inject.Inject
+
+@HiltViewModel
+class CalendarViewModel @Inject constructor(
+    private val calendarRepository: CalendarRepository,
+    getCalendarDaysUseCase: GetCalendarDaysUseCase
+) : ViewModel() {
+    val uiState: StateFlow<CalendarUiState> = getCalendarDaysUseCase()
+        .map { CalendarUiState.Success(it) as CalendarUiState }
+        .catch { emit(CalendarUiState.Error(it)) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = CalendarUiState.Loading
+        )
+
+    suspend fun forceRefresh() {
+        calendarRepository.refresh(true)
+    }
+}
+
+sealed class CalendarUiState {
+    data object Loading : CalendarUiState()
+    data class Success(val calendarDays: List<CalendarDay>) : CalendarUiState()
+    data class Error(val throwable: Throwable) : CalendarUiState()
+}

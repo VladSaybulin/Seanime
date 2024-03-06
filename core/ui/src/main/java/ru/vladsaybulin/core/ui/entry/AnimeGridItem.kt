@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.strings.animeKindStringResource
 import ru.vladsaybulin.model.Anime
+import ru.vladsaybulin.model.UserRateStatus
 
 @Composable
 fun AnimeGridItem(

@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import ru.vladsaybulin.model.Anime
 import ru.vladsaybulin.model.CalendarItem
+import kotlin.time.Duration.Companion.minutes
 
 class PopulatedCalendarItem(
     @Embedded
@@ -34,5 +35,5 @@ fun PopulatedCalendarItem.asExternalModel() =
         ),
         nextEpisode = calendarItemDbo.nextEpisode,
         nextEpisodeAt = calendarItemDbo.nextEpisodeAt,
-        duration = calendarItemDbo.duration
+        duration = calendarItemDbo.duration?.minutes
     )

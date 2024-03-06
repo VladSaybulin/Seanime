@@ -8,6 +8,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.okhttp)
+    api(libs.okhttp)
     implementation(libs.okhttp.logging)
 }

@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.ui.colors.onRateStatusContainer
-import ru.vladsaybulin.core.ui.colors.rateStatusContainer
+import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainer
+import ru.vladsaybulin.core.ui.colors.userRateStatusContainer
 import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus
 
@@ -35,8 +35,8 @@ internal fun EntryListItem(
     onClick: () -> Unit,
     detailsContent: (@Composable () -> Unit)? = null
 ) {
-    val containerColor = rateStatusContainer(userRateStatus = userRateStatus)
-    val contentColor = onRateStatusContainer(userRateStatus = userRateStatus)
+    val containerColor = userRateStatusContainer(userRateStatus = userRateStatus)
+    val contentColor = onUserRateStatusContainer(userRateStatus = userRateStatus)
 
     Surface(
         modifier = modifier,
@@ -59,7 +59,7 @@ internal fun EntryListItem(
                     poster = poster
                 )
                 if (userRateStatus != UserRateStatus.None) {
-                    UserRateStatusIcon(
+                    UserRateStatusBadge(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .size(UserRateStatusIconSize),

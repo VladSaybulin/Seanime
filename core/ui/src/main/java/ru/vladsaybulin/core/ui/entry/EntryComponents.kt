@@ -1,25 +1,30 @@
 package ru.vladsaybulin.core.ui.entry
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.ZeroCornerSize
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.ui.colors.onRateStatusColor
-import ru.vladsaybulin.core.ui.colors.rateStatusColor
+import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.ui.colors.onUserRateStatusColor
+import ru.vladsaybulin.core.ui.colors.userRateStatusColor
 import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus
 
@@ -44,59 +49,45 @@ internal fun EntryPoster(
     poster: Poster?
 ) {
     if (poster == null) {
-        Box(modifier.background(Color.LightGray))
+        Box(modifier.background(Color.White))
     } else {
         AsyncImage(
             modifier = modifier,
-            model = poster.previewUrl,
+            model = poster.originalUrl,
             contentDescription = null,
+            contentScale = ContentScale.Crop
         )
     }
 }
 
 @Composable
-internal fun UserRateStatusIcon(
+internal fun UserRateStatusBadge(
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus
 ) {
-    val userRateStatusColor = rateStatusColor(userRateStatus)
-    val userRateIconColor = onRateStatusColor(userRateStatus)
+    val userRateStatusColor = userRateStatusColor(userRateStatus)
+    val userRateIconColor = onUserRateStatusColor(userRateStatus)
 
-    val iconPainter = userRateStatusPainter(userRateStatus = userRateStatus) ?: return
+    val icon = userRateStatusIcon(userRateStatus = userRateStatus) ?: return
 
-    Canvas(modifier = modifier.aspectRatio(1f)) {
-        drawPath(
-            path = Path().apply {
-                moveTo(0.0f, size.height)
-                lineTo(size.width, 0.0f)
-                lineTo(size.width, size.height)
-                close()
-            },
-            brush = SolidColor(userRateStatusColor)
+    Box(
+        modifier = modifier
+            .clip(DefaultShape)
+            .background(userRateStatusColor)
+            .padding(DefaultIconPadding),
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = userRateIconColor,
+            modifier = Modifier.matchParentSize()
         )
-
-        val size = size.width
-
-        val halfImageSizeFraction = 0.25f
-
-        inset(
-            top = size * (0.70f - halfImageSizeFraction),
-            left = size * (0.70f - halfImageSizeFraction),
-            bottom = size - size * (0.70f + halfImageSizeFraction),
-            right = size - size * (0.70f + halfImageSizeFraction)
-        ) {
-            with(iconPainter) {
-                draw(
-                    size = this@inset.size,
-                    colorFilter = ColorFilter.tint(userRateIconColor)
-                )
-            }
-        }
     }
 }
 
 @Composable
-private fun userRateStatusPainter(userRateStatus: UserRateStatus) = when (userRateStatus) {
+@ReadOnlyComposable
+private fun userRateStatusIcon(userRateStatus: UserRateStatus) = when (userRateStatus) {
     UserRateStatus.Planned -> ShikimoriIcons.Add
     UserRateStatus.Watching -> ShikimoriIcons.Visibility
     UserRateStatus.Rewatching -> ShikimoriIcons.Replay
@@ -105,6 +96,12 @@ private fun userRateStatusPainter(userRateStatus: UserRateStatus) = when (userRa
     UserRateStatus.OnHold -> ShikimoriIcons.Pause
     else -> null
 }
-    ?.let { rememberVectorPainter(it) }
 
 private const val NameTextMaxLines = 2
+private val DefaultShape
+    @Composable get() = ShikimoriTheme.shapes.medium.copy(
+        topEnd = ZeroCornerSize,
+        bottomEnd = ZeroCornerSize,
+        topStart = ZeroCornerSize
+    )
+private val DefaultIconPadding = PaddingValues(4.dp)

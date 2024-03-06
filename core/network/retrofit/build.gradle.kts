@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:network:common"))
 
-    implementation(libs.retrofit.core)
+    api(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
 
     implementation(libs.kotlinx.serialization.json)

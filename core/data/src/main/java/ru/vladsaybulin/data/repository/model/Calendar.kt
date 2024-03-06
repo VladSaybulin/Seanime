@@ -1,13 +1,13 @@
 package ru.vladsaybulin.data.repository.model
 
 import ru.vladsaybulin.database.models.CalendarItemDbo
-import ru.vladsaybulin.network.retrofit.models.CalendarDto
+import ru.vladsaybulin.network.retrofit.models.CalendarItemDto
 
-fun CalendarDto.asDbo() = CalendarItemDbo(
+fun CalendarItemDto.asDbo() = CalendarItemDbo(
     nextEpisode = nextEpisode,
     nextEpisodeAt = nextEpisodeAt,
-    duration = duration,
+    duration = duration.takeIf { it != 0 },
     animeId = anime.id
 )
 
-fun CalendarDto.animeShell() = anime.asDbo()
+fun CalendarItemDto.animeShell() = anime.asDbo()

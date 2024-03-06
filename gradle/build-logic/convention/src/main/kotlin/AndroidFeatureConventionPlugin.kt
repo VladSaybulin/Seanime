@@ -8,13 +8,17 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply {
-                apply("wallpaper.android.library")
-                apply("wallpaper.android.hilt")
+                apply("shikimori.android.library")
+                apply("shikimori.android.hilt")
             }
 
-
             dependencies {
-                add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
+                "implementation"(project(":core:designsystem"))
+                "implementation"(project(":core:ui"))
+
+                "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
+                "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
+                "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
             }
         }
     }

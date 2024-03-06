@@ -2,12 +2,13 @@ package ru.vladsaybulin.data.repository
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.*
 import ru.vladsaybulin.data.repository.model.animeShell
@@ -18,7 +19,7 @@ import ru.vladsaybulin.database.models.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import ru.vladsaybulin.model.CalendarItem
 import ru.vladsaybulin.network.retrofit.ShikiUnauthorizedApi
-import ru.vladsaybulin.network.retrofit.models.CalendarDto
+import ru.vladsaybulin.network.retrofit.models.CalendarItemDto
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.hours
 
@@ -30,24 +31,29 @@ class CalendarRepository @Inject constructor(
 ) {
     private val dao = database.calendarDao
 
-    fun getCalendarItems(searchQuery: String): Flow<List<CalendarItem>> =
+    fun getCalendarItems(searchQuery: String? = null): Flow<List<CalendarItem>> =
         dao.getAllCalendarItems()
-            .onStart { sync() }
+            .onStart { refresh(false) }
             .map { items -> items.map(PopulatedCalendarItem::asExternalModel) }
             .flowOn(ioDispatcher)
 
-    private suspend fun sync() {
-        val timestamp = shikiPreferencesDataSource.timestampOfLastCalendarRequest.first()
-
-        if (timestamp + THRESHOLD > Clock.System.now()) return
+    suspend fun refresh(forceRefresh: Boolean = true) {
+        if (!forceRefresh) {
+            val timestamp = shikiPreferencesDataSource.timestampOfLastCalendarRequest
+                .flowOn(ioDispatcher)
+                .firstOrNull() ?: Instant.DISTANT_PAST
+            if (timestamp + THRESHOLD > Clock.System.now()) return
+        }
 
         withContext(ioDispatcher) {
             val response = unauthorizedApi.getAllCalendarItems()
+
             database.withTransaction {
                 dao.deleteAllItems()
-                dao.insertOrReplaceAnimeEntities(response.map(CalendarDto::animeShell))
-                dao.insertCalendarItems(response.map(CalendarDto::asDbo))
+                dao.insertOrReplaceAnimeEntities(response.map(CalendarItemDto::animeShell))
+                dao.insertCalendarItems(response.map(CalendarItemDto::asDbo))
             }
+
             shikiPreferencesDataSource.setTimestampOfLastCalendarRequest(Clock.System.now())
         }
     }

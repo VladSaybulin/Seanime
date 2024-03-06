@@ -5,8 +5,9 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import ru.vladsaybulin.network.common.TokensHolder
 import ru.vladsaybulin.network.common.addAuthorizationHeader
+import javax.inject.Inject
 
-class AuthorizationInterceptor(private val tokensHolder: TokensHolder) : Interceptor {
+class AuthorizationInterceptor @Inject constructor(private val tokensHolder: TokensHolder) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
         tokensHolder.getAccessToken()
             ?.let { token -> interceptWithAccessToken(chain, token) }

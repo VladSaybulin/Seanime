@@ -20,7 +20,7 @@ interface CalendarDao {
     @Transaction
     @Query(
         value = """
-            SELECT * FROM calendar_items 
+            SELECT calendar_items.* FROM calendar_items 
             JOIN animes ON anime_id = animes.id 
             WHERE name LIKE '%' | :searchQuery | '%' OR russian_name LIKE '%' | :searchQuery | '%'
         """

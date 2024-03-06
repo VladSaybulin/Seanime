@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="episode">%1$d эп.</string>
+    <string name="was_on_aired">Должно было выйти</string>
+    <string name="today_date_formatter_pattern">Сегодня, dd MMMM</string>
+    <string name="tomorrow_date_formatter_pattern">Завтра, dd MMMM</string>
+    <string name="date_with_week_formatter_pattern">EEEE, dd MMMM</string>
+    <string name="date_formatter_pattern">dd, MMMM</string>
+    <string name="error_message_title">Ошибка</string>
+    <string name="error_message">Произошла ошибка во время загрузки контента</string>
+    <string name="today">Сегодня</string>
+    <string name="yesterday">Вчера</string>
+</resources>

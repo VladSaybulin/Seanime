@@ -18,7 +18,7 @@ fun entryStatusColor(entryStatus: EntryStatus): Color = when (entryStatus) {
 }
 
 @Composable
-fun rateStatusColor(userRateStatus: UserRateStatus) =
+fun userRateStatusColor(userRateStatus: UserRateStatus) =
     when (userRateStatus) {
         UserRateStatus.Planned -> ShikimoriTheme.userRateColors.planned
         UserRateStatus.Watching, UserRateStatus.Rewatching -> ShikimoriTheme.userRateColors.watching
@@ -29,7 +29,7 @@ fun rateStatusColor(userRateStatus: UserRateStatus) =
     }
 
 @Composable
-fun onRateStatusColor(userRateStatus: UserRateStatus) = when (userRateStatus) {
+fun onUserRateStatusColor(userRateStatus: UserRateStatus) = when (userRateStatus) {
     UserRateStatus.Planned -> ShikimoriTheme.userRateColors.onPlanned
     UserRateStatus.Watching, UserRateStatus.Rewatching -> ShikimoriTheme.userRateColors.onWatching
     UserRateStatus.Completed -> ShikimoriTheme.userRateColors.onCompleted
@@ -39,7 +39,7 @@ fun onRateStatusColor(userRateStatus: UserRateStatus) = when (userRateStatus) {
 }
 
 @Composable
-fun rateStatusContainer(userRateStatus: UserRateStatus) =
+fun userRateStatusContainer(userRateStatus: UserRateStatus) =
     when (userRateStatus) {
         UserRateStatus.Planned -> ShikimoriTheme.userRateColors.plannedContainer
         UserRateStatus.Watching, UserRateStatus.Rewatching -> ShikimoriTheme.userRateColors.watchingContainer
@@ -50,7 +50,7 @@ fun rateStatusContainer(userRateStatus: UserRateStatus) =
     }
 
 @Composable
-fun onRateStatusContainer(userRateStatus: UserRateStatus) =
+fun onUserRateStatusContainer(userRateStatus: UserRateStatus) =
     when (userRateStatus) {
         UserRateStatus.Planned -> ShikimoriTheme.userRateColors.onPlannedContainer
         UserRateStatus.Watching, UserRateStatus.Rewatching -> ShikimoriTheme.userRateColors.onWatchingContainer

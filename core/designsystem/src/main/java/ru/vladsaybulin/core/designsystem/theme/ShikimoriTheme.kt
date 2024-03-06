@@ -138,7 +138,7 @@ val DarkEntryStatusColor = EntryStatusColors(
 @Composable
 fun ShikimoriTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    disableDynamicTheming: Boolean = true, //TODO Fix
+    disableDynamicTheming: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

@@ -13,6 +13,6 @@ fun AnimeDto.asDbo() = AnimeDbo(
     score = score,
     episodes = episodes,
     episodesAired = episodesAired,
-    airedOn = airedOn?.asDbo(),
-    releasedOn = releasedOn?.asDbo()
+    airedOn = airedOn?.asIncompleteDateDbo(),
+    releasedOn = releasedOn?.asIncompleteDateDbo()
 )

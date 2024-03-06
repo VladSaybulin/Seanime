@@ -1,6 +1,5 @@
 package ru.vladsaybulin.network.retrofit.di
 
-
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -8,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import ru.vladsaybulin.network.common.di.AuthorizedClient
@@ -19,7 +19,9 @@ private const val BASE_URL = "https://shikimori.one/"
 class NetworkRetrofitModule {
 
     @Provides
-    fun provideJson(): Json = Json
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+    }
 
     @Provides
     @AuthorizedClient
@@ -28,7 +30,7 @@ class NetworkRetrofitModule {
         json: Json,
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(json.asConverterFactory(MediaType.get("application/json")))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .client(okHttpClient)
         .build()
 
@@ -38,7 +40,7 @@ class NetworkRetrofitModule {
         json: Json,
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(json.asConverterFactory(MediaType.get("application/json")))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .client(okHttpClient)
         .build()
 

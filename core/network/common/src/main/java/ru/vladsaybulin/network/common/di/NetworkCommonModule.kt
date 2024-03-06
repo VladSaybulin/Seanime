@@ -5,10 +5,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import ru.vladsaybulin.network.common.ShikiAuthenticator
 import ru.vladsaybulin.network.common.TokensHolder
 import ru.vladsaybulin.network.common.interceptors.AuthorizationInterceptor
 import ru.vladsaybulin.network.common.interceptors.UserAgentInterceptor
+import javax.inject.Singleton
 
 private const val UserAgent = "Shikimori App"
 
@@ -21,30 +23,37 @@ class NetworkCommonModule {
         UserAgentInterceptor(UserAgent)
 
     @Provides
-    fun provideAuthInterceptor(tokensHolder: TokensHolder): AuthorizationInterceptor =
-        AuthorizationInterceptor(tokensHolder)
-
-    @Provides
     fun provideAuthenticator(tokensHolder: TokensHolder): ShikiAuthenticator =
         ShikiAuthenticator(tokensHolder)
 
     @Provides
+    fun provideLoggingInterceptor() = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    @Provides
+    @Singleton
     @AuthorizedClient
     fun provideAuthorizedOkHttpClient(
         userAgentInterceptor: UserAgentInterceptor,
         authorizationInterceptor: AuthorizationInterceptor,
-        authenticator: ShikiAuthenticator,
+        loggingInterceptor: HttpLoggingInterceptor,
+        authenticator: ShikiAuthenticator
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(userAgentInterceptor)
             .addInterceptor(authorizationInterceptor)
             .authenticator(authenticator)
+            .addInterceptor(loggingInterceptor)
             .build()
 
     @Provides
+    @Singleton
     fun provideUnauthorizedOkHttpClient(
-        userAgentInterceptor: UserAgentInterceptor
+        userAgentInterceptor: UserAgentInterceptor,
+        loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(userAgentInterceptor)
+        .addInterceptor(loggingInterceptor)
         .build()
 }
