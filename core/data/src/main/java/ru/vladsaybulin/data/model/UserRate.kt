@@ -3,7 +3,7 @@ package ru.vladsaybulin.data.model
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.model.UserRate
 
-fun AnimeUserRateQuery.UserRate.asExternalModel() = UserRate(
+fun AnimeUserRateQuery.UserRate.asUserRate() = UserRate(
     id = id,
     createdAt = createdAt,
     updatedAt = updatedAt,
