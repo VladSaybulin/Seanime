@@ -1,10 +1,10 @@
 package ru.vladsaybulin.network.models
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.network.util.serializers.PosterSerializer
 
-@Serializable
+@Serializable(with = PosterSerializer::class)
 data class PosterDto(
-    @SerialName("original") val originalUrl: String,
-    @SerialName("preview") val previewUrl: String
+    val originalUrl: String,
+    val previewUrl: String
 )
