@@ -21,4 +21,4 @@ class ApolloModule {
         .build()
 }
 
-private const val SERVER_URL = BuildConfig.BASE_URL + "api/graphql"
+private const val SERVER_URL = BuildConfig.BASE_URL + "/api/graphql"

@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
+import retrofit2.http.Path
 import ru.vladsaybulin.common.network.NotFoundException
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.network.models.AnimeDto
@@ -11,8 +12,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface AnimeApi {
-    @GET("/api/animes/similar")
-    suspend fun getSimilarAnime(): List<AnimeDto>
+    @GET("/api/animes/{anime_id}/similar/")
+    suspend fun getSimilarAnime(@Path("anime_id") animeId: Long): List<AnimeDto>
 }
 
 @Singleton
@@ -28,5 +29,5 @@ class AnimeDataSource @Inject constructor(
             ?: throw NotFoundException("Not found anime where id = $animeId")
     }
 
-    suspend fun getSimilarAnimes(animeId: Long) = api.getSimilarAnime()
+    suspend fun getSimilarAnimes(animeId: Long) = api.getSimilarAnime(animeId)
 }
