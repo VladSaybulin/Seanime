@@ -1,4 +1,4 @@
-package ru.vladsaybulin.data.repository.model
+package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.PosterDbo
 import ru.vladsaybulin.network.models.PosterDto

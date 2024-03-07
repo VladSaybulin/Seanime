@@ -1,4 +1,4 @@
-package ru.vladsaybulin.data.repository.di
+package ru.vladsaybulin.data.di
 
 import dagger.Binds
 import dagger.Module
