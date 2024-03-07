@@ -10,5 +10,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.androidx.room) apply false
+    alias(libs.plugins.apollo.graphql) apply false
+    alias(libs.plugins.secrets) apply false
 }
 true // Needed to make the Suppress annotation work for the plugins block

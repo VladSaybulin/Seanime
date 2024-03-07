@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.vladsaybulin.data.repository.AuthRepository
-import ru.vladsaybulin.network.common.TokensHolder
+import ru.vladsaybulin.network.TokensHolder
 
 @Module
 @InstallIn(SingletonComponent::class)

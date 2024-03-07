@@ -1,7 +1,7 @@
 package ru.vladsaybulin.data.repository.model
 
 import ru.vladsaybulin.database.models.AnimeDbo
-import ru.vladsaybulin.network.retrofit.models.AnimeDto
+import ru.vladsaybulin.network.models.AnimeDto
 
 fun AnimeDto.asDbo() = AnimeDbo(
     id = id,

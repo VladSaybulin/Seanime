@@ -17,8 +17,8 @@ dependencyResolutionManagement {
 rootProject.name = "Shikimori"
 include(":app")
 include(":core:model")
-include(":core:network:common")
-include(":core:network:retrofit")
+include(":core:network")
+include(":core:network-graphql")
 include(":core:database")
 include(":core:common")
 include(":core:datastore")

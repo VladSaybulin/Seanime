@@ -18,13 +18,13 @@ import ru.vladsaybulin.database.models.PopulatedCalendarItem
 import ru.vladsaybulin.database.models.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import ru.vladsaybulin.model.CalendarItem
-import ru.vladsaybulin.network.retrofit.ShikiUnauthorizedApi
-import ru.vladsaybulin.network.retrofit.models.CalendarItemDto
+import ru.vladsaybulin.network.datasource.CalendarDataSource
+import ru.vladsaybulin.network.models.CalendarItemDto
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.hours
 
 class CalendarRepository @Inject constructor(
-    private val unauthorizedApi: ShikiUnauthorizedApi,
+    private val calendarDataSource: CalendarDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
     private val database: ShikiDatabase,
     private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
@@ -46,7 +46,7 @@ class CalendarRepository @Inject constructor(
         }
 
         withContext(ioDispatcher) {
-            val response = unauthorizedApi.getAllCalendarItems()
+            val response = calendarDataSource.getAllCalendarItems()
 
             database.withTransaction {
                 dao.deleteAllItems()

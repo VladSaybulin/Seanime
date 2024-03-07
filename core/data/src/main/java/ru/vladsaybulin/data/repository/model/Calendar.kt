@@ -1,7 +1,7 @@
 package ru.vladsaybulin.data.repository.model
 
 import ru.vladsaybulin.database.models.CalendarItemDbo
-import ru.vladsaybulin.network.retrofit.models.CalendarItemDto
+import ru.vladsaybulin.network.models.CalendarItemDto
 
 fun CalendarItemDto.asDbo() = CalendarItemDbo(
     nextEpisode = nextEpisode,

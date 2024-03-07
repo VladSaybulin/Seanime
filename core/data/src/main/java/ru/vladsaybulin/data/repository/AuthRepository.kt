@@ -1,7 +1,7 @@
 package ru.vladsaybulin.data.repository
 
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
-import ru.vladsaybulin.network.common.TokensHolder
+import ru.vladsaybulin.network.TokensHolder
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(

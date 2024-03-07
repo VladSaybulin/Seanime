@@ -14,6 +14,5 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:database"))
     implementation(project(":core:datastore"))
-    implementation(project(":core:network:common"))
-    implementation(project(":core:network:retrofit"))
+    implementation(project(":core:network"))
 }
