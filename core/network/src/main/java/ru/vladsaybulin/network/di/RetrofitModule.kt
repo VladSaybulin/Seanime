@@ -13,7 +13,7 @@ import ru.vladsaybulin.network.common.BuildConfig
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkRetrofitModule {
+class RetrofitModule {
 
     @Provides
     fun provideJson(): Json = Json {

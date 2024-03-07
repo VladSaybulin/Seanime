@@ -11,8 +11,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.*
-import ru.vladsaybulin.data.repository.model.animeShell
-import ru.vladsaybulin.data.repository.model.asDbo
+import ru.vladsaybulin.data.model.animeShell
+import ru.vladsaybulin.data.model.asDbo
 import ru.vladsaybulin.database.ShikiDatabase
 import ru.vladsaybulin.database.models.PopulatedCalendarItem
 import ru.vladsaybulin.database.models.asExternalModel

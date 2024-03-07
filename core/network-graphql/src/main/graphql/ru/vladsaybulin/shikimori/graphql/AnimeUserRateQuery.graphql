@@ -1,0 +1,12 @@
+query AnimeUserRateQuery($id: String!) {
+    animes(ids: $id) {
+        userRate {
+            id
+            status
+            episodes
+            rewatches
+            score
+            text
+        }
+    }
+}

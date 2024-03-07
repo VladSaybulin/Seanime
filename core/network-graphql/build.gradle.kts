@@ -10,11 +10,11 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.datetime)
-    implementation(libs.apollo.graphql.runtime)
+    api(libs.apollo.graphql.runtime)
 }
 
 apollo {
     service("service") {
-        packageName.set("ru.vladsaybulin.core.network-graphql")
+        packageName.set("ru.vladsaybulin.core.network.graphql")
     }
 }
