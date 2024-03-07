@@ -18,23 +18,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.node.DrawModifierNode
-import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.colors.onUserRateStatusColor
-import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainer
-import ru.vladsaybulin.core.ui.colors.userRateStatusColor
-import ru.vladsaybulin.core.ui.colors.userRateStatusContainer
+import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
 import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus
-import kotlin.math.pow
 
 @Composable
 internal fun EntryGridItem(
@@ -89,37 +79,6 @@ internal fun EntryGridItem(
             }
         }
     }
-}
-
-private data class GradientScrimModifierElement(val colors: List<Color>) :
-    ModifierNodeElement<GradientModifierNode>() {
-    override fun create(): GradientModifierNode = GradientModifierNode(colors)
-
-    override fun update(node: GradientModifierNode) {
-        node.colors = colors
-    }
-}
-
-class GradientModifierNode(var colors: List<Color>) : DrawModifierNode, Modifier.Node() {
-    override fun ContentDrawScope.draw() {
-        drawContent()
-        drawRect(brush = Brush.verticalGradient(colors))
-    }
-}
-
-fun Modifier.drawForegroundGradientScrim(
-    color: Color,
-    decay: Float = 3.0f,
-    numStops: Int = 16,
-): Modifier {
-    val baseAlpha = color.alpha
-    val delta = 1f / (numStops - 1)
-    val colors = List(numStops) { i ->
-        val x = delta * i
-        val opacity = x.pow(decay)
-        color.copy(alpha = baseAlpha * opacity)
-    }
-    return this then GradientScrimModifierElement(colors)
 }
 
 @Composable
