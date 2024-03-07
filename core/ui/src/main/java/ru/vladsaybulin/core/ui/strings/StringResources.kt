@@ -18,6 +18,7 @@ fun animeKindStringResource(kind: AnimeKind): String? = when (kind) {
     AnimeKind.Special -> stringResource(id = R.string.anime_kind_special)
     AnimeKind.Pv -> stringResource(id = R.string.anime_kind_pv)
     AnimeKind.Cm -> stringResource(id = R.string.anime_kind_cv)
+    AnimeKind.TvSpecial -> stringResource(id = R.string.anime_kind_tv_special)
     AnimeKind.None -> null
 }
 
