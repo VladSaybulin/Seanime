@@ -2,6 +2,8 @@ query AnimeUserRateQuery($id: String!) {
     animes(ids: $id) {
         userRate {
             id
+            createdAt
+            updatedAt
             status
             episodes
             rewatches
