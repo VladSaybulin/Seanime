@@ -1,24 +1,32 @@
 package ru.vladsaybulin.network.datasource
 
-import android.util.Log
 import com.apollographql.apollo3.ApolloClient
-import ru.vladsaybulin.common.network.InvalidGraphqlQueryException
+import retrofit2.Retrofit
+import retrofit2.create
+import retrofit2.http.GET
 import ru.vladsaybulin.common.network.NotFoundException
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
+import ru.vladsaybulin.network.models.AnimeDto
 import javax.inject.Inject
 import javax.inject.Singleton
 
+interface AnimeApi {
+    @GET("/api/animes/similar")
+    suspend fun getSimilarAnime(): List<AnimeDto>
+}
+
 @Singleton
-class AnimeDataSource @Inject constructor(private val apolloClient: ApolloClient) {
-    suspend fun getAnimeDetails(id: Long): AnimeDetailsQuery.Anime {
-        val response = apolloClient.query(AnimeDetailsQuery(id = id.toString())).execute()
-        if (response.hasErrors()) {
-            response.errors!!.forEach {
-                Log.e("AnimeDataSource", it.toString())
-            }
-            throw InvalidGraphqlQueryException("Invalid AnimeDetailsQuery. See details in log")
-        }
-        return response.data!!.animes.firstOrNull()
-            ?: throw NotFoundException("Not found anime where id = $id")
+class AnimeDataSource @Inject constructor(
+    private val apolloClient: ApolloClient,
+    retrofit: Retrofit
+) {
+    private val api: AnimeApi = retrofit.create()
+
+    suspend fun getAnimeDetails(animeId: Long): AnimeDetailsQuery.Anime {
+        val response = apolloClient.query(AnimeDetailsQuery(id = animeId.toString())).execute()
+        return response.dataAssertNoErrors.animes.firstOrNull()
+            ?: throw NotFoundException("Not found anime where id = $animeId")
     }
+
+    suspend fun getSimilarAnimes(animeId: Long) = api.getSimilarAnime()
 }
