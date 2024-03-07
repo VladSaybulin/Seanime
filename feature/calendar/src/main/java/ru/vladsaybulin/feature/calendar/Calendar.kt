@@ -56,6 +56,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun CalendarRoute(
+    openAnimeDetails: (animeId: Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
@@ -64,7 +65,8 @@ fun CalendarRoute(
     CalendarScreen(
         uiState = uiState,
         modifier = modifier,
-        onRefresh = viewModel::forceRefresh
+        onRefresh = viewModel::forceRefresh,
+        openAnime = openAnimeDetails
     )
 }
 
