@@ -10,11 +10,18 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.datetime)
+    implementation(libs.apollo.graphql.adapters)
     api(libs.apollo.graphql.runtime)
 }
 
 apollo {
     service("service") {
         packageName.set("ru.vladsaybulin.core.network.graphql")
+        mapScalarToKotlinLong("ID")
+        mapScalar(
+            graphQLName = "ISO8601DateTime",
+            targetName = "kotlinx.datetime.Instant",
+            expression = "com.apollographql.apollo3.adapter.KotlinxInstantAdapter"
+        )
     }
 }

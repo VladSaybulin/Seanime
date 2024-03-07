@@ -1,7 +1,7 @@
 package ru.vladsaybulin.model
 
 data class Genre(
-    val id: Int,
+    val id: Long,
     val englishName: String,
     val russianName: String,
     val entryType: EntryType,

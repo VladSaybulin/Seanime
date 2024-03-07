@@ -7,8 +7,9 @@ enum class AnimeKind(val serializedName: String) {
     Ova("ova"),
     Music("music"),
     Special("special"),
+    TvSpecial("tv_special"),
     Pv("rv"),
-    Cv("cv"),
+    Cm("cm"),
     None("")
 }
 

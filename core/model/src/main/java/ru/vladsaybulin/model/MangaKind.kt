@@ -1,6 +1,16 @@
 package ru.vladsaybulin.model
 
 enum class MangaKind(val serializedName: String) {
+    Manga("manga"),
+    Manhwa("manhwa"),
+    Manhua("manhua"),
+    OneShot("one_shot"),
+    Doujin("doujin"),
+
+    //Ranobe kind
+    LightNovel("light_novel"),
+    Novel("novel"),
+
     None("")
 }
 

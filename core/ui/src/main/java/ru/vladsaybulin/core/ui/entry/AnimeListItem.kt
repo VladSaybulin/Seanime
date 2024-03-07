@@ -96,6 +96,6 @@ fun AnimeListItemPreview(@PreviewParameter(AnimePreviewProvider::class) anime: A
 private val KindsWithoutEpisodesText = sequenceOf(
     AnimeKind.Movie,
     AnimeKind.Music,
-    AnimeKind.Cv,
+    AnimeKind.Cm,
     AnimeKind.Pv
 )
