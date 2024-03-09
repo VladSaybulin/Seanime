@@ -53,6 +53,7 @@ import ru.vladsaybulin.model.CalendarDay
 import ru.vladsaybulin.model.CalendarItem
 import ru.vladsaybulin.model.previewCalendarItems
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun CalendarRoute(
@@ -214,10 +215,9 @@ private fun CalendarSectionHeader(date: LocalDate?) {
     val headerText = if (date == null) {
         stringResource(id = R.string.was_on_aired)
     } else {
-        val formatter_pattern = stringResource(id = R.string.date_with_week_formatter_pattern)
-        val formatter = DateTimeFormatter.ofPattern(formatter_pattern)
+        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
             .withZone(TimeZone.currentSystemDefault().toJavaZoneId())
-        formatter.format(date.toJavaLocalDate()).replaceFirstChar { it.uppercase() }
+        formatter.format(date.toJavaLocalDate())
     }
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -312,7 +312,7 @@ fun CalendarItemPreview(@PreviewParameter(CalendarPreviewProvider::class) calend
     }
 }
 
-public class CalendarPreviewProvider : PreviewParameterProvider<CalendarItem> {
+class CalendarPreviewProvider : PreviewParameterProvider<CalendarItem> {
     override val values: Sequence<CalendarItem>
         get() = previewCalendarItems.asSequence()
 
