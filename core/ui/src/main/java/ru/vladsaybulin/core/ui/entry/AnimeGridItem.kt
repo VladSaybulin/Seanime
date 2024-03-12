@@ -8,9 +8,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.strings.animeKindStringResource
+import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.UserRateStatus
 
 @Composable
 fun AnimeGridItem(
@@ -52,7 +51,7 @@ private fun DefaultAnimeDetails(anime: Anime) {
 @Composable
 @ReadOnlyComposable
 private fun Anime.gridItemDetailsData() = EntryGridItemDetailsData(
-    kindText = animeKindStringResource(kind = kind),
+    kindText = animeKindString(animeKind = kind),
     year = airedOn?.year ?: releasedOn?.year
 )
 

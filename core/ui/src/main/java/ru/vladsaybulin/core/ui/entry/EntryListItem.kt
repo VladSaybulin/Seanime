@@ -19,8 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainer
-import ru.vladsaybulin.core.ui.colors.userRateStatusContainer
+import ru.vladsaybulin.core.ui.EntryPoster
+import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
+import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus
 
@@ -35,8 +36,8 @@ internal fun EntryListItem(
     onClick: () -> Unit,
     detailsContent: (@Composable () -> Unit)? = null
 ) {
-    val containerColor = userRateStatusContainer(userRateStatus = userRateStatus)
-    val contentColor = onUserRateStatusContainer(userRateStatus = userRateStatus)
+    val containerColor = userRateStatusContainerColor(userRateStatus = userRateStatus)
+    val contentColor = onUserRateStatusContainerColor(userRateStatus = userRateStatus)
 
     Surface(
         modifier = modifier,
@@ -53,9 +54,7 @@ internal fun EntryListItem(
                     .clip(MaterialTheme.shapes.extraSmall)
             ) {
                 EntryPoster(
-                    modifier = Modifier
-                        .width(PosterWidth)
-                        .aspectRatio(PosterAspectRatio),
+                    modifier = Modifier.width(PosterWidth),
                     poster = poster
                 )
                 if (userRateStatus != UserRateStatus.None) {
@@ -90,4 +89,3 @@ private val DefaultContentPadding = PaddingValues(8.dp, 8.dp)
 private val ImageSpace = 8.dp
 private val PosterWidth = 86.dp
 private val UserRateStatusIconSize = 32.dp
-private const val PosterAspectRatio = 3 / 4f

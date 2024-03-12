@@ -6,11 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.feature.calendar.navigation.calendarScreen
 import ru.vladsaybulin.feature.details.navigation.detailsScreen
 import ru.vladsaybulin.feature.details.navigation.navigateToDetails
 import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.shikimori.ui.theme.ShikimoriTheme
 
 @Composable
 fun App() {
@@ -25,7 +25,11 @@ fun App() {
                 calendarScreen(
                     openAnimeDetails = { navController.navigateToDetails(EntryType.Anime, it) }
                 )
-                detailsScreen()
+                detailsScreen(
+                    onBackClick = {
+                        navController.navigateUp()
+                    }
+                )
             }
         }
     }

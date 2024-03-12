@@ -11,10 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.UserRateRepository
-import ru.vladsaybulin.feature.details.model.asDetails
-import ru.vladsaybulin.feature.details.model.asSimilarEntry
 import ru.vladsaybulin.feature.details.navigation.DetailsArgs
-import ru.vladsaybulin.model.Anime
 import ru.vladsaybulin.model.EntryType
 import javax.inject.Inject
 import javax.inject.Provider
@@ -26,6 +23,14 @@ class DetailsViewModel @Inject constructor(
     userRateRepository: UserRateRepository
 ) : ViewModel() {
 
+    fun onRetry() {
+
+    }
+
+    suspend fun onRefresh() {
+
+    }
+
     private val args = DetailsArgs(savedStateHandle)
 
     val uiState = when (args.entryType) {
@@ -35,10 +40,10 @@ class DetailsViewModel @Inject constructor(
                 userRateRepository.getAnimeUserRate(args.entryId),
                 animeRepository.get().getSimilarAnimes(args.entryId)
             ) { details, userRate, similar ->
-                DetailsUiState.Success(
-                    details = details.asDetails(),
+                DetailsUiState(
+                    animeDetails = details,
                     userRate = userRate,
-                    similar = similar.map(Anime::asSimilarEntry)
+                    similar = similar
                 )
             }
 

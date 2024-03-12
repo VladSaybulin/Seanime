@@ -11,8 +11,24 @@
     <string name="anime_status_ongoing">Онгоинг</string>
     <string name="anime_status_released">Вышло</string>
     <string name="anime_status_anons">Анонс</string>
-    <string name="episodes">%1$s эп.</string>
     <string name="aired_of_episodes">%1$s/%2$s эп.</string>
     <string name="aired_of_unknown_episodes">%1/- эп.</string>
     <string name="anime_kind_tv_special">TV Спешл</string>
+    <string name="user_rate_status_planned">В планах</string>
+    <string name="user_rate_status_watching">Смотрю</string>
+    <string name="user_rate_status_rewatching">Пересматриваю</string>
+    <string name="user_rate_status_completed">Просмотрено</string>
+    <string name="user_rate_status_on_hold">Отложено</string>
+    <string name="user_rate_status_dropped">Брошено</string>
+    <string name="aired_of_episodes_with_duration">%1$s/%2$s эп. по %3$s</string>
+    <string name="episodes_with_duration">%1$s эп. по %2$s</string>
+    <string name="duration_minutes">%d мин.</string>
+    <string name="episodes">%1$s эп.</string>
+    <string name="episodes_x_duration">%1$s эп. по %2$s</string>
+    <plurals name="duration_hours">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+        <item quantity="other">%d часа</item>
+    </plurals>
 </resources>

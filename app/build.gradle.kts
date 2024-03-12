@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:data"))
     implementation(project(":core:model"))
+    implementation(project(":core:designsystem"))
 
     implementation(project(":feature:calendar"))
     implementation(project(":feature:details"))
@@ -51,4 +52,5 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3.android)
+
 }

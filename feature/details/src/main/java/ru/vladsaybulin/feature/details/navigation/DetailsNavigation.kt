@@ -29,7 +29,9 @@ fun NavController.navigateToDetails(
     navigate("details/${entryType.serializedName}/$entryId")
 }
 
-fun NavGraphBuilder.detailsScreen() {
+fun NavGraphBuilder.detailsScreen(
+    onBackClick: () -> Unit
+) {
     composable(
         route = DETAILS_ROUTE,
         arguments = listOf(
@@ -37,6 +39,8 @@ fun NavGraphBuilder.detailsScreen() {
             navArgument(ENTRY_ID_ARG) { type = NavType.LongType }
         )
     ) {
-        DetailsRoute()
+        DetailsRoute(
+            onBackClick = onBackClick
+        )
     }
 }

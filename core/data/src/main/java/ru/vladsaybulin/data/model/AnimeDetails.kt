@@ -7,7 +7,6 @@ import ru.vladsaybulin.model.Character
 import ru.vladsaybulin.model.CharacterWithRole
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.Genre
-import ru.vladsaybulin.model.GenreKind
 import ru.vladsaybulin.model.IncompleteDate
 import ru.vladsaybulin.model.Manga
 import ru.vladsaybulin.model.Person
@@ -47,6 +46,7 @@ fun AnimeDetailsQuery.Anime.asExternalModel() = AnimeDetails(
     rating = rating.asAnimeRating(),
     episodes = episodes,
     episodesAired = episodesAired,
+    nextEpisodeAt = nextEpisodeAt,
     duration = duration,
     airedOn = airedOn?.asIncompleteDate(),
     releasedOn = releasedOn?.asIncompleteDate(),
@@ -81,7 +81,7 @@ private fun NetworkGenre.asGenre() = Genre(
     englishName = name,
     russianName = russian,
     entryType = EntryType.Anime,
-    kind = GenreKind.Genre
+    kind = kind.asGenreKind()
 )
 
 private fun NetworkScoreStat.asScoreStat() = Statistic(score, count)

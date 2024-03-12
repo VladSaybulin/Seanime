@@ -34,6 +34,7 @@ query AnimeDetailsQuery($id: String!) {
             id
             name
             russian
+            kind
         }
         nextEpisodeAt
         fansubbers

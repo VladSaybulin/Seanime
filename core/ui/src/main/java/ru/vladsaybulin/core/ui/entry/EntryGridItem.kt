@@ -22,6 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
 import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus

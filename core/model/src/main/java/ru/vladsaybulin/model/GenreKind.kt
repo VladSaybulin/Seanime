@@ -1,7 +1,9 @@
 package ru.vladsaybulin.model
 
 enum class GenreKind(val serializedName: String) {
-    Genre("genre")
+    Genre("genre"),
+    Theme("theme"),
+    Demographic("demographic")
 }
 
 fun String.asGenreKind() = GenreKind.entries.first { this == it.serializedName }

@@ -1,9 +1,11 @@
 package ru.vladsaybulin.feature.details.model
 
 import ru.vladsaybulin.model.AnimeDetails
+import ru.vladsaybulin.model.AnimeKind
 import ru.vladsaybulin.model.AnimeRating
 import ru.vladsaybulin.model.CharacterWithRole
 import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.Genre
 import ru.vladsaybulin.model.IncompleteDate
 import ru.vladsaybulin.model.PersonWithRoles
@@ -15,8 +17,9 @@ import ru.vladsaybulin.model.Studio
 import ru.vladsaybulin.model.UserRateStatus
 import ru.vladsaybulin.model.Video
 
-data class Details(
+data class EntryDetails internal constructor(
     val id: Long,
+    val entryType: EntryType,
     val originalName: String,
     val russianName: String?,
     val englishName: String?,
@@ -24,7 +27,7 @@ data class Details(
     val alternativeName: List<String>,
     val licenseNameRu: String?,
     val poster: Poster?,
-    val kindResId: Int?,
+    val animeKind: AnimeKind?,
     val score: Float?,
     val status: EntryStatus,
     val rating: AnimeRating,
@@ -48,8 +51,9 @@ data class Details(
     val videos: List<Video>?
 )
 
-fun AnimeDetails.asDetails() = Details(
+fun AnimeDetails.asDetails() = EntryDetails(
     id = id,
+    entryType = EntryType.Anime,
     originalName = originalName,
     russianName = russianName,
     englishName = englishName,
@@ -57,7 +61,7 @@ fun AnimeDetails.asDetails() = Details(
     alternativeName = alternativeName,
     licenseNameRu = licenseNameRu,
     poster = poster,
-    kindResId = 0, //TODO,
+    animeKind = kind,
     score = score,
     status = status,
     rating = rating,
@@ -80,3 +84,16 @@ fun AnimeDetails.asDetails() = Details(
     screenshots = screenshots,
     videos = videos
 )
+
+val EntryDetails.shouldShowEntryStatus
+    get() = status == EntryStatus.None
+
+val EntryDetails.shouldShowDates
+    get() = airedOn == null && releasedOn == null
+
+val EntryDetails.shouldShowAnimeKind
+    get() = animeKind != AnimeKind.None
+
+val EntryDetails.shouldShowEpisodes
+    get() = episodes > 0 || episodesAired > 0
+

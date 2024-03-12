@@ -1,5 +1,7 @@
 package ru.vladsaybulin.model
 
+import kotlinx.datetime.Instant
+
 class AnimeDetails(
     val id: Long,
     val originalName: String,
@@ -16,6 +18,7 @@ class AnimeDetails(
     val episodes: Int,
     val episodesAired: Int,
     val duration: Int?,
+    val nextEpisodeAt: Instant?,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
     val descriptionBBCode: String?,
@@ -25,7 +28,7 @@ class AnimeDetails(
     val dubbers: List<String>?,
     val scoreStats: List<Statistic<Int>>?,
     val userRateStatusStats: List<Statistic<UserRateStatus>>?,
-    val studios: List<Studio>?,
+    val studios: List<Studio>,
     val authors: List<PersonWithRoles>?,
     val characters: List<CharacterWithRole>?,
     val relations: List<RelatedEntry>?,

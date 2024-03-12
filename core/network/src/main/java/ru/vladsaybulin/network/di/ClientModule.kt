@@ -6,9 +6,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import ru.vladsaybulin.network.util.ShikiAuthenticator
 import ru.vladsaybulin.network.TokensHolder
 import ru.vladsaybulin.network.common.BuildConfig
+import ru.vladsaybulin.network.util.ShikiAuthenticator
 import ru.vladsaybulin.network.util.interceptors.AuthorizationInterceptor
 import ru.vladsaybulin.network.util.interceptors.UserAgentInterceptor
 import javax.inject.Singleton
@@ -40,9 +40,9 @@ class ClientModule {
         authenticator: ShikiAuthenticator
     ): OkHttpClient =
         OkHttpClient.Builder()
+            .authenticator(authenticator)
             .addInterceptor(userAgentInterceptor)
             .addInterceptor(authorizationInterceptor)
-            .authenticator(authenticator)
             .addInterceptor(loggingInterceptor)
             .build()
 

@@ -11,5 +11,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation("org.kefirsf:kefirbb:1.5")
     implementation(libs.kotlinx.datetime)
+    implementation(libs.coil.kt.compose)
 }
