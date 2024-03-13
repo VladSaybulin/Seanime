@@ -1,6 +1,8 @@
 package ru.vladsaybulin.feature.details.info
 
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,7 +45,8 @@ fun GenresLine(
         }
 
         ClickableText(
-            text = genresText
+            text = genresText,
+            style = LocalTextStyle.current.copy(color = LocalContentColor.current)
         ) { index ->
             genresText.getStringAnnotations(
                 tag = GenreTag,

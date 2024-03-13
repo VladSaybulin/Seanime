@@ -19,12 +19,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -141,28 +145,33 @@ private fun DetailsContent(
     val listState = rememberLazyListState()
     val visibleTopBar by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 0
+            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 10
         }
     }
 
     val expandedFab by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex == 0
+            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset <= 10
         }
     }
 
+    var expandedDescription by remember { mutableStateOf(false) }
+
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             DetailsTopBar(
                 visibleTopBar = visibleTopBar,
                 title = state.header.run { russianName ?: name },
                 onBackClick = onBackClick,
+                scrollBehavior = topAppBarScrollBehavior
             )
         },
         floatingActionButton = {
             UserRateFab(
-                status = UserRateStatus.Dropped,
+                status = UserRateStatus.Watching,
                 expanded = expandedFab,
                 onClick = onUserRateClick
             )
@@ -183,7 +192,31 @@ private fun DetailsContent(
                 item(key = info.key) {
                     DetailsInfoLine(
                         info = info,
-                        modifier = Modifier.padding(HorizontalPadding)
+                        modifier = HorizontalPaddingModifier
+                    )
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(24.dp))
+            }
+
+            state.description?.let {
+                item(key = "description_formatted") {
+                    DetailsDescriptionContent(
+                        description = it,
+                        expanded = expandedDescription,
+                        onExpandedChange = { expandedDescription = it },
+                        modifier = HorizontalPaddingModifier
+                    )
+                }
+            }
+
+            state.authors?.let {
+                item(key = "authors") {
+                    AuthorsCarousel(
+                        authors = it,
+                        horizontalContentPadding = HorizontalPadding
                     )
                 }
             }
@@ -193,6 +226,7 @@ private fun DetailsContent(
                     Modifier
                         .height(1500.dp)
                         .fillMaxWidth()
+
 
                 )
             }
@@ -229,4 +263,5 @@ private fun UserRateFab(
 }
 
 private val HorizontalPadding = PaddingValues(horizontal = 16.dp)
+private val HorizontalPaddingModifier = Modifier.padding(HorizontalPadding)
 

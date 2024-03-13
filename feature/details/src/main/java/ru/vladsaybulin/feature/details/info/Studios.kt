@@ -1,6 +1,7 @@
 package ru.vladsaybulin.feature.details.info
 
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -61,7 +62,7 @@ internal fun StudiosLine(
                     onStudioClick(it.item.toLong())
                 }
             },
-            style = LocalTextStyle.current
+            style = LocalTextStyle.current.copy(color = LocalContentColor.current)
         )
     }
 }

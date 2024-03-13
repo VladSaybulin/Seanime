@@ -1,5 +1,6 @@
 package ru.vladsaybulin.feature.details
 
+import ru.vladsaybulin.feature.details.model.DetailsDescription
 import ru.vladsaybulin.feature.details.model.DetailsHeader
 import ru.vladsaybulin.feature.details.model.DetailsInfo
 import ru.vladsaybulin.feature.details.model.SimilarEntry
@@ -9,6 +10,7 @@ import ru.vladsaybulin.model.AnimeDetails
 import ru.vladsaybulin.model.AnimeKind
 import ru.vladsaybulin.model.EntryStatus
 import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.PersonWithRoles
 import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.isNullOrEmpty
 
@@ -22,6 +24,8 @@ sealed class DetailsUiState {
         val header: DetailsHeader,
         val info: List<DetailsInfo>,
         val userRate: UserRate?,
+        val description: DetailsDescription?,
+        val authors: List<PersonWithRoles>?,
         val similar: List<SimilarEntry>,
     ) : DetailsUiState()
 }
@@ -69,6 +73,15 @@ fun DetailsUiState(
             if (!genres.isNullOrEmpty()) {
                 add(DetailsInfo.Genres(genres!!, R.string.header_genres, key = "genres"))
             }
+        },
+        description = if (!descriptionBBCode.isNullOrBlank()) {
+            DetailsDescription(
+                code = descriptionBBCode!!,
+                source = descriptionSource
+            )
+        } else null,
+        authors = authors?.filter {
+            it.englishRoles.firstOrNull { it == "Director" || it == "Original Creator" } != null
         },
         userRate = userRate,
         similar = similar.map(Anime::asSimilarEntry)

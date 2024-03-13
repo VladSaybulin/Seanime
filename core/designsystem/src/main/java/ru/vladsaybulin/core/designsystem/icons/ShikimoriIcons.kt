@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Person
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object ShikimoriIcons {
+    val KeyboardArrowDown = Icons.Default.KeyboardArrowDown
     val AccessTime = Icons.Default.AccessTime
     val Groups: ImageVector = Icons.Filled.Groups
     val Person: ImageVector = Icons.Default.Person

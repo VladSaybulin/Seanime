@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -51,19 +53,26 @@ fun AuthorCard(personWithRoles: PersonWithRoles) {
         ) {
             AuthorPoster(poster = personWithRoles.person.poster)
             Spacer(modifier = Modifier.width(8.dp))
-            Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxHeight()) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(min = 100.dp)
+                    .width(IntrinsicSize.Min)
+            ) {
                 Text(
                     text = personWithRoles.person.run { russianName ?: originalName },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = ShikimoriTheme.typography.labelLarge
+                    style = ShikimoriTheme.typography.labelLarge,
+                    modifier = Modifier.width(IntrinsicSize.Max)
                 )
                 Text(
                     text = personWithRoles.russianRoles.joinToString(separator = ", "),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = ShikimoriTheme.typography.labelSmall,
-                    modifier = Modifier.alpha(0.6f)
+                    modifier = Modifier.fillMaxWidth().alpha(0.6f)
                 )
             }
         }
@@ -138,6 +147,44 @@ fun AuthorCardWithoutPosterPreview() {
                 ),
                 englishRoles = listOf("Director"),
                 russianRoles = listOf("Режиссёр")
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+fun AuthorCardManyRolesPreview() {
+    ShikimoriTheme {
+        AuthorCard(
+            PersonWithRoles(
+                person = Person(
+                    id = 0,
+                    originalName = "Author name",
+                    russianName = "Author russian name",
+                    poster = Poster("")
+                ),
+                englishRoles = listOf("Director"),
+                russianRoles = listOf("Режиссёр", "Раскадровка", "Рисовка")
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+fun AuthorCardShortNamePreview() {
+    ShikimoriTheme {
+        AuthorCard(
+            PersonWithRoles(
+                person = Person(
+                    id = 0,
+                    originalName = "Author",
+                    russianName = "Author",
+                    poster = Poster("")
+                ),
+                englishRoles = listOf("Director"),
+                russianRoles = listOf("Режиссёр", "Раскадровка", "Рисовка")
             )
         )
     }
