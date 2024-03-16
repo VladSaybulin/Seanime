@@ -2,7 +2,7 @@ package ru.vladsaybulin.model
 
 import kotlinx.datetime.Instant
 
-class AnimeDetails(
+data class AnimeDetails(
     val id: Long,
     val originalName: String,
     val russianName: String?,
@@ -31,7 +31,7 @@ class AnimeDetails(
     val studios: List<Studio>,
     val authors: List<PersonWithRoles>?,
     val characters: List<CharacterWithRole>?,
-    val relations: List<RelatedEntry>?,
+    val related: List<RelatedEntry>?,
     val screenshots: List<Screenshot>,
     val videos: List<Video>?
 )

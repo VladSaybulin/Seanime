@@ -27,8 +27,8 @@ class GradientModifierNode(var colors: List<Color>) : DrawModifierNode, Modifier
 }
 
 fun Modifier.drawForegroundGradientScrim(
-    targetColor: Color,
-    startColor: Color = Color.Transparent,
+    stopColor: Color,
+    startColor: Color = stopColor.copy(alpha = .0f),
     decay: Float = 3.0f,
     numStops: Int = 16,
 ): Modifier {
@@ -36,7 +36,7 @@ fun Modifier.drawForegroundGradientScrim(
     val colors = List(numStops) { i ->
         val x = delta * i
         val opacity = x.pow(decay)
-        lerp(startColor, targetColor, opacity)
+        lerp(startColor, stopColor, opacity)
     }
     return this then GradientScrimModifierElement(colors)
 }

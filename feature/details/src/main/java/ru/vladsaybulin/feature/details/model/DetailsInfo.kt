@@ -3,6 +3,7 @@ package ru.vladsaybulin.feature.details.model
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.model.AnimeKind
 import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.Genre
 import ru.vladsaybulin.model.IncompleteDate
 import ru.vladsaybulin.model.Studio
@@ -10,6 +11,7 @@ import ru.vladsaybulin.model.isNullOrEmpty
 
 sealed interface DetailsInfo {
     data class StatusDates(
+        val entryType: EntryType,
         val status: EntryStatus,
         val airedOn: IncompleteDate?,
         val releasedOn: IncompleteDate?,

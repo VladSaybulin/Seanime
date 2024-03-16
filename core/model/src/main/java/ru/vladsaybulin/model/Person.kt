@@ -1,6 +1,6 @@
 package ru.vladsaybulin.model
 
-class Person(
+data class Person(
     val id: Long,
     val originalName: String,
     val russianName: String?,

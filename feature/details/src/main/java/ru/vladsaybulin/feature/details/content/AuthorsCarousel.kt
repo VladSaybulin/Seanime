@@ -1,4 +1,4 @@
-package ru.vladsaybulin.feature.details
+package ru.vladsaybulin.feature.details.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,23 +27,68 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import kotlinx.collections.immutable.ImmutableList
+import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.ui.ContentWithClickableHeader
+import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.Person
 import ru.vladsaybulin.model.PersonWithRoles
 import ru.vladsaybulin.model.Poster
-import ru.vladsaybulin.core.ui.R as uiR
+import ru.vladsaybulin.model.isMain
 
 @Composable
-fun AuthorCard(personWithRoles: PersonWithRoles) {
+fun AuthorsCarousel(
+    authors: ImmutableList<PersonWithRoles>,
+    onAuthorClick: (Long) -> Unit,
+    onShowAllClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    val shownAuthors = authors.filter { it.isMain() }
+    val showShowAll = shownAuthors.size < authors.size
+
+    ContentWithClickableHeader(
+        headerText = {
+            ShowAllHeaderText(
+                headerText = stringResource(id = ru.vladsaybulin.feature.details.R.string.authors),
+                shouldShownShowAll = showShowAll,
+            )
+        },
+        onClick = onShowAllClick,
+        modifier = modifier,
+        enabled = showShowAll
+    ) {
+        ShikimoriCarousel(
+            items = shownAuthors,
+            key = { it.person.id }
+        ) { personWithRoles ->
+            AuthorCard(
+                personWithRoles = personWithRoles,
+                onClick = { onAuthorClick(personWithRoles.person.id) }
+            )
+        }
+    }
+
+}
+
+
+@Composable
+fun AuthorCard(
+    personWithRoles: PersonWithRoles,
+    onClick: () -> Unit
+) {
     Surface(
         shape = ShikimoriTheme.shapes.large,
         shadowElevation = 2.dp,
-        tonalElevation = 1.dp
+        tonalElevation = 1.dp,
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier
@@ -72,7 +117,9 @@ fun AuthorCard(personWithRoles: PersonWithRoles) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = ShikimoriTheme.typography.labelSmall,
-                    modifier = Modifier.fillMaxWidth().alpha(0.6f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(0.6f)
                 )
             }
         }
@@ -105,7 +152,7 @@ private fun AuthorPoster(poster: Poster?) {
                 model = poster.originalUrl,
                 contentDescription = null,
                 placeholder = if (LocalInspectionMode.current) {
-                    painterResource(id = uiR.drawable.preview_poster_1)
+                    painterResource(id = R.drawable.preview_poster_1)
                 } else null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize()
@@ -128,7 +175,8 @@ fun AuthorCardPreview() {
                 ),
                 englishRoles = listOf("Director"),
                 russianRoles = listOf("Режиссёр")
-            )
+            ),
+            onClick = { }
         )
     }
 }
@@ -147,7 +195,8 @@ fun AuthorCardWithoutPosterPreview() {
                 ),
                 englishRoles = listOf("Director"),
                 russianRoles = listOf("Режиссёр")
-            )
+            ),
+            onClick = { }
         )
     }
 }
@@ -166,7 +215,8 @@ fun AuthorCardManyRolesPreview() {
                 ),
                 englishRoles = listOf("Director"),
                 russianRoles = listOf("Режиссёр", "Раскадровка", "Рисовка")
-            )
+            ),
+            onClick = { }
         )
     }
 }
@@ -185,7 +235,8 @@ fun AuthorCardShortNamePreview() {
                 ),
                 englishRoles = listOf("Director"),
                 russianRoles = listOf("Режиссёр", "Раскадровка", "Рисовка")
-            )
+            ),
+            onClick = { }
         )
     }
 }

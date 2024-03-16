@@ -1,10 +1,18 @@
 package ru.vladsaybulin.model
 
 enum class RelationType(val serializedName: String) {
-    None("")
+    Adaptation("Adaptation"),
+    AltHistory("Alternative version"),
+    SideStory("Side story"),
+    SpinOff("Spin-off"),
+    Sequel("Sequel"),
+    Prequel("Prequel"),
+    Summary("Summary"),
+    Character("Character"),
+    Other("Other")
 }
 
 fun String?.asRelationType() = when (this) {
-    null -> RelationType.None
-    else -> RelationType.entries.firstOrNull { it.serializedName == this } ?: RelationType.None
+    null -> RelationType.Other
+    else -> RelationType.entries.firstOrNull { it.serializedName == this } ?: RelationType.Other
 }

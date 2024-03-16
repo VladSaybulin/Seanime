@@ -17,14 +17,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,14 +39,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.core.ui.strings.animeUserRateStatusString
 import ru.vladsaybulin.core.ui.userRateStatusIcon
+import ru.vladsaybulin.feature.details.content.AuthorsBottomSheetContent
+import ru.vladsaybulin.feature.details.content.AuthorsCarousel
+import ru.vladsaybulin.feature.details.content.CharactersBottomSheetContent
+import ru.vladsaybulin.feature.details.content.CharactersCarousel
+import ru.vladsaybulin.feature.details.content.Description
+import ru.vladsaybulin.feature.details.content.EntryDetailsName
+import ru.vladsaybulin.feature.details.content.EntryDetailsPoster
+import ru.vladsaybulin.feature.details.content.RelatedBottomSheetContent
+import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
+import ru.vladsaybulin.feature.details.content.SimilarBottomSheetContent
+import ru.vladsaybulin.feature.details.content.SimilarCarousel
+import ru.vladsaybulin.feature.details.content.VideosCarousel
+import ru.vladsaybulin.feature.details.content.relatedItems
 import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.Screenshot
 import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.Video
 
 @Composable
 fun DetailsRoute(
@@ -66,13 +88,15 @@ fun DetailsRoute(
 @Composable
 fun DetailsScreen(
     uiState: DetailsUiState,
-    modifier: Modifier = Modifier,
     onRetry: () -> Unit,
     onRefresh: suspend () -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onUserRateClick: () -> Unit,
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+
+
     when (uiState) {
         is DetailsUiState.Error -> DetailsError(
             errorState = uiState,
@@ -85,10 +109,14 @@ fun DetailsScreen(
         is DetailsUiState.Success -> DetailsContent(
             state = uiState,
             onEntryClick = onEntryClick,
-            onRefresh = onRefresh,
             onBackClick = onBackClick,
+            onRefresh = onRefresh,
             modifier = modifier,
-            onUserRateClick = onUserRateClick
+            onUserRateClick = onUserRateClick,
+            onAuthorClick = {},
+            onCharacterClick = {},
+            onScreenshotClick = {},
+            onVideoClick = {}
         )
     }
 }
@@ -136,35 +164,46 @@ private fun DetailsLoading(modifier: Modifier = Modifier) {
 @Composable
 private fun DetailsContent(
     state: DetailsUiState.Success,
-    onEntryClick: (EntryType, Long) -> Unit,
     onRefresh: suspend () -> Unit,
     onUserRateClick: () -> Unit,
+    onAuthorClick: (Long) -> Unit,
+    onEntryClick: (EntryType, Long) -> Unit,
+    onCharacterClick: (Long) -> Unit,
+    onScreenshotClick: (Screenshot) -> Unit,
+    onVideoClick: (Video) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier
 ) {
-    val listState = rememberLazyListState()
-    val visibleTopBar by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 10
-        }
-    }
 
-    val expandedFab by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset <= 10
-        }
-    }
+    val coroutineScope = rememberCoroutineScope()
+
+    var showAllCharacters by remember { mutableStateOf(false) }
+    var showAllRelatedEntries by remember { mutableStateOf(false) }
+    var showAllSimilarEntries by remember { mutableStateOf(false) }
+    var showAllAuthors by remember { mutableStateOf(false) }
 
     var expandedDescription by remember { mutableStateOf(false) }
 
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val pullToRefreshState = rememberPullToRefreshState()
+    val listState = rememberLazyListState()
+
+    val visibleTopBar by remember {
+        derivedStateOf { listState.firstVisibleItemIndex > 0 }
+    }
+
+    val expandedFab by remember {
+        derivedStateOf { listState.firstVisibleItemIndex == 0 }
+    }
 
     Scaffold(
-        modifier = modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = modifier
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .nestedScroll(pullToRefreshState.nestedScrollConnection),
         topBar = {
             DetailsTopBar(
                 visibleTopBar = visibleTopBar,
-                title = state.header.run { russianName ?: name },
+                title = state.run { russianName ?: name },
                 onBackClick = onBackClick,
                 scrollBehavior = topAppBarScrollBehavior
             )
@@ -180,10 +219,26 @@ private fun DetailsContent(
         LazyColumn(
             state = listState,
         ) {
-            detailsHeaderItem(
-                header = state.header,
-                topSpacing = scaffoldPadding.calculateTopPadding()
-            )
+
+            item(key = "poster") {
+                EntryDetailsPoster(
+                    poster = state.poster,
+                    topSpacingDp = scaffoldPadding.calculateTopPadding()
+                )
+            }
+
+            item(key = "poster_name_space") {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            item(key = "name") {
+                EntryDetailsName(
+                    name = state.name,
+                    russianName = state.russianName,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+
             item {
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -203,7 +258,7 @@ private fun DetailsContent(
 
             state.description?.let {
                 item(key = "description_formatted") {
-                    DetailsDescriptionContent(
+                    Description(
                         description = it,
                         expanded = expandedDescription,
                         onExpandedChange = { expandedDescription = it },
@@ -216,18 +271,139 @@ private fun DetailsContent(
                 item(key = "authors") {
                     AuthorsCarousel(
                         authors = it,
-                        horizontalContentPadding = HorizontalPadding
+                        onAuthorClick = onAuthorClick,
+                        onShowAllClick = { showAllAuthors = true }
                     )
                 }
             }
 
-            item {
-                Box(
-                    Modifier
-                        .height(1500.dp)
-                        .fillMaxWidth()
+            state.related?.let {
+                relatedItems(
+                    relatedEntries = it,
+                    onEntryClick = onEntryClick,
+                    onShowAllClick = { showAllRelatedEntries = true }
+                )
+            }
 
+            state.characters?.let {
+                item(key = "characters") {
+                    CharactersCarousel(
+                        characters = it,
+                        onShowAllClick = {
+                            coroutineScope.launch {
+                                showAllCharacters = true
+                            }
+                        },
+                        onCharacterClick = onCharacterClick
+                    )
+                }
+            }
 
+            state.screenshots?.let {
+                item(key = "screenshot") {
+                    ScreenshotsCarousel(
+                        screenshots = it,
+                        onScreenshotClick = onScreenshotClick,
+                        onShowAllClick = { }
+                    )
+                }
+            }
+
+            state.videos?.let {
+                item(key = "videos") {
+                    VideosCarousel(
+                        videos = it,
+                        onVideoClick = onVideoClick,
+                        onShowAllClick = { }
+                    )
+                }
+            }
+
+            state.similar?.let {
+                item(key = "similar") {
+                    SimilarCarousel(
+                        similarEntries = it,
+                        onEntryClick = onEntryClick,
+                        onShowAll = { showAllSimilarEntries = true }
+                    )
+                }
+            }
+
+            item(key = "bottom_padding") {
+                //FAB: Container height = 56.dp + vertical padding 16.dp * 2
+                Spacer(modifier = Modifier.height(88.dp))
+            }
+        }
+
+        if (pullToRefreshState.isRefreshing) {
+            LaunchedEffect(Unit) {
+                onRefresh()
+                pullToRefreshState.endRefresh()
+            }
+        }
+
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+            PullToRefreshContainer(state = pullToRefreshState)
+        }
+    }
+
+    state.characters?.let { characters ->
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        if (showAllCharacters) {
+            ModalBottomSheet(
+                onDismissRequest = { showAllCharacters = false },
+                sheetState = sheetState
+            ) {
+                CharactersBottomSheetContent(
+                    allCharacters = characters,
+                    onCharacterClick = onCharacterClick,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+    }
+
+    state.related?.let { relatedEntries ->
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        if (showAllRelatedEntries) {
+            ModalBottomSheet(
+                onDismissRequest = { showAllRelatedEntries = false },
+                sheetState = sheetState
+            ) {
+                RelatedBottomSheetContent(
+                    related = relatedEntries,
+                    onEntryClick = onEntryClick,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+    }
+
+    state.similar?.let { similarEntries ->
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        if (showAllSimilarEntries) {
+            ModalBottomSheet(
+                onDismissRequest = { showAllSimilarEntries = false },
+                sheetState = sheetState
+            ) {
+                SimilarBottomSheetContent(
+                    similarEntries = similarEntries,
+                    onEntryClick = onEntryClick
+                )
+            }
+        }
+    }
+
+    state.authors?.let { authors ->
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        if (showAllAuthors) {
+            ModalBottomSheet(
+                onDismissRequest = { showAllAuthors = false },
+                sheetState = sheetState
+            ) {
+                AuthorsBottomSheetContent(
+                    authors = authors,
+                    onAuthorClick = onAuthorClick
                 )
             }
         }

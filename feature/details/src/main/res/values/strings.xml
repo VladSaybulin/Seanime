@@ -16,4 +16,14 @@
     <string name="next_episode_at_pattern_with_year">Следующий эпизод: dd MMM yyyy г., hh:mm</string>
     <string name="header_genres">Жанры</string>
     <string name="header_themes">Темы</string>
+    <string name="related">Связанное</string>
+    <string name="show_more">Показать все</string>
+    <string name="characters">Персонажи</string>
+    <string name="show_all_characters">Показать всех</string>
+    <string name="screenshots">Скриншоты</string>
+    <string name="videos">Видео</string>
+    <string name="similar">Похожее</string>
+    <string name="more"><![CDATA[Ещё >]]></string>
+    <string name="main_characters">Главные герои</string>
+    <string name="minor_characters">Второстепенные герои</string>
 </resources>

@@ -60,7 +60,7 @@ fun AnimeDetailsQuery.Anime.asExternalModel() = AnimeDetails(
     studios = studios.map(NetworkStudio::asStudio),
     authors = personRoles?.map(NetworkPersonRole::asPersonWithRoles),
     characters = characterRoles?.map(NetworkCharacterRole::asCharacterWithRole),
-    relations = related?.map(NetworkRelated::asRelatedEntry),
+    related = related?.mapNotNull(NetworkRelated::asRelatedEntry),
     screenshots = screenshots.map(NetworkScreenshot::asScreenshot),
     videos = videos.map(NetworkVideo::asVideo)
 )
@@ -119,49 +119,51 @@ private fun NetworkCharacterRole.asCharacterWithRole() = CharacterWithRole(
     isMain = rolesEn.contains("Main")
 )
 
-fun NetworkRelated.asRelatedEntry() = RelatedEntry(
-    anime = anime?.run {
-        Anime(
-            id = id,
-            originalName = name,
-            russianName = russian,
-            poster = poster?.let { p ->
-                Poster(
-                    previewUrl = p.previewUrl,
-                    originalUrl = p.originalUrl
-                )
-            },
-            kind = kind.asAnimeKind(),
-            status = status.asEntryStatus(),
-            score = score?.toScore(),
-            episodes = episodes,
-            episodesAired = episodesAired,
-            airedOn = airedOn?.let { IncompleteDate(it.day, it.month, it.year) },
-            releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) }
-        )
-    },
-    manga = manga?.run {
-        Manga(
-            id = id,
-            originalName = name,
-            russianName = russian,
-            poster = poster?.let { p ->
-                Poster(
-                    previewUrl = p.previewUrl,
-                    originalUrl = p.originalUrl
-                )
-            },
-            kind = kind.asMangaKind(),
-            status = status.asEntryStatus(),
-            score = score?.toScore(),
-            chapters = chapters,
-            volumes = volumes,
-            airedOn = airedOn?.let { IncompleteDate(it.day, it.month, it.year) },
-            releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) }
-        )
-    },
-    relationType = relationEn.asRelationType()
-)
+fun NetworkRelated.asRelatedEntry() = if (anime != null || manga != null) {
+    RelatedEntry(
+        anime = anime?.run {
+            Anime(
+                id = id,
+                originalName = name,
+                russianName = russian,
+                poster = poster?.let { p ->
+                    Poster(
+                        previewUrl = p.previewUrl,
+                        originalUrl = p.originalUrl
+                    )
+                },
+                kind = kind.asAnimeKind(),
+                status = status.asEntryStatus(),
+                score = score?.toScore(),
+                episodes = episodes,
+                episodesAired = episodesAired,
+                airedOn = airedOn?.let { IncompleteDate(it.day, it.month, it.year) },
+                releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) }
+            )
+        },
+        manga = manga?.run {
+            Manga(
+                id = id,
+                originalName = name,
+                russianName = russian,
+                poster = poster?.let { p ->
+                    Poster(
+                        previewUrl = p.previewUrl,
+                        originalUrl = p.originalUrl
+                    )
+                },
+                kind = kind.asMangaKind(),
+                status = status.asEntryStatus(),
+                score = score?.toScore(),
+                chapters = chapters,
+                volumes = volumes,
+                airedOn = airedOn?.let { IncompleteDate(it.day, it.month, it.year) },
+                releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) }
+            )
+        },
+        relationType = relationEn.asRelationType()
+    )
+} else null
 
 fun NetworkScreenshot.asScreenshot() = Screenshot(
     x166Url = x166Url,
@@ -170,8 +172,9 @@ fun NetworkScreenshot.asScreenshot() = Screenshot(
 )
 
 fun NetworkVideo.asVideo() = Video(
-    previewImageUrl = imageUrl,
+    name = name,
+    previewImageUrl = "https:$imageUrl",
     videoUrl = url,
-    playerUrl = playerUrl,
+    playerUrl = "https:$imageUrl",
     kind = kind.asVideoKind()
 )

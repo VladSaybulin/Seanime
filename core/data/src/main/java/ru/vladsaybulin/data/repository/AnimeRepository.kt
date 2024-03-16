@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers
-import ru.vladsaybulin.data.model.asAnime
 import ru.vladsaybulin.data.model.asExternalModel
-import ru.vladsaybulin.model.Anime
+import ru.vladsaybulin.data.model.asSimilarEntry
 import ru.vladsaybulin.model.AnimeDetails
+import ru.vladsaybulin.model.SimilarEntry
 import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.models.AnimeDto
 import javax.inject.Inject
@@ -22,7 +22,7 @@ class AnimeRepository @Inject constructor(
         emit(animeDataSource.getAnimeDetails(animeId).asExternalModel())
     }.flowOn(ioDispatcher)
 
-    fun getSimilarAnimes(animeId: Long): Flow<List<Anime>> = flow {
-        emit(animeDataSource.getSimilarAnimes(animeId).map(AnimeDto::asAnime))
+    fun getSimilarAnimes(animeId: Long): Flow<List<SimilarEntry>> = flow {
+        emit(animeDataSource.getSimilarAnimes(animeId).map(AnimeDto::asSimilarEntry))
     }.flowOn(ioDispatcher)
 }

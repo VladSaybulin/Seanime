@@ -11,13 +11,16 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.buildEpisodesString
 import ru.vladsaybulin.model.Anime
+import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.RelationType
 
 @Composable
 fun AnimeListItem(
     modifier: Modifier = Modifier,
     anime: Anime,
+    relationType: RelationType? = null,
     onClick: () -> Unit,
-    detailsContent: (@Composable () -> Unit)? = { DefaultAnimeDetails(anime) },
+    detailsContent: (@Composable () -> Unit)? = { DefaultAnimeDetails(anime, relationType) },
 ) {
     EntryListItem(
         modifier = modifier,
@@ -29,13 +32,13 @@ fun AnimeListItem(
 }
 
 @Composable
-private fun DefaultAnimeDetails(anime: Anime) {
-    EntryListItemDetails(data = anime.listItemDetailsData())
+private fun DefaultAnimeDetails(anime: Anime, relationType: RelationType? = null) {
+    EntryListItemDetails(data = anime.listItemDetailsData(relationType))
 }
 
 @Composable
 @ReadOnlyComposable
-fun Anime.listItemDetailsData() = EntryListItemDetailsData(
+fun Anime.listItemDetailsData(relationType: RelationType? = null) = EntryListItemDetailsData(
     kindText = animeKindString(animeKind = kind),
     year = airedOn?.year ?: releasedOn?.year,
     entryStatus = status,
@@ -45,7 +48,9 @@ fun Anime.listItemDetailsData() = EntryListItemDetailsData(
         episodesAired = episodesAired,
         duration = null
     ),
-    score = score
+    score = score,
+    relationType = relationType,
+    entryType = EntryType.Anime
 )
 
 @Preview
@@ -55,6 +60,7 @@ fun AnimeListItemPreview(@PreviewParameter(AnimePreviewProvider::class) anime: A
         AnimeListItem(
             modifier = Modifier.width(360.dp),
             anime = anime,
+            relationType = RelationType.AltHistory,
             onClick = { }
         )
     }

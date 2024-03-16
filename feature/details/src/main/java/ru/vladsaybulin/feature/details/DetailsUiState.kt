@@ -1,17 +1,21 @@
 package ru.vladsaybulin.feature.details
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import ru.vladsaybulin.feature.details.model.DetailsDescription
-import ru.vladsaybulin.feature.details.model.DetailsHeader
 import ru.vladsaybulin.feature.details.model.DetailsInfo
-import ru.vladsaybulin.feature.details.model.SimilarEntry
-import ru.vladsaybulin.feature.details.model.asSimilarEntry
-import ru.vladsaybulin.model.Anime
 import ru.vladsaybulin.model.AnimeDetails
 import ru.vladsaybulin.model.AnimeKind
+import ru.vladsaybulin.model.CharacterWithRole
 import ru.vladsaybulin.model.EntryStatus
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.PersonWithRoles
+import ru.vladsaybulin.model.Poster
+import ru.vladsaybulin.model.RelatedEntry
+import ru.vladsaybulin.model.Screenshot
+import ru.vladsaybulin.model.SimilarEntry
 import ru.vladsaybulin.model.UserRate
+import ru.vladsaybulin.model.Video
 import ru.vladsaybulin.model.isNullOrEmpty
 
 sealed class DetailsUiState {
@@ -21,28 +25,31 @@ sealed class DetailsUiState {
 
     data class Success(
         val entryType: EntryType,
-        val header: DetailsHeader,
+        val poster: Poster?,
+        val name: String,
+        val russianName: String?,
         val info: List<DetailsInfo>,
         val userRate: UserRate?,
         val description: DetailsDescription?,
-        val authors: List<PersonWithRoles>?,
-        val similar: List<SimilarEntry>,
+        val authors: ImmutableList<PersonWithRoles>?,
+        val related: ImmutableList<RelatedEntry>?,
+        val characters: ImmutableList<CharacterWithRole>?,
+        val screenshots: ImmutableList<Screenshot>?,
+        val videos: ImmutableList<Video>?,
+        val similar: ImmutableList<SimilarEntry>?
     ) : DetailsUiState()
 }
 
 fun DetailsUiState(
     animeDetails: AnimeDetails,
     userRate: UserRate?,
-    similar: List<Anime>
+    similar: List<SimilarEntry>
 ) = animeDetails.run {
     DetailsUiState.Success(
         entryType = EntryType.Anime,
-        header = DetailsHeader(
-            poster = poster,
-            name = originalName,
-            russianName = russianName,
-            animeRating = rating
-        ),
+        poster = poster,
+        name = originalName,
+        russianName = russianName,
         info = buildList {
             if (shouldShowKindAndEpisodes()) {
                 add(
@@ -50,7 +57,7 @@ fun DetailsUiState(
                         kind = kind,
                         episodes = episodes,
                         episodesAired = episodesAired,
-                        duration = duration,
+                        duration = duration?.takeIf { it > 0 },
                         ongoing = status == EntryStatus.Ongoing
                     )
                 )
@@ -61,6 +68,7 @@ fun DetailsUiState(
             if (shouldShowStatusAndDates()) {
                 add(
                     DetailsInfo.StatusDates(
+                        entryType = EntryType.Anime,
                         status = status,
                         airedOn = airedOn,
                         releasedOn = releasedOn
@@ -80,11 +88,13 @@ fun DetailsUiState(
                 source = descriptionSource
             )
         } else null,
-        authors = authors?.filter {
-            it.englishRoles.firstOrNull { it == "Director" || it == "Original Creator" } != null
-        },
+        authors = authors?.ifEmpty { null }?.toImmutableList(),
+        characters = characters?.ifEmpty { null }?.toImmutableList(),
+        related = related?.ifEmpty { null }?.toImmutableList(),
+        screenshots = screenshots.ifEmpty { null }?.toImmutableList(),
+        videos = videos?.ifEmpty { null }?.toImmutableList(),
+        similar = similar.ifEmpty { null }?.toImmutableList(),
         userRate = userRate,
-        similar = similar.map(Anime::asSimilarEntry)
     )
 }
 
@@ -101,3 +111,4 @@ fun AnimeDetails.shouldShowStatusAndDates() =
     status != EntryStatus.None
             || airedOn.isNullOrEmpty()
             || releasedOn.isNullOrEmpty()
+

@@ -25,10 +25,44 @@
     <string name="duration_minutes">%d мин.</string>
     <string name="episodes">%1$s эп.</string>
     <string name="episodes_x_duration">%1$s эп. по %2$s</string>
+    <string name="relation_type_adaptation">Адаптация</string>
+    <string name="relation_type_alt_history">Алтернативная история</string>
+    <string name="relation_type_side_story">Другая история</string>
+    <string name="relation_type_spin_off">Ответвление от оригинала</string>
+    <string name="relation_type_sequel">Продолжение</string>
+    <string name="relation_type_prequel">Предыстория</string>
+    <string name="relation_type_summary">Обобщение</string>
+    <string name="relation_type_character">Общий персонаж</string>
+    <string name="relation_type_other">Другое</string>
+    <string name="manga_kind_manga">Манга</string>
+    <string name="manga_kind_manhwa">Манхва</string>
+    <string name="manga_kind_manhua">Маньхуа</string>
+    <string name="manga_kind_oneshot">Ваншот</string>
+    <string name="manga_kind_doujin">Додзинси</string>
+    <string name="manga_kind_light_novel">Ранобэ</string>
+    <string name="manga_kind_novel">Новелла</string>
+    <string name="manga_status_anons">Анонс</string>
+    <string name="manga_status_ongoing">Издаётся</string>
+    <string name="manga_status_released">Издано</string>
+    <string name="manga_status_paused">Приостановлено</string>
+    <string name="manga_status_discontinued">Прекращено</string>
+    <string name="show_all">Показать всё</string>
     <plurals name="duration_hours">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>
         <item quantity="many">%d часов</item>
         <item quantity="other">%d часа</item>
+    </plurals>
+    <plurals name="volumes">
+        <item quantity="one">%d том</item>
+        <item quantity="few">%d тома</item>
+        <item quantity="many">%d томов</item>
+        <item quantity="other">%d тома</item>
+    </plurals>
+    <plurals name="chapters">
+        <item quantity="one">%d глава</item>
+        <item quantity="few">%d главы</item>
+        <item quantity="many">%d глав</item>
+        <item quantity="other">%d главы</item>
     </plurals>
 </resources>

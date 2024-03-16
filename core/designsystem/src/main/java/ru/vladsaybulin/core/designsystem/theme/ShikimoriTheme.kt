@@ -142,7 +142,7 @@ fun ShikimoriTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        dynamicColor && supportsDynamicTheming() -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
@@ -150,14 +150,6 @@ fun ShikimoriTheme(
         darkTheme -> DarkDefaultColorScheme
         else -> LightDefaultColorScheme
     }
-//    val view = LocalView.current
-//    if (!view.isInEditMode) {
-//        SideEffect {
-//            val window = (view.context as Activity).window
-//            window.statusBarColor = colorScheme.primary.toArgb()
-//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-//        }
-//    }
 
     val userRateColors = if (darkTheme) DarkRateStatusColors else LightRateStatusColors
     val entryStatusColors = if (darkTheme) DarkEntryStatusColor else LightEntryStatusColors
@@ -168,6 +160,7 @@ fun ShikimoriTheme(
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
+            typography = shikimoriTypography(),
             content = content
         )
     }

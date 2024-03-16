@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,12 +14,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
@@ -26,13 +31,14 @@ import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus
 
 @Composable
-internal fun EntryListItem(
+fun EntryListItem(
     modifier: Modifier = Modifier,
     name: String,
     poster: Poster?,
     userRateStatus: UserRateStatus = UserRateStatus.None,
-    nameTextStyle: TextStyle = MaterialTheme.typography.titleMedium,
+    nameTextStyle: TextStyle = MaterialTheme.typography.labelLarge,
     bodyTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
+    posterWidth: Dp = DefaultPosterWidth,
     onClick: () -> Unit,
     detailsContent: (@Composable () -> Unit)? = null
 ) {
@@ -49,18 +55,18 @@ internal fun EntryListItem(
         Row(modifier = Modifier.padding(DefaultContentPadding)) {
             Box(
                 modifier = Modifier
-                    .width(PosterWidth)
+                    .width(DefaultPosterWidth)
                     .aspectRatio(3 / 4f)
                     .clip(MaterialTheme.shapes.extraSmall)
             ) {
                 EntryPoster(
-                    modifier = Modifier.width(PosterWidth),
+                    modifier = Modifier.width(posterWidth),
                     poster = poster
                 )
                 if (userRateStatus != UserRateStatus.None) {
                     UserRateStatusBadge(
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
+                            .align(Alignment.TopEnd)
                             .size(UserRateStatusIconSize),
                         userRateStatus = userRateStatus
                     )
@@ -85,7 +91,42 @@ internal fun EntryListItem(
     }
 }
 
+@Preview
+@Composable
+fun EntryListItemPreview() {
+    ShikimoriTheme {
+        EntryListItem(
+            name = "Entry name",
+            poster = Poster(""),
+            onClick = { },
+            modifier = Modifier.fillMaxWidth(),
+            userRateStatus = UserRateStatus.Watching,
+            detailsContent = {
+                Column {
+                    Text(text = "Details text 1")
+                    Text(text = "Details text 2")
+                    Text(text = "Details text 3")
+                }
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EntryListWithLongNamePreview() {
+    ShikimoriTheme {
+        EntryListItem(
+            name = "This is a long entry name that does not fit into 2 lines",
+            poster = Poster(""),
+            modifier = Modifier.fillMaxWidth(),
+            userRateStatus = UserRateStatus.None,
+            onClick = { },
+        )
+    }
+}
+
 private val DefaultContentPadding = PaddingValues(8.dp, 8.dp)
 private val ImageSpace = 8.dp
-private val PosterWidth = 86.dp
-private val UserRateStatusIconSize = 32.dp
+private val UserRateStatusIconSize = 20.dp
+private val DefaultPosterWidth = 72.dp

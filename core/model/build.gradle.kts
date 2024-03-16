@@ -10,4 +10,5 @@ java {
 
 dependencies {
     api(libs.kotlinx.datetime)
+    api(libs.kotlinx.collections.immutable)
 }

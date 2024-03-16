@@ -30,6 +30,7 @@ fun NavController.navigateToDetails(
 }
 
 fun NavGraphBuilder.detailsScreen(
+    openEntryDetails: (EntryType, Long) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(
@@ -40,6 +41,7 @@ fun NavGraphBuilder.detailsScreen(
         )
     ) {
         DetailsRoute(
+            onEntryClick = openEntryDetails,
             onBackClick = onBackClick
         )
     }

@@ -16,10 +16,11 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.EntryStatusChip
+import ru.vladsaybulin.core.ui.EntryStatusBadge
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.feature.details.model.DetailsInfo
 import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.IncompleteDate
 import java.time.format.DateTimeFormatter
 
@@ -33,7 +34,7 @@ fun StatusDatesLine(
         modifier = modifier
     ) {
         if (info.status != EntryStatus.None) {
-            EntryStatusChip(entryStatus = info.status)
+            EntryStatusBadge(status = info.status, entryType = info.entryType)
         }
 
         buildDatesString(
@@ -113,21 +114,25 @@ class DetailsInfoStatusDatesPreviewProvider :
     override val values: Sequence<DetailsInfo.StatusDates>
         get() = sequenceOf(
             DetailsInfo.StatusDates(
+                entryType = EntryType.Anime,
                 status = EntryStatus.Released,
                 airedOn = IncompleteDate(1, 1, 2024),
                 releasedOn = IncompleteDate(2, 1, 2024)
             ),
             DetailsInfo.StatusDates(
+                entryType = EntryType.Anime,
                 status = EntryStatus.Released,
                 airedOn = IncompleteDate(1, 1, 2024),
                 releasedOn = null
             ),
             DetailsInfo.StatusDates(
+                entryType = EntryType.Anime,
                 status = EntryStatus.Ongoing,
                 airedOn = IncompleteDate(1, 1, 2024),
                 releasedOn = null
             ),
             DetailsInfo.StatusDates(
+                entryType = EntryType.Anime,
                 status = EntryStatus.Anons,
                 airedOn = null,
                 releasedOn = null

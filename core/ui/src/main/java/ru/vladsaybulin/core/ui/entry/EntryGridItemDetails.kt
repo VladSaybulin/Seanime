@@ -10,7 +10,7 @@ data class EntryGridItemDetailsData(
 )
 
 @Composable
-internal fun EntryGridItemDetails(
+fun EntryGridItemDetails(
     modifier: Modifier = Modifier,
     data: EntryGridItemDetailsData
 ) {

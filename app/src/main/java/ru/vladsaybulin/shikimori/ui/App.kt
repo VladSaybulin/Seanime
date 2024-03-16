@@ -26,6 +26,7 @@ fun App() {
                     openAnimeDetails = { navController.navigateToDetails(EntryType.Anime, it) }
                 )
                 detailsScreen(
+                    openEntryDetails = { type, id -> navController.navigateToDetails(type, id) },
                     onBackClick = {
                         navController.navigateUp()
                     }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,7 +29,7 @@ import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus
 
 @Composable
-internal fun EntryGridItem(
+fun EntryGridItem(
     name: String,
     poster: Poster?,
     onClick: () -> Unit,
@@ -36,13 +37,14 @@ internal fun EntryGridItem(
     userRateStatus: UserRateStatus = UserRateStatus.None,
     nameTextStyle: TextStyle = MaterialTheme.typography.labelLarge,
     bodyTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
+    shape: Shape = ShikimoriTheme.shapes.medium,
     detailsContent: (@Composable () -> Unit)? = null,
 ) {
     ShikimoriTheme(darkTheme = true) {
         Box(
             modifier = modifier
                 .aspectRatio(EntryGridItemAspectRatio)
-                .clip(ShikimoriTheme.shapes.medium)
+                .clip(shape)
                 .clickable(onClick = onClick)
         ) {
             val scrimColor = ShikimoriTheme.colorScheme.surface.copy(alpha = GradientScrimAlpha)
@@ -66,7 +68,7 @@ internal fun EntryGridItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomStart)
-                    .padding(4.dp)
+                    .padding(vertical = 4.dp, horizontal = 8.dp)
                     .padding(top = 16.dp)
             ) {
                 CompositionLocalProvider(value = LocalContentColor provides contentColor) {

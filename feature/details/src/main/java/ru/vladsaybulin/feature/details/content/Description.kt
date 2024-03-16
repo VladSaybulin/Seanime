@@ -1,4 +1,4 @@
-package ru.vladsaybulin.feature.details
+package ru.vladsaybulin.feature.details.content
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
@@ -35,7 +35,7 @@ import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
 import ru.vladsaybulin.feature.details.model.DetailsDescription
 
 @Composable
-fun DetailsDescriptionContent(
+fun Description(
     description: DetailsDescription,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
@@ -65,7 +65,7 @@ fun DetailsDescriptionContent(
                 .padding(bottom = 40.dp)
                 .drawForegroundGradientScrim(
                     startColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0f),
-                    targetColor = scrimColor,
+                    stopColor = scrimColor,
                     decay = 2f
                 )
         ) {
@@ -137,9 +137,20 @@ fun AnnotatedString.Builder.processTagNode(
                     block = nested
                 )
             }
-        else -> nested()
+
+        else -> {
+            append(tagNode.openTagString)
+            nested()
+            tagNode.closeTagString?.let { append(it) }
+        }
     }
 }
+
+private val TagNode.openTagString
+    get() = rawString.substring(0, bodyBegin - begin)
+
+private val TagNode.closeTagString
+    get() = if (hasBody()) rawString.substring(bodyEnd - begin, end - begin) else null
 
 private val tagAttributes = mapOf(
     "anime" to TagAttributes(false, false, false, true),

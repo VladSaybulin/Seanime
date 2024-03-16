@@ -139,6 +139,7 @@ query AnimeDetailsQuery($id: String!) {
             imageUrl
             playerUrl
             kind
+            name
         }
     }
 }
