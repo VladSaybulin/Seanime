@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,7 +55,8 @@ fun ScreenshotsCarousel(
                 .clip(ShikimoriTheme.shapes.large),
             contentPadding = ShikimoriCarouselDefaults.contentPadding(horizontal = 0.dp)
         ) {
-            items(items = screenshots) { screenshot ->
+            items(count = shownScreenshotsSize) { index ->
+                val screenshot = screenshots[index]
                 ScreenshotCard(
                     screenshot = screenshot,
                     onClick = { onScreenshotClick(screenshot) }

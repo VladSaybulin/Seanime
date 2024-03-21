@@ -28,7 +28,7 @@ query AnimeDetailsQuery($id: String!) {
             month
             year
         }
-        description
+        descriptionHtml
         descriptionSource
         genres {
             id

@@ -6,32 +6,34 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withAnnotation
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
+import kotlinx.serialization.json.Json
 import org.primeframework.transformer.domain.Node
 import org.primeframework.transformer.domain.TagAttributes
 import org.primeframework.transformer.domain.TagNode
 import org.primeframework.transformer.domain.TextNode
-import org.primeframework.transformer.service.BBCodeParser
+import org.primeframework.transformer.service.HTMLParser
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
+import ru.vladsaybulin.core.ui.strings.AnnotatedStringBuilderContext
+import ru.vladsaybulin.core.ui.strings.annotatedStringBuilderContext
+import ru.vladsaybulin.core.ui.strings.link
 import ru.vladsaybulin.feature.details.model.DetailsDescription
 
 @Composable
@@ -39,6 +41,70 @@ fun Description(
     description: DetailsDescription,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var textLayoutResult by remember {
+        mutableStateOf<TextLayoutResult?>(null)
+    }
+
+    val isExpandable by remember {
+        derivedStateOf {
+            val textLayout = textLayoutResult ?: return@derivedStateOf false
+
+            textLayout.lineCount > COLLAPSED_MAX_LINES
+        }
+    }
+
+    val annotatedDescription = buildDescriptionString(html = description.code)
+
+    val onTextClick: (Int) -> Unit = { offset ->
+        val ranges = annotatedDescription.getStringAnnotations(offset, offset)
+        if (ranges.isEmpty()) {
+            if (isExpandable) onExpandedChange(!expanded)
+        }
+    }
+
+    if (isExpandable) {
+        ExpandableText(
+            text = annotatedDescription,
+            expanded = expanded,
+            onExpandedChange = onExpandedChange,
+            onTextClick = onTextClick,
+            modifier = modifier
+        )
+    } else {
+        NonExpandableText(
+            text = annotatedDescription,
+            onTextClick = onTextClick,
+            onTextLayout = { textLayoutResult = it },
+            modifier = modifier
+        )
+    }
+
+}
+
+@Composable
+fun NonExpandableText(
+    text: AnnotatedString,
+    onTextClick: (offset: Int) -> Unit,
+    onTextLayout: (TextLayoutResult) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ClickableText(
+        text = text,
+        style = ShikimoriTheme.typography.bodyMedium.copy(LocalContentColor.current),
+        onClick = onTextClick,
+        onTextLayout = onTextLayout,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ExpandableText(
+    text: AnnotatedString,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onTextClick: (offset: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrimColor by animateColorAsState(
@@ -58,19 +124,18 @@ fun Description(
         modifier = modifier.animateContentSize()
     ) {
         ClickableText(
-            text = buildDescriptionString(code = description.code),
+            text = text,
             style = ShikimoriTheme.typography.bodyMedium.copy(LocalContentColor.current),
             maxLines = if (expanded) Int.MAX_VALUE else COLLAPSED_MAX_LINES,
+            onClick = onTextClick,
             modifier = Modifier
                 .padding(bottom = 40.dp)
                 .drawForegroundGradientScrim(
                     startColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0f),
                     stopColor = scrimColor,
                     decay = 2f
-                )
-        ) {
-            onExpandedChange(!expanded)
-        }
+                ),
+        )
 
         IconButton(
             onClick = { onExpandedChange(!expanded) },
@@ -84,82 +149,118 @@ fun Description(
 }
 
 @Composable
-fun buildDescriptionString(code: String): AnnotatedString {
-    val doc = remember(code.hashCode()) {
-        BBCodeParser().buildDocument(code, tagAttributes)
-    }
+fun buildDescriptionString(html: String): AnnotatedString {
+    val context = annotatedStringBuilderContext(
+        defaultTextStyle = ShikimoriTheme.typography.bodyMedium.copy(LocalContentColor.current)
+    )
+    val builder = AnnotatedString.Builder()
 
-    return buildAnnotatedString {
-        doc.children.forEach { node ->
-            processNode(node, colorScheme = ShikimoriTheme.colorScheme)
+    HTMLParser().buildDocument(html, supportedHtmlTags).also {
+        it.children.fastForEach {
+            builder.appendNode(context, it)
         }
     }
+    return builder.toAnnotatedString()
 }
 
-fun AnnotatedString.Builder.processNode(node: Node, colorScheme: ColorScheme) {
+fun AnnotatedString.Builder.appendNode(context: AnnotatedStringBuilderContext, node: Node) {
     when (node) {
-        is TextNode -> processTextNode(node)
-        is TagNode -> processTagNode(node, colorScheme)
+        is TagNode -> appendTagNode(context, node)
+        is TextNode -> append(node.body)
     }
 }
 
-fun AnnotatedString.Builder.processTextNode(textNode: TextNode) {
-    append(textNode.body)
-}
-
-@OptIn(ExperimentalTextApi::class)
-fun AnnotatedString.Builder.processTagNode(
-    tagNode: TagNode,
-    colorScheme: ColorScheme
+fun AnnotatedString.Builder.appendTagNode(
+    context: AnnotatedStringBuilderContext,
+    tagNode: TagNode
 ) {
-    val nested: AnnotatedString.Builder.() -> Unit = {
-        tagNode.children.forEach {
-            processNode(it, colorScheme)
-        }
-    }
+    val nestedBlock: AnnotatedString.Builder.() -> Unit = { appendBody(context, tagNode) }
 
     when (tagNode.name) {
-        "anime",
-        "manga",
-        "ranobe",
-        "character",
-        "person",
-        "url" ->
-            withAnnotation(
-                tag = tagNode.name,
-                annotation = checkNotNull(tagNode.attribute)
-            ) {
-                withStyle(
-                    style = SpanStyle(
-                        color = colorScheme.primary,
-                        textDecoration = TextDecoration.Underline
-                    ),
-                    block = nested
-                )
-            }
-
-        else -> {
-            append(tagNode.openTagString)
-            nested()
-            tagNode.closeTagString?.let { append(it) }
+        "div" -> nestedBlock()
+        "a" -> appendLink(context, tagNode, nestedBlock)
+        "br" -> {
+            append("\n")
+            nestedBlock()
         }
     }
 }
 
-private val TagNode.openTagString
-    get() = rawString.substring(0, bodyBegin - begin)
+fun AnnotatedString.Builder.appendBody(
+    context: AnnotatedStringBuilderContext,
+    tagNode: TagNode
+) {
+    tagNode.children.fastForEach { node ->
+        appendNode(context, node)
+    }
+}
 
-private val TagNode.closeTagString
-    get() = if (hasBody()) rawString.substring(bodyEnd - begin, end - begin) else null
+fun AnnotatedString.Builder.appendLink(
+    context: AnnotatedStringBuilderContext,
+    tagNode: TagNode,
+    block: AnnotatedString.Builder.() -> Unit
+) {
+    val dataAttrs = tagNode.dataAttrsAttribute
+    val href = tagNode.hrefAttribute
+    when {
+        dataAttrs != null -> link(
+            context = context,
+            tag = "shikimori",
+            annotation = dataAttrs,
+            block = block
+        )
 
-private val tagAttributes = mapOf(
-    "anime" to TagAttributes(false, false, false, true),
-    "manga" to TagAttributes(false, false, false, true),
-    "ranobe" to TagAttributes(false, false, false, true),
-    "character" to TagAttributes(false, false, false, true),
-    "person" to TagAttributes(false, false, false, true)
+        href != null -> link(
+            context = context,
+            tag = "url",
+            annotation = href,
+            block = block
+        )
+
+        else -> appendUnsupportedTag(
+            tagNode = tagNode,
+            block = block
+        )
+    }
+}
+
+fun AnnotatedString.Builder.appendUnsupportedTag(
+    tagNode: TagNode,
+    block: AnnotatedString.Builder.() -> Unit
+) {
+    tagNode.run {
+        append(document.getString(begin, bodyBegin))
+        block()
+        if (hasClosingTag()) {
+            append(document.getString(bodyEnd, end))
+        }
+    }
+}
+
+private val TagNode.dataAttrsAttribute
+    get() = attributes["data-attrs"]
+
+private val TagNode.hrefAttribute
+    get() = attributes["href"]
+
+private fun TagAttributes(
+    doesNotRequireClosingTag: Boolean = false,
+    hasPreFormattedBody: Boolean = false,
+    standalone: Boolean = false,
+    transformNewLines: Boolean = true
+) = TagAttributes(
+    doesNotRequireClosingTag,
+    hasPreFormattedBody,
+    standalone,
+    transformNewLines
 )
+
+private val json = Json { ignoreUnknownKeys = true }
 
 const val COLLAPSED_MAX_LINES = 7
 
-//May be parse html. Regex expression to find type and id in data-attrs attribute: "id":"(\d+)"|"type":"(.+)"
+val supportedHtmlTags = mapOf(
+    "div" to TagAttributes(),
+    "a" to TagAttributes(),
+    "br" to TagAttributes(doesNotRequireClosingTag = true)
+)

@@ -82,9 +82,9 @@ fun DetailsUiState(
                 add(DetailsInfo.Genres(genres!!, R.string.header_genres, key = "genres"))
             }
         },
-        description = if (!descriptionBBCode.isNullOrBlank()) {
+        description = if (!descriptionHtml.isNullOrBlank()) {
             DetailsDescription(
-                code = descriptionBBCode!!,
+                code = descriptionHtml!!,
                 source = descriptionSource
             )
         } else null,

@@ -21,7 +21,7 @@ data class AnimeDetails(
     val nextEpisodeAt: Instant?,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
-    val descriptionBBCode: String?,
+    val descriptionHtml: String?,
     val descriptionSource: String?,
     val genres: List<Genre>?,
     val subbers: List<String>?,
