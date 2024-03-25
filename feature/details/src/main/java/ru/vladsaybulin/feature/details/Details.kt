@@ -54,6 +54,7 @@ import ru.vladsaybulin.feature.details.content.Description
 import ru.vladsaybulin.feature.details.content.EntryDetailsName
 import ru.vladsaybulin.feature.details.content.EntryDetailsPoster
 import ru.vladsaybulin.feature.details.content.RelatedBottomSheetContent
+import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheetContent
 import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
 import ru.vladsaybulin.feature.details.content.SimilarBottomSheetContent
 import ru.vladsaybulin.feature.details.content.SimilarCarousel
@@ -181,6 +182,7 @@ private fun DetailsContent(
     var showAllRelatedEntries by remember { mutableStateOf(false) }
     var showAllSimilarEntries by remember { mutableStateOf(false) }
     var showAllAuthors by remember { mutableStateOf(false) }
+    var showAllScreenshots by remember { mutableStateOf(false) }
 
     var expandedDescription by remember { mutableStateOf(false) }
 
@@ -304,7 +306,7 @@ private fun DetailsContent(
                     ScreenshotsCarousel(
                         screenshots = it,
                         onScreenshotClick = onScreenshotClick,
-                        onShowAllClick = { }
+                        onShowAllClick = { showAllScreenshots = true }
                     )
                 }
             }
@@ -404,6 +406,22 @@ private fun DetailsContent(
                 AuthorsBottomSheetContent(
                     authors = authors,
                     onAuthorClick = onAuthorClick
+                )
+            }
+        }
+    }
+
+    state.screenshots?.let { screenshots ->
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        if (showAllScreenshots) {
+            ModalBottomSheet(
+                onDismissRequest = { showAllScreenshots = false },
+                sheetState = sheetState
+            ) {
+                ScreenshotsBottomSheetContent(
+                    screenshots = screenshots,
+                    onScreenshotClick = onScreenshotClick,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }
