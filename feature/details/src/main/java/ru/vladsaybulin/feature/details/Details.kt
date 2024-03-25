@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +70,8 @@ import ru.vladsaybulin.model.Video
 fun DetailsRoute(
     modifier: Modifier = Modifier,
     viewModel: DetailsViewModel = hiltViewModel(),
-    onEntryClick: (EntryType, Long) -> Unit = { _, _ -> },
+    onEntryClick: (EntryType, Long) -> Unit,
+    onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
     onBackClick: () -> Unit = {},
     onUserRateClick: () -> Unit = {},
 ) {
@@ -80,6 +82,7 @@ fun DetailsRoute(
         onRetry = viewModel::onRetry,
         onRefresh = viewModel::onRefresh,
         onEntryClick = onEntryClick,
+        onScreenshotClick = onScreenshotClick,
         onBackClick = onBackClick,
         modifier = modifier,
         onUserRateClick = onUserRateClick
@@ -92,6 +95,7 @@ fun DetailsScreen(
     onRetry: () -> Unit,
     onRefresh: suspend () -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
+    onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
     onUserRateClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -116,7 +120,7 @@ fun DetailsScreen(
             onUserRateClick = onUserRateClick,
             onAuthorClick = {},
             onCharacterClick = {},
-            onScreenshotClick = {},
+            onScreenshotClick = onScreenshotClick,
             onVideoClick = {}
         )
     }
@@ -170,7 +174,7 @@ private fun DetailsContent(
     onAuthorClick: (Long) -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onCharacterClick: (Long) -> Unit,
-    onScreenshotClick: (Screenshot) -> Unit,
+    onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
     onVideoClick: (Video) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier
@@ -182,7 +186,7 @@ private fun DetailsContent(
     var showAllRelatedEntries by remember { mutableStateOf(false) }
     var showAllSimilarEntries by remember { mutableStateOf(false) }
     var showAllAuthors by remember { mutableStateOf(false) }
-    var showAllScreenshots by remember { mutableStateOf(false) }
+    var showAllScreenshots by rememberSaveable { mutableStateOf(false) }
 
     var expandedDescription by remember { mutableStateOf(false) }
 
@@ -301,11 +305,11 @@ private fun DetailsContent(
                 }
             }
 
-            state.screenshots?.let {
+            state.screenshots?.let { screenshots ->
                 item(key = "screenshot") {
                     ScreenshotsCarousel(
-                        screenshots = it,
-                        onScreenshotClick = onScreenshotClick,
+                        screenshots = screenshots,
+                        onScreenshotClick = { onScreenshotClick(screenshots, it) },
                         onShowAllClick = { showAllScreenshots = true }
                     )
                 }
@@ -420,7 +424,7 @@ private fun DetailsContent(
             ) {
                 ScreenshotsBottomSheetContent(
                     screenshots = screenshots,
-                    onScreenshotClick = onScreenshotClick,
+                    onScreenshotClick = { onScreenshotClick(screenshots, it) },
                     modifier = Modifier.fillMaxSize()
                 )
             }

@@ -31,7 +31,7 @@ import kotlin.math.min
 @Composable
 fun ScreenshotsCarousel(
     screenshots: List<Screenshot>,
-    onScreenshotClick: (Screenshot) -> Unit,
+    onScreenshotClick: (Int) -> Unit,
     onShowAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -56,10 +56,9 @@ fun ScreenshotsCarousel(
             contentPadding = ShikimoriCarouselDefaults.contentPadding(horizontal = 0.dp)
         ) {
             items(count = shownScreenshotsSize) { index ->
-                val screenshot = screenshots[index]
                 ScreenshotCard(
-                    screenshot = screenshot,
-                    onClick = { onScreenshotClick(screenshot) }
+                    screenshot = screenshots[index],
+                    onClick = { onScreenshotClick(index) }
                 )
             }
 

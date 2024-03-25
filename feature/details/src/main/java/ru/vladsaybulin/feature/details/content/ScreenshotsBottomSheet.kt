@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -21,7 +21,7 @@ import ru.vladsaybulin.model.Screenshot
 @Composable
 fun ScreenshotsBottomSheetContent(
     screenshots: ImmutableList<Screenshot>,
-    onScreenshotClick: (Screenshot) -> Unit,
+    onScreenshotClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -31,15 +31,15 @@ fun ScreenshotsBottomSheetContent(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         contentPadding = PaddingValues(horizontal = 4.dp)
     ) {
-        items(items = screenshots) {
+        itemsIndexed(items = screenshots) { index, screenshot ->
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .clickable(onClick = { onScreenshotClick(it) }),
+                    .clickable(onClick = { onScreenshotClick(index) }),
             ) {
                 AsyncImage(
-                    model = it.x332Url,
+                    model = screenshot.x332Url,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import ru.vladsaybulin.feature.details.DetailsRoute
 import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.Screenshot
 import ru.vladsaybulin.model.asEntryType
 
 private const val ENTRY_ID_ARG = "id"
@@ -31,6 +32,7 @@ fun NavController.navigateToDetails(
 
 fun NavGraphBuilder.detailsScreen(
     openEntryDetails: (EntryType, Long) -> Unit,
+    openScreenshot: (allScreenshots: List<Screenshot>, screenshotIndex: Int) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(
@@ -42,7 +44,10 @@ fun NavGraphBuilder.detailsScreen(
     ) {
         DetailsRoute(
             onEntryClick = openEntryDetails,
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            onScreenshotClick = openScreenshot
         )
     }
+
+
 }

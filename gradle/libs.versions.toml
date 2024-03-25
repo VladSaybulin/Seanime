@@ -61,6 +61,7 @@ espressoCore = "3.5.1"
 foundationAndroid = "1.6.2"
 material3AndroidVersion = "1.2.0"
 primeTransformer = "2.1.4"
+zoomable = "1.6.1"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
@@ -109,7 +110,7 @@ retrofit-kotlin-serialization = { group = "com.jakewharton.retrofit", name = "re
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-
+zoomable = { group = "net.engawapg.lib", name = "zoomable", version.ref = "zoomable" }
 
 #Build logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

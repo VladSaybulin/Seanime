@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="current_page_of_page_count">%d из %d</string>
+</resources>

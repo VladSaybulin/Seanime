@@ -16,5 +16,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.coil.kt.compose)
 
+    implementation(libs.androidx.activity.compose)
+
     implementation(libs.kotlinx.serialization.json)
 }

@@ -43,6 +43,7 @@ dependencies {
 
     implementation(project(":feature:calendar"))
     implementation(project(":feature:details"))
+    implementation(project(":feature:imageview"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
@@ -52,5 +53,6 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.hilt.navigation.compose)
 
 }
