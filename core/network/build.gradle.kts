@@ -19,7 +19,10 @@ secrets {
 }
 
 dependencies {
+
     api(project(":core:network-graphql"))
+
+    implementation(project(":core:auth"))
     implementation(project(":core:model"))
     implementation(project(":core:common"))
 

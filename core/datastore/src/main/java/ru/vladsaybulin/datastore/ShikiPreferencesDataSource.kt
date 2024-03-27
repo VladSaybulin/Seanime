@@ -4,16 +4,12 @@ import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 import javax.inject.Inject
-import ru.vladsaybulin.model.AuthTokens
 
 class ShikiPreferencesDataSource @Inject constructor(
     private val authPreferencesDataStore: DataStore<AuthPreferences>,
     private val shikiPreferencesDataStore: DataStore<ShikiPreferences>
 ) {
-    val authTokens = authPreferencesDataStore.data.map { authPreferences ->
-        authPreferences.takeIf { it === AuthPreferences.getDefaultInstance() }
-            ?.let { AuthTokens(it.accessToken, it.refreshToken) }
-    }
+    val authStateJsonString = authPreferencesDataStore.data.map { it.authStateJsonText }
 
     val timestampOfLastCalendarRequest = shikiPreferencesDataStore.data.map { shikiPreferences ->
         Instant.fromEpochMilliseconds(shikiPreferences.timestampOfLastCalendarRequest)
@@ -24,6 +20,15 @@ class ShikiPreferencesDataSource @Inject constructor(
             it.copy {
                 this.timestampOfLastCalendarRequest = timestamp.toEpochMilliseconds()
             }
+        }
+    }
+
+    suspend fun setAuthStateJsonString(newAuthStateJsonText: String) {
+        authPreferencesDataStore.updateData {
+            it.copy {
+                this.authStateJsonText = newAuthStateJsonText
+            }
+
         }
     }
 }

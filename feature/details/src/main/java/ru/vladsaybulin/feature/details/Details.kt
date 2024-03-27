@@ -216,7 +216,7 @@ private fun DetailsContent(
         },
         floatingActionButton = {
             UserRateFab(
-                status = UserRateStatus.Watching,
+                status = state.userRate?.status ?: UserRateStatus.None,
                 expanded = expandedFab,
                 onClick = onUserRateClick
             )

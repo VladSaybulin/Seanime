@@ -22,5 +22,4 @@ class AuthPreferencesSerializer @Inject constructor() : Serializer<AuthPreferenc
         // writeTo is already called on the data store background thread
         t.writeTo(output)
     }
-
 }

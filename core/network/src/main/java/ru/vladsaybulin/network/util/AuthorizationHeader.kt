@@ -2,16 +2,27 @@ package ru.vladsaybulin.network.util
 
 import okhttp3.Request
 
-internal fun Request.Builder.addAuthorizationHeader(accessToken: String): Request.Builder =
-    this.apply {
-        addHeader(AUTHORIZATION_HEADER, "$AUTHORIZATION_TYPE $accessToken")
-    }
-
-internal fun Request.getAccessToken(): String? {
-    val headerValue = header(AUTHORIZATION_HEADER) ?: return null
-    if (!headerValue.startsWith(AUTHORIZATION_TYPE)) return null
-    return headerValue.substring(AUTHORIZATION_TYPE.length + 1, headerValue.length)
+fun Request.Builder.replaceAuthorizationHeader(accessToken: String): Request.Builder {
+    removeAuthorizationHeader()
+    addAuthorizationHeader(accessToken)
+    return this
 }
 
-private const val AUTHORIZATION_TYPE = "Bearer"
-private const val AUTHORIZATION_HEADER = "Authorization"
+fun Request.Builder.removeAuthorizationHeader(): Request.Builder {
+    removeHeader(AUTHORIZATION_HEADER_NAME)
+    return this
+}
+
+fun Request.Builder.addAuthorizationHeader(accessToken: String): Request.Builder {
+    addHeader(AUTHORIZATION_HEADER_NAME, "$AUTHORIZATION_TYPE_BEARER $accessToken")
+    return this
+}
+
+fun Request.getAccessToken(): String? {
+    val header = headers[AUTHORIZATION_HEADER_NAME] ?: return null
+    if (!header.startsWith(AUTHORIZATION_TYPE_BEARER)) return null
+    return header.substring(startIndex = AUTHORIZATION_TYPE_BEARER.length + 1)
+}
+
+private val AUTHORIZATION_HEADER_NAME = "Authorization"
+private val AUTHORIZATION_TYPE_BEARER = "Bearer"

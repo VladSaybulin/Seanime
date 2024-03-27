@@ -6,9 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import ru.vladsaybulin.network.TokensHolder
-import ru.vladsaybulin.network.common.BuildConfig
-import ru.vladsaybulin.network.util.ShikiAuthenticator
+import ru.vladsaybulin.network.util.ShikimoriAuthenticator
 import ru.vladsaybulin.network.util.interceptors.AuthorizationInterceptor
 import ru.vladsaybulin.network.util.interceptors.UserAgentInterceptor
 import javax.inject.Singleton
@@ -18,33 +16,9 @@ import javax.inject.Singleton
 class ClientModule {
 
     @Provides
-    fun provideUserAgentInterceptor(): UserAgentInterceptor =
-        UserAgentInterceptor(UserAgent)
-
-    @Provides
-    fun provideAuthenticator(tokensHolder: TokensHolder): ShikiAuthenticator =
-        ShikiAuthenticator(tokensHolder)
-
-    @Provides
     fun provideLoggingInterceptor() = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
-
-    @Provides
-    @Singleton
-    @AuthorizedClient
-    fun provideAuthorizedOkHttpClient(
-        userAgentInterceptor: UserAgentInterceptor,
-        authorizationInterceptor: AuthorizationInterceptor,
-        loggingInterceptor: HttpLoggingInterceptor,
-        authenticator: ShikiAuthenticator
-    ): OkHttpClient =
-        OkHttpClient.Builder()
-            .authenticator(authenticator)
-            .addInterceptor(userAgentInterceptor)
-            .addInterceptor(authorizationInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .build()
 
     @Provides
     @Singleton
@@ -55,6 +29,17 @@ class ClientModule {
         .addInterceptor(userAgentInterceptor)
         .addInterceptor(loggingInterceptor)
         .build()
-}
 
-private const val UserAgent = BuildConfig.SHIKIMORI_USER_AGENT
+    @Provides
+    @Singleton
+    @AuthorizedClient
+    fun provideAuthorizedOkHttpClient(
+        unauthorizedOkHttpClient: OkHttpClient,
+        authorizationInterceptor: AuthorizationInterceptor,
+        authenticator: ShikimoriAuthenticator
+    ): OkHttpClient =
+        unauthorizedOkHttpClient.newBuilder()
+            .addInterceptor(authorizationInterceptor)
+            .authenticator(authenticator)
+            .build()
+}

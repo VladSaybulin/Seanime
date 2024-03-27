@@ -26,6 +26,7 @@ androidxUiAutomator = "2.3.0"
 androidxWindowManager = "1.2.0"
 androidxWork = "2.9.0"
 apolloGraphql = "3.8.2"
+appauth = "0.11.1"
 coil = "2.5.0"
 dependencyGuard = "0.4.3"
 firebaseBom = "32.4.0"
@@ -87,6 +88,7 @@ androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "li
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 apollo-graphql-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "apolloGraphql" }
 apollo-graphql-adapters = { group = "com.apollographql.apollo3", name = "apollo-adapters", version.ref = "apolloGraphql" }
+appauth = { group = "net.openid", name = "appauth", version.ref = "appauth" }
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
