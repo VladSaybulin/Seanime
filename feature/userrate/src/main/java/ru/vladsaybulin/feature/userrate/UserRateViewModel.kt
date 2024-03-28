@@ -1,27 +1,26 @@
 package ru.vladsaybulin.feature.userrate
 
 import androidx.lifecycle.ViewModel
-import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateStatus
 import javax.inject.Inject
 
 class UserRateViewModel @Inject constructor(
 
 ) : ViewModel() {
-    private var originalUserRate: UserRate? = null
-    val requireOriginalUserRate: UserRate
-        get() = requireNotNull(originalUserRate)
+    private var setup: UserRateSetup? = null
+    val requireSetup: UserRateSetup
+        get() = requireNotNull(setup)
 
-    fun setupUserRate(userRate: UserRate) {
-        originalUserRate = userRate
+    fun setupUserRate(userRateSetup: UserRateSetup) {
+        setup = userRateSetup
     }
 
     fun save(
         status: UserRateStatus,
         score: Int,
-        episodes: Int,
-        chapters: Int,
-        volumes: Int,
+        episodes: Int?,
+        chapters: Int?,
+        volumes: Int?,
         text: String
     ) {
 
