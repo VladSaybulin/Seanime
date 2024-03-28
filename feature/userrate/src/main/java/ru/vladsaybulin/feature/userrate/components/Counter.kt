@@ -11,11 +11,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -25,35 +25,67 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 
-@Composable
-private fun Counter(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    range: IntRange = 0..Int.MAX_VALUE,
-    label: @Composable () -> Unit,
+@Stable
+class CounterState(
+    initialCount: Int,
+    val range: IntRange
 ) {
-    var isValueCorrect by remember { mutableStateOf(true) }
-    var valueStr by remember(value) { mutableStateOf(value.toString()) }
+    init {
+        require(initialCount in range) { "initialCount out of range" }
+    }
 
+    private val _countStr = mutableStateOf(initialCount.toString())
+    private var _countInt = derivedStateOf {
+        try {
+            countStr.toInt().takeIf { it in range }
+        } catch (_: NumberFormatException) {
+            null
+        }
+    }
+
+    var countStr: String
+        get() = _countStr.value
+        set(value) { _countStr.value = value }
+
+    val enabledIncrement by derivedStateOf {
+        _countInt.value.let { it != null && it < range.last }
+    }
+
+    val enabledDecrement by derivedStateOf {
+        _countInt.value.let { it != null && it > range.first }
+    }
+
+    val isError by derivedStateOf {
+        _countInt.value == null
+    }
+
+    val requireCountInt: Int
+        get() = requireNotNull(_countInt.value)
+
+    fun increment() {
+        val parsedCount = _countInt.value ?: return
+        countStr = (parsedCount + 1).toString()
+    }
+
+    fun decrement() {
+        val parsedCount = _countInt.value ?: return
+        countStr = (parsedCount - 1).toString()
+    }
+}
+
+@Composable
+fun Counter(
+    state: CounterState,
+    modifier: Modifier = Modifier,
+    label: (@Composable () -> Unit)? = null,
+) {
     OutlinedTextField(
-        value = valueStr,
-        onValueChange = {
-            valueStr = it
-            try {
-                val newValue = it.toInt()
-                if (value == newValue || newValue in range) {
-                    isValueCorrect = false
-                }
-                isValueCorrect = true
-                onValueChange(newValue)
-            } catch (_: Exception) {
-                isValueCorrect = false
-            }
-        },
+        value = state.countStr,
+        onValueChange = { state.countStr = it },
         leadingIcon = {
             IconButton(
-                onClick = { onValueChange(value - 1) },
-                enabled = value > range.first
+                onClick = { state.decrement() },
+                enabled = state.enabledDecrement
             ) {
                 Icon(
                     imageVector = ShikimoriIcons.Remove,
@@ -63,8 +95,8 @@ private fun Counter(
         },
         trailingIcon = {
             IconButton(
-                onClick = { onValueChange(value + 1) },
-                enabled = value < range.last
+                onClick = { state.increment() },
+                enabled = state.enabledIncrement
             ) {
                 Icon(
                     imageVector = ShikimoriIcons.Add,
@@ -72,7 +104,7 @@ private fun Counter(
                 )
             }
         },
-        isError = !isValueCorrect,
+        isError = state.isError,
         label = label,
         keyboardActions = KeyboardActions(
             onDone = null
@@ -85,7 +117,7 @@ private fun Counter(
         shape = CircleShape,
         singleLine = true,
         maxLines = 1,
-        modifier = Modifier.width(160.dp),
+        modifier = modifier.width(160.dp),
         textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
     )
 }
@@ -95,11 +127,10 @@ private fun Counter(
 fun CounterPreview() {
     ShikimoriTheme {
         Surface {
-            var value by remember { mutableIntStateOf(0) }
+            val state = remember { CounterState(initialCount = 0, range = 0..15) }
 
             Counter(
-                value = value,
-                onValueChange = { value = it },
+                state = state,
                 label = { Text("Episodes") }
             )
         }
