@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object ShikimoriIcons {
@@ -38,6 +39,7 @@ object ShikimoriIcons {
     val Pause = Icons.Filled.Pause
     val Clear = Icons.Filled.Clear
     val Star = Icons.Rounded.Star
+    val StarOutline = Icons.Rounded.StarOutline
     val ArrowBack = Icons.AutoMirrored.Default.ArrowBack
     val Book = Icons.Default.MenuBook
     val Tv = Icons.Default.Tv
