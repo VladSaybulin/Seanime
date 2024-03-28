@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Search
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object ShikimoriIcons {
+    val Remove = Icons.Default.Remove
     val Search = Icons.Default.Search
     val PlayArrow = Icons.Default.PlayArrow
     val KeyboardArrowDown = Icons.Default.KeyboardArrowDown
