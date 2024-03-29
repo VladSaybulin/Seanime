@@ -186,7 +186,11 @@ fun ScoreRow(
     val canvasSizeDp = DpSize(StarSizeDp.width * 5, StarSizeDp.height)
 
     val scope = rememberCoroutineScope()
-    val color = lerp(ShikimoriTheme.colorScheme.error, Color.Green, state.selectedScore / 10f)
+    val color = lerp(
+        start = ShikimoriTheme.colorScheme.error,
+        stop = ShikimoriTheme.userRateColors.completed,
+        fraction = state.selectedScore / 10f
+    )
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -251,7 +255,7 @@ fun ScoreRowPreview() {
     }
 }
 
-private val StarSizeDp = DpSize(56.dp, 56.dp)
+private val StarSizeDp = DpSize(40.dp, 40.dp)
 
 private const val DEFAULT_MAX_SCORE = 10
 private const val DEFAULT_COUNT_STAR = 5

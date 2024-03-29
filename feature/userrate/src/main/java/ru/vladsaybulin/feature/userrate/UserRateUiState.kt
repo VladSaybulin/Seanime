@@ -1,6 +1,7 @@
 package ru.vladsaybulin.feature.userrate
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,4 +50,14 @@ class UserRateUiState(
 ) {
     var status by mutableStateOf(initialStatus)
     var text by mutableStateOf(initialText)
+
+    val enabledSaveButton by derivedStateOf {
+        when {
+            (episodesCounterState?.isError ?: false) ||
+                    (chaptersCounterState?.isError ?: false) ||
+                    (volumesCounterState?.isError ?: false) -> false
+
+            else -> true
+        }
+    }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="counter_label_episodes">Эпизоды</string>
+    <string name="counter_label_chapters">Главы</string>
+    <string name="counter_label_volumes">Тома</string>
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+</resources>

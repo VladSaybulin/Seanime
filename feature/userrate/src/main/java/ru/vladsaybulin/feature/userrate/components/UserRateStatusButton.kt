@@ -2,6 +2,7 @@ package ru.vladsaybulin.feature.userrate.components
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
@@ -30,7 +31,7 @@ fun UserRateStatusButton(
     userRateStatus: UserRateStatus,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     colors: UserRateStatusButtonColors = UserRateStatusButtonDefaults.userRateStatusButtonColors(
         selectedContainerColor = userRateStatusContainerColor(userRateStatus = userRateStatus),
         selectedContentColor = onUserRateStatusContainerColor(userRateStatus = userRateStatus)
@@ -80,9 +81,11 @@ fun UserRateStatusButton(
             contentColor = contentColor
         )
     ) {
-        icon()
-        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-        text()
+        Row(modifier = Modifier.fillMaxWidth()) {
+            icon()
+            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+            text()
+        }
     }
 }
 

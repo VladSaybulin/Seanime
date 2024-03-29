@@ -25,4 +25,8 @@ class UserRateViewModel @Inject constructor(
     ) {
 
     }
+
+    fun delete() {
+
+    }
 }
