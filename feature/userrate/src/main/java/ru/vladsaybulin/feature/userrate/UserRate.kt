@@ -1,5 +1,6 @@
 package ru.vladsaybulin.feature.userrate
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +39,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMaxBy
 import androidx.compose.ui.util.fastSumBy
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.feature.userrate.components.Counter
@@ -47,16 +50,17 @@ import ru.vladsaybulin.model.UserRateStatus
 import kotlin.math.roundToInt
 
 @Composable
-fun UserRateBottomSheetContent(
+fun UserRateBottomSheet(
     viewModel: UserRateViewModel,
     modifier: Modifier = Modifier,
-    hideBottomSheet: () -> Unit
+    onDismissRequest: () -> Unit
 ) {
     val uiState = rememberUserRateUiState(setup = viewModel.requireSetup)
 
-    UserRateBottomSheetContent(
-        state = uiState,
+    UserRateBottomSheet(
+        uiState = uiState,
         modifier = modifier,
+        onDismissRequest = onDismissRequest,
         onSave = {
             viewModel.save(
                 status = uiState.status,
@@ -66,21 +70,53 @@ fun UserRateBottomSheetContent(
                 volumes = uiState.volumesCounterState?.requireCountInt,
                 text = uiState.text
             )
-            hideBottomSheet()
         },
-        onDelete = {
-            viewModel.delete()
-            hideBottomSheet()
-        }
+        onDelete = viewModel::delete
     )
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserRateBottomSheet(
+    uiState: UserRateUiState,
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    onSave: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+
+    val hideBottomSheet: () -> Unit = {
+        scope.launch { sheetState.hide() }
+            .invokeOnCompletion { onDismissRequest() }
+    }
+
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = onDismissRequest
+    ) {
+
+        UserRateBottomSheetContent(
+            state = uiState,
+            modifier =  modifier,
+            onSaveClick = {
+                onSave()
+                hideBottomSheet()
+            },
+            onDeleteClick = {
+                onDelete()
+                hideBottomSheet()
+            }
+        )
+    }
 }
 
 @Composable
 private fun UserRateBottomSheetContent(
     state: UserRateUiState,
     modifier: Modifier = Modifier,
-    onSave: () -> Unit,
-    onDelete: () -> Unit,
+    onSaveClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     val selectedStatus = state.status
     var expandedButtons by remember { mutableStateOf(false) }
@@ -168,7 +204,7 @@ private fun UserRateBottomSheetContent(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
-                        onClick = onSave,
+                        onClick = onSaveClick,
                         enabled = state.enabledSaveButton,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -178,7 +214,7 @@ private fun UserRateBottomSheetContent(
                     }
 
                     TextButton(
-                        onClick = onDelete,
+                        onClick = onDeleteClick,
                         colors = ButtonDefaults.textButtonColors(contentColor = ShikimoriTheme.colorScheme.error),
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
@@ -260,7 +296,6 @@ enum class UserRateStatusSlots {
     Buttons, Content
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun UserRateBottomSheetContentPreview() {
@@ -284,16 +319,12 @@ fun UserRateBottomSheetContentPreview() {
     val uiState = rememberUserRateUiState(setup = setup)
 
     ShikimoriTheme {
-        ModalBottomSheet(
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-            onDismissRequest = { }
-        ) {
-            UserRateBottomSheetContent(
-                state = uiState,
-                onSave = { },
-                onDelete = { }
-            )
-        }
+        UserRateBottomSheet(
+            uiState = uiState,
+            onDismissRequest = {},
+            onSave = {},
+            onDelete = {}
+        )
     }
 
 }
