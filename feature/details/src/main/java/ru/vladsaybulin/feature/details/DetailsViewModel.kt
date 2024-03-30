@@ -11,7 +11,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.GetEntryDetailsUseCase
+import ru.vladsaybulin.feature.details.model.DetailsInfo
 import ru.vladsaybulin.feature.details.navigation.DetailsArgs
+import ru.vladsaybulin.feature.userrate.UserRateSetup
+import ru.vladsaybulin.model.EntryStatus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +31,28 @@ class DetailsViewModel @Inject constructor(
     init {
         refresh()
     }
+
+    fun getUserRateSetup(): UserRateSetup? {
+        val currentState = _uiState.value
+        if (currentState !is DetailsUiState.Success) return null
+        if (currentState.userRate == null) return null
+        val episodesInfo = currentState.info
+            .firstOrNull { it is DetailsInfo.AnimeKindEpisodes } as DetailsInfo.AnimeKindEpisodes?
+        val statusInfo = currentState.info
+            .firstOrNull { it is DetailsInfo.StatusDates } as DetailsInfo.StatusDates
+        val maxEpisodes = when {
+            episodesInfo == null -> Int.MAX_VALUE
+            episodesInfo.episodesAired > 0 -> episodesInfo.episodesAired
+            episodesInfo.episodes > 0 -> episodesInfo.episodes
+            else -> Int.MAX_VALUE
+        }
+        return UserRateSetup.AnimeUserRate(
+            userRate = currentState.userRate,
+            maxEpisodes = maxEpisodes,
+            released = statusInfo.status == EntryStatus.Released
+        )
+    }
+
 
     suspend fun onRefresh() {
         refresh().join()

@@ -3,6 +3,10 @@ package ru.vladsaybulin.shikimori.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -15,15 +19,20 @@ import ru.vladsaybulin.feature.imageview.Image
 import ru.vladsaybulin.feature.imageview.ImageViewViewModel
 import ru.vladsaybulin.feature.imageview.navigation.imageViewScreen
 import ru.vladsaybulin.feature.imageview.navigation.navigateToImageView
+import ru.vladsaybulin.feature.userrate.UserRateBottomSheet
+import ru.vladsaybulin.feature.userrate.UserRateViewModel
 import ru.vladsaybulin.model.EntryType
 
 @Composable
 fun App() {
     val navController = rememberNavController()
     val imageViewViewModel = hiltViewModel<ImageViewViewModel>()
+    val userRateViewViewModel = hiltViewModel<UserRateViewModel>()
 
     ShikimoriTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
+            var showUserRateBottomSheet by remember { mutableStateOf(false) }
+
             NavHost(
                 navController = navController,
                 startDestination = "calendar"
@@ -40,6 +49,10 @@ fun App() {
                         )
                         navController.navigateToImageView()
                     },
+                    openUserRate = { setup ->
+                        userRateViewViewModel.setupUserRate(setup)
+                        showUserRateBottomSheet = true
+                    },
                     onBackClick = {
                         navController.navigateUp()
                     }
@@ -49,6 +62,13 @@ fun App() {
                     onBack = {
                         navController.navigateUp()
                     }
+                )
+            }
+
+            if (showUserRateBottomSheet) {
+                UserRateBottomSheet(
+                    viewModel = userRateViewViewModel,
+                    onDismissRequest = { showUserRateBottomSheet = false }
                 )
             }
         }

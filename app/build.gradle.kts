@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":feature:calendar"))
     implementation(project(":feature:details"))
     implementation(project(":feature:imageview"))
+    implementation(project(":feature:userrate"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)

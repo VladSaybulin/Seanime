@@ -12,6 +12,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":feature:userrate"))
     implementation(libs.primeTransformer)
     implementation(libs.kotlinx.datetime)
     implementation(libs.coil.kt.compose)
