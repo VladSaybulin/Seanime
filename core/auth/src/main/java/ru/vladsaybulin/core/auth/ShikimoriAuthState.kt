@@ -25,7 +25,12 @@ class ShikimoriAuthState @Inject internal constructor(
     @ApplicationScope private val appScope: CoroutineScope,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-    internal var authState: AuthState = AuthState()
+    internal var authState: AuthState = AuthState(
+        AuthorizationServiceConfiguration(
+            Uri.parse("${BuildConfig.BASE_URL}/oauth/authorize"),
+            Uri.parse("${BuildConfig.BASE_URL}/oauth/token")
+        )
+    )
     internal val service = AuthorizationService(context)
 
     val isAuthorized: Boolean
@@ -78,15 +83,8 @@ class ShikimoriAuthState @Inject internal constructor(
     private fun readAuthState() {
         appScope.launch {
             val jsonStr = preferencesDataSource.authStateJsonString.firstOrNull()
-            authState = if (jsonStr.isNullOrEmpty()) {
-                AuthState(
-                    AuthorizationServiceConfiguration(
-                        Uri.parse("${BuildConfig.BASE_URL}/oauth/authorize"),
-                        Uri.parse("${BuildConfig.BASE_URL}/oauth/token")
-                    )
-                )
-            } else {
-                AuthState.jsonDeserialize(jsonStr)
+            if (!jsonStr.isNullOrEmpty()) {
+                authState = AuthState.jsonDeserialize(jsonStr)
             }
         }
     }
