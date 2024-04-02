@@ -12,5 +12,6 @@ fun AnimeUserRateQuery.UserRate.asUserRate() = UserRate(
     episodes = episodes,
     chapters = 0,
     volumes = 0,
+    rewatches = rewatches,
     text = text ?: ""
 )

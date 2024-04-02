@@ -11,5 +11,6 @@ class UserRate(
     val episodes: Int,
     val chapters: Int,
     val volumes: Int,
+    val rewatches: Int,
     val text: String
 )
