@@ -16,6 +16,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,41 +35,29 @@ class CounterState(
         require(initialCount in range) { "initialCount out of range" }
     }
 
-    private val _countStr = mutableStateOf(initialCount.toString())
-    private var _countInt = derivedStateOf {
-        try {
-            countStr.toInt().takeIf { it in range }
-        } catch (_: NumberFormatException) {
-            null
-        }
+    var countStr by mutableStateOf(initialCount.toString())
+
+    val countInt by derivedStateOf {
+        countStr.toIntOrNull()?.takeIf { it in range }
     }
 
-    var countStr: String
-        get() = _countStr.value
-        set(value) { _countStr.value = value }
-
     val enabledIncrement by derivedStateOf {
-        _countInt.value.let { it != null && it < range.last }
+        countInt.let { it != null && it < range.last }
     }
 
     val enabledDecrement by derivedStateOf {
-        _countInt.value.let { it != null && it > range.first }
+        countInt.let { it != null && it > range.first }
     }
 
-    val isError by derivedStateOf {
-        _countInt.value == null
-    }
-
-    val requireCountInt: Int
-        get() = requireNotNull(_countInt.value)
+    val isError by derivedStateOf { countInt == null }
 
     fun increment() {
-        val parsedCount = _countInt.value ?: return
+        val parsedCount = countInt ?: return
         countStr = (parsedCount + 1).toString()
     }
 
     fun decrement() {
-        val parsedCount = _countInt.value ?: return
+        val parsedCount = countInt ?: return
         countStr = (parsedCount - 1).toString()
     }
 }
