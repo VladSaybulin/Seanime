@@ -1,13 +1,9 @@
 package ru.vladsaybulin.feature.userrate.components
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.DraggableAnchors
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.anchoredDraggable
-import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,26 +12,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
+import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.PointerInputModifierNode
+import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
@@ -46,136 +39,27 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import kotlin.math.roundToInt
 
-sealed class StarState {
-    data object Filled : StarState()
+class ScoreState(initialScore: Int) {
 
-    data class Fraction(val fraction: Float) : StarState()
+    private var _animatedScoreProgress =
+        Animatable(initialScore.toFloat()).apply {
+            updateBounds(0f, MAX_SCORE.toFloat())
+        }
 
-    data object Outlined : StarState()
-}
+    val scoreProgress: Float
+        get() = _animatedScoreProgress.value
 
-@Composable
-@OptIn(ExperimentalFoundationApi::class)
-fun rememberScoreRowState(
-    initialScore: Int = 0,
-    starSizePx: Size = LocalDensity.current.run { StarSizeDp.toSize() },
-    maxScore: Int = DEFAULT_MAX_SCORE,
-    starCount: Int = DEFAULT_COUNT_STAR
-): ScoreRowState {
-    require(initialScore <= maxScore) { "initialScore > maxScore" }
+    val targetScore: Int
+        get() = _animatedScoreProgress.targetValue.toInt()
 
-    val density = LocalDensity.current
-    return remember {
-        ScoreRowState(
-            draggableState = AnchoredDraggableState(
-                initialValue = initialScore,
-                anchors = DraggableAnchors {
-                    (0..maxScore).forEach { it at starSizePx.width * it * 0.5f }
-                },
-                positionalThreshold = { it * 0.5f },
-                velocityThreshold = { with(density) { 10000.dp.toPx() } },
-                animationSpec = tween()
-            ),
-            initialStarState = starSizePx,
-            starCount = starCount,
-            maxScore = maxScore
-        )
+    suspend fun animateTo(score: Int) {
+        this._animatedScoreProgress.animateTo(score.toFloat(), animationSpec = tween())
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-class ScoreRowState(
-    val draggableState: AnchoredDraggableState<Int>,
-    initialStarState: Size,
-    val maxScore: Int,
-    val starCount: Int
-) {
-    val selectedScore: Int
-        get() = draggableState.targetValue
-
-    private val _starSizePx = mutableStateOf(initialStarState)
-    var starSizePx
-        get() = _starSizePx.value
-        set(value) {
-            _starSizePx.value = value
-        }
-
-    val starStates: List<StarState>
-        get() {
-            val width = starSizePx.width
-            var remaining = draggableState.requireOffset()
-            return List(starCount) {
-                when {
-                    remaining <= 0 -> StarState.Outlined
-                    remaining <= width -> StarState.Fraction(remaining)
-                    else -> StarState.Filled
-                }.also {
-                    remaining -= width
-                }
-            }
-        }
-}
-
-fun Modifier.scoreRowPointerInput(
-    maxScore: Int = DEFAULT_MAX_SCORE,
-    onScoreChanged: (Int) -> Unit,
-) = this then ScoreRowPointerInputModifierElement(onScoreChanged, maxScore)
-
-data class ScoreRowPointerInputModifierElement(
-    val onScoreChanged: (Int) -> Unit,
-    val maxScore: Int
-) : ModifierNodeElement<ScoreRowPointerInputModifierNode>() {
-    override fun create(): ScoreRowPointerInputModifierNode = ScoreRowPointerInputModifierNode(
-        onScoreChanged = onScoreChanged,
-        maxScore = maxScore
-    )
-
-    override fun update(node: ScoreRowPointerInputModifierNode) {
-        node.onScoreChanged = onScoreChanged
-        node.maxScore = maxScore
-    }
-}
-
-class ScoreRowPointerInputModifierNode(
-    var onScoreChanged: (Int) -> Unit,
-    var maxScore: Int
-) : Modifier.Node(), PointerInputModifierNode {
-
-    var pressPos: Offset? = null
-
-    override fun onCancelPointerInput() {
-        pressPos = null
-    }
-
-    override fun onPointerEvent(
-        pointerEvent: PointerEvent,
-        pass: PointerEventPass,
-        bounds: IntSize
-    ) {
-        if (pass != PointerEventPass.Main) return
-        if (pointerEvent.type == PointerEventType.Press) {
-            pressPos = pointerEvent.changes.first().position
-            return
-        }
-        if (pointerEvent.type == PointerEventType.Release && pressPos != null) {
-            val releasePos = pointerEvent.changes.first().position
-            if (releasePos != pressPos) {
-                pressPos = null
-                return
-            }
-            val score = (releasePos.x / bounds.width * maxScore).roundToInt()
-            onScoreChanged(score)
-            pressPos = null
-            return
-        }
-        pressPos = null
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScoreRow(
-    state: ScoreRowState,
+    state: ScoreState,
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
@@ -185,12 +69,14 @@ fun ScoreRow(
     val starSizePx = with(density) { StarSizeDp.toSize() }
     val canvasSizeDp = DpSize(StarSizeDp.width * 5, StarSizeDp.height)
 
-    val scope = rememberCoroutineScope()
-    val color = lerp(
-        start = ShikimoriTheme.colorScheme.error,
-        stop = ShikimoriTheme.userRateColors.completed,
-        fraction = state.selectedScore / 10f
-    )
+    val outlineColor = ShikimoriTheme.colorScheme.outline
+    val color = if (state.targetScore > 0f) {
+        lerp(
+            start = ShikimoriTheme.colorScheme.error,
+            stop = ShikimoriTheme.userRateColors.completed,
+            fraction = state.scoreProgress / MAX_SCORE
+        )
+    } else outlineColor
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -199,49 +85,141 @@ fun ScoreRow(
         Canvas(
             modifier = Modifier
                 .size(canvasSizeDp)
-                .scoreRowPointerInput { score ->
-                    scope.launch { state.draggableState.animateTo(score) }
-                }
-                .anchoredDraggable(state.draggableState, Orientation.Horizontal)
+                .scoreContainerPointerEvent(state)
         ) {
-            val starStates = state.starStates
-            starStates.forEachIndexed { index, state ->
-                translate(left = index * starSizePx.width) {
-                    when (state) {
-                        StarState.Filled -> drawPainter(starFilledPainter, starSizePx, color)
-                        StarState.Outlined -> drawPainter(starOutlinePainter, starSizePx, color)
-                        is StarState.Fraction -> {
-                            clipRect(right = state.fraction) {
-                                drawPainter(starFilledPainter, starSizePx, color)
-                            }
-                            clipRect(left = state.fraction) {
-                                drawPainter(starOutlinePainter, starSizePx, color)
-                            }
-                        }
-                    }
-                }
-            }
+            drawStars(
+                scoreProgress = state.scoreProgress,
+                filledStarPainter = starFilledPainter,
+                filledStarColorFilter = ColorFilter.tint(color),
+                outlinedStarPainter = starOutlinePainter,
+                outlinedStarColorFilter = ColorFilter.tint(outlineColor),
+                starSize = starSizePx
+            )
         }
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = state.selectedScore.toString(),
+            text = state.targetScore.toString(),
             style = ShikimoriTheme.typography.headlineLarge,
             color = color
         )
     }
 }
 
-fun DrawScope.drawPainter(
-    painter: Painter,
-    size: Size,
-    color: Color
+fun DrawScope.drawStars(
+    scoreProgress: Float,
+    filledStarPainter: Painter,
+    filledStarColorFilter: ColorFilter,
+    outlinedStarPainter: Painter,
+    outlinedStarColorFilter: ColorFilter,
+    starSize: Size,
 ) {
-    with(painter) {
-        draw(
-            size = size,
-            colorFilter = ColorFilter.tint(color)
-        )
+    val scoresPerStar = MAX_SCORE.toFloat() / STAR_COUNT.toFloat()
+    val fullStars = (scoreProgress / scoresPerStar).toInt()
+
+    (1..fullStars).forEach { _ ->
+        with(filledStarPainter) {
+            draw(
+                size = starSize,
+                colorFilter = filledStarColorFilter
+            )
+        }
+        drawContext.transform.translate(left = starSize.width)
+    }
+
+    if (fullStars == STAR_COUNT) return
+
+    val notFullStarProgress = (scoreProgress - (fullStars * scoresPerStar)) / scoresPerStar
+    val clipFraction = notFullStarProgress * starSize.width
+    clipRect(right = clipFraction) {
+        with(filledStarPainter) {
+            draw(
+                size = starSize,
+                colorFilter = filledStarColorFilter
+            )
+        }
+    }
+    clipRect(left = clipFraction) {
+        with(outlinedStarPainter) {
+            draw(
+                size = starSize,
+                colorFilter = outlinedStarColorFilter
+            )
+        }
+    }
+
+    drawContext.transform.translate(left = starSize.width)
+
+    ((fullStars + 1)..<STAR_COUNT).forEach { _ ->
+        with(outlinedStarPainter) {
+            draw(
+                size = starSize,
+                colorFilter = outlinedStarColorFilter
+            )
+        }
+        drawContext.transform.translate(left = starSize.width)
+    }
+}
+
+fun Modifier.scoreContainerPointerEvent(state: ScoreState) =
+    this then ScoreContainerModifierElement(state)
+
+data class ScoreContainerModifierElement(
+    val state: ScoreState
+) : ModifierNodeElement<ScoreContainerModifierNode>() {
+
+    override fun create(): ScoreContainerModifierNode = ScoreContainerModifierNode(state)
+
+    override fun update(node: ScoreContainerModifierNode) {
+        node.setState(state)
+    }
+
+    override fun InspectorInfo.inspectableProperties() {
+        properties["state"] = state
+    }
+}
+
+class ScoreContainerModifierNode(
+    initialState: ScoreState
+) : PointerInputModifierNode, DelegatingNode() {
+
+    private var state = initialState
+
+    private var currentProgress: Float = state.targetScore / MAX_SCORE.toFloat()
+        set(value) {
+            field = value.coerceIn(0f..1f)
+        }
+
+    private val dragGesturesPointerInput = delegate(SuspendingPointerInputModifierNode {
+        detectHorizontalDragGestures { change, dragAmount ->
+            currentProgress += dragAmount / size.width
+            onProgressChanged()
+        }
+    })
+
+    override fun onCancelPointerInput() {
+        dragGesturesPointerInput.onCancelPointerInput()
+    }
+
+    override fun onPointerEvent(
+        pointerEvent: PointerEvent,
+        pass: PointerEventPass,
+        bounds: IntSize
+    ) {
+        dragGesturesPointerInput.onPointerEvent(pointerEvent, pass, bounds)
+    }
+
+    private fun onProgressChanged() {
+        val targetScore = (currentProgress * MAX_SCORE).roundToInt()
+        if (state.targetScore != targetScore)
+            coroutineScope.launch {
+                state.animateTo(targetScore)
+            }
+    }
+
+    fun setState(state: ScoreState) {
+        this.state = state
+        currentProgress = state.targetScore / MAX_SCORE.toFloat()
     }
 }
 
@@ -250,12 +228,13 @@ fun DrawScope.drawPainter(
 fun ScoreRowPreview() {
     ShikimoriTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize()) {
-            ScoreRow(state = rememberScoreRowState(initialScore = 0))
+            val state = remember { ScoreState(5) }
+            ScoreRow(state = state)
         }
     }
 }
 
 private val StarSizeDp = DpSize(40.dp, 40.dp)
 
-private const val DEFAULT_MAX_SCORE = 10
-private const val DEFAULT_COUNT_STAR = 5
+private const val MAX_SCORE = 10
+private const val STAR_COUNT = 5
