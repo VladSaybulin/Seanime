@@ -1,28 +1,44 @@
 package ru.vladsaybulin.feature.userrate
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
+import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateStatus
 import javax.inject.Inject
 
 class UserRateViewModel @Inject constructor(
-
+    getEnabledAutocorrectUseCase: GetEnableAutocorrectUserRateUseCase
 ) : ViewModel() {
-    private var setup: UserRateSetup? = null
-    val requireSetup: UserRateSetup
-        get() = requireNotNull(setup)
 
-    fun setupUserRate(userRateSetup: UserRateSetup) {
-        setup = userRateSetup
+    private val userRateWithContext =
+        MutableSharedFlow<Pair<UserRate, UserRateEditorContext>>()
+
+    val setup = combine(
+        getEnabledAutocorrectUseCase(),
+        userRateWithContext
+    ) { enabledAutocorrect, (userRate, context) ->
+        UserRateSetup.Success(
+            userRate = userRate,
+            context = context,
+            enabledAutocorrect = enabledAutocorrect
+        )
+    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = UserRateSetup.None
+        )
+
+    fun setupUserRate(userRate: UserRate, context: UserRateEditorContext) {
+        userRateWithContext.tryEmit(userRate to context)
     }
 
-    fun save(
-        status: UserRateStatus,
-        score: Int,
-        episodes: Int?,
-        chapters: Int?,
-        volumes: Int?,
-        text: String
-    ) {
+    fun save(userRateValues: UserRateValues) {
 
     }
 
@@ -30,3 +46,13 @@ class UserRateViewModel @Inject constructor(
 
     }
 }
+
+data class UserRateValues(
+    val status: UserRateStatus,
+    val score: Int,
+    val episodes: Int?,
+    val chapters: Int?,
+    val volumes: Int?,
+    val rewatches: Int,
+    val text: String,
+)

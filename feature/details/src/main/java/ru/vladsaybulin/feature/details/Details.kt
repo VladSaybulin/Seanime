@@ -86,11 +86,7 @@ fun DetailsRoute(
         onScreenshotClick = onScreenshotClick,
         onBackClick = onBackClick,
         modifier = modifier,
-        onEditUserRateClick = {
-            viewModel.getUserRateSetup()?.let {
-                onEditUserRateClick(it)
-            }
-        }
+        onEditUserRateClick = { }
     )
 }
 
