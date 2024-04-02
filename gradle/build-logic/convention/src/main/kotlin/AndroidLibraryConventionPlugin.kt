@@ -15,6 +15,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 34
+
+                //A stub for the AppAuth-Android library. Required to build a specific module
+                defaultConfig.manifestPlaceholders["appAuthRedirectScheme"] = "stub"
             }
         }
     }
