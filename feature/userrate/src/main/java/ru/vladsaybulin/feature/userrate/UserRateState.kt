@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
 import ru.vladsaybulin.feature.userrate.components.CounterState
 import ru.vladsaybulin.feature.userrate.components.ScoreState
@@ -127,6 +128,7 @@ class UserRateState(
         if (!enabledAutoCorrect) return
         episodesState?.let {
             snapshotFlow { it.countInt }
+                .drop(1)
                 .filterNotNull()
                 .collect { episodes ->
                     progressChanged(episodes, context.episodesLimit!!)
@@ -138,6 +140,7 @@ class UserRateState(
         if (!enabledAutoCorrect) return
         chaptersState?.let {
             snapshotFlow { it.countInt }
+                .drop(1)
                 .filterNotNull()
                 .collect { chapters ->
                     progressChanged(chapters, context.chaptersLimit!!)
@@ -149,6 +152,7 @@ class UserRateState(
         if (!enabledAutoCorrect) return
         chaptersState?.let {
             snapshotFlow { it.countInt }
+                .drop(1)
                 .filterNotNull()
                 .collect { volumes ->
                     progressChanged(volumes, context.volumesLimit!!)
@@ -159,9 +163,14 @@ class UserRateState(
     suspend fun collectRewatchesChanges() {
         if (!enabledAutoCorrect) return
         snapshotFlow { rewatchesState.countInt }
+            .drop(1)
             .filterNotNull()
             .collect { rewatches ->
-                setStatus(Completed)
+                if (context.entryStatus != EntryStatus.Ongoing) {
+                    setStatus(Completed)
+                } else {
+                    setStatus(Watching)
+                }
             }
     }
 
@@ -201,7 +210,7 @@ class UserRateState(
     }
 
     private fun progressChanged(progress: Int, limit: Limit) {
-        if (progress == limit.limit) {
+        if (progress == limit.limit && context.entryStatus != EntryStatus.Ongoing) {
             setStatus(Completed)
             return
         }
