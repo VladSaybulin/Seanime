@@ -2,10 +2,13 @@ package ru.vladsaybulin.feature.userrate
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
@@ -82,6 +85,7 @@ fun UserRateBottomSheet(
 @Composable
 fun UserRateContent(
     state: UserRateState,
+    modifier: Modifier = Modifier,
     onSave: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -95,14 +99,17 @@ fun UserRateContent(
         expandedStatusButtons = expandedStatusButtons,
         onExpandedChange = setExpandedStatusButtons,
         onStatusChanged = state::setStatus,
+        modifier = modifier.background(ShikimoriTheme.colorScheme.surface)
     ) {
         Column {
-            HorizontalDivider()
+            Spacer(modifier = Modifier.height(8.dp))
             ScoreRow(
                 state = state.scoreState,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+            Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider()
+            Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.padding(horizontal = 16.dp)) {
                 state.episodesState?.let {
                     Counter(state = it)
@@ -114,11 +121,17 @@ fun UserRateContent(
                     Counter(state = it)
                 }
             }
-            Counter(state = state.rewatchesState)
+            Spacer(modifier = Modifier.height(8.dp))
+            Counter(
+                state = state.rewatchesState,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider()
             UserRateTextField(
                 text = state.text,
                 onTextChange = { state.text = it },
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             HorizontalDivider()
             Button(
@@ -266,7 +279,7 @@ private fun SelectedStatusButton(
     ) { status ->
         UserRateStatusButton(
             userRateStatus = status,
-            selected = status == targetStatus,
+            selected = true,
             onClick = onClick,
         )
     }
@@ -297,7 +310,7 @@ fun UserRateContentPreview() {
                 chaptersLimit = null,
                 volumesLimit = null
             ),
-            enabledAutocorrect = true
+            enabledAutocorrect = false
         )
     ).collectAsUserRateState()
 
