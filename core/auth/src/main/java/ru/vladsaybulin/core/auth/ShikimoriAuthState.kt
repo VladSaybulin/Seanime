@@ -19,56 +19,43 @@ import ru.vladsaybulin.common.network.di.ApplicationScope
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import javax.inject.Inject
 
-interface ShikimoriAuthState {
-    val isAuthorized: Boolean
-    val accessToken: String?
-
-    fun onLogin(response: TokenResponse)
-
-    fun onLogout()
-
-    fun onAuthorizationFailed(exception: AuthorizationException)
-
-    fun onTokenExchangeFailed(exception: AuthorizationException)
-}
-
-class ShikimoriAuthStateImpl @Inject internal constructor(
+class ShikimoriAuthState @Inject internal constructor(
     private val preferencesDataSource: ShikiPreferencesDataSource,
     @ApplicationContext context: Context,
     @ApplicationScope private val appScope: CoroutineScope,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
-) : ShikimoriAuthState {
-    private var authState: AuthState = AuthState()
-    private val service = AuthorizationService(context)
+) {
+    internal var authState: AuthState = AuthState()
+    internal val service = AuthorizationService(context)
 
-    override val isAuthorized: Boolean
+    val isAuthorized: Boolean
         get() = authState.isAuthorized
 
-    override val accessToken: String?
+    val accessToken: String?
         get() = getFreshAccessToken()
 
     init {
         readAuthState()
     }
 
-    override fun onLogin(response: TokenResponse) {
+    internal fun onLogin(response: TokenResponse) {
         authState.update(response, null)
         saveAuthState()
     }
 
-    override fun onLogout() {
+    fun onLogout() {
         if (!isAuthorized) return
         authState = AuthState()
         saveAuthState()
     }
 
-    override fun onAuthorizationFailed(exception: AuthorizationException) {
+    internal fun onAuthorizationFailed(exception: AuthorizationException) {
         exception.printStackTrace()
         authState.update(null as AuthorizationResponse?, exception)
         saveAuthState()
     }
 
-    override fun onTokenExchangeFailed(exception: AuthorizationException) {
+    internal fun onTokenExchangeFailed(exception: AuthorizationException) {
         exception.printStackTrace()
         authState.update(null as TokenResponse?, exception)
         saveAuthState()
