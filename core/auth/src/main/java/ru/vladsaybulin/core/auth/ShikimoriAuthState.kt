@@ -1,6 +1,7 @@
 package ru.vladsaybulin.core.auth
 
 import android.content.Context
+import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -10,6 +11,7 @@ import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
+import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.TokenResponse
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -90,7 +92,12 @@ class ShikimoriAuthStateImpl @Inject internal constructor(
         appScope.launch {
             val jsonStr = preferencesDataSource.authStateJsonString.firstOrNull()
             authState = if (jsonStr.isNullOrEmpty()) {
-                AuthState()
+                AuthState(
+                    AuthorizationServiceConfiguration(
+                        Uri.parse("${BuildConfig.BASE_URL}/oauth/authorize"),
+                        Uri.parse("${BuildConfig.BASE_URL}/oauth/token")
+                    )
+                )
             } else {
                 AuthState.jsonDeserialize(jsonStr)
             }
