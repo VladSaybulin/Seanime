@@ -5,4 +5,5 @@
     <string name="counter_label_volumes">Тома</string>
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
+    <string name="text_placeholder">Расскажите о своих впечатлениях о тайтле</string>
 </resources>
