@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.shikimori.android.application)
     alias(libs.plugins.shikimori.android.application.compose)
     alias(libs.plugins.shikimori.android.hilt)
-
 }
 
 android {
@@ -18,6 +17,15 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val secretsProperties = Properties().apply {
+            file("../secrets.properties").inputStream().use { fis ->
+                load(fis)
+            }
+        }
+        val redirectUrl = requireNotNull(secretsProperties["SHIKIMORI_AUTH_REDIRECT_URI"]).toString()
+        val redirectScheme = redirectUrl.substringBefore(':')
+        android.defaultConfig.manifestPlaceholders["appAuthRedirectScheme"] = redirectScheme
     }
 
     buildTypes {
@@ -59,11 +67,3 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
 }
-
-val secretsProperties = Properties().apply {
-    file("../secrets.properties").inputStream().use { fis ->
-        load(fis)
-    }
-}
-val redirectUrl = requireNotNull(secretsProperties["SHIKIMORI_AUTH_REDIRECT_URI"])
-android.defaultConfig.manifestPlaceholders["appAuthRedirectScheme"] = redirectUrl
