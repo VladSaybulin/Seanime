@@ -6,13 +6,16 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
+import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateValues
 import javax.inject.Inject
 
 class UserRateViewModel @Inject constructor(
-    getEnabledAutocorrectUseCase: GetEnableAutocorrectUserRateUseCase
+    getEnabledAutocorrectUseCase: GetEnableAutocorrectUserRateUseCase,
+    private val userRateRepository: UserRateRepository
 ) : ViewModel() {
 
     private val userRateWithContext =
@@ -39,10 +42,23 @@ class UserRateViewModel @Inject constructor(
     }
 
     fun save(userRateValues: UserRateValues) {
-
+        val userRateId = getUserRateId() ?: return
+        viewModelScope.launch {
+            userRateRepository.updateUserRate(userRateId, userRateValues)
+        }
     }
 
     fun delete() {
+        val userRateId = getUserRateId() ?: return
+        viewModelScope.launch {
+            userRateRepository.deleteUserRate(userRateId)
+        }
+    }
 
+    private fun getUserRateId(): Long? {
+        val currSetup = setup.value
+        return if (currSetup is UserRateSetup.Success) {
+            currSetup.userRate.id
+        } else null
     }
 }
