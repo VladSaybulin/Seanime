@@ -2,6 +2,7 @@ package ru.vladsaybulin.feature.userrate
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -13,6 +14,7 @@ import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateValues
 import javax.inject.Inject
 
+@HiltViewModel
 class UserRateViewModel @Inject constructor(
     getEnabledAutocorrectUseCase: GetEnableAutocorrectUserRateUseCase,
     private val userRateRepository: UserRateRepository
