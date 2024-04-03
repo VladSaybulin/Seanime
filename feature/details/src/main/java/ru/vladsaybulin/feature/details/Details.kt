@@ -61,9 +61,10 @@ import ru.vladsaybulin.feature.details.content.SimilarBottomSheetContent
 import ru.vladsaybulin.feature.details.content.SimilarCarousel
 import ru.vladsaybulin.feature.details.content.VideosCarousel
 import ru.vladsaybulin.feature.details.content.relatedItems
-import ru.vladsaybulin.feature.userrate.UserRateSetup
+import ru.vladsaybulin.feature.userrate.UserRateEditorContext
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.Screenshot
+import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateStatus
 import ru.vladsaybulin.model.Video
 
@@ -73,7 +74,7 @@ fun DetailsRoute(
     viewModel: DetailsViewModel = hiltViewModel(),
     onEntryClick: (EntryType, Long) -> Unit,
     onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
-    onEditUserRateClick: (UserRateSetup) -> Unit,
+    onEditUserRateClick: (UserRate, UserRateEditorContext) -> Unit,
     onBackClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -86,7 +87,10 @@ fun DetailsRoute(
         onScreenshotClick = onScreenshotClick,
         onBackClick = onBackClick,
         modifier = modifier,
-        onEditUserRateClick = { }
+        onEditUserRateClick = { userRate ->
+            val context = viewModel.getUserRateEditorContext() ?: return@DetailsScreen
+            onEditUserRateClick(userRate, context)
+        }
     )
 }
 
@@ -97,7 +101,7 @@ fun DetailsScreen(
     onRefresh: suspend () -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
-    onEditUserRateClick: () -> Unit,
+    onEditUserRateClick: (UserRate) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -171,7 +175,7 @@ private fun DetailsLoading(modifier: Modifier = Modifier) {
 private fun DetailsContent(
     state: DetailsUiState.Success,
     onRefresh: suspend () -> Unit,
-    onEditUserRateClick: () -> Unit,
+    onEditUserRateClick: (UserRate) -> Unit,
     onAuthorClick: (Long) -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onCharacterClick: (Long) -> Unit,
@@ -219,7 +223,11 @@ private fun DetailsContent(
             UserRateFab(
                 status = state.userRate?.status ?: UserRateStatus.None,
                 expanded = expandedFab,
-                onClick = onEditUserRateClick
+                onClick = {
+                    if (state.userRate != null) {
+                        onEditUserRateClick(state.userRate)
+                    }
+                }
             )
         }
     ) { scaffoldPadding ->

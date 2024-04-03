@@ -49,8 +49,8 @@ fun App() {
                         )
                         navController.navigateToImageView()
                     },
-                    openUserRate = { setup ->
-                        userRateViewViewModel.setupUserRate(setup)
+                    openUserRate = { userRate, context ->
+                        userRateViewViewModel.setupUserRate(userRate, context)
                         showUserRateBottomSheet = true
                     },
                     onBackClick = {
