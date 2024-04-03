@@ -2,12 +2,14 @@ package ru.vladsaybulin.feature.userrate
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -15,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -31,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
+import androidx.compose.ui.util.lerp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -43,7 +47,6 @@ import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateStatus
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -137,7 +140,9 @@ fun UserRateContent(
             Button(
                 onClick = onSave,
                 enabled = state.enabledSaveButton,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
             ) {
                 Text(text = stringResource(id = R.string.save))
             }
@@ -148,6 +153,7 @@ fun UserRateContent(
             ) {
                 Text(text = stringResource(id = R.string.delete))
             }
+            Spacer(modifier = Modifier.height(48.dp)) //TODO()
         }
     }
 }
@@ -191,18 +197,21 @@ private fun UserRateLayout(
 ) {
     val animatedExpandable by animateFloatAsState(
         targetValue = if (expandedStatusButtons) 1f else 0f,
-        label = "ExpandedStatusButtons"
+        label = "ExpandedStatusButtons",
+        animationSpec = tween(durationMillis = 300)
     )
 
     SubcomposeLayout(
         modifier = modifier.clipToBounds()
     ) { constraints ->
+        val collapsed = animatedExpandable == 0f
+
         val buttonsConstraints = constraints.copy(minWidth = 0)
-        val buttonsPlaceables = if (animatedExpandable == 0f) {
+        val buttonsPlaceables = if (collapsed) {
             subcompose(UserRateLayoutSlotId.SelectedButton) {
                 SelectedStatusButton(
                     targetStatus = selectedStatus,
-                    onClick = { onExpandedChange(true) }
+                    onClick = { onExpandedChange(true) },
                 )
             }
         } else {
@@ -221,32 +230,39 @@ private fun UserRateLayout(
         }.map { it.measure(buttonsConstraints) }
         val buttonsHeight = buttonsPlaceables.fastSumBy { it.height }
 
-        var selectedButtonY = 0
-        if (animatedExpandable > 0f) {
+        val selectedButtonHeight: Int
+        var startSelectedButtonY = 0
+        if (!collapsed) {
             val index = availableUseRateStatuses.indexOf(selectedStatus)
             for (i in 0..<index) {
-                selectedButtonY += buttonsPlaceables[i].height
+                startSelectedButtonY += buttonsPlaceables[i].height
             }
+            selectedButtonHeight = buttonsPlaceables[index].height
+        } else {
+            selectedButtonHeight = buttonsPlaceables.first().height
         }
 
         val inputsConstraints = constraints.copy(minHeight = 0)
         val inputsPlaceable = subcompose(slotId = UserRateLayoutSlotId.Inputs) {
-            Box(
-                modifier = Modifier.alpha(1 - animatedExpandable),
-                content = inputsContent
-            )
+            Surface {
+                Box(
+                    modifier = Modifier.alpha(1 - animatedExpandable),
+                    content = inputsContent
+                )
+            }
         }.first().measure(inputsConstraints)
-
-        val initialY = -(animatedExpandable * selectedButtonY).roundToInt()
 
         val endHeight = max(buttonsHeight, inputsPlaceable.height)
         layout(constraints.maxWidth, endHeight) {
-            var y = initialY
+            var buttonY = lerp(-startSelectedButtonY, 0, animatedExpandable)
             buttonsPlaceables.forEach {
-                it.placeRelative(0, y)
-                y += it.height
+                it.placeRelative(0, buttonY)
+                buttonY += it.height
             }
-            inputsPlaceable.placeRelative(0, y)
+            inputsPlaceable.placeRelative(
+                0,
+                lerp(selectedButtonHeight, buttonsHeight, animatedExpandable)
+            )
         }
     }
 }
@@ -257,14 +273,13 @@ private fun AllStatusButtons(
     selectedStatus: UserRateStatus,
     onClick: (UserRateStatus) -> Unit,
 ) {
-    Column {
-        availableStatuses.forEach {
-            UserRateStatusButton(
-                userRateStatus = it,
-                selected = it == selectedStatus,
-                onClick = { onClick(it) },
-            )
-        }
+    availableStatuses.forEach {
+        UserRateStatusButton(
+            userRateStatus = it,
+            selected = it == selectedStatus,
+            onClick = { onClick(it) },
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
     }
 }
 
@@ -281,6 +296,7 @@ private fun SelectedStatusButton(
             userRateStatus = status,
             selected = true,
             onClick = onClick,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
     }
 }
@@ -305,12 +321,12 @@ fun UserRateContentPreview() {
             ),
             context = UserRateEditorContext(
                 entryType = EntryType.Anime,
-                entryStatus = EntryStatus.Ongoing,
+                entryStatus = EntryStatus.Released,
                 episodesLimit = Limit.Limited(17),
                 chaptersLimit = null,
                 volumesLimit = null
             ),
-            enabledAutocorrect = false
+            enabledAutocorrect = true
         )
     ).collectAsUserRateState()
 
