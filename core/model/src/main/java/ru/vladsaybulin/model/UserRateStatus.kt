@@ -9,3 +9,6 @@ enum class UserRateStatus(val serializedName: String) {
     Dropped("dropped"),
     None("")
 }
+
+fun String.asUserRateStatus() = UserRateStatus.entries.firstOrNull { this == it.serializedName }
+        ?: UserRateStatus.None
