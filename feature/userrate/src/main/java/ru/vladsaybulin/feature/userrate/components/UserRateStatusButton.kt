@@ -1,7 +1,10 @@
 package ru.vladsaybulin.feature.userrate.components
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +17,8 @@ import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,25 +42,39 @@ fun UserRateStatusButton(
     icon: ImageVector = notNoneUserRateStatusIcon(userRateStatus),
     colors: UserRateStatusButtonColors = UserRateStatusButtonDefaults.userRateStatusButtonColors()
 ) {
+    val transition = updateTransition(targetState = colors, label = "UserRateButtonColors")
+    val animatedContainerColor by transition.animateColor(label = "Container") { targetColors ->
+        targetColors.containerColor
+    }
+    val animatedContentColor by transition.animateColor(label = "Content") { targetColors ->
+        targetColors.contentColor
+    }
+
     Row(
         modifier = modifier
             .defaultMinSize(minWidth = MinWidth, minHeight = MinHeight)
             .clip(CircleShape)
-            .background(colors.containerColor)
+            .background(animatedContainerColor)
             .clickable(
                 onClick = onClick,
-                role = Role.Button
+                role = Role.Button,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
             )
             .padding(ContentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val userRateText = checkNotNull(animeUserRateStatusString(userRateStatus = userRateStatus))
-        Icon(imageVector = icon, contentDescription = userRateText)
+        Icon(
+            imageVector = icon,
+            contentDescription = userRateText,
+            tint = animatedContentColor
+        )
         Spacer(modifier = Modifier.width(IconSpacing))
         Text(
             text = userRateText,
             style = ShikimoriTheme.typography.labelLarge,
-            color = colors.contentColor
+            color = animatedContentColor
         )
     }
 }
