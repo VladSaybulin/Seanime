@@ -21,6 +21,6 @@ class UserRateWithEntryLinkDto(
     @SerialName("volumes") val volumes: Int,
     @SerialName("rewatches") val rewatches: Int,
     @SerialName("text") val text: String,
-    @SerialName("create_at") val createdAt: Instant,
+    @SerialName("created_at") val createdAt: Instant,
     @SerialName("updated_at") val updatedAt: Instant,
 )
