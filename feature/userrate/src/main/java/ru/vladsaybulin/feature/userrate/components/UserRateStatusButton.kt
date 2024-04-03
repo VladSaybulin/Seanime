@@ -1,137 +1,102 @@
 package ru.vladsaybulin.feature.userrate.components
 
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
+import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
 import ru.vladsaybulin.core.ui.strings.animeUserRateStatusString
-import ru.vladsaybulin.core.ui.userRateStatusIcon
 import ru.vladsaybulin.model.UserRateStatus
 
 @Composable
 fun UserRateStatusButton(
     userRateStatus: UserRateStatus,
-    selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    colors: UserRateStatusButtonColors = UserRateStatusButtonDefaults.userRateStatusButtonColors(
-        selectedContainerColor = userRateStatusContainerColor(userRateStatus = userRateStatus),
-        selectedContentColor = onUserRateStatusContainerColor(userRateStatus = userRateStatus)
-    ),
-    icon: @Composable () -> Unit = {
-        Icon(
-            imageVector = checkNotNull(userRateStatusIcon(userRateStatus = userRateStatus)),
-            contentDescription = null
-        )
-    },
-    text: @Composable () -> Unit = {
-        Text(text = checkNotNull(animeUserRateStatusString(userRateStatus = userRateStatus)))
-    }
+    icon: ImageVector = notNoneUserRateStatusIcon(userRateStatus),
+    colors: UserRateStatusButtonColors = UserRateStatusButtonDefaults.userRateStatusButtonColors()
 ) {
-    UserRateStatusButton(
-        selected = selected,
-        colors = colors,
-        onClick = onClick,
-        modifier = modifier,
-        icon = icon,
-        text = text
-    )
+    Row(
+        modifier = modifier
+            .defaultMinSize(minWidth = MinWidth, minHeight = MinHeight)
+            .clip(CircleShape)
+            .background(colors.containerColor)
+            .clickable(
+                onClick = onClick,
+                role = Role.Button
+            )
+            .padding(ContentPadding),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val userRateText = checkNotNull(animeUserRateStatusString(userRateStatus = userRateStatus))
+        Icon(imageVector = icon, contentDescription = userRateText)
+        Spacer(modifier = Modifier.width(IconSpacing))
+        Text(
+            text = userRateText,
+            style = ShikimoriTheme.typography.labelLarge,
+            color = colors.contentColor
+        )
+    }
 }
 
-@Composable
-fun UserRateStatusButton(
-    selected: Boolean,
-    colors: UserRateStatusButtonColors,
-    onClick: () -> Unit,
-    modifier: Modifier,
-    icon: @Composable () -> Unit,
-    text: @Composable () -> Unit
-) {
-    val colorTransition = updateTransition(targetState = selected, label = "UserRateButtonColor")
-    val containerColor by colorTransition.animateColor(label = "containerColor") {
-        colors.containerColor(it)
-    }
-    val contentColor by colorTransition.animateColor(label = "contentColor") {
-        colors.contentColor(it)
-    }
+object UserRateStatusButtonDefaults {
 
-    TextButton(
-        onClick = onClick,
-        modifier = modifier,
-        colors = ButtonDefaults.textButtonColors(
-            containerColor = containerColor,
-            contentColor = contentColor
+    @Composable
+    fun userRateStatusButtonColors(
+        containerColor: Color = ShikimoriTheme.colorScheme
+            .surfaceColorAtElevation(LocalAbsoluteTonalElevation.current),
+        contentColor: Color = ShikimoriTheme.colorScheme.onSurface
+    ) = UserRateStatusButtonColors(
+        containerColor = containerColor,
+        contentColor = contentColor
+    )
+
+    @Composable
+    fun userRateStatusButtonColors(userRateStatus: UserRateStatus) =
+        UserRateStatusButtonColors(
+            containerColor = userRateStatusContainerColor(userRateStatus),
+            contentColor = onUserRateStatusContainerColor(userRateStatus)
         )
-    ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            icon()
-            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            text()
-        }
-    }
 }
 
 data class UserRateStatusButtonColors(
     val containerColor: Color,
-    val selectedContainerColor: Color,
-    val contentColor: Color,
-    val selectedContentColor: Color
-) {
-    fun containerColor(selected: Boolean) = if (selected) {
-        selectedContainerColor
-    } else containerColor
+    val contentColor: Color
+)
 
-    fun contentColor(selected: Boolean) = if (selected) {
-        selectedContentColor
-    } else contentColor
-}
-
-object UserRateStatusButtonDefaults {
-    @Composable
-    fun userRateStatusButtonColors(
-        containerColor: Color = ShikimoriTheme.colorScheme.surface.copy(alpha = 0f),
-        selectedContainerColor: Color = ShikimoriTheme.colorScheme.primaryContainer,
-        contentColor: Color = ShikimoriTheme.colorScheme.onSurface,
-        selectedContentColor: Color = ShikimoriTheme.colorScheme.onPrimaryContainer
-    ) = UserRateStatusButtonColors(
-        containerColor = containerColor,
-        selectedContainerColor = selectedContainerColor,
-        contentColor = contentColor,
-        selectedContentColor = selectedContentColor
-    )
-}
-
-@Preview
 @Composable
+@Preview
 fun UserRateStatusButtonPreview() {
     ShikimoriTheme {
-        Surface {
-            var selected by remember { mutableStateOf(false) }
-
-            UserRateStatusButton(
-                userRateStatus = UserRateStatus.Watching,
-                selected = selected,
-                onClick = { selected = !selected },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        UserRateStatusButton(
+            userRateStatus = UserRateStatus.Watching,
+            onClick = { },
+        )
     }
 }
+
+val MinWidth = 58.dp
+val MinHeight = 40.dp
+private val ContentPadding = PaddingValues(start = 16.dp, end = 24.dp)
+private val IconSpacing = 8.dp

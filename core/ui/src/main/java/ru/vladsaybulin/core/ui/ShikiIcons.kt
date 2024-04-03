@@ -16,3 +16,15 @@ fun userRateStatusIcon(userRateStatus: UserRateStatus) = when (userRateStatus) {
     UserRateStatus.OnHold -> ShikimoriIcons.Pause
     else -> null
 }
+
+@Composable
+@ReadOnlyComposable
+fun notNoneUserRateStatusIcon(userRateStatus: UserRateStatus) = when (userRateStatus) {
+    UserRateStatus.Planned -> ShikimoriIcons.Add
+    UserRateStatus.Watching -> ShikimoriIcons.Visibility
+    UserRateStatus.Rewatching -> ShikimoriIcons.Replay
+    UserRateStatus.Completed -> ShikimoriIcons.Done
+    UserRateStatus.Dropped -> ShikimoriIcons.Clear
+    UserRateStatus.OnHold -> ShikimoriIcons.Pause
+    else -> throw IllegalArgumentException("UserRateStatus is None")
+}

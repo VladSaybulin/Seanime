@@ -3,14 +3,15 @@ package ru.vladsaybulin.feature.userrate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
@@ -43,6 +45,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.feature.userrate.components.Counter
 import ru.vladsaybulin.feature.userrate.components.ScoreRow
 import ru.vladsaybulin.feature.userrate.components.UserRateStatusButton
+import ru.vladsaybulin.feature.userrate.components.UserRateStatusButtonDefaults
 import ru.vladsaybulin.model.EntryStatus
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.UserRate
@@ -105,59 +108,73 @@ fun UserRateContent(
         expandedStatusButtons = expandedStatusButtons,
         onExpandedChange = setExpandedStatusButtons,
         onStatusChanged = state::setStatus,
-        modifier = modifier.background(ShikimoriTheme.colorScheme.surface)
+        modifier = modifier.clipToBounds()
     ) {
-        Column {
-            Spacer(modifier = Modifier.height(8.dp))
-            ScoreRow(
-                state = state.scoreState,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-                state.episodesState?.let {
-                    Counter(state = it)
-                }
-                state.chaptersState?.let {
-                    Counter(state = it)
-                }
-                state.volumesState?.let {
-                    Counter(state = it)
-                }
+        Spacer(modifier = Modifier.height(8.dp))
+        ScoreRow(
+            state = state.scoreState,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider()
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(modifier = Modifier.padding(horizontal = 16.dp)) {
+            state.episodesState?.let {
+                Counter(
+                    state = it,
+                    label = { Text(stringResource(R.string.counter_label_episodes)) }
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Counter(
-                state = state.rewatchesState,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            HorizontalDivider()
-            UserRateTextField(
-                text = state.text,
-                onTextChange = { state.text = it },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            HorizontalDivider()
-            Button(
-                onClick = onSave,
-                enabled = state.enabledSaveButton,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.save))
+            state.chaptersState?.let {
+                Counter(
+                    state = it,
+                    label = { Text(stringResource(R.string.counter_label_chapters)) }
+                )
             }
-
-            TextButton(
-                onClick = onDelete,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            ) {
-                Text(text = stringResource(id = R.string.delete))
+            state.volumesState?.let {
+                Counter(
+                    state = it,
+                    label = { Text(stringResource(R.string.counter_label_volumes)) }
+                )
             }
-            Spacer(modifier = Modifier.height(48.dp)) //TODO()
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Counter(
+            state = state.rewatchesState,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            label = { Text(stringResource(R.string.counter_label_rewatches)) }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider()
+        UserRateTextField(
+            text = state.text,
+            onTextChange = { state.text = it },
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+        HorizontalDivider()
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onSave,
+            enabled = state.enabledSaveButton,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(0.96f)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = stringResource(id = R.string.save))
+        }
+        TextButton(
+            onClick = onDelete,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text(
+                text = stringResource(id = R.string.delete),
+                color = ShikimoriTheme.colorScheme.error
+            )
+        }
+
+        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        Spacer(modifier = Modifier.height(bottomPadding))
     }
 }
 
@@ -196,7 +213,7 @@ private fun UserRateLayout(
     modifier: Modifier = Modifier,
     onExpandedChange: (Boolean) -> Unit,
     onStatusChanged: (UserRateStatus) -> Unit,
-    inputsContent: @Composable BoxScope.() -> Unit,
+    inputsContent: @Composable ColumnScope.() -> Unit,
 ) {
     val animatedExpandable by animateFloatAsState(
         targetValue = if (expandedStatusButtons) 1f else 0f,
@@ -248,14 +265,14 @@ private fun UserRateLayout(
         val inputsConstraints = constraints.copy(minHeight = 0)
         val inputsPlaceable = subcompose(slotId = UserRateLayoutSlotId.Inputs) {
             Surface {
-                Box(
+                Column(
                     modifier = Modifier.alpha(1 - animatedExpandable),
                     content = inputsContent
                 )
             }
         }.first().measure(inputsConstraints)
 
-        val endHeight = max(buttonsHeight, inputsPlaceable.height)
+        val endHeight = max(buttonsHeight, inputsPlaceable.height) + selectedButtonHeight
         layout(constraints.maxWidth, endHeight) {
             var buttonY = lerp(-startSelectedButtonY, 0, animatedExpandable)
             buttonsPlaceables.forEach {
@@ -277,14 +294,16 @@ private fun AllStatusButtons(
     onClick: (UserRateStatus) -> Unit,
 ) {
     availableStatuses.forEach {
-        Surface(modifier = Modifier.fillMaxWidth()) {
-            UserRateStatusButton(
-                userRateStatus = it,
-                selected = it == selectedStatus,
-                onClick = { onClick(it) },
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-        }
+        UserRateStatusButton(
+            userRateStatus = it,
+            onClick = { onClick(it) },
+            colors = if (it == selectedStatus) {
+                UserRateStatusButtonDefaults.userRateStatusButtonColors(userRateStatus = it)
+            } else UserRateStatusButtonDefaults.userRateStatusButtonColors(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -293,18 +312,19 @@ private fun SelectedStatusButton(
     targetStatus: UserRateStatus,
     onClick: () -> Unit,
 ) {
-    Surface(modifier = Modifier.fillMaxWidth()) {
-        AnimatedContent(
-            targetState = targetStatus,
-            label = "SelectedStatusButton",
-            modifier = Modifier.padding(horizontal = 16.dp)
-        ) { status ->
-            UserRateStatusButton(
-                userRateStatus = status,
-                selected = true,
-                onClick = onClick
-            )
-        }
+    AnimatedContent(
+        targetState = targetStatus,
+        label = "SelectedStatusButton",
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) { status ->
+        UserRateStatusButton(
+            userRateStatus = status,
+            onClick = onClick,
+            colors = UserRateStatusButtonDefaults.userRateStatusButtonColors(
+                userRateStatus = status
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
