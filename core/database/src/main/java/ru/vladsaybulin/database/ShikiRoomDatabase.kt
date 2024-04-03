@@ -9,6 +9,7 @@ import ru.vladsaybulin.database.dao.CalendarDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.AnimeDbo
 import ru.vladsaybulin.database.models.CalendarItemDbo
+import ru.vladsaybulin.database.models.UserRateDbo
 import ru.vladsaybulin.database.utils.AnimeKindTypeConverter
 import ru.vladsaybulin.database.utils.EntryStatusTypeConverter
 import ru.vladsaybulin.database.utils.InstantTypeConverter
@@ -18,7 +19,7 @@ import ru.vladsaybulin.database.utils.UserRateTypeConverter
     entities = [
         CalendarItemDbo::class,
         AnimeDbo::class,
-        UserRateDao::class
+        UserRateDbo::class
     ],
     version = 1,
 )
