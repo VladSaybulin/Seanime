@@ -306,7 +306,7 @@ private fun SelectedStatusButton(
 fun UserRateContentPreview() {
 
     val state = MutableStateFlow(
-        UserRateSetup.Success(
+        UserRateSetup.Edit(
             userRate = UserRate(
                 id = 1,
                 createdAt = Clock.System.now(),

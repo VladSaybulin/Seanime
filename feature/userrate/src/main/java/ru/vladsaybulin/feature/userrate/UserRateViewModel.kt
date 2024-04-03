@@ -25,7 +25,7 @@ class UserRateViewModel @Inject constructor(
         getEnabledAutocorrectUseCase(),
         userRateWithContext
     ) { enabledAutocorrect, (userRate, context) ->
-        UserRateSetup.Success(
+        UserRateSetup.Edit(
             userRate = userRate,
             context = context,
             enabledAutocorrect = enabledAutocorrect
@@ -57,7 +57,7 @@ class UserRateViewModel @Inject constructor(
 
     private fun getUserRateId(): Long? {
         val currSetup = setup.value
-        return if (currSetup is UserRateSetup.Success) {
+        return if (currSetup is UserRateSetup.Edit) {
             currSetup.userRate.id
         } else null
     }

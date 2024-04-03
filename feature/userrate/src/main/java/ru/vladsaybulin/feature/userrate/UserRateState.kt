@@ -30,7 +30,7 @@ fun StateFlow<UserRateSetup>.collectAsUserRateState(): UserRateState? {
     val state = remember(setupState.value) {
         setupState.value.let { setup ->
             when (setup) {
-                is UserRateSetup.Success -> setup.asState()
+                is UserRateSetup.Edit -> setup.asState()
                 else -> null
             }
         }
@@ -51,7 +51,7 @@ fun StateFlow<UserRateSetup>.collectAsUserRateState(): UserRateState? {
     return state
 }
 
-private fun UserRateSetup.Success.asState() = with(userRate) {
+private fun UserRateSetup.Edit.asState() = with(userRate) {
     UserRateState(
         enabledAutoCorrect = enabledAutocorrect,
         context = context,
