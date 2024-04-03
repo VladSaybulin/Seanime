@@ -9,6 +9,7 @@ import ru.vladsaybulin.common.network.NotFoundException
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.models.UserRateValuesDto
+import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,7 +19,7 @@ private interface UserRateApi {
     suspend fun updateUserRate(
         @Path("id") userRateId: Long,
         @Field("user_rate") userRateValuesDto: UserRateValuesDto
-    )
+    ) : UserRateWithEntryLinkDto
 }
 
 @Singleton
@@ -36,7 +37,8 @@ class UserRateDataSource @Inject constructor(
         return anime.userRate
     }
 
-    suspend fun updateUserRate(userRateId: Long, userRateValues: UserRateValuesDto) {
-        api.updateUserRate(userRateId, userRateValues)
-    }
+    suspend fun updateUserRate(
+        userRateId: Long,
+        userRateValues: UserRateValuesDto
+    ): UserRateWithEntryLinkDto = api.updateUserRate(userRateId, userRateValues)
 }
