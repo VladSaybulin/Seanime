@@ -36,7 +36,8 @@ class UserRateRepository @Inject constructor(
 
     suspend fun deleteUserRate(userRateId: Long) {
         withContext(ioDispatcher) {
-
+            userRateDataSource.deleteUSerRate(userRateId)
+            database.userRateDao.deleteUserRate(userRateId)
         }
     }
 }
