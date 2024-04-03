@@ -22,6 +22,7 @@ import ru.vladsaybulin.model.UserRateStatus.OnHold
 import ru.vladsaybulin.model.UserRateStatus.Planned
 import ru.vladsaybulin.model.UserRateStatus.Rewatching
 import ru.vladsaybulin.model.UserRateStatus.Watching
+import ru.vladsaybulin.model.UserRateValues
 
 @Composable
 fun StateFlow<UserRateSetup>.collectAsUserRateState(): UserRateState? {

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.model.UserRate
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.UserRateValues
 import javax.inject.Inject
 
 class UserRateViewModel @Inject constructor(
@@ -46,13 +46,3 @@ class UserRateViewModel @Inject constructor(
 
     }
 }
-
-data class UserRateValues(
-    val status: UserRateStatus,
-    val score: Int,
-    val episodes: Int?,
-    val chapters: Int?,
-    val volumes: Int?,
-    val rewatches: Int,
-    val text: String,
-)
