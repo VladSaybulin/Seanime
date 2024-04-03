@@ -10,6 +10,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import ru.vladsaybulin.network.common.BuildConfig
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -21,6 +22,7 @@ class RetrofitModule {
     }
 
     @Provides
+    @Singleton
     @AuthorizedClient
     fun provideAuthorizedRetrofit(
         @AuthorizedClient okHttpClient: OkHttpClient,
@@ -32,6 +34,7 @@ class RetrofitModule {
         .build()
 
     @Provides
+    @Singleton
     fun provideUnauthorizedRetrofit(
         okHttpClient: OkHttpClient,
         json: Json,
