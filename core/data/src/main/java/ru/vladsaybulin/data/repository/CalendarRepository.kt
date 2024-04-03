@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.common.network.Dispatcher
-import ru.vladsaybulin.common.network.ShikiDispatchers.*
+import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.animeShell
 import ru.vladsaybulin.data.model.asDbo
 import ru.vladsaybulin.database.ShikiDatabase
@@ -29,10 +29,11 @@ class CalendarRepository @Inject constructor(
     private val database: ShikiDatabase,
     private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
 ) {
-    private val dao = database.calendarDao
+    private val calendarDao = database.calendarDao
+    private val animeDao = database.animeDao
 
     fun getCalendarItems(searchQuery: String? = null): Flow<List<CalendarItem>> =
-        dao.getAllCalendarItems()
+        calendarDao.getAllCalendarItems()
             .onStart { refresh(false) }
             .map { items -> items.map(PopulatedCalendarItem::asExternalModel) }
             .flowOn(ioDispatcher)
@@ -49,9 +50,9 @@ class CalendarRepository @Inject constructor(
             val response = calendarDataSource.getAllCalendarItems()
 
             database.withTransaction {
-                dao.deleteAllItems()
-                dao.insertOrReplaceAnimeEntities(response.map(CalendarItemDto::animeShell))
-                dao.insertCalendarItems(response.map(CalendarItemDto::asDbo))
+                calendarDao.deleteAllItems()
+                animeDao.insertOrReplaceAnimeEntities(response.map(CalendarItemDto::animeShell))
+                calendarDao.insertCalendarItems(response.map(CalendarItemDto::asDbo))
             }
 
             shikiPreferencesDataSource.setTimestampOfLastCalendarRequest(Clock.System.now())
