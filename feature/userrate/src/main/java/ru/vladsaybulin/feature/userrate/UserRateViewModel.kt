@@ -21,7 +21,7 @@ class UserRateViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val userRateWithContext =
-        MutableSharedFlow<Pair<UserRate, UserRateEditorContext>>()
+        MutableSharedFlow<Pair<UserRate, UserRateEditorContext>>(replay = 1)
 
     val setup = combine(
         getEnabledAutocorrectUseCase(),

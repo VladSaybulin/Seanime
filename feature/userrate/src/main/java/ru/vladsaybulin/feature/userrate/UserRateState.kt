@@ -8,8 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
 import ru.vladsaybulin.feature.userrate.components.CounterState
@@ -25,16 +23,11 @@ import ru.vladsaybulin.model.UserRateStatus.Watching
 import ru.vladsaybulin.model.UserRateValues
 
 @Composable
-fun StateFlow<UserRateSetup>.collectAsUserRateState(): UserRateState? {
-    val setupState = this.collectAsStateWithLifecycle()
-    val state = remember(setupState.value) {
-        setupState.value.let { setup ->
-            when (setup) {
-                is UserRateSetup.Edit -> setup.asState()
-                else -> null
-            }
-        }
-    } ?: return null
+fun rememberUserRateState(setup: UserRateSetup): UserRateState? {
+    val state = when (setup) {
+        is UserRateSetup.Edit -> remember(setup) { setup.asState() }
+        else -> return null
+    }
 
     LaunchedEffect(key1 = state) {
         state.collectEpisodesChanges()

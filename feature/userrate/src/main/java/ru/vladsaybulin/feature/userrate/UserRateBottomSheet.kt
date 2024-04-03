@@ -32,10 +32,11 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
 import androidx.compose.ui.util.lerp
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
@@ -55,8 +56,9 @@ fun UserRateBottomSheet(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit
 ) {
+    val setupState = viewModel.setup.collectAsStateWithLifecycle()
 
-    val state = viewModel.setup.collectAsUserRateState() ?: return
+    val state = rememberUserRateState(setup = setupState.value) ?: return
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -64,11 +66,12 @@ fun UserRateBottomSheet(
     val closeSheet = {
         scope.launch {
             sheetState.hide()
-        }
+        }.invokeOnCompletion { onDismissRequest() }
     }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
         modifier = modifier
     ) {
         UserRateContent(
@@ -274,12 +277,14 @@ private fun AllStatusButtons(
     onClick: (UserRateStatus) -> Unit,
 ) {
     availableStatuses.forEach {
-        UserRateStatusButton(
-            userRateStatus = it,
-            selected = it == selectedStatus,
-            onClick = { onClick(it) },
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        Surface(modifier = Modifier.fillMaxWidth()) {
+            UserRateStatusButton(
+                userRateStatus = it,
+                selected = it == selectedStatus,
+                onClick = { onClick(it) },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
     }
 }
 
@@ -288,53 +293,58 @@ private fun SelectedStatusButton(
     targetStatus: UserRateStatus,
     onClick: () -> Unit,
 ) {
-    AnimatedContent(
-        targetState = targetStatus,
-        label = "SelectedStatusButton"
-    ) { status ->
-        UserRateStatusButton(
-            userRateStatus = status,
-            selected = true,
-            onClick = onClick,
+    Surface(modifier = Modifier.fillMaxWidth()) {
+        AnimatedContent(
+            targetState = targetStatus,
+            label = "SelectedStatusButton",
             modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        ) { status ->
+            UserRateStatusButton(
+                userRateStatus = status,
+                selected = true,
+                onClick = onClick
+            )
+        }
     }
 }
 
 @Composable
-@Preview
+@Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
 fun UserRateContentPreview() {
 
-    val state = MutableStateFlow(
-        UserRateSetup.Edit(
-            userRate = UserRate(
-                id = 1,
-                createdAt = Clock.System.now(),
-                updatedAt = Clock.System.now(),
-                status = UserRateStatus.Planned,
-                score = 7,
-                episodes = 14,
-                chapters = 0,
-                volumes = 0,
-                rewatches = 0,
-                text = ""
-            ),
-            context = UserRateEditorContext(
-                entryType = EntryType.Anime,
-                entryStatus = EntryStatus.Released,
-                episodesLimit = Limit.Limited(17),
-                chaptersLimit = null,
-                volumesLimit = null
-            ),
-            enabledAutocorrect = true
+    val state = checkNotNull(
+        rememberUserRateState(
+            setup = UserRateSetup.Edit(
+                userRate = UserRate(
+                    id = 1,
+                    createdAt = Clock.System.now(),
+                    updatedAt = Clock.System.now(),
+                    status = UserRateStatus.Planned,
+                    score = 7,
+                    episodes = 14,
+                    chapters = 0,
+                    volumes = 0,
+                    rewatches = 0,
+                    text = ""
+                ),
+                context = UserRateEditorContext(
+                    entryType = EntryType.Anime,
+                    entryStatus = EntryStatus.Released,
+                    episodesLimit = Limit.Limited(17),
+                    chaptersLimit = null,
+                    volumesLimit = null
+                ),
+                enabledAutocorrect = true
+            )
         )
-    ).collectAsUserRateState()
+    )
 
-    ShikimoriTheme {
+
+    ShikimoriTheme(darkTheme = true) {
         UserRateContent(
-            state = state!!,
+            state = state,
             onSave = { },
-            onDelete = {  }
+            onDelete = { }
         )
     }
 }
