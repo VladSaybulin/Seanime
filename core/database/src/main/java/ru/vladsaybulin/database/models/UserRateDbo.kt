@@ -18,7 +18,7 @@ import ru.vladsaybulin.model.UserRateStatus
         )
     ]
 )
-class UserRateDbo(
+data class UserRateDbo(
     @ColumnInfo("id")
     @PrimaryKey
     val id: Long,
