@@ -1,10 +1,13 @@
 package ru.vladsaybulin.network.datasource
 
 import com.apollographql.apollo3.ApolloClient
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.encodeToJsonElement
 import retrofit2.Retrofit
+import retrofit2.http.Body
 import retrofit2.http.DELETE
-import retrofit2.http.Field
-import retrofit2.http.PATCH
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import ru.vladsaybulin.common.network.NotFoundException
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
@@ -16,10 +19,10 @@ import javax.inject.Singleton
 
 private interface UserRateApi {
 
-    @PATCH("/api/v2/user_rates/{id}")
+    @PUT("/api/v2/user_rates/{id}")
     suspend fun updateUserRate(
         @Path("id") userRateId: Long,
-        @Field("user_rate") userRateValuesDto: UserRateValuesDto
+        @Body userRate: JsonObject
     ) : UserRateWithEntryLinkDto?
 
     @DELETE("/api/v2/user_rates/{id}")
@@ -30,6 +33,7 @@ private interface UserRateApi {
 class UserRateDataSource @Inject constructor(
     private val apolloClient: ApolloClient,
     @AuthorizedClient retrofit: Retrofit,
+    private val json: Json
 ) {
 
     private val api = retrofit.create(UserRateApi::class.java)
@@ -44,7 +48,13 @@ class UserRateDataSource @Inject constructor(
     suspend fun updateUserRate(
         userRateId: Long,
         userRateValues: UserRateValuesDto
-    ): UserRateWithEntryLinkDto? = api.updateUserRate(userRateId, userRateValues)
+    ): UserRateWithEntryLinkDto? {
+        val wrappedBody = JsonObject(
+            mapOf("user_rate" to json.encodeToJsonElement(userRateValues))
+        )
+        return api.updateUserRate(userRateId, wrappedBody)
+    }
+
 
     suspend fun deleteUSerRate(userRateId: Long) {
         api.deleteUserRate(userRateId)
