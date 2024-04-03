@@ -2,6 +2,7 @@ package ru.vladsaybulin.network.datasource
 
 import com.apollographql.apollo3.ApolloClient
 import retrofit2.Retrofit
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.PATCH
 import retrofit2.http.Path
@@ -19,7 +20,10 @@ private interface UserRateApi {
     suspend fun updateUserRate(
         @Path("id") userRateId: Long,
         @Field("user_rate") userRateValuesDto: UserRateValuesDto
-    ) : UserRateWithEntryLinkDto
+    ) : UserRateWithEntryLinkDto?
+
+    @DELETE("/api/v2/user_rates/{id}")
+    suspend fun deleteUserRate(@Path("id") userRateId: Long)
 }
 
 @Singleton
@@ -40,5 +44,9 @@ class UserRateDataSource @Inject constructor(
     suspend fun updateUserRate(
         userRateId: Long,
         userRateValues: UserRateValuesDto
-    ): UserRateWithEntryLinkDto = api.updateUserRate(userRateId, userRateValues)
+    ): UserRateWithEntryLinkDto? = api.updateUserRate(userRateId, userRateValues)
+
+    suspend fun deleteUSerRate(userRateId: Long) {
+        api.deleteUserRate(userRateId)
+    }
 }
