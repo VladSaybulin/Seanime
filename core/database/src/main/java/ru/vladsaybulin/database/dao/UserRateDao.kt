@@ -1,14 +1,11 @@
 package ru.vladsaybulin.database.dao
 
 import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.OnConflictStrategy
 import ru.vladsaybulin.database.models.UserRateDbo
 
 interface UserRateDao {
 
-    @Insert
-    fun insertUserRates(userRates: List<UserRateDbo>)
-
-    @Query("DELETE FROM user_rates")
-    fun deleteAllUserRates()
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertOrReplaceUserRates(userRates: List<UserRateDbo>)
 }
