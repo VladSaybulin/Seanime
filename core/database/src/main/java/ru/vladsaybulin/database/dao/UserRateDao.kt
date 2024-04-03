@@ -8,4 +8,7 @@ interface UserRateDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOrReplaceUserRates(userRates: List<UserRateDbo>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertOrReplaceUserRate(userRate: UserRateDbo)
 }
