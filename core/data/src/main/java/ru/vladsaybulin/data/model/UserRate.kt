@@ -1,6 +1,7 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
+import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.database.models.UserRateDbo
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.UserRate
@@ -31,6 +32,21 @@ fun AnimeUserRateQuery.UserRate.asDbo(animeId: Long) = UserRateDbo(
     episodes = episodes,
     chapters = 0,
     volumes = 0,
+    rewatches = rewatches,
+    text = text ?: "",
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+
+fun MangaUserRateQuery.UserRate.asDbo(mangaId: Long) = UserRateDbo(
+    id = id,
+    animeId = null,
+    mangaId = mangaId,
+    status = status.asUserRateStatus(),
+    score = score,
+    episodes = 0,
+    chapters = chapters,
+    volumes = volumes,
     rewatches = rewatches,
     text = text ?: "",
     createdAt = createdAt,
