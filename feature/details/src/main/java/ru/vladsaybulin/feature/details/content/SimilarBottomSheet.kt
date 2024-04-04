@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,7 @@ import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.SimilarEntry
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SimilarBottomSheet(
     similarEntries: List<SimilarEntry>,
