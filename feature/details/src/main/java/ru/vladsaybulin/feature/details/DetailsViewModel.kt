@@ -22,6 +22,7 @@ import ru.vladsaybulin.model.AnimeDetails
 import ru.vladsaybulin.model.EntryDetails
 import ru.vladsaybulin.model.EntryStatus.Ongoing
 import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.MangaDetails
 import ru.vladsaybulin.model.UserRateStatus
 import javax.inject.Inject
 import javax.inject.Provider
@@ -29,7 +30,7 @@ import javax.inject.Provider
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val userRateRepository: UserRateRepository,
+    userRateRepository: UserRateRepository,
     private val getEntryDetailsUseCase: GetEntryDetailsUseCase,
     private val createUserRateUseCaseProvider: Provider<CreateUserRateUseCase>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
@@ -48,7 +49,7 @@ class DetailsViewModel @Inject constructor(
 
     val userRate = when (args.entryType) {
         EntryType.Anime -> userRateRepository.getAnimeUserRate(args.entryId)
-        else -> TODO()
+        else -> userRateRepository.getMangaUserRate(args.entryId)
     }
         .stateIn(
             scope = viewModelScope,
@@ -87,7 +88,7 @@ class DetailsViewModel @Inject constructor(
         if (userRate.value == null) return null
         return if (lastEntryDetailsLoaded.anime != null) {
             lastEntryDetailsLoaded.anime!!.getUserRateEditorContext()
-        } else TODO() //Manga
+        } else lastEntryDetailsLoaded.manga!!.getUserRateEditorContext()
     }
 
     fun createUserRate(status: UserRateStatus) {
@@ -117,4 +118,18 @@ private fun AnimeDetails.getUserRateEditorContext() = UserRateEditorContext(
     },
     chaptersLimit = null,
     volumesLimit = null
+)
+
+private fun MangaDetails.getUserRateEditorContext() = UserRateEditorContext(
+    entryType = EntryType.Manga,
+    entryStatus = status,
+    episodesLimit = null,
+    chaptersLimit = when {
+        chapters > 0 -> Limit.Limited(chapters)
+        else -> Limit.Unlimited
+    },
+    volumesLimit = when {
+        volumes > 0 -> Limit.Limited(volumes)
+        else -> Limit.Unlimited
+    }
 )
