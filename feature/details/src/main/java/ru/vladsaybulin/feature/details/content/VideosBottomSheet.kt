@@ -10,10 +10,26 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.model.Video
 
 @Composable
-fun VideosBottomSheet(
+internal fun VideosBottomSheet(
+    videos: List<Video>,
+    onVideoClick: () -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ShikimoriModalBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier) {
+        VideosBottomSheetContent(
+            videos = videos,
+            onVideoClick = onVideoClick
+        )
+    }
+}
+
+@Composable
+private fun VideosBottomSheetContent(
     videos: List<Video>,
     onVideoClick: () -> Unit,
     modifier: Modifier = Modifier

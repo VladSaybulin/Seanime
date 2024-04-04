@@ -1,26 +1,49 @@
 package ru.vladsaybulin.feature.details.content
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.ui.entry.EntryListItem
 import ru.vladsaybulin.model.PersonWithRoles
 
 @Composable
-fun AuthorsBottomSheetContent(
+internal fun AuthorsBottomSheet(
     authors: List<PersonWithRoles>,
     onAuthorClick: (Long) -> Unit,
+    onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    ShikimoriModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        modifier = modifier
+    ) {
+        AuthorsBottomSheetContent(
+            authors = authors,
+            onAuthorClick = onAuthorClick,
+
+        )
+    }
+}
+
+@Composable
+private fun AuthorsBottomSheetContent(
+    authors: List<PersonWithRoles>,
+    onAuthorClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
     ) {
         items(
             items = authors,

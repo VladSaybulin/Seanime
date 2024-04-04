@@ -17,13 +17,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -47,17 +45,16 @@ import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.core.ui.strings.animeUserRateStatusString
 import ru.vladsaybulin.core.ui.userRateStatusIcon
-import ru.vladsaybulin.feature.details.content.AuthorsBottomSheetContent
+import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
-import ru.vladsaybulin.feature.details.content.CharactersBottomSheetContent
+import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
 import ru.vladsaybulin.feature.details.content.CharactersCarousel
 import ru.vladsaybulin.feature.details.content.Description
 import ru.vladsaybulin.feature.details.content.EntryDetailsName
 import ru.vladsaybulin.feature.details.content.EntryDetailsPoster
-import ru.vladsaybulin.feature.details.content.RelatedBottomSheetContent
-import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheetContent
+import ru.vladsaybulin.feature.details.content.RelatedBottomSheet
+import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
-import ru.vladsaybulin.feature.details.content.SimilarBottomSheetContent
 import ru.vladsaybulin.feature.details.content.SimilarCarousel
 import ru.vladsaybulin.feature.details.content.VideosCarousel
 import ru.vladsaybulin.feature.details.content.relatedItems
@@ -125,7 +122,9 @@ fun DetailsScreen(
             onEditUserRateClick = onEditUserRateClick,
             onAuthorClick = {},
             onCharacterClick = {},
-            onScreenshotClick = onScreenshotClick,
+            onScreenshotClick = { index ->
+                onScreenshotClick(checkNotNull(uiState.screenshots), index)
+            },
             onVideoClick = {}
         )
     }
@@ -179,7 +178,7 @@ private fun DetailsContent(
     onAuthorClick: (Long) -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onCharacterClick: (Long) -> Unit,
-    onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
+    onScreenshotClick: (screenshotIndex: Int) -> Unit,
     onVideoClick: (Video) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier
@@ -318,7 +317,7 @@ private fun DetailsContent(
                 item(key = "screenshot") {
                     ScreenshotsCarousel(
                         screenshots = screenshots,
-                        onScreenshotClick = { onScreenshotClick(screenshots, it) },
+                        onScreenshotClick = { onScreenshotClick(it) },
                         onShowAllClick = { showAllScreenshots = true }
                     )
                 }
@@ -345,7 +344,7 @@ private fun DetailsContent(
             }
 
             item(key = "bottom_padding") {
-                //FAB: Container height = 56.dp + vertical padding 16.dp * 2
+                //FAB height 56.dp + FAB padding 16.dp * 2
                 Spacer(modifier = Modifier.height(88.dp))
             }
         }
@@ -362,82 +361,36 @@ private fun DetailsContent(
         }
     }
 
-    state.characters?.let { characters ->
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        if (showAllCharacters) {
-            ModalBottomSheet(
-                onDismissRequest = { showAllCharacters = false },
-                sheetState = sheetState
-            ) {
-                CharactersBottomSheetContent(
-                    allCharacters = characters,
-                    onCharacterClick = onCharacterClick,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
+    if (state.authors != null && showAllAuthors) {
+        AuthorsBottomSheet(
+            authors = state.authors,
+            onAuthorClick = onAuthorClick,
+            onDismissRequest = { showAllAuthors = false }
+        )
     }
 
-    state.related?.let { relatedEntries ->
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        if (showAllRelatedEntries) {
-            ModalBottomSheet(
-                onDismissRequest = { showAllRelatedEntries = false },
-                sheetState = sheetState
-            ) {
-                RelatedBottomSheetContent(
-                    related = relatedEntries,
-                    onEntryClick = onEntryClick,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
+    if (state.characters != null && showAllCharacters) {
+        CharactersBottomSheet(
+            allCharacters = state.characters,
+            onCharacterClick = onCharacterClick,
+            onDismissRequest = { showAllCharacters = false }
+        )
     }
 
-    state.similar?.let { similarEntries ->
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        if (showAllSimilarEntries) {
-            ModalBottomSheet(
-                onDismissRequest = { showAllSimilarEntries = false },
-                sheetState = sheetState
-            ) {
-                SimilarBottomSheetContent(
-                    similarEntries = similarEntries,
-                    onEntryClick = onEntryClick
-                )
-            }
-        }
+    if (state.related != null && showAllRelatedEntries) {
+        RelatedBottomSheet(
+            related = state.related,
+            onEntryClick = onEntryClick,
+            onDismissRequest = { showAllRelatedEntries = false }
+        )
     }
 
-    state.authors?.let { authors ->
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        if (showAllAuthors) {
-            ModalBottomSheet(
-                onDismissRequest = { showAllAuthors = false },
-                sheetState = sheetState
-            ) {
-                AuthorsBottomSheetContent(
-                    authors = authors,
-                    onAuthorClick = onAuthorClick
-                )
-            }
-        }
-    }
-
-    state.screenshots?.let { screenshots ->
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        if (showAllScreenshots) {
-            ModalBottomSheet(
-                onDismissRequest = { showAllScreenshots = false },
-                sheetState = sheetState
-            ) {
-                ScreenshotsBottomSheetContent(
-                    screenshots = screenshots,
-                    onScreenshotClick = { onScreenshotClick(screenshots, it) },
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
+    if (state.screenshots != null && showAllScreenshots) {
+        ScreenshotsBottomSheet(
+            screenshots = state.screenshots,
+            onScreenshotClick = onScreenshotClick,
+            onDismissRequest = { showAllScreenshots = false }
+        )
     }
 }
 
