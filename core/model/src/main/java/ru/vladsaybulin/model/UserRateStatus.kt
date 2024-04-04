@@ -3,7 +3,7 @@ package ru.vladsaybulin.model
 enum class UserRateStatus(val serializedName: String) {
     Planned("planned"),
     Watching("watching"),
-    Rewatching("rewathing"),
+    Rewatching("rewatching"),
     Completed("completed"),
     OnHold("on_hold"),
     Dropped("dropped"),
