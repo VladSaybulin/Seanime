@@ -1,4 +1,4 @@
-package ru.vladsaybulin.feature.userrate.components
+package ru.vladsaybulin.core.ui
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
-import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
 import ru.vladsaybulin.core.ui.strings.animeUserRateStatusString
 import ru.vladsaybulin.model.UserRateStatus
 

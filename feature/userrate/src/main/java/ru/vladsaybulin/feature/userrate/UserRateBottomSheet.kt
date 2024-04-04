@@ -42,10 +42,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.ui.UserRateStatusButton
+import ru.vladsaybulin.core.ui.UserRateStatusButtonDefaults
 import ru.vladsaybulin.feature.userrate.components.Counter
 import ru.vladsaybulin.feature.userrate.components.ScoreRow
-import ru.vladsaybulin.feature.userrate.components.UserRateStatusButton
-import ru.vladsaybulin.feature.userrate.components.UserRateStatusButtonDefaults
 import ru.vladsaybulin.model.EntryStatus
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.UserRate
