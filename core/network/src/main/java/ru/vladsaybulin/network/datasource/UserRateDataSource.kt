@@ -7,17 +7,22 @@ import kotlinx.serialization.json.encodeToJsonElement
 import retrofit2.Retrofit
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import ru.vladsaybulin.common.network.NotFoundException
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.network.di.AuthorizedClient
+import ru.vladsaybulin.network.models.CreateUserRateDto
 import ru.vladsaybulin.network.models.UserRateValuesDto
 import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private interface UserRateApi {
+
+    @POST("/api/v2/user_rates/")
+    suspend fun createUserRate(@Body userRate: JsonObject) : UserRateWithEntryLinkDto?
 
     @PUT("/api/v2/user_rates/{id}")
     suspend fun updateUserRate(
@@ -43,6 +48,13 @@ class UserRateDataSource @Inject constructor(
         val anime = response.dataAssertNoErrors.animes.firstOrNull()
             ?: throw NotFoundException("Not found anime where id = $animeId")
         return anime.userRate
+    }
+
+    suspend fun createUserRate(createUserRateDto: CreateUserRateDto): UserRateWithEntryLinkDto? {
+        val wrappedBody = JsonObject(
+            mapOf("user_rate" to json.encodeToJsonElement(createUserRateDto))
+        )
+        return api.createUserRate(wrappedBody)
     }
 
     suspend fun updateUserRate(
