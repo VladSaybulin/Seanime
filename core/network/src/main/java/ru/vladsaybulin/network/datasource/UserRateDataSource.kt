@@ -14,6 +14,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import ru.vladsaybulin.common.network.ShikimoriException
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
+import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.models.CreateUserRateDto
 import ru.vladsaybulin.network.models.UserRateValuesDto
@@ -50,6 +51,13 @@ class UserRateDataSource @Inject constructor(
         val anime = response.dataAssertNoErrors.animes.firstOrNull()
             ?: throw ShikimoriException("Not found anime where id = $animeId")
         return anime.userRate
+    }
+
+    suspend fun getMangaUserRate(mangaId: Long): MangaUserRateQuery.UserRate? {
+        val response = apolloClient.query(MangaUserRateQuery(id = mangaId.toString())).execute()
+        val manga = response.dataAssertNoErrors.mangas.firstOrNull()
+            ?: throw ShikimoriException("Not found manga where id = $mangaId")
+        return manga.userRate
     }
 
     suspend fun createUserRate(createUserRateDto: CreateUserRateDto): UserRateWithEntryLinkDto? {
