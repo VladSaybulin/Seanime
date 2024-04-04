@@ -5,6 +5,7 @@ import ru.vladsaybulin.database.models.UserRateDbo
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateValues
+import ru.vladsaybulin.network.models.CreateUserRateDto
 import ru.vladsaybulin.network.models.UserRateValuesDto
 import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
 
@@ -51,3 +52,23 @@ fun UserRateWithEntryLinkDto.asDbo() = UserRateDbo(
     createdAt = createdAt,
     updatedAt = updatedAt
 )
+
+fun CreateUserRateDto(
+    userId: Long,
+    entryType: EntryType,
+    entryId: Long,
+    userRateValues: UserRateValues
+) = with(userRateValues) {
+    CreateUserRateDto(
+        userId = userId,
+        targetType = entryType,
+        targetId = entryId,
+        status = status,
+        score = score,
+        episodes = episodes ?: 0,
+        chapters = chapters ?: 0,
+        volumes = volumes ?: 0,
+        rewatches = rewatches,
+        text = text
+    )
+}

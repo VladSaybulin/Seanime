@@ -13,3 +13,8 @@ fun PosterDto.asPoster() = Poster(
     originalUrl = originalUrl,
     previewUrl = previewUrl
 )
+
+fun Poster.asDbo() = PosterDbo(
+    originalUrl = originalUrl,
+    previewUrl = previewUrl
+)

@@ -7,3 +7,5 @@ import ru.vladsaybulin.network.models.IncompleteDateDto
 fun IncompleteDateDto.asDbo() = IncompleteDateDbo(day, month, year)
 
 fun IncompleteDateDto.asIncompleteDate() = IncompleteDate(day, month, year)
+
+fun IncompleteDate.asDbo() = IncompleteDateDbo(day, month, year)

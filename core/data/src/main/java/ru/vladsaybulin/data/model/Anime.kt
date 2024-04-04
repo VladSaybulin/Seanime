@@ -31,3 +31,17 @@ fun AnimeDto.asAnime() = Anime(
     airedOn = airedOn?.asIncompleteDate(),
     releasedOn = releasedOn?.asIncompleteDate()
 )
+
+fun Anime.asDbo() = AnimeDbo(
+    id = id,
+    originalName = originalName,
+    russianName = russianName,
+    poster = poster?.asDbo(),
+    kind = kind,
+    status = status,
+    score = score ?: 0f,
+    episodes = episodes,
+    episodesAired = episodesAired,
+    airedOn = airedOn?.asDbo(),
+    releasedOn = releasedOn?.asDbo()
+)
