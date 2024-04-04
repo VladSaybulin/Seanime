@@ -4,6 +4,8 @@ import com.apollographql.apollo3.ApolloClient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
+import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -31,7 +33,7 @@ private interface UserRateApi {
     ) : UserRateWithEntryLinkDto?
 
     @DELETE("/api/v2/user_rates/{id}")
-    suspend fun deleteUserRate(@Path("id") userRateId: Long)
+    suspend fun deleteUserRate(@Path("id") userRateId: Long): Response<ResponseBody>
 }
 
 @Singleton
