@@ -5,7 +5,8 @@ query MangaUserRateQuery($id: String!) {
             createdAt
             updatedAt
             status
-            episodes
+            chapters
+            volumes
             rewatches
             score
             text
