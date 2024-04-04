@@ -13,7 +13,7 @@ data class AnimeDbo(
     @ColumnInfo("id")
     val id: Long,
     @ColumnInfo("name") val originalName: String,
-    @ColumnInfo("russian_name") val russianName: String,
+    @ColumnInfo("russian_name") val russianName: String?,
     @Embedded("image") val poster: PosterDbo?,
     @ColumnInfo("kind") val kind: AnimeKind,
     @ColumnInfo("status") val status: EntryStatus,
