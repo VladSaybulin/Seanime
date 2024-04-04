@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
 import retrofit2.http.Path
-import ru.vladsaybulin.common.network.NotFoundException
+import ru.vladsaybulin.common.network.ShikimoriException
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.models.AnimeDto
@@ -27,7 +27,7 @@ class AnimeDataSource @Inject constructor(
     suspend fun getAnimeDetails(animeId: Long): AnimeDetailsQuery.Anime {
         val response = apolloClient.query(AnimeDetailsQuery(id = animeId.toString())).execute()
         return response.dataAssertNoErrors.animes.firstOrNull()
-            ?: throw NotFoundException("Not found anime where id = $animeId")
+            ?: throw ShikimoriException("Not found anime where id = $animeId")
     }
 
     suspend fun getSimilarAnimes(animeId: Long) = api.getSimilarAnime(animeId)

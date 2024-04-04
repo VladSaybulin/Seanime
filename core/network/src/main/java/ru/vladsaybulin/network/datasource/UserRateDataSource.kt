@@ -12,7 +12,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import ru.vladsaybulin.common.network.NotFoundException
+import ru.vladsaybulin.common.network.ShikimoriException
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.models.CreateUserRateDto
@@ -48,7 +48,7 @@ class UserRateDataSource @Inject constructor(
     suspend fun getAnimeUserRate(animeId: Long): AnimeUserRateQuery.UserRate? {
         val response = apolloClient.query(AnimeUserRateQuery(id = animeId.toString())).execute()
         val anime = response.dataAssertNoErrors.animes.firstOrNull()
-            ?: throw NotFoundException("Not found anime where id = $animeId")
+            ?: throw ShikimoriException("Not found anime where id = $animeId")
         return anime.userRate
     }
 
