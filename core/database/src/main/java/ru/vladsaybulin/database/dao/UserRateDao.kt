@@ -13,6 +13,9 @@ interface UserRateDao {
     @Query("SELECT * FROM user_rates WHERE anime_id = :animeId AND manga_id IS NULL")
     fun getAnimeUserRate(animeId: Long): Flow<UserRateDbo?>
 
+    @Query("SELECT * FROM user_rates WHERE anime_id IS NULL AND manga_id = :mangaId")
+    fun getMangaUserRate(mangaId: Long): Flow<UserRateDbo?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceUserRates(userRates: List<UserRateDbo>)
 
