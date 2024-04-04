@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.CreateUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEntryDetailsUseCase
+import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.feature.details.navigation.DetailsArgs
 import ru.vladsaybulin.feature.userrate.Limit
 import ru.vladsaybulin.feature.userrate.UserRateEditorContext
@@ -28,6 +29,7 @@ import javax.inject.Provider
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val userRateRepository: UserRateRepository,
     private val getEntryDetailsUseCase: GetEntryDetailsUseCase,
     private val createUserRateUseCaseProvider: Provider<CreateUserRateUseCase>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
@@ -44,11 +46,20 @@ class DetailsViewModel @Inject constructor(
             initialValue = false
         )
 
+    val userRate = when (args.entryType) {
+        EntryType.Anime -> userRateRepository.getAnimeUserRate(args.entryId)
+        else -> TODO()
+    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = null
+        )
+
     val uiState = entryDetails
         .map { details ->
             DetailsUiState(
                 details.anime!!,
-                details.userRate,
                 details.similarEntries
             ) as DetailsUiState
         }
@@ -73,7 +84,7 @@ class DetailsViewModel @Inject constructor(
 
     fun getUserRateEditorContext(): UserRateEditorContext? {
         val lastEntryDetailsLoaded = entryDetails.replayCache.firstOrNull() ?: return null
-        if (lastEntryDetailsLoaded.userRate == null) return null
+        if (userRate.value == null) return null
         return if (lastEntryDetailsLoaded.anime != null) {
             lastEntryDetailsLoaded.anime!!.getUserRateEditorContext()
         } else TODO() //Manga
@@ -89,7 +100,9 @@ class DetailsViewModel @Inject constructor(
     }
 
     private fun refresh() = viewModelScope.launch {
-        entryDetails.emit(getEntryDetailsUseCase(args.entryType, args.entryId).first())
+        getEntryDetailsUseCase(args.entryType, args.entryId).collect{
+            entryDetails.emit(it)
+        }
     }
 }
 

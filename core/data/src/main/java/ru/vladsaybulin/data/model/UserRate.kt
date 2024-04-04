@@ -9,17 +9,32 @@ import ru.vladsaybulin.network.models.CreateUserRateDto
 import ru.vladsaybulin.network.models.UserRateValuesDto
 import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
 
-fun AnimeUserRateQuery.UserRate.asUserRate() = UserRate(
+fun UserRateDbo.asUserRate() = UserRate(
     id = id,
     createdAt = createdAt,
     updatedAt = updatedAt,
+    status = status,
+    score = score,
+    episodes = episodes,
+    chapters = 0,
+    volumes = 0,
+    rewatches = rewatches,
+    text = text
+)
+
+fun AnimeUserRateQuery.UserRate.asDbo(animeId: Long) = UserRateDbo(
+    id = id,
+    animeId = animeId,
+    mangaId = null,
     status = status.asUserRateStatus(),
     score = score,
     episodes = episodes,
     chapters = 0,
     volumes = 0,
     rewatches = rewatches,
-    text = text ?: ""
+    text = text ?: "",
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
 fun UserRateValues.asDto() = UserRateValuesDto(

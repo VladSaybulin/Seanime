@@ -110,4 +110,13 @@ fun animeUserRateStatusStringResId(userRateStatus: UserRateStatus) = when (userR
 fun animeUserRateStatusString(userRateStatus: UserRateStatus) =
     animeUserRateStatusStringResId(userRateStatus)?.let { stringResource(id = it) }
 
+@Composable
+@ReadOnlyComposable
+fun notNoneAnimeUserRateStatusString(userRateStatus: UserRateStatus) =
+    stringResource(
+        id = requireNotNull(animeUserRateStatusStringResId(userRateStatus)) {
+            "UserRateStatus is None"
+        }
+    )
+
 

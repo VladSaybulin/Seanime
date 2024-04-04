@@ -2,8 +2,9 @@ package ru.vladsaybulin.data.repository
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -25,9 +26,18 @@ class UserRateRepository @Inject constructor(
     private val userRepository: UserRepository,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-    fun getAnimeUserRate(animeId: Long): Flow<UserRate?> = flow {
-        emit(userRateDataSource.getAnimeUserRate(animeId)?.asUserRate())
-    }.flowOn(ioDispatcher)
+    fun getAnimeUserRate(animeId: Long): Flow<UserRate?> =
+        database.userRateDao.getAnimeUserRate(animeId)
+            .onStart { refreshAnimeUserRate(animeId) }
+            .map { it?.asUserRate() }
+            .flowOn(ioDispatcher)
+
+    suspend fun refreshAnimeUserRate(animeId: Long) {
+        val dbo = userRateDataSource.getAnimeUserRate(animeId)?.asDbo(animeId)
+        if (dbo != null) {
+            database.userRateDao.insertOrReplaceUserRate(dbo)
+        }
+    }
 
     suspend fun createUserRate(userRateValues: UserRateValues, anime: Anime) {
         withContext(ioDispatcher) {

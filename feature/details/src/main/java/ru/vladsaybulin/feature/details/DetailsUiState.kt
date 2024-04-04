@@ -14,7 +14,6 @@ import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.RelatedEntry
 import ru.vladsaybulin.model.Screenshot
 import ru.vladsaybulin.model.SimilarEntry
-import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.Video
 import ru.vladsaybulin.model.isNullOrEmpty
 
@@ -30,7 +29,6 @@ sealed class DetailsUiState {
         val russianName: String?,
         val status: EntryStatus,
         val info: List<DetailsInfo>,
-        val userRate: UserRate?,
         val description: DetailsDescription?,
         val authors: ImmutableList<PersonWithRoles>?,
         val related: ImmutableList<RelatedEntry>?,
@@ -43,7 +41,6 @@ sealed class DetailsUiState {
 
 fun DetailsUiState(
     animeDetails: AnimeDetails,
-    userRate: UserRate?,
     similar: List<SimilarEntry>
 ) = animeDetails.run {
     DetailsUiState.Success(
@@ -95,8 +92,7 @@ fun DetailsUiState(
         related = related?.ifEmpty { null }?.toImmutableList(),
         screenshots = screenshots.ifEmpty { null }?.toImmutableList(),
         videos = videos?.ifEmpty { null }?.toImmutableList(),
-        similar = similar.ifEmpty { null }?.toImmutableList(),
-        userRate = userRate,
+        similar = similar.ifEmpty { null }?.toImmutableList()
     )
 }
 

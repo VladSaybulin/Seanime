@@ -1,5 +1,3 @@
-@file:JvmName("IncompleteDateKt")
-
 package ru.vladsaybulin.data.model
 
 import kotlinx.datetime.LocalDate

@@ -23,9 +23,8 @@ class MainActivity : ComponentActivity() {
 
         authorizationLauncher = registerAuthorizationLauncher(authState)
 
-        //if (!authState.isAuthorized) {
-        //    authorizationLauncher.launch()
-        //}
+        //authorizationLauncher.launch()
+
 
         enableEdgeToEdge()
 

@@ -14,8 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,12 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
-import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
-import ru.vladsaybulin.core.ui.strings.animeUserRateStatusString
-import ru.vladsaybulin.core.ui.userRateStatusIcon
 import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
@@ -54,6 +47,7 @@ import ru.vladsaybulin.feature.details.content.RelatedBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
 import ru.vladsaybulin.feature.details.content.SimilarCarousel
+import ru.vladsaybulin.feature.details.content.UserRateFab
 import ru.vladsaybulin.feature.details.content.UserRateStatusSelectionBottomSheet
 import ru.vladsaybulin.feature.details.content.VideosCarousel
 import ru.vladsaybulin.feature.details.content.relatedItems
@@ -75,10 +69,12 @@ fun DetailsRoute(
     onBackClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val userRate by viewModel.userRate.collectAsStateWithLifecycle()
     val enabledAutocorrect by viewModel.enabledAutocorrectStatus.collectAsStateWithLifecycle()
 
     DetailsScreen(
         uiState = uiState,
+        userRate = userRate,
         enabledAutocorrect = enabledAutocorrect,
         onRetry = viewModel::onRetry,
         onRefresh = viewModel::onRefresh,
@@ -86,9 +82,9 @@ fun DetailsRoute(
         onScreenshotClick = onScreenshotClick,
         onBackClick = onBackClick,
         modifier = modifier,
-        onEditUserRateClick = { userRate ->
+        onEditUserRateClick = {
             val context = viewModel.getUserRateEditorContext() ?: return@DetailsScreen
-            onEditUserRateClick(userRate, context)
+            onEditUserRateClick(checkNotNull(userRate), context)
         },
         onCreateUserRate = viewModel::createUserRate
     )
@@ -97,12 +93,13 @@ fun DetailsRoute(
 @Composable
 fun DetailsScreen(
     uiState: DetailsUiState,
+    userRate: UserRate?,
     enabledAutocorrect: Boolean,
     onRetry: () -> Unit,
     onRefresh: suspend () -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
-    onEditUserRateClick: (UserRate) -> Unit,
+    onEditUserRateClick: () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -120,6 +117,7 @@ fun DetailsScreen(
 
         is DetailsUiState.Success -> DetailsContent(
             state = uiState,
+            userRate = userRate,
             enabledAutocorrect = enabledAutocorrect,
             onEntryClick = onEntryClick,
             onBackClick = onBackClick,
@@ -180,9 +178,10 @@ private fun DetailsLoading(modifier: Modifier = Modifier) {
 @Composable
 private fun DetailsContent(
     state: DetailsUiState.Success,
+    userRate: UserRate?,
     enabledAutocorrect: Boolean,
     onRefresh: suspend () -> Unit,
-    onEditUserRateClick: (UserRate) -> Unit,
+    onEditUserRateClick: () -> Unit,
     onAuthorClick: (Long) -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onCharacterClick: (Long) -> Unit,
@@ -228,11 +227,11 @@ private fun DetailsContent(
         },
         floatingActionButton = {
             UserRateFab(
-                status = state.userRate?.status ?: UserRateStatus.None,
+                userRateStatus = userRate?.status ?: UserRateStatus.None,
                 expanded = expandedFab,
                 onClick = {
-                    if (state.userRate != null) {
-                        onEditUserRateClick(state.userRate)
+                    if (userRate != null) {
+                        onEditUserRateClick()
                     } else {
                         if (state.status == EntryStatus.Anons) {
                             onCreateUserRate(UserRateStatus.Planned)
@@ -417,33 +416,6 @@ private fun DetailsContent(
     }
 }
 
-@Composable
-private fun UserRateFab(
-    status: UserRateStatus?,
-    expanded: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val icon = status?.let { userRateStatusIcon(userRateStatus = it) }
-        ?: ShikimoriIcons.Add
-
-    val text = status?.let { animeUserRateStatusString(userRateStatus = it) }
-        ?: stringResource(id = R.string.add)
-
-    ExtendedFloatingActionButton(
-        text = { Text(text = text) },
-        icon = { Icon(imageVector = icon, contentDescription = null) },
-        onClick = onClick,
-        expanded = expanded,
-        containerColor = status?.let {
-            userRateStatusContainerColor(userRateStatus = it)
-        } ?: ShikimoriTheme.colorScheme.primaryContainer,
-        contentColor = status?.let {
-            onUserRateStatusContainerColor(userRateStatus = it)
-        } ?: ShikimoriTheme.colorScheme.onPrimaryContainer,
-        modifier = modifier
-    )
-}
 
 private val HorizontalPadding = PaddingValues(horizontal = 16.dp)
 private val HorizontalPaddingModifier = Modifier.padding(HorizontalPadding)
