@@ -17,7 +17,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,6 +40,7 @@ import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.UserRateStatusButton
 import ru.vladsaybulin.core.ui.UserRateStatusButtonDefaults
@@ -72,7 +72,7 @@ fun UserRateBottomSheet(
         }.invokeOnCompletion { onDismissRequest() }
     }
 
-    ModalBottomSheet(
+    ShikimoriModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         modifier = modifier
