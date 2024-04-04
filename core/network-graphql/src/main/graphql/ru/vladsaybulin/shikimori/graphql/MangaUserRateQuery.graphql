@@ -1,0 +1,14 @@
+query MangaUserRateQuery($id: String!) {
+    mangas(ids: $id) {
+        userRate {
+            id
+            createdAt
+            updatedAt
+            status
+            episodes
+            rewatches
+            score
+            text
+        }
+    }
+}

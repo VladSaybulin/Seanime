@@ -1,0 +1,127 @@
+query MangaDetailsQuery($id: String!) {
+    mangas(ids: $id) {
+        id
+        name
+        russian
+        english
+        japanese
+        synonyms
+        licenseNameRu
+        poster {
+            previewUrl
+            originalUrl
+        }
+        kind
+        score
+        status
+        chapters
+        volumes
+        airedOn {
+            day
+            month
+            year
+        }
+        releasedOn {
+            day
+            month
+            year
+        }
+        descriptionHtml
+        descriptionSource
+        genres {
+            id
+            name
+            russian
+            kind
+        }
+        scoresStats {
+            score
+            count
+        }
+        statusesStats {
+            status
+            count
+        }
+        publishers {
+            id
+            name
+        }
+        personRoles {
+            person {
+                id
+                name
+                russian
+                poster {
+                    previewUrl
+                    originalUrl
+                }
+            }
+            rolesEn
+            rolesRu
+        }
+        characterRoles {
+            character {
+                id
+                name
+                russian
+                poster {
+                    previewUrl
+                    originalUrl
+                }
+            }
+            rolesEn
+        }
+        related {
+            anime {
+                id
+                name
+                russian
+                poster {
+                    previewUrl
+                    originalUrl
+                }
+                kind
+                score
+                status
+                episodes
+                episodesAired
+                airedOn {
+                    day
+                    month
+                    year
+                }
+                releasedOn {
+                    day
+                    month
+                    year
+                }
+            }
+            manga {
+                id
+                name
+                russian
+                poster {
+                    previewUrl
+                    originalUrl
+                }
+                kind
+                score
+                status
+                chapters
+                volumes
+                airedOn {
+                    day
+                    month
+                    year
+                }
+                releasedOn {
+                    day
+                    month
+                    year
+                }
+            }
+            relationEn
+            relationRu
+        }
+    }
+}
