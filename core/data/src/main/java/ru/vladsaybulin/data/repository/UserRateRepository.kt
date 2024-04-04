@@ -54,37 +54,31 @@ class UserRateRepository @Inject constructor(
     }
 
     suspend fun createUserRate(userRateValues: UserRateValues, anime: Anime) {
-        withContext(ioDispatcher) {
-            val myId = userRepository.getMyId() ?: throw IllegalStateException("Not authorized")
-            val response = try {
-                userRateDataSource.createUserRate(
-                    CreateUserRateDto(
-                        userId = myId,
-                        entryType = EntryType.Anime,
-                        entryId = anime.id,
-                        userRateValues = userRateValues
-                    )
-                )
-            } catch (exception: Exception) {
-                //TODO If UserRate exists then load and save remote UserRate
-                throw exception
-            }
-            if (response != null) {
-                database.animeDao.insertOrReplaceAnimeEntity(anime.asDbo())
-                database.userRateDao.insertOrReplaceUserRate(response.asDbo())
-            }
+        createUserRate(EntryType.Anime, anime.id, userRateValues) {
+            database.animeDao.insertOrReplaceAnimeEntity(anime.asDbo())
         }
     }
 
     suspend fun createUserRate(userRateValues: UserRateValues, manga: Manga) {
+        createUserRate(EntryType.Manga, manga.id, userRateValues) {
+            database.mangaDao.insertOrReplaceMangaEntity(manga.asDbo())
+        }
+    }
+
+    private suspend fun createUserRate(
+        entryType: EntryType,
+        entryId: Long,
+        userRateValues: UserRateValues,
+        onSaveEntity: suspend () -> Unit
+    ) {
         withContext(ioDispatcher) {
             val myId = userRepository.getMyId() ?: throw IllegalStateException("Not authorized")
             val response = try {
                 userRateDataSource.createUserRate(
                     CreateUserRateDto(
                         userId = myId,
-                        entryType = EntryType.Manga,
-                        entryId = manga.id,
+                        entryType = entryType,
+                        entryId = entryId,
                         userRateValues = userRateValues
                     )
                 )
@@ -93,7 +87,7 @@ class UserRateRepository @Inject constructor(
                 throw exception
             }
             if (response != null) {
-                database.animeDao.insertOrReplaceAnimeEntity(manga.asDbo())
+                onSaveEntity()
                 database.userRateDao.insertOrReplaceUserRate(response.asDbo())
             }
         }
