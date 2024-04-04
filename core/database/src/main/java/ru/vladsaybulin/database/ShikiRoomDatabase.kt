@@ -9,16 +9,19 @@ import ru.vladsaybulin.database.dao.CalendarDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.AnimeDbo
 import ru.vladsaybulin.database.models.CalendarItemDbo
+import ru.vladsaybulin.database.models.MangaDbo
 import ru.vladsaybulin.database.models.UserRateDbo
 import ru.vladsaybulin.database.utils.AnimeKindTypeConverter
 import ru.vladsaybulin.database.utils.EntryStatusTypeConverter
 import ru.vladsaybulin.database.utils.InstantTypeConverter
+import ru.vladsaybulin.database.utils.MangaKindTypeConverter
 import ru.vladsaybulin.database.utils.UserRateTypeConverter
 
 @Database(
     entities = [
         CalendarItemDbo::class,
         AnimeDbo::class,
+        MangaDbo::class,
         UserRateDbo::class
     ],
     version = 1,
@@ -26,6 +29,7 @@ import ru.vladsaybulin.database.utils.UserRateTypeConverter
 @TypeConverters(
     value = [
         AnimeKindTypeConverter::class,
+        MangaKindTypeConverter::class,
         EntryStatusTypeConverter::class,
         InstantTypeConverter::class,
         UserRateTypeConverter::class
