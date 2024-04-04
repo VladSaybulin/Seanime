@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import ru.vladsaybulin.common.network.NotFoundException
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
+import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.models.AnimeDto
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,7 +19,7 @@ interface AnimeApi {
 
 @Singleton
 class AnimeDataSource @Inject constructor(
-    private val apolloClient: ApolloClient,
+    @AuthorizedClient private val apolloClient: ApolloClient,
     retrofit: Retrofit
 ) {
     private val api: AnimeApi = retrofit.create()
