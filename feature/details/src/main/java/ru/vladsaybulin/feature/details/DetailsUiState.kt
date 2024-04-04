@@ -28,6 +28,7 @@ sealed class DetailsUiState {
         val poster: Poster?,
         val name: String,
         val russianName: String?,
+        val status: EntryStatus,
         val info: List<DetailsInfo>,
         val userRate: UserRate?,
         val description: DetailsDescription?,
@@ -50,6 +51,7 @@ fun DetailsUiState(
         poster = poster,
         name = originalName,
         russianName = russianName,
+        status = status,
         info = buildList {
             if (shouldShowKindAndEpisodes()) {
                 add(

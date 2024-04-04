@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.vladsaybulin.core.domain.CreateUserRateUseCase
+import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEntryDetailsUseCase
 import ru.vladsaybulin.feature.details.navigation.DetailsArgs
 import ru.vladsaybulin.feature.userrate.Limit
@@ -19,17 +21,28 @@ import ru.vladsaybulin.model.AnimeDetails
 import ru.vladsaybulin.model.EntryDetails
 import ru.vladsaybulin.model.EntryStatus.Ongoing
 import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.UserRateStatus
 import javax.inject.Inject
+import javax.inject.Provider
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val getEntryDetailsUseCase: GetEntryDetailsUseCase
+    private val getEntryDetailsUseCase: GetEntryDetailsUseCase,
+    private val createUserRateUseCaseProvider: Provider<CreateUserRateUseCase>,
+    getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
 ) : ViewModel() {
 
     private val args = DetailsArgs(savedStateHandle)
 
     private val entryDetails = MutableSharedFlow<EntryDetails>(replay = 1)
+
+    val enabledAutocorrectStatus = getEnableAutocorrectUserRateUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = false
+        )
 
     val uiState = entryDetails
         .map { details ->
@@ -64,6 +77,15 @@ class DetailsViewModel @Inject constructor(
         return if (lastEntryDetailsLoaded.anime != null) {
             lastEntryDetailsLoaded.anime!!.getUserRateEditorContext()
         } else TODO() //Manga
+    }
+
+    fun createUserRate(status: UserRateStatus) {
+        viewModelScope.launch {
+            createUserRateUseCaseProvider.get().invoke(
+                userRateStatus = status,
+                entryDetails = entryDetails.first()
+            )
+        }
     }
 
     private fun refresh() = viewModelScope.launch {

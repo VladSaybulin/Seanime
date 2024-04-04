@@ -28,7 +28,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,7 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
@@ -56,9 +54,11 @@ import ru.vladsaybulin.feature.details.content.RelatedBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
 import ru.vladsaybulin.feature.details.content.SimilarCarousel
+import ru.vladsaybulin.feature.details.content.UserRateStatusSelectionBottomSheet
 import ru.vladsaybulin.feature.details.content.VideosCarousel
 import ru.vladsaybulin.feature.details.content.relatedItems
 import ru.vladsaybulin.feature.userrate.UserRateEditorContext
+import ru.vladsaybulin.model.EntryStatus
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.Screenshot
 import ru.vladsaybulin.model.UserRate
@@ -75,9 +75,11 @@ fun DetailsRoute(
     onBackClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val enabledAutocorrect by viewModel.enabledAutocorrectStatus.collectAsStateWithLifecycle()
 
     DetailsScreen(
         uiState = uiState,
+        enabledAutocorrect = enabledAutocorrect,
         onRetry = viewModel::onRetry,
         onRefresh = viewModel::onRefresh,
         onEntryClick = onEntryClick,
@@ -87,18 +89,21 @@ fun DetailsRoute(
         onEditUserRateClick = { userRate ->
             val context = viewModel.getUserRateEditorContext() ?: return@DetailsScreen
             onEditUserRateClick(userRate, context)
-        }
+        },
+        onCreateUserRate = viewModel::createUserRate
     )
 }
 
 @Composable
 fun DetailsScreen(
     uiState: DetailsUiState,
+    enabledAutocorrect: Boolean,
     onRetry: () -> Unit,
     onRefresh: suspend () -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
     onEditUserRateClick: (UserRate) -> Unit,
+    onCreateUserRate: (UserRateStatus) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -115,11 +120,13 @@ fun DetailsScreen(
 
         is DetailsUiState.Success -> DetailsContent(
             state = uiState,
+            enabledAutocorrect = enabledAutocorrect,
             onEntryClick = onEntryClick,
             onBackClick = onBackClick,
             onRefresh = onRefresh,
             modifier = modifier,
             onEditUserRateClick = onEditUserRateClick,
+            onCreateUserRate = onCreateUserRate,
             onAuthorClick = {},
             onCharacterClick = {},
             onScreenshotClick = { index ->
@@ -173,6 +180,7 @@ private fun DetailsLoading(modifier: Modifier = Modifier) {
 @Composable
 private fun DetailsContent(
     state: DetailsUiState.Success,
+    enabledAutocorrect: Boolean,
     onRefresh: suspend () -> Unit,
     onEditUserRateClick: (UserRate) -> Unit,
     onAuthorClick: (Long) -> Unit,
@@ -180,19 +188,19 @@ private fun DetailsContent(
     onCharacterClick: (Long) -> Unit,
     onScreenshotClick: (screenshotIndex: Int) -> Unit,
     onVideoClick: (Video) -> Unit,
+    onCreateUserRate: (UserRateStatus) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier
 ) {
-
-    val coroutineScope = rememberCoroutineScope()
-
-    var showAllCharacters by remember { mutableStateOf(false) }
-    var showAllRelatedEntries by remember { mutableStateOf(false) }
-    var showAllSimilarEntries by remember { mutableStateOf(false) }
-    var showAllAuthors by remember { mutableStateOf(false) }
+    var showAllCharacters by rememberSaveable { mutableStateOf(false) }
+    var showAllRelatedEntries by rememberSaveable { mutableStateOf(false) }
+    var showAllSimilarEntries by rememberSaveable { mutableStateOf(false) }
+    var showAllAuthors by rememberSaveable { mutableStateOf(false) }
     var showAllScreenshots by rememberSaveable { mutableStateOf(false) }
 
-    var expandedDescription by remember { mutableStateOf(false) }
+    var showUserRateStatusSelection by remember { mutableStateOf(false) }
+
+    var expandedDescription by rememberSaveable { mutableStateOf(false) }
 
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val pullToRefreshState = rememberPullToRefreshState()
@@ -225,6 +233,12 @@ private fun DetailsContent(
                 onClick = {
                     if (state.userRate != null) {
                         onEditUserRateClick(state.userRate)
+                    } else {
+                        if (state.status == EntryStatus.Anons) {
+                            onCreateUserRate(UserRateStatus.Planned)
+                        } else {
+                            showUserRateStatusSelection = true
+                        }
                     }
                 }
             )
@@ -304,9 +318,7 @@ private fun DetailsContent(
                     CharactersCarousel(
                         characters = it,
                         onShowAllClick = {
-                            coroutineScope.launch {
-                                showAllCharacters = true
-                            }
+                            showAllCharacters = true
                         },
                         onCharacterClick = onCharacterClick
                     )
@@ -390,6 +402,17 @@ private fun DetailsContent(
             screenshots = state.screenshots,
             onScreenshotClick = onScreenshotClick,
             onDismissRequest = { showAllScreenshots = false }
+        )
+    }
+
+    if (showUserRateStatusSelection) {
+        UserRateStatusSelectionBottomSheet(
+            enabledAutocorrect = enabledAutocorrect,
+            entryStatus = state.status,
+            onStatusClick = onCreateUserRate,
+            onDismissRequest = {
+                showUserRateStatusSelection = false
+            }
         )
     }
 }
