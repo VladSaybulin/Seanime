@@ -32,7 +32,8 @@ fun RelatedEntryListItem(
         RelatedMangaListItem(
             manga = manga,
             relationType = relatedEntry.relationType,
-            onClick = { onEntryClick(EntryType.Manga, manga.id) }
+            onClick = { onEntryClick(EntryType.Manga, manga.id) },
+            modifier = modifier
         )
     }
 }
