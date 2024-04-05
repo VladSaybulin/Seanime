@@ -3,18 +3,16 @@ package ru.vladsaybulin.core.auth
 import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.TokenResponse
-import ru.vladsaybulin.common.network.Dispatcher
-import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.network.di.ApplicationScope
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import javax.inject.Inject
@@ -23,14 +21,14 @@ class ShikimoriAuthState @Inject internal constructor(
     private val preferencesDataSource: ShikiPreferencesDataSource,
     @ApplicationContext context: Context,
     @ApplicationScope private val appScope: CoroutineScope,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-    internal var authState: AuthState = AuthState(
-        AuthorizationServiceConfiguration(
-            Uri.parse("${BuildConfig.BASE_URL}/oauth/authorize"),
-            Uri.parse("${BuildConfig.BASE_URL}/oauth/token")
-        )
-    )
+    internal var authState: AuthState = runBlocking {
+        preferencesDataSource.authStateJsonString.firstOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?.let { AuthState.jsonDeserialize(it) }
+            ?: InitialAuthState
+    }
+
     internal val service = AuthorizationService(context)
 
     val isAuthorized: Boolean
@@ -39,18 +37,13 @@ class ShikimoriAuthState @Inject internal constructor(
     val accessToken: String?
         get() = getFreshAccessToken()
 
-    init {
-        readAuthState()
-    }
-
     internal fun onLogin(response: TokenResponse) {
         authState.update(response, null)
         saveAuthState()
     }
 
     fun onLogout() {
-        if (!isAuthorized) return
-        authState = AuthState()
+        authState = InitialAuthState
         saveAuthState()
     }
 
@@ -67,25 +60,30 @@ class ShikimoriAuthState @Inject internal constructor(
     }
 
     private fun getFreshAccessToken(): String? {
-        var accessToken: String? = null
-        authState.performActionWithFreshTokens(service) { freshAccessToken, _, _ ->
-            accessToken = freshAccessToken
+        var accessToken: String? = authState.accessToken
+        authState.performActionWithFreshTokens(service) { freshAccessToken, _, ex ->
+            if (ex == null) return@performActionWithFreshTokens
+            if (accessToken != freshAccessToken) {
+                saveAuthState()
+                accessToken = freshAccessToken
+            }
         }
         return accessToken
     }
 
     private fun saveAuthState() {
-        appScope.launch(ioDispatcher) {
+        appScope.launch {
             preferencesDataSource.setAuthStateJsonString(authState.jsonSerializeString())
         }
     }
 
-    private fun readAuthState() {
-        appScope.launch {
-            val jsonStr = preferencesDataSource.authStateJsonString.firstOrNull()
-            if (!jsonStr.isNullOrEmpty()) {
-                authState = AuthState.jsonDeserialize(jsonStr)
-            }
-        }
+    companion object {
+        val InitialAuthState
+            get() = AuthState(
+            AuthorizationServiceConfiguration(
+                Uri.parse("${BuildConfig.BASE_URL}/oauth/authorize"),
+                Uri.parse("${BuildConfig.BASE_URL}/oauth/token")
+            )
+        )
     }
 }
