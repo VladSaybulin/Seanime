@@ -58,12 +58,7 @@ class DetailsViewModel @Inject constructor(
         )
 
     val uiState = entryDetails
-        .map { details ->
-            DetailsUiState(
-                details.anime!!,
-                details.similarEntries
-            ) as DetailsUiState
-        }
+        .map { details -> details.toUiState() }
         .catch { emit(DetailsUiState.Error(it)) }
         .stateIn(
             scope = viewModelScope,
