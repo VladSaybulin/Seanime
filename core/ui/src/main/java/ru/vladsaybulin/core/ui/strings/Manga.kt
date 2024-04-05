@@ -7,10 +7,11 @@ import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.EntryStatus
 import ru.vladsaybulin.model.MangaKind
+import ru.vladsaybulin.model.UserRateStatus
 
 @Composable
 @ReadOnlyComposable
-fun volumesAndChaptersString(
+fun chaptersAndVolumesString(
     volumes: Int,
     chapters: Int
 ): String? {
@@ -49,6 +50,31 @@ fun mangaKindStringResId(mangaKind: MangaKind) = when (mangaKind) {
 @ReadOnlyComposable
 fun mangaKindString(mangaKind: MangaKind) =
     mangaKindStringResId(mangaKind)?.let { stringResource(id = it) }
+
+
+fun mangaUserRateStatusStringResId(userRateStatus: UserRateStatus) = when (userRateStatus) {
+    UserRateStatus.Planned -> R.string.user_rate_status_planned
+    UserRateStatus.Watching -> R.string.user_rate_status_reading
+    UserRateStatus.Rewatching -> R.string.user_rate_status_rereading
+    UserRateStatus.Completed -> R.string.user_rate_status_read
+    UserRateStatus.OnHold -> R.string.user_rate_status_on_hold
+    UserRateStatus.Dropped -> R.string.user_rate_status_dropped
+    UserRateStatus.None -> null
+}
+
+@Composable
+@ReadOnlyComposable
+fun mangaUserRateStatusString(userRateStatus: UserRateStatus) =
+    mangaUserRateStatusStringResId(userRateStatus)?.let { stringResource(id = it) }
+
+@Composable
+@ReadOnlyComposable
+fun notNoneMangaUserRateStatusString(userRateStatus: UserRateStatus) =
+    stringResource(
+        id = requireNotNull(mangaUserRateStatusStringResId(userRateStatus)) {
+            "UserRateStatus is None"
+        }
+    )
 
 fun mangaStatusStringResId(status: EntryStatus) = when (status) {
     EntryStatus.Anons -> R.string.manga_status_anons

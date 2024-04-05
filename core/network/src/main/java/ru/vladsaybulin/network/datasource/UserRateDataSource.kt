@@ -39,7 +39,7 @@ private interface UserRateApi {
 
 @Singleton
 class UserRateDataSource @Inject constructor(
-    private val apolloClient: ApolloClient,
+    @AuthorizedClient private val apolloClient: ApolloClient,
     @AuthorizedClient retrofit: Retrofit,
     private val json: Json
 ) {

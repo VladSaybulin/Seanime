@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,11 +33,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.feature.details.content.AnimeInformation
 import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
@@ -43,6 +47,7 @@ import ru.vladsaybulin.feature.details.content.CharactersCarousel
 import ru.vladsaybulin.feature.details.content.Description
 import ru.vladsaybulin.feature.details.content.EntryDetailsName
 import ru.vladsaybulin.feature.details.content.EntryDetailsPoster
+import ru.vladsaybulin.feature.details.content.MangaInformation
 import ru.vladsaybulin.feature.details.content.RelatedBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
@@ -66,7 +71,10 @@ fun DetailsRoute(
     onEntryClick: (EntryType, Long) -> Unit,
     onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
     onEditUserRateClick: (UserRate, UserRateEditorContext) -> Unit,
-    onBackClick: () -> Unit = {},
+    onGenreClick: (Long) -> Unit = {},
+    onPublisherClick: (Long) -> Unit = {},
+    onStudioClick: (Long) -> Unit = {},
+    onBackClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val userRate by viewModel.userRate.collectAsStateWithLifecycle()
@@ -80,6 +88,9 @@ fun DetailsRoute(
         onRefresh = viewModel::onRefresh,
         onEntryClick = onEntryClick,
         onScreenshotClick = onScreenshotClick,
+        onGenreClick = onGenreClick,
+        onPublisherClick = onPublisherClick,
+        onStudioClick = onStudioClick,
         onBackClick = onBackClick,
         modifier = modifier,
         onEditUserRateClick = {
@@ -101,6 +112,9 @@ fun DetailsScreen(
     onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
     onEditUserRateClick: () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
+    onGenreClick: (Long) -> Unit,
+    onPublisherClick: (Long) -> Unit,
+    onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -125,6 +139,9 @@ fun DetailsScreen(
             modifier = modifier,
             onEditUserRateClick = onEditUserRateClick,
             onCreateUserRate = onCreateUserRate,
+            onGenreClick = onGenreClick,
+            onPublisherClick = onPublisherClick,
+            onStudioClick = onStudioClick,
             onAuthorClick = {},
             onCharacterClick = {},
             onScreenshotClick = { index ->
@@ -188,6 +205,9 @@ private fun DetailsContent(
     onScreenshotClick: (screenshotIndex: Int) -> Unit,
     onVideoClick: (Video) -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
+    onGenreClick: (Long) -> Unit,
+    onPublisherClick: (Long) -> Unit,
+    onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier
 ) {
@@ -228,6 +248,7 @@ private fun DetailsContent(
         floatingActionButton = {
             UserRateFab(
                 userRateStatus = userRate?.status ?: UserRateStatus.None,
+                entryType = state.entryType,
                 expanded = expandedFab,
                 onClick = {
                     if (userRate != null) {
@@ -269,12 +290,23 @@ private fun DetailsContent(
             item {
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            state.info.forEach { info ->
-                if (!info.shouldShow) return@forEach
-                item(key = info.key) {
-                    DetailsInfoLine(
-                        info = info,
-                        modifier = HorizontalPaddingModifier
+
+            if (state.entryType == EntryType.Manga) {
+                item(key = "manga_info") {
+                    MangaInformation(
+                        state = state,
+                        onPublisherClick = onPublisherClick,
+                        onGenreClick = onGenreClick
+                    )
+                }
+            }
+
+            if (state.entryType == EntryType.Anime) {
+                item(key = "anime_info") {
+                    AnimeInformation(
+                        state = state,
+                        onStudioClick = onStudioClick,
+                        onGenreClick = onGenreClick
                     )
                 }
             }
@@ -283,10 +315,10 @@ private fun DetailsContent(
                 Spacer(Modifier.height(24.dp))
             }
 
-            state.description?.let {
-                item(key = "description_formatted") {
+            if (state.descriptionHtml != null) {
+                item(key = "description") {
                     Description(
-                        description = it,
+                        descriptionHtml = state.descriptionHtml,
                         expanded = expandedDescription,
                         onExpandedChange = { expandedDescription = it },
                         modifier = HorizontalPaddingModifier
@@ -294,28 +326,28 @@ private fun DetailsContent(
                 }
             }
 
-            state.authors?.let {
+            if (!state.authors.isNullOrEmpty()) {
                 item(key = "authors") {
                     AuthorsCarousel(
-                        authors = it,
+                        authors = state.authors,
                         onAuthorClick = onAuthorClick,
                         onShowAllClick = { showAllAuthors = true }
                     )
                 }
             }
 
-            state.related?.let {
+            if (!state.related.isNullOrEmpty()) {
                 relatedItems(
-                    relatedEntries = it,
+                    relatedEntries = state.related,
                     onEntryClick = onEntryClick,
                     onShowAllClick = { showAllRelatedEntries = true }
                 )
             }
 
-            state.characters?.let {
+            if (!state.characters.isNullOrEmpty()) {
                 item(key = "characters") {
                     CharactersCarousel(
-                        characters = it,
+                        characters = state.characters,
                         onShowAllClick = {
                             showAllCharacters = true
                         },
@@ -324,30 +356,30 @@ private fun DetailsContent(
                 }
             }
 
-            state.screenshots?.let { screenshots ->
+            if (!state.screenshots.isNullOrEmpty()) {
                 item(key = "screenshot") {
                     ScreenshotsCarousel(
-                        screenshots = screenshots,
+                        screenshots = state.screenshots,
                         onScreenshotClick = { onScreenshotClick(it) },
                         onShowAllClick = { showAllScreenshots = true }
                     )
                 }
             }
 
-            state.videos?.let {
+            if (!state.videos.isNullOrEmpty()) {
                 item(key = "videos") {
                     VideosCarousel(
-                        videos = it,
+                        videos = state.videos,
                         onVideoClick = onVideoClick,
                         onShowAllClick = { }
                     )
                 }
             }
 
-            state.similar?.let {
+            if (state.similar.isNotEmpty()) {
                 item(key = "similar") {
                     SimilarCarousel(
-                        similarEntries = it,
+                        similarEntries = state.similar,
                         onEntryClick = onEntryClick,
                         onShowAll = { showAllSimilarEntries = true }
                     )
@@ -355,8 +387,11 @@ private fun DetailsContent(
             }
 
             item(key = "bottom_padding") {
-                //FAB height 56.dp + FAB padding 16.dp * 2
-                Spacer(modifier = Modifier.height(88.dp))
+                //56dp (FAB height) + 16 dp (FAB padding) * 2 = 88 dp
+                val navigationBarsBottomPadding = with(LocalDensity.current) {
+                    WindowInsets.navigationBars.getBottom(this).toDp()
+                }
+                Spacer(modifier = Modifier.height(88.dp + navigationBarsBottomPadding))
             }
         }
 
@@ -407,8 +442,12 @@ private fun DetailsContent(
     if (showUserRateStatusSelection) {
         UserRateStatusSelectionBottomSheet(
             enabledAutocorrect = enabledAutocorrect,
+            entryType = state.entryType,
             entryStatus = state.status,
-            onStatusClick = onCreateUserRate,
+            onStatusClick = {
+                onCreateUserRate(it)
+                showUserRateStatusSelection = false
+            },
             onDismissRequest = {
                 showUserRateStatusSelection = false
             }

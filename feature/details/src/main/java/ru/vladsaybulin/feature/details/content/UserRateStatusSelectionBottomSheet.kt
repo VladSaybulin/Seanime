@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.ui.UserRateStatusButton
 import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.UserRateStatus
 import ru.vladsaybulin.model.UserRateStatus.Completed
 import ru.vladsaybulin.model.UserRateStatus.Dropped
@@ -22,6 +23,7 @@ import ru.vladsaybulin.model.UserRateStatus.Watching
 internal fun UserRateStatusSelectionBottomSheet(
     enabledAutocorrect: Boolean,
     entryStatus: EntryStatus,
+    entryType: EntryType,
     onStatusClick: (UserRateStatus) -> Unit,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
@@ -44,6 +46,7 @@ internal fun UserRateStatusSelectionBottomSheet(
         }.forEach {
             UserRateStatusButton(
                 userRateStatus = it,
+                entryType = entryType,
                 onClick = { onStatusClick(it) },
                 modifier = Modifier.fillMaxWidth()
             )

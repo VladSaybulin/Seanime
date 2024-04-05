@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
@@ -30,7 +31,7 @@ import kotlin.math.min
 
 @Composable
 fun ScreenshotsCarousel(
-    screenshots: List<Screenshot>,
+    screenshots: ImmutableList<Screenshot>,
     onScreenshotClick: (Int) -> Unit,
     onShowAllClick: () -> Unit,
     modifier: Modifier = Modifier,

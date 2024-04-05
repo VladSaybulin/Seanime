@@ -51,7 +51,7 @@ sealed class DetailsUiState {
         val characters: ImmutableList<CharacterWithRole>?,
         val screenshots: ImmutableList<Screenshot>?,
         val videos: ImmutableList<Video>?,
-        val similar: ImmutableList<SimilarEntry>?
+        val similar: ImmutableList<SimilarEntry>
     ) : DetailsUiState()
 }
 

@@ -1,4 +1,4 @@
-package ru.vladsaybulin.feature.details.info
+package ru.vladsaybulin.feature.details.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -25,7 +25,7 @@ internal fun InfoLine(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(vertical = 2.dp)
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 2.dp)
     ) {
         Box(modifier = Modifier.align(iconAlignment)) {
             icon()

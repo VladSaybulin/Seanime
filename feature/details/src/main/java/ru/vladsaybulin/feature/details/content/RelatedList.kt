@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.ui.Header
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.EntryType
@@ -13,7 +14,7 @@ import ru.vladsaybulin.model.RelatedEntry
 import kotlin.math.min
 
 fun LazyListScope.relatedItems(
-    relatedEntries: List<RelatedEntry>,
+    relatedEntries: ImmutableList<RelatedEntry>,
     onEntryClick: (EntryType, Long) -> Unit,
     onShowAllClick: () -> Unit,
     itemModifier: Modifier = Modifier,

@@ -34,11 +34,10 @@ import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
 import ru.vladsaybulin.core.ui.strings.AnnotatedStringBuilderContext
 import ru.vladsaybulin.core.ui.strings.annotatedStringBuilderContext
 import ru.vladsaybulin.core.ui.strings.link
-import ru.vladsaybulin.feature.details.model.DetailsDescription
 
 @Composable
 fun Description(
-    description: DetailsDescription,
+    descriptionHtml: String,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -55,7 +54,7 @@ fun Description(
         }
     }
 
-    val annotatedDescription = buildDescriptionString(html = description.code)
+    val annotatedDescription = buildDescriptionString(html = descriptionHtml)
 
     val onTextClick: (Int) -> Unit = { offset ->
         val ranges = annotatedDescription.getStringAnnotations(offset, offset)

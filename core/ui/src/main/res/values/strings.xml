@@ -16,8 +16,11 @@
     <string name="anime_kind_tv_special">TV Спешл</string>
     <string name="user_rate_status_planned">В планах</string>
     <string name="user_rate_status_watching">Смотрю</string>
+    <string name="user_rate_status_reading">Читаю</string>
     <string name="user_rate_status_rewatching">Пересматриваю</string>
+    <string name="user_rate_status_rereading">Перечитываю</string>
     <string name="user_rate_status_completed">Просмотрено</string>
+    <string name="user_rate_status_read">Прочитано</string>
     <string name="user_rate_status_on_hold">Отложено</string>
     <string name="user_rate_status_dropped">Брошено</string>
     <string name="aired_of_episodes_with_duration">%1$s/%2$s эп. по %3$s</string>

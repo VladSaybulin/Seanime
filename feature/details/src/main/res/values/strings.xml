@@ -26,4 +26,8 @@
     <string name="more"><![CDATA[Ещё >]]></string>
     <string name="main_characters">Главные герои</string>
     <string name="minor_characters">Второстепенные герои</string>
+    <string name="publisher">Издатель</string>
+    <string name="publishers">Издатели</string>
+    <string name="genre">Жанр</string>
+    <string name="genres">Жанры</string>
 </resources>
