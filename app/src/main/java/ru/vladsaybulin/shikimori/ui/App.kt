@@ -24,7 +24,9 @@ import ru.vladsaybulin.feature.userrate.UserRateViewModel
 import ru.vladsaybulin.model.EntryType
 
 @Composable
-fun App() {
+fun App(
+    signIn: () -> Unit,
+) {
     val navController = rememberNavController()
     val imageViewViewModel = hiltViewModel<ImageViewViewModel>()
     val userRateViewViewModel = hiltViewModel<UserRateViewModel>()
@@ -32,6 +34,7 @@ fun App() {
     ShikimoriTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             var showUserRateBottomSheet by remember { mutableStateOf(false) }
+            var showRequireAuthDialog by remember { mutableStateOf(false) }
 
             NavHost(
                 navController = navController,
@@ -69,6 +72,13 @@ fun App() {
                 UserRateBottomSheet(
                     viewModel = userRateViewViewModel,
                     onDismissRequest = { showUserRateBottomSheet = false }
+                )
+            }
+
+            if (showRequireAuthDialog) {
+                RequireAuthDialog(
+                    onSignIn = signIn,
+                    onDismissRequest = { showRequireAuthDialog = false }
                 )
             }
         }

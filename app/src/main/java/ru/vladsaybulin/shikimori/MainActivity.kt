@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
 import ru.vladsaybulin.core.auth.AuthorizationLauncher
 import ru.vladsaybulin.core.auth.ShikimoriAuthState
+import ru.vladsaybulin.core.auth.launch
 import ru.vladsaybulin.core.auth.registerAuthorizationLauncher
 import ru.vladsaybulin.shikimori.ui.App
 import javax.inject.Inject
@@ -23,13 +24,12 @@ class MainActivity : ComponentActivity() {
 
         authorizationLauncher = registerAuthorizationLauncher(authState)
 
-        //authorizationLauncher.launch()
-
-
         enableEdgeToEdge()
 
         setContent {
-            App()
+            App(
+                signIn = { authorizationLauncher.launch() }
+            )
         }
     }
 }
