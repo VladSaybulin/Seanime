@@ -1,22 +1,16 @@
 package ru.vladsaybulin.data.repository
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.CreateUserRateDto
 import ru.vladsaybulin.data.model.asDbo
 import ru.vladsaybulin.data.model.asDto
-import ru.vladsaybulin.data.model.asUserRate
 import ru.vladsaybulin.database.ShikiDatabase
 import ru.vladsaybulin.model.Anime
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateValues
 import ru.vladsaybulin.network.datasource.UserRateDataSource
 import javax.inject.Inject
@@ -27,32 +21,6 @@ class UserRateRepository @Inject constructor(
     private val userRepository: UserRepository,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-    fun getAnimeUserRate(animeId: Long): Flow<UserRate?> =
-        database.userRateDao.getAnimeUserRate(animeId)
-            .onStart { refreshAnimeUserRate(animeId) }
-            .map { it?.asUserRate() }
-            .flowOn(ioDispatcher)
-
-    fun getMangaUserRate(mangaId: Long): Flow<UserRate?> =
-        database.userRateDao.getMangaUserRate(mangaId)
-            .onStart { refreshMangaUserRate(mangaId) }
-            .map { it?.asUserRate() }
-            .flowOn(ioDispatcher)
-
-    suspend fun refreshAnimeUserRate(animeId: Long) {
-        val dbo = userRateDataSource.getAnimeUserRate(animeId)?.asDbo(animeId)
-        if (dbo != null) {
-            database.userRateDao.insertOrReplaceUserRate(dbo)
-        }
-    }
-
-    suspend fun refreshMangaUserRate(mangaId: Long) {
-        val dbo = userRateDataSource.getMangaUserRate(mangaId)?.asDbo(mangaId)
-        if (dbo != null) {
-            database.userRateDao.insertOrReplaceUserRate(dbo)
-        }
-    }
-
     suspend fun createUserRate(userRateValues: UserRateValues, anime: Anime) {
         createUserRate(EntryType.Anime, anime.id, userRateValues) {
             database.animeDao.insertOrReplaceAnimeEntity(anime.asDbo())

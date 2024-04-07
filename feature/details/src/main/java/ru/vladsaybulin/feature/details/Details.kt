@@ -78,13 +78,11 @@ fun DetailsRoute(
     onRequireAuth: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val userRate by viewModel.userRate.collectAsStateWithLifecycle()
     val enabledAutocorrect by viewModel.enabledAutocorrectStatus.collectAsStateWithLifecycle()
     val isAuthorized = viewModel.isAuthorized()
 
     DetailsScreen(
         uiState = uiState,
-        userRate = userRate,
         enabledAutocorrect = enabledAutocorrect,
         isAuthorized = isAuthorized,
         onRetry = viewModel::onRetry,
@@ -96,7 +94,7 @@ fun DetailsRoute(
         onStudioClick = onStudioClick,
         onBackClick = onBackClick,
         modifier = modifier,
-        onEditUserRateClick = {
+        onEditUserRateClick = { userRate ->
             val context = viewModel.getUserRateEditorContext() ?: return@DetailsScreen
             onEditUserRateClick(checkNotNull(userRate), context)
         },
@@ -108,14 +106,13 @@ fun DetailsRoute(
 @Composable
 fun DetailsScreen(
     uiState: DetailsUiState,
-    userRate: UserRate?,
     enabledAutocorrect: Boolean,
     isAuthorized: Boolean,
     onRetry: () -> Unit,
     onRefresh: suspend () -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
-    onEditUserRateClick: () -> Unit,
+    onEditUserRateClick: (UserRate) -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
     onGenreClick: (Long) -> Unit,
     onPublisherClick: (Long) -> Unit,
@@ -137,7 +134,6 @@ fun DetailsScreen(
 
         is DetailsUiState.Success -> DetailsContent(
             state = uiState,
-            userRate = userRate,
             enabledAutocorrect = enabledAutocorrect,
             isAuthorized = isAuthorized,
             onEntryClick = onEntryClick,
@@ -203,11 +199,10 @@ private fun DetailsLoading(modifier: Modifier = Modifier) {
 @Composable
 private fun DetailsContent(
     state: DetailsUiState.Success,
-    userRate: UserRate?,
     enabledAutocorrect: Boolean,
     isAuthorized: Boolean,
     onRefresh: suspend () -> Unit,
-    onEditUserRateClick: () -> Unit,
+    onEditUserRateClick: (UserRate) -> Unit,
     onAuthorClick: (Long) -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
     onCharacterClick: (Long) -> Unit,
@@ -257,13 +252,13 @@ private fun DetailsContent(
         },
         floatingActionButton = {
             UserRateFab(
-                userRateStatus = userRate?.status ?: UserRateStatus.None,
+                userRateStatus = state.userRate?.status ?: UserRateStatus.None,
                 entryType = state.entryType,
                 expanded = expandedFab,
                 onClick = {
                     when {
                         !isAuthorized -> onRequireAuth()
-                        userRate != null -> onEditUserRateClick()
+                        state.userRate != null -> onEditUserRateClick(state.userRate)
                         state.status == Anons -> onCreateUserRate(UserRateStatus.Planned)
                         else -> showUserRateStatusSelection = true
                     }

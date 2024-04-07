@@ -1,6 +1,9 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
+import ru.vladsaybulin.database.models.IncompleteDateDbo
+import ru.vladsaybulin.database.models.MangaDbo
+import ru.vladsaybulin.database.models.PosterDbo
 import ru.vladsaybulin.model.Anime
 import ru.vladsaybulin.model.Character
 import ru.vladsaybulin.model.CharacterWithRole
@@ -43,6 +46,26 @@ fun MangaDetailsQuery.Manga.asExternalModel() = MangaDetails(
     characters = characterRoles?.map(MangaDetailsQuery.CharacterRole::asCharacterWithRole),
     related = related?.mapNotNull(MangaDetailsQuery.Related::asRelatedEntry),
 )
+
+fun MangaDetailsQuery.Manga.asDbo() = MangaDbo(
+    id = id,
+    originalName = name,
+    russianName = russian,
+    poster = poster?.asDbo(),
+    kind = kind.asMangaKind(),
+    status = status.asEntryStatus(),
+    score = score?.toFloat() ?: 0f,
+    chapters = chapters,
+    volumes = volumes,
+    airedOn = airedOn?.asDbo(),
+    releasedOn = releasedOn?.asDbo()
+)
+
+private fun MangaDetailsQuery.Poster.asDbo() = PosterDbo(originalUrl, previewUrl)
+
+private fun MangaDetailsQuery.AiredOn.asDbo() = IncompleteDateDbo(day, month, year)
+
+private fun MangaDetailsQuery.ReleasedOn.asDbo() = IncompleteDateDbo(day, month, year)
 
 private fun Double.toScore() = this.toFloat().takeIf { it != 0.0f }
 

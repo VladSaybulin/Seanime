@@ -1,7 +1,7 @@
 package ru.vladsaybulin.core.domain
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.model.EntryDetails
@@ -19,34 +19,27 @@ class GetEntryDetailsUseCase @Inject constructor(
         entryId: Long
     ): Flow<EntryDetails> = when (entryType) {
         EntryType.Anime -> animeRepositoryProvider.get().let { animeRepository ->
-            combine(
-                animeRepository.getAnimeDetails(entryId),
-                animeRepository.getSimilarAnimes(entryId),
-            ) { details, similar->
-                val sortedAnimeDetails = details.copy(
-                    characters = details.characters?.sortedBy { !it.isMain },
-                    authors = details.authors?.sortedBy { !it.isMain() }
-                )
-                EntryDetails(
-                    anime = sortedAnimeDetails,
-                    similarEntries = similar
-                )
-            }
+            animeRepository.getEntryDetails(entryId)
+                .map { details ->
+                    val anime = requireNotNull(details.anime)
+                    val sortedAnimeDetails = anime.copy(
+                        characters = anime.characters?.sortedBy { !it.isMain },
+                        authors = anime.authors?.sortedBy { !it.isMain() }
+                    )
+                    details.copy(anime = sortedAnimeDetails)
+                }
         }
+
         else -> mangaRepositoryProvider.get().let { mangaRepository ->
-            combine(
-                mangaRepository.geMangaDetails(entryId),
-                mangaRepository.getSimilarMangas(entryId),
-            ) { details, similar->
-                val sortedMangaDetails = details.copy(
-                    characters = details.characters?.sortedBy { !it.isMain },
-                    authors = details.authors?.sortedBy { !it.isMain() }
-                )
-                EntryDetails(
-                    manga = sortedMangaDetails,
-                    similarEntries = similar
-                )
-            }
+            mangaRepository.getEntryDetails(entryId)
+                .map { details ->
+                    val manga = requireNotNull(details.manga)
+                    val sortedMangaDetails = manga.copy(
+                        characters = manga.characters?.sortedBy { !it.isMain },
+                        authors = manga.authors?.sortedBy { !it.isMain() }
+                    )
+                    details.copy(manga = sortedMangaDetails)
+                }
         }
     }
 }

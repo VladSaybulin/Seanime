@@ -15,7 +15,6 @@ import ru.vladsaybulin.core.domain.CreateUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEntryDetailsUseCase
 import ru.vladsaybulin.data.repository.AuthRepository
-import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.feature.details.navigation.DetailsArgs
 import ru.vladsaybulin.feature.userrate.Limit
 import ru.vladsaybulin.feature.userrate.UserRateEditorContext
@@ -31,7 +30,6 @@ import javax.inject.Provider
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    userRateRepository: UserRateRepository,
     private val getEntryDetailsUseCase: GetEntryDetailsUseCase,
     private val createUserRateUseCaseProvider: Provider<CreateUserRateUseCase>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
@@ -47,16 +45,6 @@ class DetailsViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = false
-        )
-
-    val userRate = when (args.entryType) {
-        EntryType.Anime -> userRateRepository.getAnimeUserRate(args.entryId)
-        else -> userRateRepository.getMangaUserRate(args.entryId)
-    }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = null
         )
 
     val uiState = entryDetails
@@ -82,7 +70,6 @@ class DetailsViewModel @Inject constructor(
 
     fun getUserRateEditorContext(): UserRateEditorContext? {
         val lastEntryDetailsLoaded = entryDetails.replayCache.firstOrNull() ?: return null
-        if (userRate.value == null) return null
         return if (lastEntryDetailsLoaded.anime != null) {
             lastEntryDetailsLoaded.anime!!.getUserRateEditorContext()
         } else lastEntryDetailsLoaded.manga!!.getUserRateEditorContext()

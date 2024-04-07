@@ -63,6 +63,30 @@ fun UserRateValues.asDto() = UserRateValuesDto(
     text = text
 )
 
+fun UserRate.asDbo(
+    entryType: EntryType,
+    entryId: Long
+) = UserRateDbo(
+    id = id,
+    animeId = when (entryType) {
+        EntryType.Anime -> entryId
+        else -> null
+    },
+    mangaId = when (entryType) {
+        EntryType.Anime -> null
+        else -> entryId
+    },
+    status = status,
+    score = score,
+    episodes = episodes,
+    chapters = chapters,
+    volumes = volumes,
+    rewatches = rewatches,
+    text = text,
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+
 fun UserRateWithEntryLinkDto.asDbo() = UserRateDbo(
     id = id,
     animeId = when (entryType) {

@@ -18,6 +18,7 @@ import ru.vladsaybulin.model.RelatedEntry
 import ru.vladsaybulin.model.Screenshot
 import ru.vladsaybulin.model.SimilarEntry
 import ru.vladsaybulin.model.Studio
+import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.Video
 
 sealed class DetailsUiState {
@@ -51,7 +52,8 @@ sealed class DetailsUiState {
         val characters: ImmutableList<CharacterWithRole>?,
         val screenshots: ImmutableList<Screenshot>?,
         val videos: ImmutableList<Video>?,
-        val similar: ImmutableList<SimilarEntry>
+        val similar: ImmutableList<SimilarEntry>,
+        val userRate: UserRate?
     ) : DetailsUiState()
 }
 
@@ -82,6 +84,7 @@ private fun EntryDetails.animeDetailsToUiState() = with(anime!!) {
         screenshots = screenshots.toImmutableList(),
         videos = videos?.toImmutableList(),
         similar = similarEntries.toImmutableList(),
+        userRate = userRate,
 
         //Manga only fields
         chapters = 0,
@@ -111,6 +114,7 @@ private fun EntryDetails.mangaDetailsToUiState() = with(manga!!) {
         characters = characters?.toImmutableList(),
         related = related?.toImmutableList(),
         similar = similarEntries.toImmutableList(),
+        userRate = userRate,
 
         //Anime only fields
         episodes = 0,

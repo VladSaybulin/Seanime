@@ -8,8 +8,8 @@ import ru.vladsaybulin.database.models.AnimeDbo
 @Dao
 interface AnimeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrReplaceAnimeEntities(anime: List<AnimeDbo>)
+    suspend fun insertOrReplaceAnimeEntities(anime: List<AnimeDbo>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrReplaceAnimeEntity(anime: AnimeDbo)
+    suspend fun insertOrReplaceAnimeEntity(anime: AnimeDbo)
 }

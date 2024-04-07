@@ -4,4 +4,5 @@ data class EntryDetails(
     val anime: AnimeDetails? = null,
     val manga: MangaDetails? = null,
     val similarEntries: List<SimilarEntry>,
+    val userRate: UserRate?
 )
