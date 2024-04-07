@@ -6,13 +6,14 @@ import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.POST
 import ru.vladsaybulin.network.di.AuthorizedClient
+import javax.inject.Inject
 
 interface AuthApi {
     @POST("/api/users/sign_out")
     suspend fun singOut(): Response<ResponseBody>
 }
 
-class AuthDataSource(
+class AuthDataSource @Inject constructor(
     @AuthorizedClient retrofit: Retrofit
 ) {
     private val api: AuthApi = retrofit.create()

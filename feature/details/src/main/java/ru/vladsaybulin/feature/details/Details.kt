@@ -57,7 +57,7 @@ import ru.vladsaybulin.feature.details.content.UserRateStatusSelectionBottomShee
 import ru.vladsaybulin.feature.details.content.VideosCarousel
 import ru.vladsaybulin.feature.details.content.relatedItems
 import ru.vladsaybulin.feature.userrate.UserRateEditorContext
-import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.EntryStatus.Anons
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.Screenshot
 import ru.vladsaybulin.model.UserRate
@@ -75,15 +75,18 @@ fun DetailsRoute(
     onPublisherClick: (Long) -> Unit = {},
     onStudioClick: (Long) -> Unit = {},
     onBackClick: () -> Unit,
+    onRequireAuth: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val userRate by viewModel.userRate.collectAsStateWithLifecycle()
     val enabledAutocorrect by viewModel.enabledAutocorrectStatus.collectAsStateWithLifecycle()
+    val isAuthorized = viewModel.isAuthorized()
 
     DetailsScreen(
         uiState = uiState,
         userRate = userRate,
         enabledAutocorrect = enabledAutocorrect,
+        isAuthorized = isAuthorized,
         onRetry = viewModel::onRetry,
         onRefresh = viewModel::onRefresh,
         onEntryClick = onEntryClick,
@@ -97,7 +100,8 @@ fun DetailsRoute(
             val context = viewModel.getUserRateEditorContext() ?: return@DetailsScreen
             onEditUserRateClick(checkNotNull(userRate), context)
         },
-        onCreateUserRate = viewModel::createUserRate
+        onCreateUserRate = viewModel::createUserRate,
+        onRequireAuth = onRequireAuth
     )
 }
 
@@ -106,6 +110,7 @@ fun DetailsScreen(
     uiState: DetailsUiState,
     userRate: UserRate?,
     enabledAutocorrect: Boolean,
+    isAuthorized: Boolean,
     onRetry: () -> Unit,
     onRefresh: suspend () -> Unit,
     onEntryClick: (EntryType, Long) -> Unit,
@@ -116,6 +121,7 @@ fun DetailsScreen(
     onPublisherClick: (Long) -> Unit,
     onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit,
+    onRequireAuth: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -133,6 +139,7 @@ fun DetailsScreen(
             state = uiState,
             userRate = userRate,
             enabledAutocorrect = enabledAutocorrect,
+            isAuthorized = isAuthorized,
             onEntryClick = onEntryClick,
             onBackClick = onBackClick,
             onRefresh = onRefresh,
@@ -147,7 +154,8 @@ fun DetailsScreen(
             onScreenshotClick = { index ->
                 onScreenshotClick(checkNotNull(uiState.screenshots), index)
             },
-            onVideoClick = {}
+            onVideoClick = {},
+            onRequireAuth = onRequireAuth
         )
     }
 }
@@ -197,6 +205,7 @@ private fun DetailsContent(
     state: DetailsUiState.Success,
     userRate: UserRate?,
     enabledAutocorrect: Boolean,
+    isAuthorized: Boolean,
     onRefresh: suspend () -> Unit,
     onEditUserRateClick: () -> Unit,
     onAuthorClick: (Long) -> Unit,
@@ -209,6 +218,7 @@ private fun DetailsContent(
     onPublisherClick: (Long) -> Unit,
     onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit,
+    onRequireAuth: () -> Unit,
     modifier: Modifier
 ) {
     var showAllCharacters by rememberSaveable { mutableStateOf(false) }
@@ -251,14 +261,11 @@ private fun DetailsContent(
                 entryType = state.entryType,
                 expanded = expandedFab,
                 onClick = {
-                    if (userRate != null) {
-                        onEditUserRateClick()
-                    } else {
-                        if (state.status == EntryStatus.Anons) {
-                            onCreateUserRate(UserRateStatus.Planned)
-                        } else {
-                            showUserRateStatusSelection = true
-                        }
+                    when {
+                        !isAuthorized -> onRequireAuth()
+                        userRate != null -> onEditUserRateClick()
+                        state.status == Anons -> onCreateUserRate(UserRateStatus.Planned)
+                        else -> showUserRateStatusSelection = true
                     }
                 }
             )

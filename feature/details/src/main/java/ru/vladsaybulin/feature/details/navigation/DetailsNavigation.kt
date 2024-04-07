@@ -36,7 +36,8 @@ fun NavGraphBuilder.detailsScreen(
     openEntryDetails: (EntryType, Long) -> Unit,
     openScreenshot: (allScreenshots: List<Screenshot>, screenshotIndex: Int) -> Unit,
     openUserRate: (UserRate, UserRateEditorContext) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onRequireAuth: () -> Unit,
 ) {
     composable(
         route = DETAILS_ROUTE,
@@ -49,7 +50,8 @@ fun NavGraphBuilder.detailsScreen(
             onEntryClick = openEntryDetails,
             onBackClick = onBackClick,
             onScreenshotClick = openScreenshot,
-            onEditUserRateClick = openUserRate
+            onEditUserRateClick = openUserRate,
+            onRequireAuth = onRequireAuth
         )
     }
 

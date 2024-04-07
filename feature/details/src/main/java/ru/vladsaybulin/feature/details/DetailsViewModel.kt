@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.CreateUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEntryDetailsUseCase
+import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.feature.details.navigation.DetailsArgs
 import ru.vladsaybulin.feature.userrate.Limit
@@ -34,6 +35,7 @@ class DetailsViewModel @Inject constructor(
     private val getEntryDetailsUseCase: GetEntryDetailsUseCase,
     private val createUserRateUseCaseProvider: Provider<CreateUserRateUseCase>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val args = DetailsArgs(savedStateHandle)
@@ -94,6 +96,8 @@ class DetailsViewModel @Inject constructor(
             )
         }
     }
+
+    fun isAuthorized() = authRepository.isAuthorized()
 
     private fun refresh() = viewModelScope.launch {
         getEntryDetailsUseCase(args.entryType, args.entryId).collect{

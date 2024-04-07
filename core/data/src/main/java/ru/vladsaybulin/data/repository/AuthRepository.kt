@@ -12,9 +12,9 @@ class AuthRepository @Inject constructor(
     private val authDataSource: AuthDataSource,
     private val shikiPreferences: ShikiPreferencesDataSource
 ) {
-    private fun isAuthorized() = authState.isAuthorized
+    fun isAuthorized() = authState.isAuthorized
 
-    private suspend fun logOut() {
+    suspend fun logOut() {
         authDataSource.signOut()
         authState.onLogout()
         database.userRateDao.deleteAll()

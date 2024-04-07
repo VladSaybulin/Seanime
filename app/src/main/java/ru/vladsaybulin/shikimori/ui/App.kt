@@ -56,9 +56,8 @@ fun App(
                         userRateViewViewModel.setupUserRate(userRate, context)
                         showUserRateBottomSheet = true
                     },
-                    onBackClick = {
-                        navController.navigateUp()
-                    }
+                    onBackClick = { navController.navigateUp() },
+                    onRequireAuth = { showRequireAuthDialog = true }
                 )
                 imageViewScreen(
                     viewModel = imageViewViewModel,
