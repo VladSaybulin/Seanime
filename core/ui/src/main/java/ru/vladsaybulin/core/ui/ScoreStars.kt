@@ -45,7 +45,7 @@ fun AnimatedScoreStars(
 }
 
 @Composable
-private fun ScoreStars(
+fun ScoreStars(
     score: Float,
     modifier: Modifier = Modifier,
     starSize: DpSize = DefaultStarSize,
