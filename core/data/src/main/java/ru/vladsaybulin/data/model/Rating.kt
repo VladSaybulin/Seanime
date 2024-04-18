@@ -1,7 +1,7 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.type.AnimeRatingEnum
-import ru.vladsaybulin.model.AnimeRating
+import ru.vladsaybulin.model.anime.AnimeRating
 
 fun AnimeRatingEnum?.asAnimeRating() = when (this) {
     AnimeRatingEnum.g -> AnimeRating.G

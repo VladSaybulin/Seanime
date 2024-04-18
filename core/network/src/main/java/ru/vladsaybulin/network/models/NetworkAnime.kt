@@ -3,8 +3,8 @@ package ru.vladsaybulin.network.models
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import ru.vladsaybulin.model.AnimeKind
-import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.network.util.serializers.AnimeKindSerializer
 import ru.vladsaybulin.network.util.serializers.EntryStatusSerializer
 import ru.vladsaybulin.network.util.serializers.LocalDateToIncompleteDateSerializer

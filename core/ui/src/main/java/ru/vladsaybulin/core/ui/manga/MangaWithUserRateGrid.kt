@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 import ru.vladsaybulin.core.ui.entry.EntryGrid
 import ru.vladsaybulin.core.ui.entry.EntryGridDefaults
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.manga.MangaWithUserRate
 
 @Composable

@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.data.repository.UserRateRepository
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.UserRate
-import ru.vladsaybulin.model.UserRateValues
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateValues
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import javax.inject.Inject
 
 @HiltViewModel

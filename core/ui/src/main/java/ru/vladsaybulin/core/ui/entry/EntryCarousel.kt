@@ -1,11 +1,10 @@
 package ru.vladsaybulin.core.ui.entry
 
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import ru.vladsaybulin.model.Poster
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 
 fun <T> LazyListScope.entryCarouselItems(

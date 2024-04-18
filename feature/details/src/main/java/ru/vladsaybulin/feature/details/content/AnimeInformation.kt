@@ -22,9 +22,9 @@ import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.feature.details.DetailsUiState
 import ru.vladsaybulin.feature.details.genreSearchParams
 import ru.vladsaybulin.feature.details.studioSearchParams
-import ru.vladsaybulin.model.AnimeKind
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.Studio
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.anime.Studio
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 

@@ -52,8 +52,8 @@ import ru.vladsaybulin.core.ui.manga.MangaWithUserRateGrid
 import ru.vladsaybulin.core.ui.strings.entryTypeString
 import ru.vladsaybulin.core.ui.strings.orderString
 import ru.vladsaybulin.data.model.RecentSearchQuery
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Order
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.search.Order
 
 @Composable
 fun SearchRoute(

@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
-import ru.vladsaybulin.model.CalendarItem
+import ru.vladsaybulin.model.calendar.CalendarItem
 import kotlin.time.Duration.Companion.minutes
 
 class PopulatedCalendarItem(

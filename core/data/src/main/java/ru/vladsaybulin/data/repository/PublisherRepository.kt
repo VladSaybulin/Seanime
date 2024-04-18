@@ -10,7 +10,7 @@ import ru.vladsaybulin.database.dao.PublisherDao
 import ru.vladsaybulin.database.models.manga.PublisherEntity
 import ru.vladsaybulin.database.models.manga.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
-import ru.vladsaybulin.model.Publisher
+import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.network.datasource.PublisherDataSource
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.days

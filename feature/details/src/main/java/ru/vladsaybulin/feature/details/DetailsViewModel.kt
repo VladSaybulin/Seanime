@@ -17,7 +17,7 @@ import ru.vladsaybulin.core.domain.GetEntryDetailsUseCase
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.feature.details.navigation.DetailsArgs
 import ru.vladsaybulin.model.EntryDetails
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
 import javax.inject.Provider
 

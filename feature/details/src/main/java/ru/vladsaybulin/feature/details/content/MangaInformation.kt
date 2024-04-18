@@ -13,7 +13,7 @@ import ru.vladsaybulin.feature.details.DetailsUiState
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.feature.details.genreSearchParams
 import ru.vladsaybulin.feature.details.publisherSearchParams
-import ru.vladsaybulin.model.Publisher
+import ru.vladsaybulin.model.manga.Publisher
 
 internal fun LazyListScope.mangaInformation(
     state: DetailsUiState.Success,

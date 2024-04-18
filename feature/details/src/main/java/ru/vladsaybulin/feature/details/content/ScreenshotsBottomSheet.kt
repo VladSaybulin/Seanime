@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
-import ru.vladsaybulin.model.Screenshot
+import ru.vladsaybulin.model.anime.Screenshot
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

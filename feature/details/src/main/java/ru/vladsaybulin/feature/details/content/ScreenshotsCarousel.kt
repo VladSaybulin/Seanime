@@ -26,7 +26,7 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.Screenshot
+import ru.vladsaybulin.model.anime.Screenshot
 import kotlin.math.min
 
 @Composable

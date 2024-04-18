@@ -1,7 +1,7 @@
 package ru.vladsaybulin.feature.search
 
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Order
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.search.Order
 
 data class SearchControlPanelUiState(
     val isEntryTypeLocked: Boolean,

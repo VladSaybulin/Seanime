@@ -20,8 +20,8 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.ui.EntryStatusBadge
 import ru.vladsaybulin.core.ui.strings.relationTypeString
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.RelationType
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.related.RelationType
 import java.text.DecimalFormat
 
 data class EntryListItemDetailsData(

@@ -10,7 +10,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.SimilarEntry
 import kotlin.math.min
 

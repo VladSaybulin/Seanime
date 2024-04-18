@@ -1,7 +1,7 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.type.VideoKindEnum
-import ru.vladsaybulin.model.VideoKind
+import ru.vladsaybulin.model.anime.VideoKind
 
 fun VideoKindEnum.asVideoKind() = when (this) {
     VideoKindEnum.pv -> VideoKind.Pv

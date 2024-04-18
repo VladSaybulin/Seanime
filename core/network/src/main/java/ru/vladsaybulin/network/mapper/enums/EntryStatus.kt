@@ -2,7 +2,7 @@ package ru.vladsaybulin.network.mapper.enums
 
 import ru.vladsaybulin.core.network.graphql.type.AnimeStatusEnum
 import ru.vladsaybulin.core.network.graphql.type.MangaStatusEnum
-import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.common.EntryStatus
 
 fun AnimeStatusEnum?.asEntryStatus() = when (this) {
     AnimeStatusEnum.anons -> EntryStatus.Anons

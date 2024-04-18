@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.model.MangaKind
+import ru.vladsaybulin.model.manga.MangaKind
 
 fun mangaKindStringResId(mangaKind: MangaKind) = when (mangaKind) {
     MangaKind.Manga -> R.string.manga_kind_manga

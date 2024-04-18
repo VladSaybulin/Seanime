@@ -19,7 +19,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusColor
 import ru.vladsaybulin.core.ui.userRateStatusIcon
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 internal fun EntryItemName(

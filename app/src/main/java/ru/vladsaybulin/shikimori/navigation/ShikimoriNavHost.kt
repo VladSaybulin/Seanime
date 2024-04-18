@@ -13,7 +13,7 @@ import ru.vladsaybulin.feature.imageview.navigation.imageViewScreen
 import ru.vladsaybulin.feature.list.navigation.myListScreen
 import ru.vladsaybulin.feature.search.navigation.navigateToSearch
 import ru.vladsaybulin.feature.search.navigation.searchScreen
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.shikimori.ui.ShikimoriAppState
 
 @Composable

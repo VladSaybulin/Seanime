@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.common.EntryStatus
 
 fun entryStatusStringId(status: EntryStatus, target: TargetStringsEntry) = when (target) {
     TargetStringsEntry.Anime -> animeStatusStringId(status)

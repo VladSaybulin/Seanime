@@ -3,7 +3,7 @@ package ru.vladsaybulin.core.domain
 import kotlinx.coroutines.CoroutineDispatcher
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.Default
-import ru.vladsaybulin.model.PersonWithRoles
+import ru.vladsaybulin.model.person.PersonWithRoles
 import javax.inject.Inject
 
 class SearchPersonsUseCase @Inject constructor(

@@ -3,7 +3,7 @@ package ru.vladsaybulin.database.models.manga
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.vladsaybulin.model.Publisher
+import ru.vladsaybulin.model.manga.Publisher
 
 @Entity(tableName = "publishers")
 data class PublisherEntity(

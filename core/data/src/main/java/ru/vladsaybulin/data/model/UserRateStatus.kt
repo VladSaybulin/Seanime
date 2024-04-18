@@ -1,7 +1,7 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.type.UserRateStatusEnum
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 fun UserRateStatusEnum?.asUserRateStatus() = when (this) {
     UserRateStatusEnum.planned -> UserRateStatus.Planned

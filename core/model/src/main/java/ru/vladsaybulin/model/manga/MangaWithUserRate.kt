@@ -1,7 +1,6 @@
 package ru.vladsaybulin.model.manga
 
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.UserRate
+import ru.vladsaybulin.model.userrate.UserRate
 
 data class MangaWithUserRate(
     val manga: Manga,

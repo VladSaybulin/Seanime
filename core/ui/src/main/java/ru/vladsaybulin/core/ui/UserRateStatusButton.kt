@@ -31,7 +31,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun UserRateStatusButton(

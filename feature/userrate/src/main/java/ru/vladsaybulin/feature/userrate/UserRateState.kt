@@ -12,15 +12,15 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
 import ru.vladsaybulin.feature.userrate.components.CounterState
 import ru.vladsaybulin.feature.userrate.components.ScoreState
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.UserRateStatus.Completed
-import ru.vladsaybulin.model.UserRateStatus.Dropped
-import ru.vladsaybulin.model.UserRateStatus.OnHold
-import ru.vladsaybulin.model.UserRateStatus.Planned
-import ru.vladsaybulin.model.UserRateStatus.Rewatching
-import ru.vladsaybulin.model.UserRateStatus.Watching
-import ru.vladsaybulin.model.UserRateValues
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus.Completed
+import ru.vladsaybulin.model.userrate.UserRateStatus.Dropped
+import ru.vladsaybulin.model.userrate.UserRateStatus.OnHold
+import ru.vladsaybulin.model.userrate.UserRateStatus.Planned
+import ru.vladsaybulin.model.userrate.UserRateStatus.Rewatching
+import ru.vladsaybulin.model.userrate.UserRateStatus.Watching
+import ru.vladsaybulin.model.userrate.UserRateValues
 
 @Composable
 fun rememberUserRateState(setup: UserRateSetup): UserRateState? {

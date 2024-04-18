@@ -1,6 +1,6 @@
 package ru.vladsaybulin.feature.userrate
 
-import ru.vladsaybulin.model.UserRate
+import ru.vladsaybulin.model.userrate.UserRate
 
 sealed interface UserRateSetup {
     data class Edit(

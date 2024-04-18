@@ -10,7 +10,7 @@ import retrofit2.http.Path
 import ru.vladsaybulin.common.network.ShikimoriException
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.core.network.graphql.AnimeQuery
-import ru.vladsaybulin.model.Order
+import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.mapper.enums.asOrderEnum

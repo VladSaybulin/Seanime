@@ -30,11 +30,11 @@ import ru.vladsaybulin.core.ui.entry.EntryKindAndYearMetadata
 import ru.vladsaybulin.core.ui.entry.UserRateStatusBadge
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.mangaKindString
-import ru.vladsaybulin.model.EntryStatus.Ongoing
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.UserRateStatus.Rewatching
-import ru.vladsaybulin.model.UserRateStatus.Watching
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.common.EntryStatus.Ongoing
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus.Rewatching
+import ru.vladsaybulin.model.userrate.UserRateStatus.Watching
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.userrate.UserRateProgressLimit
 import ru.vladsaybulin.model.userrate.UserRateProgressLimit.Companion.Unlimited

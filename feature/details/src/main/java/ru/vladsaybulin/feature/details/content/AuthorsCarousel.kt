@@ -38,10 +38,10 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.model.Person
-import ru.vladsaybulin.model.PersonWithRoles
-import ru.vladsaybulin.model.Poster
-import ru.vladsaybulin.model.isMain
+import ru.vladsaybulin.model.person.Person
+import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.person.isMain
 
 @Composable
 fun AuthorsCarousel(

@@ -3,9 +3,9 @@ package ru.vladsaybulin.database.models.genre
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Genre
-import ru.vladsaybulin.model.GenreKind
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.genre.GenreKind
 
 @Entity(tableName = "genres")
 data class GenreEntity(

@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.core.ui.entry.EntryKindAndYearMetadata
 import ru.vladsaybulin.core.ui.strings.mangaKindString
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun MangaGridItem(

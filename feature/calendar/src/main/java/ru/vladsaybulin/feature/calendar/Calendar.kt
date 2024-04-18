@@ -50,9 +50,9 @@ import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.anime.AnimeGridItem
 import ru.vladsaybulin.model.CalendarDay
-import ru.vladsaybulin.model.CalendarItem
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.previewCalendarItems
+import ru.vladsaybulin.model.calendar.CalendarItem
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.calendar.previewCalendarItems
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 

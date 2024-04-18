@@ -11,8 +11,8 @@ import ru.vladsaybulin.core.ui.entry.AnimePreviewProvider
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.core.ui.entry.EntryKindAndYearMetadata
 import ru.vladsaybulin.core.ui.strings.animeKindString
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun AnimeGridItem(

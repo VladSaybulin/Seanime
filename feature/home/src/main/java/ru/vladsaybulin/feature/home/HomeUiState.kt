@@ -1,8 +1,8 @@
 package ru.vladsaybulin.feature.home
 
 import kotlinx.collections.immutable.ImmutableList
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.model.topic.Topic
 
 sealed class HomeUiState {

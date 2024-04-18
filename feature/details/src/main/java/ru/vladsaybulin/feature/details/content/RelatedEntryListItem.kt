@@ -7,11 +7,11 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.ui.entry.EntryListItem
 import ru.vladsaybulin.core.ui.entry.EntryListItemDetails
 import ru.vladsaybulin.core.ui.entry.listItemDetailsData
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.RelatedEntry
-import ru.vladsaybulin.model.RelationType
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelationType
 
 @Composable
 fun RelatedEntryListItem(

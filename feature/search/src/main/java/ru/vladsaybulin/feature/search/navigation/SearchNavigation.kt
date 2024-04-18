@@ -10,10 +10,10 @@ import androidx.navigation.navArgument
 import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.core.navigation.util.appendArg
 import ru.vladsaybulin.feature.search.SearchRoute
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.asEntryStatus
-import ru.vladsaybulin.model.asEntryType
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.common.asEntryStatus
+import ru.vladsaybulin.model.common.asEntryType
 
 private const val SEARCH_ROUTE = "search"
 

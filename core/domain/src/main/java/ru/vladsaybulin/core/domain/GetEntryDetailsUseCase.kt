@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.map
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.model.EntryDetails
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.isMain
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.person.isMain
 import javax.inject.Inject
 import javax.inject.Provider
 

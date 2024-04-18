@@ -1,7 +1,7 @@
 package ru.vladsaybulin.core.domain
 
 import ru.vladsaybulin.data.repository.FiltersRepository
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.search.Filters
 import javax.inject.Inject
 

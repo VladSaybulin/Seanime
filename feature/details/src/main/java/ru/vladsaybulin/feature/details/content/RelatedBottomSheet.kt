@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.RelatedEntry
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.related.RelatedEntry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -24,7 +24,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
-import ru.vladsaybulin.model.Poster
+import ru.vladsaybulin.model.common.Poster
 
 internal fun LazyListScope.poster(
     poster: Poster?,

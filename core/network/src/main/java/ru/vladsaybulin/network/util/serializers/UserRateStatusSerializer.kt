@@ -6,8 +6,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.asUserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.asUserRateStatus
 
 class UserRateStatusSerializer : KSerializer<UserRateStatus> {
     override val descriptor: SerialDescriptor =

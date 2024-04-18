@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.ui.entry.EntryListItem
-import ru.vladsaybulin.model.PersonWithRoles
+import ru.vladsaybulin.model.person.PersonWithRoles
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

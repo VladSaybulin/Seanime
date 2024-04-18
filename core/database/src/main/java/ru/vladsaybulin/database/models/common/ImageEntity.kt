@@ -1,7 +1,7 @@
 package ru.vladsaybulin.database.models.common
 
 import androidx.room.ColumnInfo
-import ru.vladsaybulin.model.Poster
+import ru.vladsaybulin.model.common.Poster
 
 data class ImageEntity(
 

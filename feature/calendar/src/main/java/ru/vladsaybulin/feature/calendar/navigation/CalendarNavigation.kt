@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import ru.vladsaybulin.feature.calendar.CalendarRoute
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.common.EntryType
 
 const val CALENDAR_ROUTE = "calendar"
 

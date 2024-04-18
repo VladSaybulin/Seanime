@@ -21,9 +21,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun MyListRoute(

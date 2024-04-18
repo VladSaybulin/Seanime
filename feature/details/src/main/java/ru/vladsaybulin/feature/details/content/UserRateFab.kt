@@ -17,8 +17,8 @@ import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 internal fun UserRateFab(

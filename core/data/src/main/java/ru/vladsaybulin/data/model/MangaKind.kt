@@ -1,7 +1,7 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.type.MangaKindEnum
-import ru.vladsaybulin.model.MangaKind
+import ru.vladsaybulin.model.manga.MangaKind
 
 fun MangaKindEnum?.asMangaKind() = when (this) {
     MangaKindEnum.manga -> MangaKind.Manga

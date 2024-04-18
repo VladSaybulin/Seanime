@@ -2,7 +2,7 @@ package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
-import ru.vladsaybulin.model.Anime
+import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.network.models.NetworkAnime
 
 fun NetworkAnime.asEntity() = AnimeEntity(

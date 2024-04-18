@@ -6,8 +6,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.asEntryType
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.common.asEntryType
 
 class UserRateTargetTypeSerializer : KSerializer<EntryType> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(

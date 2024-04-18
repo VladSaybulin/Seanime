@@ -4,8 +4,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun entryStatusColor(entryStatus: EntryStatus): Color = when (entryStatus) {

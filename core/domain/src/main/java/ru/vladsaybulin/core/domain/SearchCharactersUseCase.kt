@@ -1,6 +1,6 @@
 package ru.vladsaybulin.core.domain
 
-import ru.vladsaybulin.model.CharacterWithRole
+import ru.vladsaybulin.model.character.CharacterWithRole
 import javax.inject.Inject
 
 class SearchCharactersUseCase @Inject constructor() {

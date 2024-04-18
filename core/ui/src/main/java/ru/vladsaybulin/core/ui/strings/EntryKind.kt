@@ -3,7 +3,7 @@ package ru.vladsaybulin.core.ui.strings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.common.EntryType
 
 fun entryTypeStringId(entryType: EntryType) = when (entryType) {
     EntryType.Anime -> R.string.core_ui_entry_type_anime

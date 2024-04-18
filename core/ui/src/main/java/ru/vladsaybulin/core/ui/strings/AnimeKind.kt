@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.model.AnimeKind
+import ru.vladsaybulin.model.anime.AnimeKind
 
 fun animeKindStringResId(kind: AnimeKind): Int? = when (kind) {
     AnimeKind.Tv -> R.string.anime_kind_tv

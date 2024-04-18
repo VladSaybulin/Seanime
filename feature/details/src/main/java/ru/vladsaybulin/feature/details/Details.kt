@@ -57,10 +57,10 @@ import ru.vladsaybulin.feature.details.content.name
 import ru.vladsaybulin.feature.details.content.poster
 import ru.vladsaybulin.feature.details.content.relatedItems
 import ru.vladsaybulin.feature.details.model.getUserRateWithEntry
-import ru.vladsaybulin.model.EntryStatus.Anons
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.common.EntryStatus.Anons
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun DetailsRoute(

@@ -1,8 +1,8 @@
 package ru.vladsaybulin.database.utils
 
 import androidx.room.TypeConverter
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.asEntryType
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.asEntryType
 
 class EntryStatusTypeConverter {
 

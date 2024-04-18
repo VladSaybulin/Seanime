@@ -7,7 +7,7 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
 import ru.vladsaybulin.core.designsystem.components.TextBadgeDefaults
 import ru.vladsaybulin.core.ui.colors.entryStatusColor
 import ru.vladsaybulin.core.ui.strings.entryStatusString
-import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.common.EntryStatus
 
 @Composable
 fun EntryStatusBadge(

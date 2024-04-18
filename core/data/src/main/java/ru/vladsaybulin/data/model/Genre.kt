@@ -2,7 +2,7 @@ package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.type.GenreKindEnum
 import ru.vladsaybulin.database.models.genre.GenreEntity
-import ru.vladsaybulin.model.GenreKind
+import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.network.models.NetworkGenre
 
 fun GenreKindEnum.asGenreKind() = when (this) {

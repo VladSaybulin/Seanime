@@ -1,12 +1,12 @@
 package ru.vladsaybulin.feature.details.model
 
 import ru.vladsaybulin.feature.details.DetailsUiState
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.AnimeKind
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.MangaKind
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.manga.MangaKind
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 fun DetailsUiState.Success.getUserRateWithEntry(): UserRateWithEntry {
     require(userRate != null)

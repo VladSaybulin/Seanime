@@ -2,7 +2,7 @@ package ru.vladsaybulin.data.model
 
 import kotlinx.datetime.LocalDate
 import ru.vladsaybulin.database.models.common.IncompleteDateEntity
-import ru.vladsaybulin.model.IncompleteDate
+import ru.vladsaybulin.model.common.IncompleteDate
 
 fun LocalDate.asIncompleteDateDbo() =
     IncompleteDateEntity(

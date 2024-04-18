@@ -1,7 +1,7 @@
 package ru.vladsaybulin.network.mapper.enums
 
 import ru.vladsaybulin.core.network.graphql.type.AnimeKindEnum
-import ru.vladsaybulin.model.AnimeKind
+import ru.vladsaybulin.model.anime.AnimeKind
 
 fun AnimeKindEnum?.asAnimeKind() = when (this) {
     AnimeKindEnum.tv -> AnimeKind.Tv

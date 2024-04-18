@@ -22,9 +22,9 @@ import kotlinx.datetime.toJavaLocalDate
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.ui.EntryStatusBadge
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.Genre
-import ru.vladsaybulin.model.IncompleteDate
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.common.IncompleteDate
 import java.time.format.DateTimeFormatter
 
 @Composable

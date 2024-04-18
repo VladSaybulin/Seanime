@@ -38,7 +38,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.Video
+import ru.vladsaybulin.model.anime.Video
 import kotlin.math.min
 
 @OptIn(ExperimentalFoundationApi::class)

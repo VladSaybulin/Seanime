@@ -15,7 +15,7 @@ import ru.vladsaybulin.database.dao.CalendarDao
 import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
 import ru.vladsaybulin.database.models.calendar.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
-import ru.vladsaybulin.model.CalendarItem
+import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.network.datasource.CalendarDataSource
 import ru.vladsaybulin.network.models.CalendarItemDto
 import javax.inject.Inject

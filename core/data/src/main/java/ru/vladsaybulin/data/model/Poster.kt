@@ -1,7 +1,7 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.common.ImageEntity
-import ru.vladsaybulin.model.Poster
+import ru.vladsaybulin.model.common.Poster
 import ru.vladsaybulin.network.models.PosterDto
 
 fun PosterDto.asEntity() = ImageEntity(

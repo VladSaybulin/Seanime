@@ -6,7 +6,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.feature.home.HomeRoute
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.common.EntryType
 
 const val HOME_ROUTE = "home_route"
 

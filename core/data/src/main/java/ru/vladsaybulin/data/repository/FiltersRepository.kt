@@ -1,15 +1,15 @@
 package ru.vladsaybulin.data.repository
 
-import ru.vladsaybulin.model.AnimeKind
-import ru.vladsaybulin.model.AnimeRating
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Genre
-import ru.vladsaybulin.model.GenreKind
-import ru.vladsaybulin.model.MangaKind
-import ru.vladsaybulin.model.Publisher
-import ru.vladsaybulin.model.Studio
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.anime.AnimeRating
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.genre.GenreKind
+import ru.vladsaybulin.model.manga.MangaKind
+import ru.vladsaybulin.model.manga.Publisher
+import ru.vladsaybulin.model.anime.Studio
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.search.Duration
 import ru.vladsaybulin.model.search.FilterOption
 import ru.vladsaybulin.model.search.Filters

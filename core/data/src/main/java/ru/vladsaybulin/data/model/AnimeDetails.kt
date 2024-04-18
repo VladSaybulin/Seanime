@@ -4,23 +4,23 @@ import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.common.IncompleteDateEntity
 import ru.vladsaybulin.database.models.common.ImageEntity
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.AnimeDetails
-import ru.vladsaybulin.model.Character
-import ru.vladsaybulin.model.CharacterWithRole
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Genre
-import ru.vladsaybulin.model.IncompleteDate
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.Person
-import ru.vladsaybulin.model.PersonWithRoles
-import ru.vladsaybulin.model.Poster
-import ru.vladsaybulin.model.RelatedEntry
-import ru.vladsaybulin.model.Screenshot
-import ru.vladsaybulin.model.Statistic
-import ru.vladsaybulin.model.Studio
-import ru.vladsaybulin.model.Video
-import ru.vladsaybulin.model.asRelationType
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.AnimeDetails
+import ru.vladsaybulin.model.character.Character
+import ru.vladsaybulin.model.character.CharacterWithRole
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.common.IncompleteDate
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.person.Person
+import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.anime.Screenshot
+import ru.vladsaybulin.model.common.Statistic
+import ru.vladsaybulin.model.anime.Studio
+import ru.vladsaybulin.model.anime.Video
+import ru.vladsaybulin.model.related.asRelationType
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery.AiredOn as NetworkAiredOn
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery.CharacterRole as NetworkCharacterRole
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery.Genre as NetworkGenre

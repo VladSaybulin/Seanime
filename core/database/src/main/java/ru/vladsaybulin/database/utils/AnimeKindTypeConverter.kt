@@ -1,8 +1,8 @@
 package ru.vladsaybulin.database.utils
 
 import androidx.room.TypeConverter
-import ru.vladsaybulin.model.AnimeKind
-import ru.vladsaybulin.model.asAnimeKind
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.anime.asAnimeKind
 
 class AnimeKindTypeConverter {
 

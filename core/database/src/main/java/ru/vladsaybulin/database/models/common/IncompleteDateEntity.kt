@@ -1,7 +1,7 @@
 package ru.vladsaybulin.database.models.common
 
 import androidx.room.ColumnInfo
-import ru.vladsaybulin.model.IncompleteDate
+import ru.vladsaybulin.model.common.IncompleteDate
 
 
 data class IncompleteDateEntity(

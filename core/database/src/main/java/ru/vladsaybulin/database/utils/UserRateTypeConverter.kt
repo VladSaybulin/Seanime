@@ -1,8 +1,8 @@
 package ru.vladsaybulin.database.utils
 
 import androidx.room.TypeConverter
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.asUserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.asUserRateStatus
 
 class UserRateTypeConverter {
     @TypeConverter

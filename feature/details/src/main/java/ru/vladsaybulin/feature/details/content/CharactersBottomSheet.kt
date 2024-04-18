@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.ui.Header
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.CharacterWithRole
+import ru.vladsaybulin.model.character.CharacterWithRole
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

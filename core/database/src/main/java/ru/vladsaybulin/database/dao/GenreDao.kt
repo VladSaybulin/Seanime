@@ -5,8 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.vladsaybulin.database.models.genre.GenreEntity
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.GenreKind
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.genre.GenreKind
 
 @Dao
 interface GenreDao {

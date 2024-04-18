@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRateDbo
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.models.userrate.UserRateOrderDbo
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Dao
 interface UserRateDao {

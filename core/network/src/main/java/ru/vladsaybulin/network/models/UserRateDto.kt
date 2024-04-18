@@ -3,7 +3,7 @@ package ru.vladsaybulin.network.models
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.network.util.serializers.UserRateStatusSerializer
 
 @Serializable

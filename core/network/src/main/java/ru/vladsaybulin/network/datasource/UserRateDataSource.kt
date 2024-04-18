@@ -18,7 +18,7 @@ import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.core.network.graphql.AnimeUserRatesQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRatesQuery
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.mapper.queries.asDto
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatusEnum

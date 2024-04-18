@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
-import ru.vladsaybulin.model.UserRate
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Entity(
     tableName = "user_rates",

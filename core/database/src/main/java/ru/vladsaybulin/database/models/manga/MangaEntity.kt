@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 import ru.vladsaybulin.database.models.common.ImageEntity
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.common.IncompleteDateEntity
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.MangaKind
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.manga.MangaKind
 
 @Entity(tableName = "mangas")
 class MangaEntity(

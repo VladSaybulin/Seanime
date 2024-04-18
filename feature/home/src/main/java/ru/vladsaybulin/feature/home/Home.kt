@@ -38,10 +38,10 @@ import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun HomeRoute(

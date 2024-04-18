@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.CharacterWithRole
+import ru.vladsaybulin.model.character.CharacterWithRole
 
 @Composable
 fun CharactersCarousel(

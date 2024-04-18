@@ -5,23 +5,23 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.core.navigation.ImageViewArgs
 import ru.vladsaybulin.core.navigation.SearchArgs
-import ru.vladsaybulin.model.AnimeKind
-import ru.vladsaybulin.model.CharacterWithRole
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.EntryDetails
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Genre
-import ru.vladsaybulin.model.IncompleteDate
-import ru.vladsaybulin.model.MangaKind
-import ru.vladsaybulin.model.PersonWithRoles
-import ru.vladsaybulin.model.Poster
-import ru.vladsaybulin.model.Publisher
-import ru.vladsaybulin.model.RelatedEntry
-import ru.vladsaybulin.model.Screenshot
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.common.IncompleteDate
+import ru.vladsaybulin.model.manga.MangaKind
+import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.manga.Publisher
+import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.anime.Screenshot
 import ru.vladsaybulin.model.SimilarEntry
-import ru.vladsaybulin.model.Studio
-import ru.vladsaybulin.model.UserRate
-import ru.vladsaybulin.model.Video
+import ru.vladsaybulin.model.anime.Studio
+import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.anime.Video
 
 sealed class DetailsUiState {
     data object Loading : DetailsUiState()

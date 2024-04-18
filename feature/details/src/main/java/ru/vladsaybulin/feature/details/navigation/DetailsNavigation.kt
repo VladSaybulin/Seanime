@@ -9,9 +9,9 @@ import androidx.navigation.navArgument
 import ru.vladsaybulin.core.navigation.ImageViewArgs
 import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.feature.details.DetailsRoute
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateWithEntry
-import ru.vladsaybulin.model.asEntryType
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
+import ru.vladsaybulin.model.common.asEntryType
 
 private const val ENTRY_ID_ARG = "id"
 private const val ENTRY_TYPE_ARG = "type"

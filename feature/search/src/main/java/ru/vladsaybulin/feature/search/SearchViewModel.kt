@@ -27,8 +27,8 @@ import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.data.repository.RecentSearchQueryRepository
 import ru.vladsaybulin.feature.search.navigation.SearchArgs
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Order
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.FilterType
 import ru.vladsaybulin.model.search.QueryMapKey
 import javax.inject.Inject

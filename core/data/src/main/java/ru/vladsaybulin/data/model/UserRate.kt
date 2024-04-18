@@ -3,9 +3,9 @@ package ru.vladsaybulin.data.model
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRate
-import ru.vladsaybulin.model.UserRateValues
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.network.models.CreateUserRateDto
 import ru.vladsaybulin.network.models.UserRateDto
 import ru.vladsaybulin.network.models.UserRateValuesDto

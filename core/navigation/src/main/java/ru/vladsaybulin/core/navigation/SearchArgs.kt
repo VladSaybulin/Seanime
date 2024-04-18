@@ -1,7 +1,7 @@
 package ru.vladsaybulin.core.navigation
 
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 
 data class SearchArgs(
     val entryType: EntryType? = null,

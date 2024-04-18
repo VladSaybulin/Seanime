@@ -46,10 +46,10 @@ import ru.vladsaybulin.core.ui.UserRateStatusButton
 import ru.vladsaybulin.core.ui.UserRateStatusButtonDefaults
 import ru.vladsaybulin.feature.userrate.components.Counter
 import ru.vladsaybulin.feature.userrate.components.ScoreRow
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRate
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)

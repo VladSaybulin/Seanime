@@ -1,7 +1,7 @@
 package ru.vladsaybulin.network.mapper.queries
 
 import ru.vladsaybulin.core.network.graphql.GenresQuery
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.network.mapper.enums.asGenreKind
 import ru.vladsaybulin.network.models.NetworkGenre
 

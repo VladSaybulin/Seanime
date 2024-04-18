@@ -2,16 +2,16 @@ package ru.vladsaybulin.feature.home
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.datetime.Clock
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.AnimeKind
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.IncompleteDate
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.MangaKind
-import ru.vladsaybulin.model.Poster
-import ru.vladsaybulin.model.UserRate
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.IncompleteDate
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.manga.MangaKind
+import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.model.topic.NewsTopic
 import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.model.user.UserImage

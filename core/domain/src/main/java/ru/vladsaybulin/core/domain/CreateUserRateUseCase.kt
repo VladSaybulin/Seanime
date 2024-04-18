@@ -1,13 +1,13 @@
 package ru.vladsaybulin.core.domain
 
 import ru.vladsaybulin.data.repository.UserRateRepository
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.AnimeDetails
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.EntryDetails
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.MangaDetails
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.UserRateValues
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.manga.MangaDetails
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateValues
 import javax.inject.Inject
 
 class CreateUserRateUseCase @Inject constructor(

@@ -28,11 +28,11 @@ import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.AnimeWithUserRate
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.AnimeWithUserRate
 import ru.vladsaybulin.model.EntryDetails
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.Order
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.datasource.UserRateDataSource

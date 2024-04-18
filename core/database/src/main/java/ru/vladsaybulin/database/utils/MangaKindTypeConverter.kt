@@ -1,8 +1,8 @@
 package ru.vladsaybulin.database.utils
 
 import androidx.room.TypeConverter
-import ru.vladsaybulin.model.MangaKind
-import ru.vladsaybulin.model.asMangaKind
+import ru.vladsaybulin.model.manga.MangaKind
+import ru.vladsaybulin.model.manga.asMangaKind
 
 class MangaKindTypeConverter {
 

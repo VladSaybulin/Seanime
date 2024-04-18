@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
-import ru.vladsaybulin.model.Video
+import ru.vladsaybulin.model.anime.Video
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

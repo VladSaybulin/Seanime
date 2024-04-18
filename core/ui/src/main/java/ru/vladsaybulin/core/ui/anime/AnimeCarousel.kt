@@ -6,8 +6,8 @@ import androidx.compose.ui.Modifier
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun AnimeCarousel(

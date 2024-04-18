@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 import ru.vladsaybulin.core.ui.entry.EntryGrid
 import ru.vladsaybulin.core.ui.entry.EntryGridDefaults
-import ru.vladsaybulin.model.AnimeWithUserRate
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.anime.AnimeWithUserRate
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun AnimeWithUserRateGrid(

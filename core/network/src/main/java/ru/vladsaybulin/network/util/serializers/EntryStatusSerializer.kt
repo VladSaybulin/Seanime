@@ -6,9 +6,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.asEntryStatus
-import ru.vladsaybulin.model.asEntryType
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.asEntryStatus
 
 internal class EntryStatusSerializer : KSerializer<EntryStatus> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("entry_status", PrimitiveKind.STRING)

@@ -27,8 +27,8 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
-import ru.vladsaybulin.model.Poster
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.common.Image
 
 @Composable

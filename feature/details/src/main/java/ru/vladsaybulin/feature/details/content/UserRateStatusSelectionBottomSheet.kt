@@ -8,15 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.ui.UserRateStatusButton
-import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.UserRateStatus.Completed
-import ru.vladsaybulin.model.UserRateStatus.Dropped
-import ru.vladsaybulin.model.UserRateStatus.OnHold
-import ru.vladsaybulin.model.UserRateStatus.Planned
-import ru.vladsaybulin.model.UserRateStatus.Rewatching
-import ru.vladsaybulin.model.UserRateStatus.Watching
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus.Completed
+import ru.vladsaybulin.model.userrate.UserRateStatus.Dropped
+import ru.vladsaybulin.model.userrate.UserRateStatus.OnHold
+import ru.vladsaybulin.model.userrate.UserRateStatus.Planned
+import ru.vladsaybulin.model.userrate.UserRateStatus.Rewatching
+import ru.vladsaybulin.model.userrate.UserRateStatus.Watching
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

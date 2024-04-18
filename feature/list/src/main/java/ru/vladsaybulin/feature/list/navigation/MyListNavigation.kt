@@ -8,10 +8,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import ru.vladsaybulin.feature.list.MyListRoute
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.asEntryType
-import ru.vladsaybulin.model.asUserRateStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.common.asEntryType
+import ru.vladsaybulin.model.userrate.asUserRateStatus
 
 private const val EntryTypeArg = "entry_type"
 private const val UserRateStatusArg = "status"

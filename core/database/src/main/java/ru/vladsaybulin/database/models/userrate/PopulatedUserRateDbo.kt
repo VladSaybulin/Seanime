@@ -6,7 +6,7 @@ import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.asExternalModel
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 data class PopulatedUserRateDbo(
     @Embedded val userRateEntity: UserRateEntity,

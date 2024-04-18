@@ -3,7 +3,7 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.vladsaybulin.model.Studio
+import ru.vladsaybulin.model.anime.Studio
 
 @Entity(tableName = "studios")
 data class StudioEntity(

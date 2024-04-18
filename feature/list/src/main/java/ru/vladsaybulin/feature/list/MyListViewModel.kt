@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.core.domain.GetPagedUserRatesUseCase
 import ru.vladsaybulin.feature.list.navigation.MyListArgs
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
 
 @HiltViewModel

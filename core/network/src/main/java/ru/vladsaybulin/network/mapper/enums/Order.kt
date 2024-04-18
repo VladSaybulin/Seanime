@@ -1,7 +1,7 @@
 package ru.vladsaybulin.network.mapper.enums
 
 import ru.vladsaybulin.core.network.graphql.type.OrderEnum
-import ru.vladsaybulin.model.Order
+import ru.vladsaybulin.model.search.Order
 
 internal fun Order.asOrderEnum() = when (this) {
     Order.Popularity -> OrderEnum.popularity

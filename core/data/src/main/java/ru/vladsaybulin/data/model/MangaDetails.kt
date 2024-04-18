@@ -4,21 +4,21 @@ import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
 import ru.vladsaybulin.database.models.common.IncompleteDateEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.common.ImageEntity
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.Character
-import ru.vladsaybulin.model.CharacterWithRole
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Genre
-import ru.vladsaybulin.model.IncompleteDate
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.MangaDetails
-import ru.vladsaybulin.model.Person
-import ru.vladsaybulin.model.PersonWithRoles
-import ru.vladsaybulin.model.Poster
-import ru.vladsaybulin.model.Publisher
-import ru.vladsaybulin.model.RelatedEntry
-import ru.vladsaybulin.model.Statistic
-import ru.vladsaybulin.model.asRelationType
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.character.Character
+import ru.vladsaybulin.model.character.CharacterWithRole
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.common.IncompleteDate
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.manga.MangaDetails
+import ru.vladsaybulin.model.person.Person
+import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.manga.Publisher
+import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.common.Statistic
+import ru.vladsaybulin.model.related.asRelationType
 
 fun MangaDetailsQuery.Manga.asExternalModel() = MangaDetails(
     id = id,

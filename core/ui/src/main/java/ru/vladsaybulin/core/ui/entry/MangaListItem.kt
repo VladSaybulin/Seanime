@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.vladsaybulin.core.ui.strings.chaptersAndVolumesString
 import ru.vladsaybulin.core.ui.strings.mangaKindString
-import ru.vladsaybulin.model.Manga
-import ru.vladsaybulin.model.RelationType
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.related.RelationType
 
 @Composable
 fun MangaListItem(

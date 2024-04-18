@@ -45,8 +45,8 @@ import ru.vladsaybulin.core.ui.strings.entryStatusString
 import ru.vladsaybulin.core.ui.strings.mangaKindString
 import ru.vladsaybulin.core.ui.strings.seasonFilterString
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
-import ru.vladsaybulin.model.AnimeKind
-import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.search.FilterOption
 import ru.vladsaybulin.model.search.FilterType
 import ru.vladsaybulin.model.search.Filters

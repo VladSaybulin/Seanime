@@ -3,9 +3,9 @@ package ru.vladsaybulin.core.domain
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.data.repository.UserRateRepository
-import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.UserRateWithEntry
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import javax.inject.Inject
 
 class GetPagedUserRatesUseCase @Inject constructor(

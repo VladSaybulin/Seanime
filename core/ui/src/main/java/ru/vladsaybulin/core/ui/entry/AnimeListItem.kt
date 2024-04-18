@@ -10,8 +10,8 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.buildEpisodesString
-import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.RelationType
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.related.RelationType
 
 @Composable
 fun AnimeListItem(

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.model.AnimeRating
+import ru.vladsaybulin.model.anime.AnimeRating
 
 fun animeRatingStringId(animeRating: AnimeRating) = when (animeRating) {
     AnimeRating.G -> R.string.core_ui_anime_rating_g

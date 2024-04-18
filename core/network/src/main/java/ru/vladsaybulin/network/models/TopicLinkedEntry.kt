@@ -3,7 +3,7 @@ package ru.vladsaybulin.network.models
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.network.util.serializers.EntryStatusSerializer
 
 /**

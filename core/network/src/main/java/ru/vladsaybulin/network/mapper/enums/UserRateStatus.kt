@@ -1,7 +1,7 @@
 package ru.vladsaybulin.network.mapper.enums
 
 import ru.vladsaybulin.core.network.graphql.type.UserRateStatusEnum
-import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 internal fun UserRateStatusEnum?.asUserRateStatus() = when (this) {
     UserRateStatusEnum.planned -> UserRateStatus.Planned
