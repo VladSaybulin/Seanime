@@ -3,10 +3,11 @@ package ru.vladsaybulin.core.domain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.data.repository.CalendarRepository
-import ru.vladsaybulin.model.CalendarDay
+import ru.vladsaybulin.model.calendar.CalendarItem
 import javax.inject.Inject
 
 class GetCalendarDaysUseCase @Inject constructor(
@@ -25,3 +26,8 @@ class GetCalendarDaysUseCase @Inject constructor(
                 }.map { (date, items) -> CalendarDay(date, items.sortedBy { it.nextEpisodeAt }) }
             }
 }
+
+data class CalendarDay(
+    val date: LocalDate?,
+    val items: List<CalendarItem>
+)

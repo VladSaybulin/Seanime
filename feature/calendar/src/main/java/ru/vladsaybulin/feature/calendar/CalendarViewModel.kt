@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import ru.vladsaybulin.core.domain.CalendarDay
 import ru.vladsaybulin.core.domain.GetCalendarDaysUseCase
 import ru.vladsaybulin.data.repository.CalendarRepository
-import ru.vladsaybulin.model.CalendarDay
 import javax.inject.Inject
 
 @HiltViewModel
