@@ -9,5 +9,5 @@ data class CalendarItemDto(
     @SerialName("next_episode") val nextEpisode: Int,
     @SerialName("next_episode_at") val nextEpisodeAt: Instant,
     @SerialName("duration") val duration: Int?,
-    @SerialName("anime") val anime: AnimeDto,
+    @SerialName("anime") val anime: NetworkAnime,
 )

@@ -11,7 +11,6 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.buildEpisodesString
 import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.RelationType
 
 @Composable
@@ -24,7 +23,7 @@ fun AnimeListItem(
 ) {
     EntryListItem(
         modifier = modifier,
-        name = anime.russianName ?: anime.originalName,
+        name = anime.russianName ?: anime.name,
         poster = anime.poster,
         onClick = onClick,
         detailsContent = detailsContent
@@ -49,8 +48,7 @@ fun Anime.listItemDetailsData(relationType: RelationType? = null) = EntryListIte
         duration = null
     ),
     score = score,
-    relationType = relationType,
-    entryType = EntryType.Anime
+    relationType = relationType
 )
 
 @Preview

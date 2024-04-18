@@ -1,24 +1,32 @@
 package ru.vladsaybulin.feature.imageview
 
 import androidx.lifecycle.ViewModel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import ru.vladsaybulin.core.navigation.ImageViewArgs
+import ru.vladsaybulin.model.common.Image
 import javax.inject.Inject
 
 class ImageViewViewModel @Inject constructor() : ViewModel() {
 
-    private var images: ImmutableList<Image>? = null
-    val requireImages: ImmutableList<Image>
-        get() = checkNotNull(images)
+    private val _state = MutableStateFlow<ImageViewState>(ImageViewState.NoSet)
+    val state = _state.asStateFlow()
 
-    var initialImage = 0
-        private set
-
-    fun setup(
-        images: List<Image>,
-        initialImage: Int
-    ) {
-        this.images = images.toImmutableList()
-        this.initialImage = initialImage
+    fun setImages(params: ImageViewArgs) {
+        _state.value = ImageViewState.Set(
+            params.images,
+            params.initialIndex,
+            params.isSingle
+        )
     }
+}
+
+sealed class ImageViewState {
+    data object NoSet : ImageViewState()
+
+    data class Set(
+        val images: List<Image>,
+        val initialIndex: Int,
+        val isSingle: Boolean
+    ) : ImageViewState()
 }

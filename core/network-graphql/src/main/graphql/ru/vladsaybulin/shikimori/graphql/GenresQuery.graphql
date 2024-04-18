@@ -1,0 +1,8 @@
+query GenresQuery($entryType: GenreEntryTypeEnum!) {
+    genres(entryType: $entryType) {
+        id
+        name
+        russian
+        kind
+    }
+}

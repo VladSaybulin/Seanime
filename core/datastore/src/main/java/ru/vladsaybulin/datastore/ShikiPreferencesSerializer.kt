@@ -3,6 +3,7 @@ package ru.vladsaybulin.datastore
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
+import ru.vladsaybulin.core.datastore.proto.ShikiPreferences
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject

@@ -5,11 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -33,21 +32,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.feature.details.content.AnimeInformation
+import ru.vladsaybulin.core.navigation.ImageViewArgs
+import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
 import ru.vladsaybulin.feature.details.content.CharactersCarousel
 import ru.vladsaybulin.feature.details.content.Description
-import ru.vladsaybulin.feature.details.content.EntryDetailsName
-import ru.vladsaybulin.feature.details.content.EntryDetailsPoster
-import ru.vladsaybulin.feature.details.content.MangaInformation
 import ru.vladsaybulin.feature.details.content.RelatedBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
@@ -55,51 +51,54 @@ import ru.vladsaybulin.feature.details.content.SimilarCarousel
 import ru.vladsaybulin.feature.details.content.UserRateFab
 import ru.vladsaybulin.feature.details.content.UserRateStatusSelectionBottomSheet
 import ru.vladsaybulin.feature.details.content.VideosCarousel
+import ru.vladsaybulin.feature.details.content.animeInformation
+import ru.vladsaybulin.feature.details.content.mangaInformation
+import ru.vladsaybulin.feature.details.content.name
+import ru.vladsaybulin.feature.details.content.poster
 import ru.vladsaybulin.feature.details.content.relatedItems
-import ru.vladsaybulin.feature.userrate.UserRateEditorContext
+import ru.vladsaybulin.feature.details.model.getUserRateWithEntry
 import ru.vladsaybulin.model.EntryStatus.Anons
 import ru.vladsaybulin.model.EntryType
-import ru.vladsaybulin.model.Screenshot
-import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateStatus
-import ru.vladsaybulin.model.Video
+import ru.vladsaybulin.model.UserRateWithEntry
 
 @Composable
 fun DetailsRoute(
     modifier: Modifier = Modifier,
-    viewModel: DetailsViewModel = hiltViewModel(),
     onEntryClick: (EntryType, Long) -> Unit,
-    onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
-    onEditUserRateClick: (UserRate, UserRateEditorContext) -> Unit,
-    onGenreClick: (Long) -> Unit = {},
-    onPublisherClick: (Long) -> Unit = {},
-    onStudioClick: (Long) -> Unit = {},
+    onSearchClick: (SearchArgs) -> Unit,
+    onAuthorClick: (Long) -> Unit,
+    onCharacterClick: (Long) -> Unit,
+    onShowRequireAuthDialog: () -> Unit,
+    onShowUserRate: (UserRateWithEntry) -> Unit,
+    onShowImage: (ImageViewArgs) -> Unit,
     onBackClick: () -> Unit,
-    onRequireAuth: () -> Unit,
+    viewModel: DetailsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val enabledAutocorrect by viewModel.enabledAutocorrectStatus.collectAsStateWithLifecycle()
     val isAuthorized = viewModel.isAuthorized()
+
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.refresh()
+    }
 
     DetailsScreen(
         uiState = uiState,
         enabledAutocorrect = enabledAutocorrect,
         isAuthorized = isAuthorized,
         onRetry = viewModel::onRetry,
-        onRefresh = viewModel::onRefresh,
+        refresh = viewModel::refresh,
+        onCreateUserRate = viewModel::createUserRate,
         onEntryClick = onEntryClick,
-        onScreenshotClick = onScreenshotClick,
-        onGenreClick = onGenreClick,
-        onPublisherClick = onPublisherClick,
-        onStudioClick = onStudioClick,
+        onSearchClick = onSearchClick,
+        onAuthorClick = onAuthorClick,
+        onCharacterClick = onCharacterClick,
+        onShowRequireAuthDialog = onShowRequireAuthDialog,
+        onShowUserRate = onShowUserRate,
+        onShowImage = onShowImage,
         onBackClick = onBackClick,
         modifier = modifier,
-        onEditUserRateClick = { userRate ->
-            val context = viewModel.getUserRateEditorContext() ?: return@DetailsScreen
-            onEditUserRateClick(checkNotNull(userRate), context)
-        },
-        onCreateUserRate = viewModel::createUserRate,
-        onRequireAuth = onRequireAuth
     )
 }
 
@@ -109,20 +108,18 @@ fun DetailsScreen(
     enabledAutocorrect: Boolean,
     isAuthorized: Boolean,
     onRetry: () -> Unit,
-    onRefresh: suspend () -> Unit,
-    onEntryClick: (EntryType, Long) -> Unit,
-    onScreenshotClick: (List<Screenshot>, screenshotIndex: Int) -> Unit,
-    onEditUserRateClick: (UserRate) -> Unit,
+    refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
-    onGenreClick: (Long) -> Unit,
-    onPublisherClick: (Long) -> Unit,
-    onStudioClick: (Long) -> Unit,
+    onEntryClick: (EntryType, Long) -> Unit,
+    onSearchClick: (SearchArgs) -> Unit,
+    onAuthorClick: (Long) -> Unit,
+    onCharacterClick: (Long) -> Unit,
+    onShowRequireAuthDialog: () -> Unit,
+    onShowUserRate: (UserRateWithEntry) -> Unit,
+    onShowImage: (ImageViewArgs) -> Unit,
     onBackClick: () -> Unit,
-    onRequireAuth: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
-
     when (uiState) {
         is DetailsUiState.Error -> DetailsError(
             errorState = uiState,
@@ -136,22 +133,17 @@ fun DetailsScreen(
             state = uiState,
             enabledAutocorrect = enabledAutocorrect,
             isAuthorized = isAuthorized,
-            onEntryClick = onEntryClick,
-            onBackClick = onBackClick,
-            onRefresh = onRefresh,
-            modifier = modifier,
-            onEditUserRateClick = onEditUserRateClick,
+            refresh = refresh,
             onCreateUserRate = onCreateUserRate,
-            onGenreClick = onGenreClick,
-            onPublisherClick = onPublisherClick,
-            onStudioClick = onStudioClick,
-            onAuthorClick = {},
-            onCharacterClick = {},
-            onScreenshotClick = { index ->
-                onScreenshotClick(checkNotNull(uiState.screenshots), index)
-            },
-            onVideoClick = {},
-            onRequireAuth = onRequireAuth
+            onEntryClick = onEntryClick,
+            onSearchClick = onSearchClick,
+            onAuthorClick = onAuthorClick,
+            onCharacterClick = onCharacterClick,
+            onShowRequireAuthDialog = onShowRequireAuthDialog,
+            onShowUserRate = onShowUserRate,
+            onShowImage = onShowImage,
+            onBackClick = onBackClick,
+            modifier = modifier,
         )
     }
 }
@@ -201,19 +193,16 @@ private fun DetailsContent(
     state: DetailsUiState.Success,
     enabledAutocorrect: Boolean,
     isAuthorized: Boolean,
-    onRefresh: suspend () -> Unit,
-    onEditUserRateClick: (UserRate) -> Unit,
-    onAuthorClick: (Long) -> Unit,
-    onEntryClick: (EntryType, Long) -> Unit,
-    onCharacterClick: (Long) -> Unit,
-    onScreenshotClick: (screenshotIndex: Int) -> Unit,
-    onVideoClick: (Video) -> Unit,
+    refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
-    onGenreClick: (Long) -> Unit,
-    onPublisherClick: (Long) -> Unit,
-    onStudioClick: (Long) -> Unit,
+    onEntryClick: (EntryType, Long) -> Unit,
+    onSearchClick: (SearchArgs) -> Unit,
+    onAuthorClick: (Long) -> Unit,
+    onCharacterClick: (Long) -> Unit,
+    onShowRequireAuthDialog: () -> Unit,
+    onShowUserRate: (UserRateWithEntry) -> Unit,
+    onShowImage: (ImageViewArgs) -> Unit,
     onBackClick: () -> Unit,
-    onRequireAuth: () -> Unit,
     modifier: Modifier
 ) {
     var showAllCharacters by rememberSaveable { mutableStateOf(false) }
@@ -240,6 +229,8 @@ private fun DetailsContent(
 
     Scaffold(
         modifier = modifier
+            .navigationBarsPadding()
+            .padding(bottom = 80.dp)
             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
             .nestedScroll(pullToRefreshState.nestedScrollConnection),
         topBar = {
@@ -257,9 +248,12 @@ private fun DetailsContent(
                 expanded = expandedFab,
                 onClick = {
                     when {
-                        !isAuthorized -> onRequireAuth()
-                        state.userRate != null -> onEditUserRateClick(state.userRate)
-                        state.status == Anons -> onCreateUserRate(UserRateStatus.Planned)
+                        !isAuthorized -> onShowRequireAuthDialog()
+                        state.userRate != null -> onShowUserRate(state.getUserRateWithEntry())
+                        enabledAutocorrect && state.status == Anons -> onCreateUserRate(
+                            UserRateStatus.Planned
+                        )
+
                         else -> showUserRateStatusSelection = true
                     }
                 }
@@ -268,54 +262,36 @@ private fun DetailsContent(
     ) { scaffoldPadding ->
         LazyColumn(
             state = listState,
+            //FAB 56.dp + horizontal padding 16.dp
+            contentPadding = PaddingValues(bottom = 56.dp + 32.dp)
         ) {
 
-            item(key = "poster") {
-                EntryDetailsPoster(
-                    poster = state.poster,
-                    topSpacingDp = scaffoldPadding.calculateTopPadding()
-                )
-            }
+            poster(
+                poster = state.poster,
+                topSpace = scaffoldPadding.calculateTopPadding(),
+                onPosterClick = { onShowImage(state.posterViewParams()) }
+            )
 
-            item(key = "poster_name_space") {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            item(key = "name") {
-                EntryDetailsName(
-                    name = state.name,
-                    russianName = state.russianName,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+            name(
+                name = state.name,
+                russianName = state.russianName,
+            )
 
             if (state.entryType == EntryType.Manga) {
-                item(key = "manga_info") {
-                    MangaInformation(
-                        state = state,
-                        onPublisherClick = onPublisherClick,
-                        onGenreClick = onGenreClick
-                    )
-                }
+                mangaInformation(
+                    state = state,
+                    onSearchClick = onSearchClick
+                )
             }
 
             if (state.entryType == EntryType.Anime) {
-                item(key = "anime_info") {
-                    AnimeInformation(
-                        state = state,
-                        onStudioClick = onStudioClick,
-                        onGenreClick = onGenreClick
-                    )
-                }
+                animeInformation(
+                    state = state,
+                    onSearchClick = onSearchClick
+                )
             }
 
-            item {
-                Spacer(Modifier.height(24.dp))
-            }
+            item { Spacer(Modifier.height(24.dp)) }
 
             if (state.descriptionHtml != null) {
                 item(key = "description") {
@@ -362,7 +338,7 @@ private fun DetailsContent(
                 item(key = "screenshot") {
                     ScreenshotsCarousel(
                         screenshots = state.screenshots,
-                        onScreenshotClick = { onScreenshotClick(it) },
+                        onScreenshotClick = { onShowImage(state.screenshotViewParams(it)) },
                         onShowAllClick = { showAllScreenshots = true }
                     )
                 }
@@ -372,7 +348,7 @@ private fun DetailsContent(
                 item(key = "videos") {
                     VideosCarousel(
                         videos = state.videos,
-                        onVideoClick = onVideoClick,
+                        onVideoClick = { },
                         onShowAllClick = { }
                     )
                 }
@@ -387,19 +363,11 @@ private fun DetailsContent(
                     )
                 }
             }
-
-            item(key = "bottom_padding") {
-                //56dp (FAB height) + 16 dp (FAB padding) * 2 = 88 dp
-                val navigationBarsBottomPadding = with(LocalDensity.current) {
-                    WindowInsets.navigationBars.getBottom(this).toDp()
-                }
-                Spacer(modifier = Modifier.height(88.dp + navigationBarsBottomPadding))
-            }
         }
 
         if (pullToRefreshState.isRefreshing) {
             LaunchedEffect(Unit) {
-                onRefresh()
+                refresh()
                 pullToRefreshState.endRefresh()
             }
         }
@@ -436,7 +404,7 @@ private fun DetailsContent(
     if (state.screenshots != null && showAllScreenshots) {
         ScreenshotsBottomSheet(
             screenshots = state.screenshots,
-            onScreenshotClick = onScreenshotClick,
+            onScreenshotClick = { onShowImage(state.screenshotViewParams(it)) },
             onDismissRequest = { showAllScreenshots = false }
         )
     }
@@ -456,7 +424,6 @@ private fun DetailsContent(
         )
     }
 }
-
 
 private val HorizontalPadding = PaddingValues(horizontal = 16.dp)
 private val HorizontalPaddingModifier = Modifier.padding(HorizontalPadding)

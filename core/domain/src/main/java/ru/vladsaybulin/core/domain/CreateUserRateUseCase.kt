@@ -46,7 +46,7 @@ class CreateUserRateUseCase @Inject constructor(
 
 private fun AnimeDetails.asBrief() = Anime(
     id = id,
-    originalName = originalName,
+    name = originalName,
     russianName = russianName,
     poster = poster,
     kind = kind,
@@ -55,12 +55,13 @@ private fun AnimeDetails.asBrief() = Anime(
     episodes = episodes,
     episodesAired = episodesAired,
     airedOn = airedOn,
-    releasedOn = releasedOn
+    releasedOn = releasedOn,
+    userRate = null
 )
 
 private fun MangaDetails.asBrief() = Manga(
     id = id,
-    originalName = originalName,
+    name = originalName,
     russianName = russianName,
     poster = poster,
     kind = kind,

@@ -1,15 +1,32 @@
 package ru.vladsaybulin.feature.details.content
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.core.ui.strings.chaptersAndVolumesString
 import ru.vladsaybulin.core.ui.strings.mangaKindString
 import ru.vladsaybulin.feature.details.DetailsUiState
 import ru.vladsaybulin.feature.details.R
+import ru.vladsaybulin.feature.details.genreSearchParams
+import ru.vladsaybulin.feature.details.publisherSearchParams
 import ru.vladsaybulin.model.Publisher
+
+internal fun LazyListScope.mangaInformation(
+    state: DetailsUiState.Success,
+    onSearchClick: (SearchArgs) -> Unit
+) {
+    item(key = "manga_info") {
+        MangaInformation(
+            state = state,
+            onPublisherClick = { onSearchClick(state.publisherSearchParams(it)) },
+            onGenreClick = { onSearchClick(state.genreSearchParams(it)) }
+        )
+    }
+}
 
 @Composable
 fun MangaInformation(

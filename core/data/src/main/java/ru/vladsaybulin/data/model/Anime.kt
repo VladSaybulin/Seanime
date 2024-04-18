@@ -1,26 +1,44 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.database.models.AnimeDbo
+import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.model.Anime
-import ru.vladsaybulin.network.models.AnimeDto
+import ru.vladsaybulin.network.models.NetworkAnime
 
-fun AnimeDto.asDbo() = AnimeDbo(
+fun NetworkAnime.asEntity() = AnimeEntity(
     id = id,
     originalName = originalName,
     russianName = russianName,
-    poster = poster?.asDbo(),
+    poster = poster?.asEntity(),
     kind = kind,
     status = status,
     score = score,
     episodes = episodes,
     episodesAired = episodesAired,
-    airedOn = airedOn?.asIncompleteDateDbo(),
-    releasedOn = releasedOn?.asIncompleteDateDbo()
+    airedOn = airedOn?.asEntity(),
+    releasedOn = releasedOn?.asEntity()
 )
 
-fun AnimeDto.asAnime() = Anime(
+fun NetworkAnime.userRateEntityShell() = userRate?.let { userRate ->
+    UserRateEntity(
+        id = userRate.id,
+        animeId = id,
+        mangaId = null,
+        status = userRate.status,
+        score = userRate.score,
+        episodes = episodes,
+        chapters = 0,
+        volumes = 0,
+        rewatches = userRate.rewatches,
+        text = userRate.text ?: "",
+        createdAt = userRate.createdAt,
+        updatedAt = userRate.updatedAt
+    )
+}
+
+fun NetworkAnime.asAnime() = Anime(
     id = id,
-    originalName = originalName,
+    name = originalName,
     russianName = russianName,
     poster = poster?.asPoster(),
     kind = kind,
@@ -29,19 +47,20 @@ fun AnimeDto.asAnime() = Anime(
     episodes = episodes,
     episodesAired = episodesAired,
     airedOn = airedOn?.asIncompleteDate(),
-    releasedOn = releasedOn?.asIncompleteDate()
+    releasedOn = releasedOn?.asIncompleteDate(),
+    userRate = userRate?.asExternalModel()
 )
 
-fun Anime.asDbo() = AnimeDbo(
+fun Anime.asEntity() = AnimeEntity(
     id = id,
-    originalName = originalName,
+    originalName = name,
     russianName = russianName,
-    poster = poster?.asDbo(),
+    poster = poster?.asEntity(),
     kind = kind,
     status = status,
     score = score ?: 0f,
     episodes = episodes,
     episodesAired = episodesAired,
-    airedOn = airedOn?.asDbo(),
-    releasedOn = releasedOn?.asDbo()
+    airedOn = airedOn?.asEntity(),
+    releasedOn = releasedOn?.asEntity()
 )

@@ -1,7 +1,11 @@
 package ru.vladsaybulin.model
 
+import ru.vladsaybulin.model.common.Image
+
 data class Screenshot(
     val x166Url: String,
     val x332Url: String,
-    val originalUrl: String
-)
+    override val originalUrl: String
+) : Image {
+    override val previewUrl: String = x332Url
+}

@@ -3,6 +3,8 @@ package ru.vladsaybulin.feature.details
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
+import ru.vladsaybulin.core.navigation.ImageViewArgs
+import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.model.AnimeKind
 import ru.vladsaybulin.model.CharacterWithRole
 import ru.vladsaybulin.model.EntryDetails
@@ -28,12 +30,14 @@ sealed class DetailsUiState {
 
     data class Success(
         val entryType: EntryType,
+        val entryId: Long,
         val poster: Poster?,
         val name: String,
         val russianName: String?,
         val status: EntryStatus,
         val animeKind: AnimeKind?,
         val mangaKind: MangaKind?,
+        val score: Float,
         val episodes: Int,
         val episodesAired: Int,
         val episodeDuration: Int?,
@@ -63,11 +67,13 @@ internal fun EntryDetails.toUiState(): DetailsUiState =
 private fun EntryDetails.animeDetailsToUiState() = with(anime!!) {
     DetailsUiState.Success(
         entryType = EntryType.Anime,
+        entryId = id,
         poster = poster,
         name = originalName,
         russianName = russianName,
         status = status,
         animeKind = kind,
+        score = score ?: 0f,
         episodes = episodes,
         episodesAired = episodesAired,
         episodeDuration = duration?.takeIf { it > 0 },
@@ -97,11 +103,13 @@ private fun EntryDetails.animeDetailsToUiState() = with(anime!!) {
 private fun EntryDetails.mangaDetailsToUiState() = with(manga!!) {
     DetailsUiState.Success(
         entryType = EntryType.Manga,
+        entryId = id,
         poster = poster,
         name = originalName,
         russianName = russianName,
         status = status,
         mangaKind = kind,
+        score = score ?: 0f,
         chapters = chapters,
         volumes = volumes,
         airedOn = airedOn,
@@ -125,6 +133,42 @@ private fun EntryDetails.mangaDetailsToUiState() = with(manga!!) {
         studios = null,
         screenshots = null,
         videos = null,
+    )
+}
+
+internal fun DetailsUiState.Success.publisherSearchParams(publisherId: Long) =
+    SearchArgs(
+        entryType = entryType,
+        publisherId = publisherId
+    )
+
+internal fun DetailsUiState.Success.studioSearchParams(studioId: Long) =
+    SearchArgs(
+        entryType = entryType,
+        studioId = studioId
+    )
+
+internal fun DetailsUiState.Success.genreSearchParams(genreId: Long) =
+    SearchArgs(
+        entryType = entryType,
+        genreId = genreId
+    )
+
+internal fun DetailsUiState.Success.posterViewParams(): ImageViewArgs {
+    require(poster != null)
+    return ImageViewArgs(
+        images = listOf(poster),
+        initialIndex = 0,
+        isSingle = true
+    )
+}
+
+internal fun DetailsUiState.Success.screenshotViewParams(initialIndex: Int): ImageViewArgs {
+    require(!screenshots.isNullOrEmpty())
+    return ImageViewArgs(
+        images = screenshots,
+        initialIndex = initialIndex,
+        isSingle = false
     )
 }
 

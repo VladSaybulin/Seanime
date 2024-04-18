@@ -15,8 +15,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
-import ru.vladsaybulin.core.ui.strings.notNoneAnimeUserRateStatusString
-import ru.vladsaybulin.core.ui.strings.notNoneMangaUserRateStatusString
+import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.UserRateStatus
@@ -70,10 +69,7 @@ private fun UserRateFabText(
 ) {
     val text = if (status == null || status == UserRateStatus.None) {
         stringResource(id = R.string.add)
-    } else when (entryType) {
-        EntryType.Anime -> notNoneAnimeUserRateStatusString(userRateStatus = status)
-        else -> notNoneMangaUserRateStatusString(userRateStatus = status)
-    }
+    } else userRateStatusString(status)
 
     Text(
         text = text,

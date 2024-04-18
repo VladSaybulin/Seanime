@@ -10,8 +10,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.data.repository.UserRateRepository
+import ru.vladsaybulin.model.Anime
+import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.model.Manga
 import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateValues
+import ru.vladsaybulin.model.UserRateWithEntry
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,6 +43,10 @@ class UserRateViewModel @Inject constructor(
             initialValue = UserRateSetup.None
         )
 
+    fun setUserRate(userRateWithEntry: UserRateWithEntry) {
+        userRateWithContext.tryEmit(userRateWithEntry.userRate to (userRateWithEntry.anime?.context ?: userRateWithEntry.manga!!.context))
+    }
+
     fun setupUserRate(userRate: UserRate, context: UserRateEditorContext) {
         userRateWithContext.tryEmit(userRate to context)
     }
@@ -64,3 +72,19 @@ class UserRateViewModel @Inject constructor(
         } else null
     }
 }
+
+val Anime.context
+    get() = UserRateEditorContext(
+        entryType = EntryType.Anime,
+        entryStatus = status,
+        episodesLimit = Limit.Unlimited
+    )
+
+
+val Manga.context
+    get() = UserRateEditorContext(
+        entryType = EntryType.Manga,
+        entryStatus = status,
+        chaptersLimit = Limit.Unlimited,
+        volumesLimit = Limit.Unlimited
+    )

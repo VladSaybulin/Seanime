@@ -1,9 +1,9 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
-import ru.vladsaybulin.database.models.IncompleteDateDbo
-import ru.vladsaybulin.database.models.MangaDbo
-import ru.vladsaybulin.database.models.PosterDbo
+import ru.vladsaybulin.database.models.common.IncompleteDateEntity
+import ru.vladsaybulin.database.models.manga.MangaEntity
+import ru.vladsaybulin.database.models.common.ImageEntity
 import ru.vladsaybulin.model.Anime
 import ru.vladsaybulin.model.Character
 import ru.vladsaybulin.model.CharacterWithRole
@@ -47,25 +47,25 @@ fun MangaDetailsQuery.Manga.asExternalModel() = MangaDetails(
     related = related?.mapNotNull(MangaDetailsQuery.Related::asRelatedEntry),
 )
 
-fun MangaDetailsQuery.Manga.asDbo() = MangaDbo(
+fun MangaDetailsQuery.Manga.asEntity() = MangaEntity(
     id = id,
     originalName = name,
     russianName = russian,
-    poster = poster?.asDbo(),
+    poster = poster?.asEntity(),
     kind = kind.asMangaKind(),
     status = status.asEntryStatus(),
     score = score?.toFloat() ?: 0f,
     chapters = chapters,
     volumes = volumes,
-    airedOn = airedOn?.asDbo(),
-    releasedOn = releasedOn?.asDbo()
+    airedOn = airedOn?.asEntity(),
+    releasedOn = releasedOn?.asEntity()
 )
 
-private fun MangaDetailsQuery.Poster.asDbo() = PosterDbo(originalUrl, previewUrl)
+private fun MangaDetailsQuery.Poster.asEntity() = ImageEntity(originalUrl, previewUrl)
 
-private fun MangaDetailsQuery.AiredOn.asDbo() = IncompleteDateDbo(day, month, year)
+private fun MangaDetailsQuery.AiredOn.asEntity() = IncompleteDateEntity(day, month, year)
 
-private fun MangaDetailsQuery.ReleasedOn.asDbo() = IncompleteDateDbo(day, month, year)
+private fun MangaDetailsQuery.ReleasedOn.asEntity() = IncompleteDateEntity(day, month, year)
 
 private fun Double.toScore() = this.toFloat().takeIf { it != 0.0f }
 
@@ -125,7 +125,7 @@ fun MangaDetailsQuery.Related.asRelatedEntry() = if (anime != null || manga != n
         anime = anime?.run {
             Anime(
                 id = id,
-                originalName = name,
+                name = name,
                 russianName = russian,
                 poster = poster?.let { p ->
                     Poster(
@@ -139,13 +139,14 @@ fun MangaDetailsQuery.Related.asRelatedEntry() = if (anime != null || manga != n
                 episodes = episodes,
                 episodesAired = episodesAired,
                 airedOn = airedOn?.let { IncompleteDate(it.day, it.month, it.year) },
-                releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) }
+                releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) },
+                userRate = null
             )
         },
         manga = manga?.run {
             Manga(
                 id = id,
-                originalName = name,
+                name = name,
                 russianName = russian,
                 poster = poster?.let { p ->
                     Poster(

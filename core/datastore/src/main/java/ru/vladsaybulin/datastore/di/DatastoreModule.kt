@@ -14,30 +14,13 @@ import kotlinx.coroutines.CoroutineScope
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.network.di.ApplicationScope
-import ru.vladsaybulin.datastore.AuthPreferences
-import ru.vladsaybulin.datastore.AuthPreferencesSerializer
-import ru.vladsaybulin.datastore.ShikiPreferences
+import ru.vladsaybulin.core.datastore.proto.ShikiPreferences
 import ru.vladsaybulin.datastore.ShikiPreferencesSerializer
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class DatastoreModule {
-
-    @Provides
-    @Singleton
-    internal fun providesUserPreferencesDataStore(
-        @ApplicationContext context: Context,
-        @Dispatcher(IO) ioDispatcher: CoroutineDispatcher,
-        @ApplicationScope scope: CoroutineScope,
-        userPreferencesSerializer: AuthPreferencesSerializer,
-    ): DataStore<AuthPreferences> =
-        DataStoreFactory.create(
-            serializer = userPreferencesSerializer,
-            scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
-        ) {
-            context.dataStoreFile("auth_preferences.proto.pb")
-        }
 
     @Provides
     @Singleton

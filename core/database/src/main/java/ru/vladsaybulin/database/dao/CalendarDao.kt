@@ -5,8 +5,8 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.database.models.CalendarItemDbo
-import ru.vladsaybulin.database.models.PopulatedCalendarItem
+import ru.vladsaybulin.database.models.calendar.CalendarItemDbo
+import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
 
 @Dao
 interface CalendarDao {

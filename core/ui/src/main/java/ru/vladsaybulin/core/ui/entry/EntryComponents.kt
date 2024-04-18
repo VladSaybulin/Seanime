@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +48,7 @@ internal fun UserRateStatusBadge(
 
     Box(
         modifier = modifier
+            .sizeIn(minWidth = 24.dp, minHeight = 24.dp)
             .clip(DefaultShape)
             .background(userRateStatusColor)
             .padding(DefaultIconPadding),

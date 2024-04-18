@@ -30,9 +30,7 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
-import ru.vladsaybulin.core.ui.strings.animeUserRateStatusString
-import ru.vladsaybulin.core.ui.strings.mangaUserRateStatusString
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.model.UserRateStatus
 
 @Composable
@@ -40,7 +38,6 @@ fun UserRateStatusButton(
     userRateStatus: UserRateStatus,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    entryType: EntryType = EntryType.Anime,
     icon: ImageVector = notNoneUserRateStatusIcon(userRateStatus),
     colors: UserRateStatusButtonColors = UserRateStatusButtonDefaults.userRateStatusButtonColors()
 ) {
@@ -66,12 +63,7 @@ fun UserRateStatusButton(
             .padding(ContentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val userRateText = checkNotNull(
-            when (entryType) {
-                EntryType.Anime -> animeUserRateStatusString(userRateStatus = userRateStatus)
-                else -> mangaUserRateStatusString(userRateStatus = userRateStatus)
-            }
-        )
+        val userRateText = userRateStatusString(userRateStatus)
         Icon(
             imageVector = icon,
             contentDescription = userRateText,

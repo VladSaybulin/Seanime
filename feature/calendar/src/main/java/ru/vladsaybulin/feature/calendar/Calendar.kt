@@ -48,16 +48,17 @@ import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.entry.AnimeGridItem
+import ru.vladsaybulin.core.ui.anime.AnimeGridItem
 import ru.vladsaybulin.model.CalendarDay
 import ru.vladsaybulin.model.CalendarItem
+import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.previewCalendarItems
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
 fun CalendarRoute(
-    openAnimeDetails: (animeId: Long) -> Unit,
+    onEntryClick: (EntryType, Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
@@ -67,7 +68,9 @@ fun CalendarRoute(
         uiState = uiState,
         modifier = modifier,
         onRefresh = viewModel::forceRefresh,
-        openAnime = openAnimeDetails
+        onAnimeClick = { animeId ->
+            onEntryClick(EntryType.Anime, animeId)
+        }
     )
 }
 
@@ -75,7 +78,7 @@ fun CalendarRoute(
 fun CalendarScreen(
     uiState: CalendarUiState,
     modifier: Modifier = Modifier,
-    openAnime: (animeId: Long) -> Unit = {},
+    onAnimeClick: (animeId: Long) -> Unit = {},
     onRefresh: suspend () -> Unit = {},
 ) {
     Scaffold { contentPadding ->
@@ -90,7 +93,7 @@ fun CalendarScreen(
             CalendarUiState.Loading -> CalendarLoading(modifier = Modifier.fillMaxSize())
             is CalendarUiState.Success -> CalendarContent(
                 calendarDays = uiState.calendarDays,
-                onCalendarItemClick = { openAnime(it.anime.id) },
+                onCalendarItemClick = { onAnimeClick(it.anime.id) },
                 onRefresh = onRefresh
             )
         }

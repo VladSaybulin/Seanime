@@ -1,0 +1,47 @@
+query AnimeUserRatesQuery(
+    $page: Int!
+    $limit: Int!
+    $status: UserRateStatusEnum!
+    $userId: ID
+) {
+    userRates(
+        page: $page
+        limit: $limit
+        status: $status
+        targetType: Anime
+        userId: $userId
+    ) {
+        id
+        createdAt
+        updatedAt
+        status
+        score
+        episodes
+        rewatches
+        text
+        anime {
+            id
+            name
+            russian
+            poster {
+                originalUrl
+                previewUrl
+            }
+            kind
+            score
+            status
+            episodes
+            episodesAired
+            airedOn {
+                day
+                month
+                year
+            }
+            releasedOn {
+                day
+                month
+                year
+            }
+        }
+    }
+}

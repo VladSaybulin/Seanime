@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_home_title">Главная</string>
+    <string name="feature_home_on_air_now">Сейчас на экранах</string>
+    <string name="feature_home_more">Ещё</string>
+    <string name="feature_home_news_topics">Новости</string>
+    <string name="feature_home_all_news_topics">Все новости</string>
+</resources>

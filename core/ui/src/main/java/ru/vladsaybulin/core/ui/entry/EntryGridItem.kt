@@ -25,13 +25,13 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
-import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.common.Image
 
 @Composable
 fun EntryGridItem(
     name: String,
-    poster: Poster?,
+    poster: Image?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
@@ -60,7 +60,7 @@ fun EntryGridItem(
             UserRateStatusBadge(
                 userRateStatus = userRateStatus,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(32.dp)
                     .align(Alignment.TopEnd)
             )
 
@@ -88,7 +88,7 @@ fun EntryGridItem(
 internal fun SmallEntryGridItem(
     modifier: Modifier,
     name: String,
-    poster: Poster?,
+    poster: Image?,
     onClick: () -> Unit,
     userRateStatus: UserRateStatus = UserRateStatus.None,
     nameTextStyle: TextStyle = MaterialTheme.typography.labelMedium,

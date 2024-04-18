@@ -1,6 +1,8 @@
 package ru.vladsaybulin.model
 
+import ru.vladsaybulin.model.common.Image
+
 data class Poster(
-    val originalUrl: String,
-    val previewUrl: String = originalUrl
-)
+    override val originalUrl: String,
+    override val previewUrl: String = originalUrl
+) : Image

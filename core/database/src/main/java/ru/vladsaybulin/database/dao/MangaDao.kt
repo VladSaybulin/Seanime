@@ -3,12 +3,18 @@ package ru.vladsaybulin.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import ru.vladsaybulin.database.models.MangaDbo
+import androidx.room.Query
+import ru.vladsaybulin.database.models.manga.MangaEntity
 
 @Dao
 interface MangaDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrReplaceMangaEntity(manga: MangaDbo)
+    @Query("SELECT * FROM mangas WHERE id = :mangaId")
+    suspend fun getMangaById(mangaId: Long): MangaEntity
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrReplaceMangaEntity(manga: MangaEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrReplaceMangas(manga: List<MangaEntity>)
 }

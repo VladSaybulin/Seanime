@@ -1,0 +1,68 @@
+query MangaQuery(
+    $page: Int
+    $limit: Int
+    $order: OrderEnum
+    $kind: MangaKindString
+    $status: MangaStatusString
+    $score: Int
+    $genre: String
+    $publisher: String
+    $franchise: String
+    $censored: Boolean
+    $mylist: MylistString
+    $ids: String
+    $excludeIds: String
+    $search: String
+) {
+    mangas(
+        page: $page
+        limit: $limit
+        order: $order
+        kind: $kind
+        status: $status
+        score: $score
+        genre: $genre
+        publisher: $publisher
+        franchise: $franchise
+        censored: $censored
+        mylist: $mylist
+        ids: $ids
+        excludeIds: $excludeIds
+        search: $search
+    ) {
+        id
+        name
+        russian
+        poster {
+            originalUrl
+            previewUrl
+        }
+        kind
+        score
+        status
+        chapters
+        volumes
+        airedOn {
+            day
+            month
+            year
+        }
+        releasedOn {
+            day
+            month
+            year
+        }
+        userRate {
+            id
+            createdAt
+            updatedAt
+            status
+            score
+            episodes
+            chapters
+            volumes
+            rewatches
+            text
+        }
+    }
+}

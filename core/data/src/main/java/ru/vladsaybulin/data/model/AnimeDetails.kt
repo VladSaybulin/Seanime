@@ -1,9 +1,9 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
-import ru.vladsaybulin.database.models.AnimeDbo
-import ru.vladsaybulin.database.models.IncompleteDateDbo
-import ru.vladsaybulin.database.models.PosterDbo
+import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.common.IncompleteDateEntity
+import ru.vladsaybulin.database.models.common.ImageEntity
 import ru.vladsaybulin.model.Anime
 import ru.vladsaybulin.model.AnimeDetails
 import ru.vladsaybulin.model.Character
@@ -68,25 +68,25 @@ fun AnimeDetailsQuery.Anime.asExternalModel() = AnimeDetails(
     videos = videos.map(NetworkVideo::asVideo)
 )
 
-fun AnimeDetailsQuery.Anime.asDbo() = AnimeDbo(
+fun AnimeDetailsQuery.Anime.asEntity() = AnimeEntity(
     id = id,
     originalName = name,
     russianName = russian,
-    poster = poster?.asDbo(),
+    poster = poster?.asEntity(),
     kind = kind.asAnimeKind(),
     status = status.asEntryStatus(),
     score = score?.toFloat() ?: 0f,
     episodes = episodes,
     episodesAired = episodesAired,
-    airedOn = airedOn?.asDbo(),
-    releasedOn = releasedOn?.asDbo()
+    airedOn = airedOn?.asEntity(),
+    releasedOn = releasedOn?.asEntity()
 )
 
-private fun AnimeDetailsQuery.Poster.asDbo() = PosterDbo(originalUrl, previewUrl)
+private fun AnimeDetailsQuery.Poster.asEntity() = ImageEntity(originalUrl, previewUrl)
 
-private fun AnimeDetailsQuery.AiredOn.asDbo() = IncompleteDateDbo(day, month, year)
+private fun AnimeDetailsQuery.AiredOn.asEntity() = IncompleteDateEntity(day, month, year)
 
-private fun AnimeDetailsQuery.ReleasedOn.asDbo() = IncompleteDateDbo(day, month, year)
+private fun AnimeDetailsQuery.ReleasedOn.asEntity() = IncompleteDateEntity(day, month, year)
 
 private fun Double.toScore() = this.toFloat().takeIf { it != 0.0f }
 
@@ -147,7 +147,7 @@ fun NetworkRelated.asRelatedEntry() = if (anime != null || manga != null) {
         anime = anime?.run {
             Anime(
                 id = id,
-                originalName = name,
+                name = name,
                 russianName = russian,
                 poster = poster?.let { p ->
                     Poster(
@@ -161,13 +161,14 @@ fun NetworkRelated.asRelatedEntry() = if (anime != null || manga != null) {
                 episodes = episodes,
                 episodesAired = episodesAired,
                 airedOn = airedOn?.let { IncompleteDate(it.day, it.month, it.year) },
-                releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) }
+                releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) },
+                userRate = null
             )
         },
         manga = manga?.run {
             Manga(
                 id = id,
-                originalName = name,
+                name = name,
                 russianName = russian,
                 poster = poster?.let { p ->
                     Poster(

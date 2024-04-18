@@ -1,0 +1,2 @@
+package ru.vladsaybulin.model
+

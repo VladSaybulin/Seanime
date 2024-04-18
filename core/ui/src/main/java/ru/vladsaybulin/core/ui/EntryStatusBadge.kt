@@ -6,15 +6,12 @@ import androidx.compose.ui.Modifier
 import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
 import ru.vladsaybulin.core.designsystem.components.TextBadgeDefaults
 import ru.vladsaybulin.core.ui.colors.entryStatusColor
-import ru.vladsaybulin.core.ui.strings.animeStatusString
-import ru.vladsaybulin.core.ui.strings.mangaStatusString
+import ru.vladsaybulin.core.ui.strings.entryStatusString
 import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
 
 @Composable
 fun EntryStatusBadge(
     status: EntryStatus,
-    entryType: EntryType,
     modifier: Modifier = Modifier,
 ) {
     val statusColor = entryStatusColor(status)
@@ -23,13 +20,6 @@ fun EntryStatusBadge(
         contentColor = statusColor,
         modifier = modifier
     ) {
-        Text(
-            text = checkNotNull(
-                when (entryType) {
-                    EntryType.Anime -> animeStatusString(status)
-                    else -> mangaStatusString(status)
-                }
-            )
-        )
+        Text(text = entryStatusString(status))
     }
 }

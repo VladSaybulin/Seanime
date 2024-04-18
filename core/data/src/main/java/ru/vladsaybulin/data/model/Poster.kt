@@ -1,10 +1,10 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.database.models.PosterDbo
+import ru.vladsaybulin.database.models.common.ImageEntity
 import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.network.models.PosterDto
 
-fun PosterDto.asDbo() = PosterDbo(
+fun PosterDto.asEntity() = ImageEntity(
     originalUrl = originalUrl,
     previewUrl = previewUrl
 )
@@ -14,7 +14,7 @@ fun PosterDto.asPoster() = Poster(
     previewUrl = previewUrl
 )
 
-fun Poster.asDbo() = PosterDbo(
+fun Poster.asEntity() = ImageEntity(
     originalUrl = originalUrl,
     previewUrl = previewUrl
 )

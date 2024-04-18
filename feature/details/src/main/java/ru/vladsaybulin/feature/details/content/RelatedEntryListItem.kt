@@ -46,7 +46,7 @@ private fun RelatedAnimeListItem(
     modifier: Modifier = Modifier
 ) {
     EntryListItem(
-        name = anime.run { russianName ?: originalName },
+        name = anime.run { russianName ?: name },
         poster = anime.poster,
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
@@ -71,7 +71,7 @@ private fun RelatedMangaListItem(
     modifier: Modifier = Modifier
 ) {
     EntryListItem(
-        name = manga.run { russianName ?: originalName },
+        name = manga.run { russianName ?: name },
         poster = manga.poster,
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),

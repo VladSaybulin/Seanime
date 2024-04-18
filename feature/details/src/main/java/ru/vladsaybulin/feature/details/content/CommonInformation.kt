@@ -23,7 +23,6 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.ui.EntryStatusBadge
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.Genre
 import ru.vladsaybulin.model.IncompleteDate
 import java.time.format.DateTimeFormatter
@@ -42,7 +41,7 @@ internal fun StatusAndDatesInfoLine(
             icon = { InfoIcon(imageVector = ShikimoriIcons.CalendarToday) }
         ) {
             if (status != EntryStatus.None) {
-                EntryStatusBadge(status = status, entryType = EntryType.Manga)
+                EntryStatusBadge(status = status)
             }
             if (dates != null) {
                 if (status != EntryStatus.None) {
@@ -63,7 +62,7 @@ internal fun GenresInfoLine(
         items = genres,
         labelSingleStringRes = R.string.genre,
         labelSeveralStringRes = R.string.genres,
-        name = { it.russianName },
+        name = { it.russianName ?: it.englishName },
         annotation = { it.id.toString() },
         onItemClick = { onGenreClick(it.toLong()) }
     )

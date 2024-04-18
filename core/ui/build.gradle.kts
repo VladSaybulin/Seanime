@@ -9,12 +9,14 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:model"))
+    implementation(project(":core:designsystem"))
+
     implementation(libs.kotlinx.datetime)
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.primeTransformer)
-
-    implementation(project(":core:model"))
-    implementation(project(":core:designsystem"))
+    implementation(libs.paging.compose)
+    implementation(libs.zoomable)
 }

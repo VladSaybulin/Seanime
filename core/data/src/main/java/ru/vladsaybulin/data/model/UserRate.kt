@@ -2,15 +2,30 @@ package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
-import ru.vladsaybulin.database.models.UserRateDbo
+import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.UserRate
 import ru.vladsaybulin.model.UserRateValues
 import ru.vladsaybulin.network.models.CreateUserRateDto
+import ru.vladsaybulin.network.models.UserRateDto
 import ru.vladsaybulin.network.models.UserRateValuesDto
+import ru.vladsaybulin.network.models.UserRateWithEntryDto
 import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
 
-fun UserRateDbo.asUserRate() = UserRate(
+fun UserRateDto.asExternalModel() = UserRate(
+    id = id,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    status = status,
+    score = score,
+    episodes = episodes,
+    chapters = 0,
+    volumes = 0,
+    rewatches = rewatches,
+    text = text ?: ""
+)
+
+fun UserRateEntity.asUserRate() = UserRate(
     id = id,
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -23,7 +38,7 @@ fun UserRateDbo.asUserRate() = UserRate(
     text = text
 )
 
-fun AnimeUserRateQuery.UserRate.asDbo(animeId: Long) = UserRateDbo(
+fun AnimeUserRateQuery.UserRate.asEntity(animeId: Long) = UserRateEntity(
     id = id,
     animeId = animeId,
     mangaId = null,
@@ -38,7 +53,7 @@ fun AnimeUserRateQuery.UserRate.asDbo(animeId: Long) = UserRateDbo(
     updatedAt = updatedAt
 )
 
-fun MangaUserRateQuery.UserRate.asDbo(mangaId: Long) = UserRateDbo(
+fun MangaUserRateQuery.UserRate.asEntity(mangaId: Long) = UserRateEntity(
     id = id,
     animeId = null,
     mangaId = mangaId,
@@ -47,7 +62,7 @@ fun MangaUserRateQuery.UserRate.asDbo(mangaId: Long) = UserRateDbo(
     episodes = 0,
     chapters = chapters,
     volumes = volumes,
-    rewatches = rewatches,
+    rewatches = 0,
     text = text ?: "",
     createdAt = createdAt,
     updatedAt = updatedAt
@@ -63,10 +78,10 @@ fun UserRateValues.asDto() = UserRateValuesDto(
     text = text
 )
 
-fun UserRate.asDbo(
+fun UserRate.asEntity(
     entryType: EntryType,
     entryId: Long
-) = UserRateDbo(
+) = UserRateEntity(
     id = id,
     animeId = when (entryType) {
         EntryType.Anime -> entryId
@@ -87,7 +102,7 @@ fun UserRate.asDbo(
     updatedAt = updatedAt
 )
 
-fun UserRateWithEntryLinkDto.asDbo() = UserRateDbo(
+fun UserRateWithEntryLinkDto.asEntity() = UserRateEntity(
     id = id,
     animeId = when (entryType) {
         EntryType.Anime -> entryId
@@ -125,5 +140,22 @@ fun CreateUserRateDto(
         volumes = volumes ?: 0,
         rewatches = rewatches,
         text = text
+    )
+}
+
+internal fun UserRateWithEntryDto.userRateDboShell() = with(userRateDto) {
+    UserRateEntity(
+        id = id,
+        animeId = networkAnime?.id,
+        mangaId = networkManga?.id,
+        status = status,
+        score = score,
+        episodes = episodes,
+        chapters = chapters,
+        volumes = volumes,
+        rewatches = rewatches,
+        text = text ?: "",
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 }

@@ -1,20 +1,28 @@
 package ru.vladsaybulin.network.datasource
 
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.api.Optional.Companion.presentIfNotNull
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
 import retrofit2.http.Path
 import ru.vladsaybulin.common.network.ShikimoriException
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
+import ru.vladsaybulin.core.network.graphql.AnimeQuery
+import ru.vladsaybulin.model.Order
+import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.di.AuthorizedClient
-import ru.vladsaybulin.network.models.AnimeDto
+import ru.vladsaybulin.network.mapper.enums.asOrderEnum
+import ru.vladsaybulin.network.mapper.queries.asDto
+import ru.vladsaybulin.network.models.NetworkAnime
+import ru.vladsaybulin.network.util.getOrderEnum
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface AnimeApi {
     @GET("/api/animes/{anime_id}/similar/")
-    suspend fun getSimilarAnime(@Path("anime_id") animeId: Long): List<AnimeDto>
+    suspend fun getSimilarAnime(@Path("anime_id") animeId: Long): List<NetworkAnime>
 }
 
 @Singleton
@@ -24,6 +32,78 @@ class AnimeDataSource @Inject constructor(
 ) {
     private val api: AnimeApi = retrofit.create()
 
+    suspend fun getAnime(
+        page: Int? = null,
+        limit: Int? = null,
+        queryMap: Map<QueryMapKey, String>,
+    ): List<NetworkAnime>  {
+        val response = apolloClient.query(
+            AnimeQuery(
+                page = presentIfNotNull(page),
+                limit = presentIfNotNull(limit),
+                order = presentIfNotNull(queryMap.getOrderEnum()),
+                kind = presentIfNotNull(queryMap[QueryMapKey.Kind]),
+                status = presentIfNotNull(queryMap[QueryMapKey.Status]),
+                season = presentIfNotNull(queryMap[QueryMapKey.Season]),
+                score = presentIfNotNull(queryMap[QueryMapKey.Score]?.toInt()),
+                duration = presentIfNotNull(queryMap[QueryMapKey.Duration]),
+                rating = presentIfNotNull(queryMap[QueryMapKey.Rating]),
+                genre = presentIfNotNull(queryMap[QueryMapKey.Genre]),
+                studio = presentIfNotNull(queryMap[QueryMapKey.Studio]),
+                franchise = presentIfNotNull(queryMap[QueryMapKey.Franchise]),
+                censored = presentIfNotNull(queryMap[QueryMapKey.Censored]?.toBooleanStrict()),
+                mylist = presentIfNotNull(queryMap[QueryMapKey.MyList]),
+                ids = presentIfNotNull(queryMap[QueryMapKey.Ids]),
+                excludeIds = presentIfNotNull(queryMap[QueryMapKey.ExcludedIds]),
+                search = presentIfNotNull(queryMap[QueryMapKey.Search])
+            )
+        ).execute()
+        return response.dataAssertNoErrors.animes.map { it.asDto() }
+    }
+
+    suspend fun getAnime(
+        page: Int? = null,
+        limit: Int? = null,
+        order: Order = Order.Popularity,
+        kindString: String? = null,
+        statusString: String? = null,
+        seasonString: String? = null,
+        score: Int? = null,
+        durationString: String? = null,
+        ratingString: String? = null,
+        genreString: String? = null,
+        studioString: String? = null,
+        franchise: String? = null,
+        censored: Boolean? = null,
+        myListString: String? = null,
+        idsString: String? = null,
+        excludedIdsString: String? = null,
+        search: String? = null
+    ): List<NetworkAnime> {
+        val response = apolloClient.query(
+            AnimeQuery(
+                page = presentIfNotNull(page),
+                limit = presentIfNotNull(limit),
+                order = Optional.present(order.asOrderEnum()),
+                kind = presentIfNotNull(kindString),
+                status = presentIfNotNull(statusString),
+                season = presentIfNotNull(seasonString),
+                score = presentIfNotNull(score),
+                duration = presentIfNotNull(durationString),
+                rating = presentIfNotNull(ratingString),
+                genre = presentIfNotNull(genreString),
+                studio = presentIfNotNull(studioString),
+                franchise = presentIfNotNull(franchise),
+                censored = presentIfNotNull(censored),
+                mylist = presentIfNotNull(myListString),
+                ids = Optional.present(idsString),
+                excludeIds = presentIfNotNull(excludedIdsString),
+                search = presentIfNotNull(search)
+            )
+        ).execute()
+        return response.dataAssertNoErrors.animes.map { it.asDto() }
+    }
+
     suspend fun getAnimeDetails(animeId: Long): AnimeDetailsQuery.Anime {
         val response = apolloClient.query(AnimeDetailsQuery(id = animeId.toString())).execute()
         return response.dataAssertNoErrors.animes.firstOrNull()
@@ -32,3 +112,4 @@ class AnimeDataSource @Inject constructor(
 
     suspend fun getSimilarAnimes(animeId: Long) = api.getSimilarAnime(animeId)
 }
+

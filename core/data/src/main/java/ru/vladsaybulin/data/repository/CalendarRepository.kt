@@ -2,20 +2,18 @@ package ru.vladsaybulin.data.repository
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.animeShell
-import ru.vladsaybulin.data.model.asDbo
-import ru.vladsaybulin.database.ShikiDatabase
-import ru.vladsaybulin.database.models.PopulatedCalendarItem
-import ru.vladsaybulin.database.models.asExternalModel
+import ru.vladsaybulin.data.model.asEntity
+import ru.vladsaybulin.data.util.sync
+import ru.vladsaybulin.database.dao.AnimeDao
+import ru.vladsaybulin.database.dao.CalendarDao
+import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
+import ru.vladsaybulin.database.models.calendar.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import ru.vladsaybulin.model.CalendarItem
 import ru.vladsaybulin.network.datasource.CalendarDataSource
@@ -25,39 +23,29 @@ import kotlin.time.Duration.Companion.hours
 
 class CalendarRepository @Inject constructor(
     private val calendarDataSource: CalendarDataSource,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
-    private val database: ShikiDatabase,
+    private val calendarDao: CalendarDao,
+    private val animeDao: AnimeDao,
     private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
+    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
-    private val calendarDao = database.calendarDao
-    private val animeDao = database.animeDao
-
     fun getCalendarItems(searchQuery: String? = null): Flow<List<CalendarItem>> =
         calendarDao.getAllCalendarItems()
-            .onStart { refresh(false) }
+            .onStart { syncCalendarItems(false) }
             .map { items -> items.map(PopulatedCalendarItem::asExternalModel) }
             .flowOn(ioDispatcher)
 
-    suspend fun refresh(forceRefresh: Boolean = true) {
-        if (!forceRefresh) {
-            val timestamp = shikiPreferencesDataSource.timestampOfLastCalendarRequest
-                .flowOn(ioDispatcher)
-                .firstOrNull() ?: Instant.DISTANT_PAST
-            if (timestamp + THRESHOLD > Clock.System.now()) return
-        }
-
-        withContext(ioDispatcher) {
+    suspend fun syncCalendarItems(forceRefresh: Boolean = true) {
+        sync(
+            ttl = CALENDAR_TTL,
+            lastRequestDateFlow = shikiPreferencesDataSource.calendarLastRequestDate,
+            updateLastRequest = shikiPreferencesDataSource::setLastCalendarRequestDate
+        ) {
             val response = calendarDataSource.getAllCalendarItems()
-
-            database.withTransaction {
-                calendarDao.deleteAllItems()
-                animeDao.insertOrReplaceAnimeEntities(response.map(CalendarItemDto::animeShell))
-                calendarDao.insertCalendarItems(response.map(CalendarItemDto::asDbo))
-            }
-
-            shikiPreferencesDataSource.setTimestampOfLastCalendarRequest(Clock.System.now())
+            calendarDao.deleteAllItems()
+            animeDao.insertOrReplaceAnimes(response.map(CalendarItemDto::animeShell))
+            calendarDao.insertCalendarItems(response.map(CalendarItemDto::asEntity))
         }
     }
 }
 
-private val THRESHOLD = 1.hours
+private val CALENDAR_TTL = 1.hours

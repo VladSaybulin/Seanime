@@ -1,0 +1,28 @@
+package ru.vladsaybulin.database.models.calendar
+
+import androidx.room.Embedded
+import androidx.room.Relation
+import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.anime.asExternalModel
+import ru.vladsaybulin.model.CalendarItem
+import kotlin.time.Duration.Companion.minutes
+
+class PopulatedCalendarItem(
+    @Embedded
+    val calendarItemDbo: CalendarItemDbo,
+
+    @Relation(
+        entity = AnimeEntity::class,
+        parentColumn = "anime_id",
+        entityColumn = "id"
+    )
+    val animeDbo: AnimeEntity
+)
+
+fun PopulatedCalendarItem.asExternalModel() =
+    CalendarItem(
+        anime = animeDbo.asExternalModel(),
+        nextEpisode = calendarItemDbo.nextEpisode,
+        nextEpisodeAt = calendarItemDbo.nextEpisodeAt,
+        duration = calendarItemDbo.duration?.minutes
+    )

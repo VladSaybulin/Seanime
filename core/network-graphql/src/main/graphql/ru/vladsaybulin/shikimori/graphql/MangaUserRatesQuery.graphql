@@ -1,0 +1,48 @@
+query MangaUserRatesQuery(
+    $page: Int!
+    $limit: Int!
+    $status: UserRateStatusEnum!
+    $userId: ID
+) {
+    userRates(
+        page: $page
+        limit: $limit
+        status: $status
+        targetType: Manga
+        userId: $userId
+    ) {
+        id
+        createdAt
+        updatedAt
+        status
+        score
+        chapters
+        volumes
+        rewatches
+        text
+        manga {
+            id
+            name
+            russian
+            poster {
+                originalUrl
+                previewUrl
+            }
+            kind
+            score
+            status
+            chapters
+            volumes
+            airedOn {
+                day
+                month
+                year
+            }
+            releasedOn {
+                day
+                month
+                year
+            }
+        }
+    }
+}

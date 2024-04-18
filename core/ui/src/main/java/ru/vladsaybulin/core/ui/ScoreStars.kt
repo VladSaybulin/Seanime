@@ -12,17 +12,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.PointerInputModifierNode
+import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import java.util.Random
+import kotlin.math.roundToInt
 
 @Composable
 fun AnimatedScoreStars(
@@ -105,15 +114,68 @@ fun ScoreStars(
     }
 }
 
+fun Modifier.inputScore(
+    onScoreChange: (Int) -> Unit
+) = this then InputScoreElement(onScoreChange)
+
+data class InputScoreElement(
+    val onScoreChange: (Int) -> Unit
+) : ModifierNodeElement<InputScoreNode>() {
+    override fun create(): InputScoreNode = InputScoreNode(onScoreChange)
+
+    override fun update(node: InputScoreNode) {
+        node.onScoreChange = onScoreChange
+    }
+
+    override fun InspectorInfo.inspectableProperties() {
+        properties["onScoreChange"] = onScoreChange
+    }
+}
+
+class InputScoreNode(
+    var onScoreChange: (Int) -> Unit
+) : PointerInputModifierNode, Modifier.Node() {
+
+    private var isPressed = false
+
+    override fun onCancelPointerInput() {
+        isPressed = false
+    }
+
+    override fun onPointerEvent(
+        pointerEvent: PointerEvent,
+        pass: PointerEventPass,
+        bounds: IntSize
+    ) {
+        if (pass != PointerEventPass.Main) return
+        when (pointerEvent.type) {
+            PointerEventType.Press -> {
+                isPressed = true
+            }
+            PointerEventType.Release -> {
+                isPressed = false
+            }
+        }
+
+        if (!isPressed) return
+        val change = pointerEvent.changes.first()
+        change.consume()
+        updateScore(change.position, bounds)
+    }
+
+    private fun updateScore(position: Offset, bounds: IntSize) {
+        val score = ((position.x / bounds.width) * MaxScore).roundToInt()
+        onScoreChange(score)
+    }
+}
+
 @Preview
 @Composable
 fun ScoreStarsPreview() {
     ShikimoriTheme {
         Surface {
             Column {
-                val score = remember {
-                    mutableIntStateOf(7)
-                }
+                val score = remember { mutableIntStateOf(7) }
 
                 AnimatedScoreStars(score = score.intValue.toFloat())
 
@@ -121,12 +183,12 @@ fun ScoreStarsPreview() {
                     Text(text = "Change")
                 }
             }
-
         }
     }
 }
 
 val DefaultStarSize = DpSize(40.dp, 40.dp)
+val SmallStarSize = DpSize(24.dp, 24.dp)
 
 private const val StarsAmount = 5
 private const val MaxScore = 10

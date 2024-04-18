@@ -14,11 +14,14 @@ room {
 }
 
 dependencies {
+    implementation(project(":core:model"))
+
     implementation(libs.kotlinx.datetime)
+    implementation(libs.paging.runtime)
 
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
+    implementation(libs.room.paging)
 
-    implementation(project(":core:model"))
 }

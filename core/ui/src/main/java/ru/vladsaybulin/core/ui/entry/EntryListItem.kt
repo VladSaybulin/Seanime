@@ -29,12 +29,13 @@ import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.model.Poster
 import ru.vladsaybulin.model.UserRateStatus
+import ru.vladsaybulin.model.common.Image
 
 @Composable
 fun EntryListItem(
     modifier: Modifier = Modifier,
     name: String,
-    poster: Poster?,
+    poster: Image?,
     userRateStatus: UserRateStatus = UserRateStatus.None,
     nameTextStyle: TextStyle = MaterialTheme.typography.labelLarge,
     bodyTextStyle: TextStyle = MaterialTheme.typography.bodySmall,

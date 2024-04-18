@@ -6,18 +6,20 @@ import androidx.navigation.compose.composable
 import ru.vladsaybulin.feature.imageview.ImageViewRoute
 import ru.vladsaybulin.feature.imageview.ImageViewViewModel
 
+const val IMAGE_VIEW_ROUTE = "imageview"
+
 fun NavController.navigateToImageView() {
-    navigate("imageview")
+    navigate(IMAGE_VIEW_ROUTE)
 }
 
 fun NavGraphBuilder.imageViewScreen(
     viewModel: ImageViewViewModel,
-    onBack: () -> Unit
+    onBackClick: () -> Unit,
 ) {
-    composable(route = "imageview") {
+    composable(route = IMAGE_VIEW_ROUTE) {
         ImageViewRoute(
             viewModel = viewModel,
-            onBack = onBack
+            onBackClick = onBackClick
         )
     }
 }

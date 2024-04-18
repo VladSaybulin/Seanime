@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -82,7 +83,7 @@ fun EntryRow(
 
             Spacer(modifier = Modifier.width(spacing.posterSpace))
 
-            Column {
+            Column(modifier = Modifier.fillMaxHeight().padding(8.dp)) {
                 EntryRowName(
                     name = name,
                     textStyle = nameTextStyle

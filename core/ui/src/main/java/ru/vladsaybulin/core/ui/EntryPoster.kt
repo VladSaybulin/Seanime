@@ -9,12 +9,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
-import ru.vladsaybulin.model.Poster
+import ru.vladsaybulin.model.common.Image
 
 @Composable
 fun EntryPoster(
     modifier: Modifier = Modifier,
-    poster: Poster?
+    poster: Image?
 ) {
     Box(modifier = modifier.aspectRatio(PosterAspectRatio)) {
         if (poster == null) {

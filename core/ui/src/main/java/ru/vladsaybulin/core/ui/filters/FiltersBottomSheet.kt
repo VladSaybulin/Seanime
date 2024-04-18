@@ -1,0 +1,415 @@
+package ru.vladsaybulin.core.ui.filters
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.IntState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
+import kotlinx.coroutines.launch
+import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
+import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
+import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.ui.AnimatedScoreStars
+import ru.vladsaybulin.core.ui.R
+import ru.vladsaybulin.core.ui.inputScore
+import ru.vladsaybulin.core.ui.strings.animeKindString
+import ru.vladsaybulin.core.ui.strings.animeRatingString
+import ru.vladsaybulin.core.ui.strings.durationString
+import ru.vladsaybulin.core.ui.strings.entryStatusString
+import ru.vladsaybulin.core.ui.strings.mangaKindString
+import ru.vladsaybulin.core.ui.strings.seasonFilterString
+import ru.vladsaybulin.core.ui.strings.userRateStatusString
+import ru.vladsaybulin.model.AnimeKind
+import ru.vladsaybulin.model.EntryStatus
+import ru.vladsaybulin.model.search.FilterOption
+import ru.vladsaybulin.model.search.FilterType
+import ru.vladsaybulin.model.search.Filters
+import ru.vladsaybulin.model.search.SeasonFilter
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FiltersBottomSheet(
+    filtersState: FiltersState,
+    onDismissRequest: () -> Unit,
+    onApplyFilters: (AppliedFilters) -> Unit,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState()
+
+    val closeSheet = {
+        coroutineScope.launch {
+            sheetState.hide()
+        }.invokeOnCompletion { onDismissRequest() }
+    }
+
+    ShikimoriModalBottomSheet(
+        onDismissRequest = {
+            filtersState.cancelChanges()
+            onDismissRequest()
+        },
+        sheetState = sheetState
+    ) {
+        FiltersContent(
+            filtersState = filtersState,
+            onApplyFilters = {
+                onApplyFilters(it)
+                closeSheet()
+            }
+        )
+    }
+}
+
+@Composable
+fun FiltersContent(
+    filtersState: FiltersState,
+    onApplyFilters: (AppliedFilters) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+    ) {
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            var addDivider = false
+
+            val mayBeDivider: LazyListScope.() -> Unit = {
+                if (addDivider) {
+                    item { HorizontalDivider() }
+                } else {
+                    addDivider = true
+                }
+            }
+
+            if (!filtersState.animeKindOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_kind)
+                regularFilter(
+                    options = filtersState.animeKindOptions,
+                    label = {
+                        Text(text = animeKindString(it.value) ?: it.value.name)
+                    }
+                )
+            }
+
+
+            if (!filtersState.mangaKindOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_kind)
+                regularFilter(
+                    options = filtersState.mangaKindOptions,
+                    label = {
+                        Text(text = mangaKindString(it.value) ?: it.value.name)
+                    }
+                )
+            }
+
+            if (!filtersState.statusOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_status)
+                regularFilter(
+                    options = filtersState.statusOptions,
+                    label = {
+                        Text(text = entryStatusString(it.value))
+                    }
+                )
+            }
+
+
+            if (!filtersState.myListStatusOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_my_list_status)
+                regularFilter(
+                    options = filtersState.myListStatusOptions,
+                    label = {
+                        Text(text = userRateStatusString(it.value))
+                    }
+                )
+            }
+
+            if (!filtersState.durationOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_duration)
+                regularFilter(
+                    options = filtersState.durationOptions,
+                    label = {
+                        Text(text = durationString(it.value))
+                    }
+                )
+            }
+
+            if (!filtersState.seasonOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_season)
+                seasonFilter(
+                    options = filtersState.seasonOptions,
+                    customOptions = filtersState.customSeasonOptions,
+                    onNewOptionClick = { },
+                    onOptionDeleteClick = { },
+                )
+            }
+
+            if (!filtersState.ratingOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_season)
+                regularFilter(
+                    options = filtersState.ratingOptions,
+                    label = {
+                        Text(text = animeRatingString(it.value))
+                    }
+                )
+            }
+
+            if (!filtersState.demographicOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_demographic)
+                regularFilter(
+                    options = filtersState.demographicOptions,
+                    label = {
+                        Text(text = it.value.russianName ?: it.value.englishName)
+                    }
+                )
+            }
+
+            if (!filtersState.themeOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_themes)
+                regularFilter(
+                    options = filtersState.themeOptions,
+                    label = {
+                        Text(text = it.value.russianName ?: it.value.englishName)
+                    }
+                )
+            }
+
+            if (!filtersState.genresOptions.isNullOrEmpty()) {
+                mayBeDivider()
+                filterHeader(headerTextId = R.string.core_ui_filter_header_genres)
+                regularFilter(
+                    options = filtersState.genresOptions,
+                    label = {
+                        Text(text = it.value.russianName ?: it.value.englishName)
+                    }
+                )
+            }
+
+            mayBeDivider()
+            filterHeader(headerTextId = R.string.core_ui_filter_header_score)
+            scoreFilter(
+                selected = filtersState.selectedMinScoreState,
+                onScoreChange = filtersState::changeMinScore
+            )
+        }
+        Button(
+            onClick = { onApplyFilters(filtersState.getAppliedFilters()) },
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = stringResource(id = R.string.core_ui_apply))
+        }
+
+        TextButton(
+            onClick = { filtersState.resetAll() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(id = R.string.core_ui_reset),
+                color = ShikimoriTheme.colorScheme.error
+            )
+        }
+    }
+}
+
+fun LazyListScope.scoreFilter(selected: IntState, onScoreChange: (Int) -> Unit) {
+    item {
+        AnimatedScoreStars(
+            score = selected.intValue.toFloat(),
+            modifier = Modifier
+                .inputScore(onScoreChange = onScoreChange)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+fun LazyListScope.seasonFilter(
+    options: FilterOptionStates<SeasonFilter>,
+    customOptions: SnapshotStateList<FilterOptionState<SeasonFilter>>,
+    onNewOptionClick: () -> Unit,
+    onOptionDeleteClick: (Int) -> Unit
+) {
+    item {
+        Column(
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) {
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                options.fastForEach { optionState ->
+                    ShikimoriFilterChip(
+                        selected = optionState.value != OptionValue.Unselected,
+                        onClick = optionState::onClick,
+                        onLongClick = optionState::onLongClick,
+                        label = {
+                            Text(text = seasonFilterString(seasonFilter = optionState.option.value))
+                        },
+                        leadingIcon = optionState.value.optionStateValueIcon()
+                    )
+                }
+            }
+            Text(
+                text = stringResource(id = R.string.core_ui_filter_custom_season_options),
+                style = ShikimoriTheme.typography.labelMedium,
+                color = LocalContentColor.current.copy(alpha = 0.7f),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                customOptions.forEach { optionState ->
+                    ShikimoriFilterChip(
+                        selected = optionState.value != OptionValue.Unselected,
+                        onClick = optionState::onClick,
+                        onLongClick = optionState::onLongClick,
+                        label = {
+                            Text(text = seasonFilterString(seasonFilter = optionState.option.value))
+                        },
+                        leadingIcon = optionState.value.optionStateValueIcon(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    onOptionDeleteClick(requireNotNull(optionState.option.value.id))
+                                }
+                            ) {
+                                Icon(imageVector = ShikimoriIcons.Clear, contentDescription = null)
+                            }
+                        }
+                    )
+                }
+
+                ShikimoriFilterChip(
+                    selected = false,
+                    onClick = onNewOptionClick,
+                    label = {
+                        Text(text = stringResource(id = R.string.core_ui_filter_add_custom_season))
+                    },
+                    leadingIcon = {
+                        Icon(imageVector = ShikimoriIcons.Add, contentDescription = null)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+fun <T> LazyListScope.regularFilter(
+    options: FilterOptionStates<T>,
+    label: @Composable (FilterOption<T>) -> Unit
+) {
+    item {
+        FlowRow(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            options.fastForEach { optionState ->
+                ShikimoriFilterChip(
+                    selected = optionState.value != OptionValue.Unselected,
+                    onClick = optionState::onClick,
+                    onLongClick = optionState::onLongClick,
+                    label = { label(optionState.option) },
+                    leadingIcon = optionState.value.optionStateValueIcon()
+                )
+            }
+        }
+    }
+}
+
+fun LazyListScope.filterHeader(headerTextId: Int) {
+    item {
+        Text(
+            text = stringResource(id = headerTextId),
+            style = ShikimoriTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
+}
+
+fun OptionValue.optionStateValueIcon(): (@Composable () -> Unit)? =
+    when (this) {
+        OptionValue.Unselected -> null
+        OptionValue.Selected -> {
+            { SelectedIcon() }
+        }
+
+        OptionValue.Excluded -> {
+            { ExcludedIcon() }
+        }
+    }
+
+@Composable
+fun SelectedIcon() {
+    Icon(imageVector = ShikimoriIcons.Done, contentDescription = null)
+}
+
+@Composable
+fun ExcludedIcon() {
+    Icon(imageVector = ShikimoriIcons.Remove, contentDescription = null)
+}
+
+@Composable
+@Preview
+fun FiltersContentPreview() {
+    ShikimoriTheme {
+        Surface {
+            FiltersContent(
+                filtersState = rememberFiltersState(
+                    filters = Filters(
+                        animeKindOptions = AnimeKind.entries
+                            .filter { it != AnimeKind.None }
+                            .map { FilterOption(it, it.serializedName) },
+                        statusOptions = EntryStatus.entries
+                            .filter { it != EntryStatus.None }
+                            .map { FilterOption(it, it.serializedName) },
+                    ),
+                    appliedFilters = mapOf(FilterType.Score to mapOf("7" to OptionValue.Selected))
+                ),
+                onApplyFilters = {}
+            )
+        }
+    }
+}

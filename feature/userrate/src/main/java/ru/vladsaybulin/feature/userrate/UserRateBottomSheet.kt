@@ -359,7 +359,6 @@ fun UserRateContentPreview() {
         )
     )
 
-
     ShikimoriTheme(darkTheme = true) {
         UserRateContent(
             state = state,

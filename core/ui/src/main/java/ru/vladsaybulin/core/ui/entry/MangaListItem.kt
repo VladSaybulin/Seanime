@@ -2,9 +2,8 @@ package ru.vladsaybulin.core.ui.entry
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import ru.vladsaybulin.core.ui.strings.mangaKindString
 import ru.vladsaybulin.core.ui.strings.chaptersAndVolumesString
-import ru.vladsaybulin.model.EntryType
+import ru.vladsaybulin.core.ui.strings.mangaKindString
 import ru.vladsaybulin.model.Manga
 import ru.vladsaybulin.model.RelationType
 
@@ -19,7 +18,7 @@ fun MangaListItem(
     }
 ) {
     EntryListItem(
-        name = manga.run { russianName ?: originalName },
+        name = manga.run { russianName ?: name },
         poster = manga.poster,
         onClick = onClick,
         modifier = modifier,
@@ -39,6 +38,5 @@ fun Manga.listItemDetailsData(relationType: RelationType? = null) = EntryListIte
     entryStatus = status,
     volumeText = chaptersAndVolumesString(volumes = volumes, chapters = chapters),
     score = score,
-    relationType = relationType,
-    entryType = EntryType.Manga
+    relationType = relationType
 )

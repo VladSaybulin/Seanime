@@ -7,7 +7,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import ru.vladsaybulin.database.ShikiDatabase
 import ru.vladsaybulin.database.ShikiRoomDatabase
 import javax.inject.Singleton
 
@@ -17,13 +16,11 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideShikiDatabase(@ApplicationContext applicationContext: Context): ShikiDatabase {
-        val roomDatabase = Room.databaseBuilder(
+    fun provideShikiDatabase(@ApplicationContext applicationContext: Context): ShikiRoomDatabase =
+        Room.databaseBuilder(
             checkNotNull(applicationContext.applicationContext),
             ShikiRoomDatabase::class.java,
             "shiki_database"
         ).build()
-        return ShikiDatabase(roomDatabase)
-    }
 
 }

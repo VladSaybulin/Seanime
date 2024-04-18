@@ -12,10 +12,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults.DefaultArrangement
 
 @Composable
 fun <T> ShikimoriCarousel(
@@ -26,7 +25,6 @@ fun <T> ShikimoriCarousel(
     contentPadding: PaddingValues = ShikimoriCarouselDefaults.contentPadding(),
     listState: LazyListState = rememberLazyListState(),
     arrangement: Arrangement.Horizontal = DefaultArrangement,
-    shape: Shape = RectangleShape,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     itemContent: @Composable LazyItemScope.(T) -> Unit
 ) {
@@ -70,7 +68,8 @@ object ShikimoriCarouselDefaults {
         vertical: Dp = 8.dp,
         horizontal: Dp = 16.dp
     ) = PaddingValues(vertical = vertical, horizontal = horizontal)
+
+    val DefaultArrangement = Arrangement.spacedBy(8.dp)
 }
 
-private val DefaultContentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp)
-private val DefaultArrangement = Arrangement.spacedBy(8.dp)
+

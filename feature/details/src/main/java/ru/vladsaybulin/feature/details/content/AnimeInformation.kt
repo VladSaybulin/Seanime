@@ -1,5 +1,6 @@
 package ru.vladsaybulin.feature.details.content
 
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -14,18 +15,34 @@ import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.core.ui.LocalTimeZone
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.feature.details.DetailsUiState
+import ru.vladsaybulin.feature.details.genreSearchParams
+import ru.vladsaybulin.feature.details.studioSearchParams
 import ru.vladsaybulin.model.AnimeKind
 import ru.vladsaybulin.model.EntryStatus
 import ru.vladsaybulin.model.Studio
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+internal fun LazyListScope.animeInformation(
+    state: DetailsUiState.Success,
+    onSearchClick: (SearchArgs) -> Unit,
+) {
+    item(key = "anime_info") {
+        AnimeInformation(
+            state = state,
+            onStudioClick = { onSearchClick(state.studioSearchParams(it)) },
+            onGenreClick = { onSearchClick(state.genreSearchParams(it)) }
+        )
+    }
+}
+
 @Composable
-internal fun AnimeInformation(
+private fun AnimeInformation(
     state: DetailsUiState.Success,
     onStudioClick: (Long) -> Unit,
     onGenreClick: (Long) -> Unit

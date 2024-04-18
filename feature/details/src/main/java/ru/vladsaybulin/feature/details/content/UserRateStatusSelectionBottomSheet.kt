@@ -46,7 +46,6 @@ internal fun UserRateStatusSelectionBottomSheet(
         }.forEach {
             UserRateStatusButton(
                 userRateStatus = it,
-                entryType = entryType,
                 onClick = { onStatusClick(it) },
                 modifier = Modifier.fillMaxWidth()
             )

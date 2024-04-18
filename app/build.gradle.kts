@@ -47,14 +47,19 @@ android {
 dependencies {
 
     implementation(project(":core:auth"))
-    implementation(project(":core:common"))
     implementation(project(":core:data"))
-    implementation(project(":core:model"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:common"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:model"))
+
 
     implementation(project(":feature:calendar"))
     implementation(project(":feature:details"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:list"))
     implementation(project(":feature:imageview"))
+    implementation(project(":feature:search"))
     implementation(project(":feature:userrate"))
 
     implementation(libs.androidx.activity.compose)

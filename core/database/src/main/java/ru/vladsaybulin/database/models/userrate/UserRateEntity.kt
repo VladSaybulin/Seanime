@@ -1,0 +1,59 @@
+package ru.vladsaybulin.database.models.userrate
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+import kotlinx.datetime.Instant
+import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.manga.MangaEntity
+import ru.vladsaybulin.model.UserRate
+import ru.vladsaybulin.model.UserRateStatus
+
+@Entity(
+    tableName = "user_rates",
+    foreignKeys = [
+        ForeignKey(
+            entity = AnimeEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["anime_id"],
+            onDelete = ForeignKey.NO_ACTION,
+            onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = MangaEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["manga_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class UserRateEntity(
+    @ColumnInfo("id")
+    @PrimaryKey
+    val id: Long,
+    @ColumnInfo("anime_id") val animeId: Long?,
+    @ColumnInfo("manga_id") val mangaId: Long?,
+    @ColumnInfo("status") val status: UserRateStatus,
+    @ColumnInfo("score") val score: Int,
+    @ColumnInfo("episodes") val episodes: Int,
+    @ColumnInfo("chapters") val chapters: Int,
+    @ColumnInfo("volumes") val volumes: Int,
+    @ColumnInfo("rewatches") val rewatches: Int,
+    @ColumnInfo("text") val text: String,
+    @ColumnInfo("created_at") val createdAt: Instant,
+    @ColumnInfo("updated_at") val updatedAt: Instant
+)
+
+fun UserRateEntity.asExternalModel() = UserRate(
+    id = id,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    status = status,
+    score = score,
+    episodes = episodes,
+    chapters = chapters,
+    volumes = volumes,
+    rewatches = rewatches,
+    text = text
+)

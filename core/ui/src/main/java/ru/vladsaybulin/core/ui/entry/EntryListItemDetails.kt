@@ -21,18 +21,16 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.ui.EntryStatusBadge
 import ru.vladsaybulin.core.ui.strings.relationTypeString
 import ru.vladsaybulin.model.EntryStatus
-import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.RelationType
 import java.text.DecimalFormat
 
 data class EntryListItemDetailsData(
     val kindText: String? = null,
     val year: Int? = null,
-    val entryType: EntryType,
-    val entryStatus: EntryStatus,
+    val entryStatus: EntryStatus = EntryStatus.None,
     val volumeText: String? = null,
     val score: Float? = null,
-    val relationType: RelationType?
+    val relationType: RelationType? = null
 )
 
 @Composable
@@ -52,7 +50,6 @@ fun EntryListItemDetails(
             if (data.entryStatus != EntryStatus.None) {
                 EntryStatusBadge(
                     status = data.entryStatus,
-                    entryType = data.entryType,
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
             }

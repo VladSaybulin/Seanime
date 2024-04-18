@@ -13,4 +13,5 @@ dependencies {
     implementation(project(":core:common"))
 
     implementation(libs.kotlinx.datetime)
+    implementation(libs.paging.runtime)
 }

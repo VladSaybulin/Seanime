@@ -2,10 +2,10 @@ package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.model.EntryType
 import ru.vladsaybulin.model.SimilarEntry
-import ru.vladsaybulin.network.models.AnimeDto
-import ru.vladsaybulin.network.models.MangaDto
+import ru.vladsaybulin.network.models.NetworkAnime
+import ru.vladsaybulin.network.models.NetworkManga
 
-fun AnimeDto.asSimilarEntry() = SimilarEntry(
+fun NetworkAnime.asSimilarEntry() = SimilarEntry(
     entryId = id,
     entryType = EntryType.Anime,
     originalName = originalName,
@@ -13,7 +13,7 @@ fun AnimeDto.asSimilarEntry() = SimilarEntry(
     poster = poster?.asPoster()
 )
 
-fun MangaDto.asSimilarEntry() = SimilarEntry(
+fun NetworkManga.asSimilarEntry() = SimilarEntry(
     entryId = id,
     entryType = EntryType.Manga,
     originalName = originalName,
