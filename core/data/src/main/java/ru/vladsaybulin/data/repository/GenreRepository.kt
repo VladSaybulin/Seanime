@@ -4,7 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.model.asEntity
+import ru.vladsaybulin.data.model.asPOJO
 import ru.vladsaybulin.data.util.sync
 import ru.vladsaybulin.database.dao.GenreDao
 import ru.vladsaybulin.database.models.genre.GenreEntity
@@ -46,7 +46,7 @@ class GenreRepository @Inject constructor(
             val response = genreDataSource.getGenres(entryType)
 
             genreDao.deleteGenresByEntryType(entryType)
-            genreDao.insertAllGenres(response.map { it.asEntity() })
+            genreDao.insertAllGenres(response.map { it.asPOJO() })
         }
     }
 }

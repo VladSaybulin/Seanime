@@ -9,14 +9,14 @@ fun NetworkAnime.asEntity() = AnimeEntity(
     id = id,
     originalName = originalName,
     russianName = russianName,
-    poster = poster?.asEntity(),
+    poster = poster?.asPOJO(),
     kind = kind,
     status = status,
     score = score,
     episodes = episodes,
     episodesAired = episodesAired,
-    airedOn = airedOn?.asEntity(),
-    releasedOn = releasedOn?.asEntity()
+    airedOn = airedOn?.asPOJO(),
+    releasedOn = releasedOn?.asPOJO()
 )
 
 fun NetworkAnime.userRateEntityShell() = userRate?.let { userRate ->
@@ -36,31 +36,31 @@ fun NetworkAnime.userRateEntityShell() = userRate?.let { userRate ->
     )
 }
 
-fun NetworkAnime.asAnime() = Anime(
+fun NetworkAnime.asExternalModel() = Anime(
     id = id,
     name = originalName,
     russianName = russianName,
-    poster = poster?.asPoster(),
+    poster = poster?.asExternalModel(),
     kind = kind,
     status = status,
     score = score,
     episodes = episodes,
     episodesAired = episodesAired,
-    airedOn = airedOn?.asIncompleteDate(),
-    releasedOn = releasedOn?.asIncompleteDate(),
+    airedOn = airedOn?.asExternalModel(),
+    releasedOn = releasedOn?.asExternalModel(),
     userRate = userRate?.asExternalModel()
 )
 
-fun Anime.asEntity() = AnimeEntity(
+fun Anime.asPOJO() = AnimeEntity(
     id = id,
     originalName = name,
     russianName = russianName,
-    poster = poster?.asEntity(),
+    poster = poster?.asPOJO(),
     kind = kind,
     status = status,
     score = score ?: 0f,
     episodes = episodes,
     episodesAired = episodesAired,
-    airedOn = airedOn?.asEntity(),
-    releasedOn = releasedOn?.asEntity()
+    airedOn = airedOn?.asPOJO(),
+    releasedOn = releasedOn?.asPOJO()
 )

@@ -1,6 +1,6 @@
 package ru.vladsaybulin.model.common
 
-data class Statistic<T>(
+data class StatisticsItem<T>(
     val values: T,
     val count: Int
 )

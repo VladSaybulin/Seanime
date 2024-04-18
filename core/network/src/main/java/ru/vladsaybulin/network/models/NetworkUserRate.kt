@@ -7,7 +7,7 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.network.util.serializers.UserRateStatusSerializer
 
 @Serializable
-data class UserRateDto(
+data class NetworkUserRate(
     @SerialName("id") val id: Long,
     @SerialName("create_at") val createdAt: Instant,
     @SerialName("updated_at") val updatedAt: Instant,

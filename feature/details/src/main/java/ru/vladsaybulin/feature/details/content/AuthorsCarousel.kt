@@ -38,9 +38,9 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.ui.R
+import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.person.Person
 import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.common.Poster
 import ru.vladsaybulin.model.person.isMain
 
 @Composable
@@ -127,7 +127,7 @@ fun AuthorCard(
 }
 
 @Composable
-private fun AuthorPoster(poster: Poster?) {
+private fun AuthorPoster(poster: Image?) {
     Box(
         modifier = Modifier
             .size(PosterSize)
@@ -171,7 +171,7 @@ fun AuthorCardPreview() {
                     id = 0,
                     originalName = "Author name",
                     russianName = "Author russian name",
-                    poster = Poster("")
+                    poster = Image("", ""),
                 ),
                 englishRoles = listOf("Director"),
                 russianRoles = listOf("Режиссёр")
@@ -211,7 +211,7 @@ fun AuthorCardManyRolesPreview() {
                     id = 0,
                     originalName = "Author name",
                     russianName = "Author russian name",
-                    poster = Poster("")
+                    poster = Image("", ""),
                 ),
                 englishRoles = listOf("Director"),
                 russianRoles = listOf("Режиссёр", "Раскадровка", "Рисовка")
@@ -231,7 +231,7 @@ fun AuthorCardShortNamePreview() {
                     id = 0,
                     originalName = "Author",
                     russianName = "Author",
-                    poster = Poster("")
+                    poster = Image("", ""),
                 ),
                 englishRoles = listOf("Director"),
                 russianRoles = listOf("Режиссёр", "Раскадровка", "Рисовка")

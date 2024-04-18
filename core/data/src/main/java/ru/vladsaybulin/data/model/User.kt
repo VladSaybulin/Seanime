@@ -5,16 +5,16 @@ import ru.vladsaybulin.database.models.user.UserImagePOJO
 import ru.vladsaybulin.network.models.BriefUserDto
 import ru.vladsaybulin.network.models.UserImageDto
 
-fun BriefUserDto.asEntity() = UserEntity(
+fun BriefUserDto.asPOJO() = UserEntity(
     id = id,
     nickname = nickname,
     avatarUrl = avatarUrl,
-    image = image.asEntity(),
+    image = image.asPOJO(),
     lastOnlineAt = lastOnlineAt,
     url = url
 )
 
-private fun UserImageDto.asEntity() = UserImagePOJO(
+private fun UserImageDto.asPOJO() = UserImagePOJO(
     x160Url = x160Url,
     x148Url = x148Url,
     x80Url = x80Url,

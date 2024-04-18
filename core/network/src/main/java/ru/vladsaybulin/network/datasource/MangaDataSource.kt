@@ -13,6 +13,7 @@ import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.models.NetworkManga
+import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
 import ru.vladsaybulin.network.util.getOrderEnum
 import javax.inject.Inject
 
@@ -54,9 +55,9 @@ class MangaDataSource @Inject constructor(
         return response.dataAssertNoErrors.mangas.map { it.asNetworkModel() }
     }
 
-    suspend fun getMangaDetails(mangaId: Long): MangaDetailsQuery.Manga {
+    suspend fun getMangaDetails(mangaId: Long): NetworkMangaDetails {
         val response = apolloClient.query(MangaDetailsQuery(id = mangaId.toString())).execute()
-        return response.dataAssertNoErrors.mangas.firstOrNull()
+        return response.dataAssertNoErrors.mangas.firstOrNull()?.asNetworkModel()
             ?: throw ShikimoriException("Not found manga where id = $mangaId")
     }
 

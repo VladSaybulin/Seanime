@@ -11,6 +11,7 @@ query MangaUserRateQuery($id: String!) {
             status
             chapters
             volumes
+            rewatches
             score
             text
         }

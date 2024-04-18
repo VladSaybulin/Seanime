@@ -1,4 +1,4 @@
-package ru.vladsaybulin.data.model
+package ru.vladsaybulin.network.mapper.enums
 
 import ru.vladsaybulin.core.network.graphql.type.VideoKindEnum
 import ru.vladsaybulin.model.anime.VideoKind

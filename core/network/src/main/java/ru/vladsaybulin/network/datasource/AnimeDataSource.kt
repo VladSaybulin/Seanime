@@ -14,8 +14,10 @@ import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.mapper.enums.asOrderEnum
-import ru.vladsaybulin.network.mapper.queries.asDto
+import ru.vladsaybulin.network.mapper.queries.asNetworkModels
+import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.models.NetworkAnime
+import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 import ru.vladsaybulin.network.util.getOrderEnum
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -58,7 +60,7 @@ class AnimeDataSource @Inject constructor(
                 search = presentIfNotNull(queryMap[QueryMapKey.Search])
             )
         ).execute()
-        return response.dataAssertNoErrors.animes.map { it.asDto() }
+        return response.dataAssertNoErrors.animes.map { it.asNetworkModels() }
     }
 
     suspend fun getAnime(
@@ -101,12 +103,12 @@ class AnimeDataSource @Inject constructor(
                 search = presentIfNotNull(search)
             )
         ).execute()
-        return response.dataAssertNoErrors.animes.map { it.asDto() }
+        return response.dataAssertNoErrors.animes.map { it.asNetworkModels() }
     }
 
-    suspend fun getAnimeDetails(animeId: Long): AnimeDetailsQuery.Anime {
+    suspend fun getAnimeDetails(animeId: Long): NetworkAnimeDetails {
         val response = apolloClient.query(AnimeDetailsQuery(id = animeId.toString())).execute()
-        return response.dataAssertNoErrors.animes.firstOrNull()
+        return response.dataAssertNoErrors.animes.firstOrNull()?.asNetworkModel()
             ?: throw ShikimoriException("Not found anime where id = $animeId")
     }
 

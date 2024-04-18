@@ -1,168 +1,53 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
-import ru.vladsaybulin.database.models.common.IncompleteDateEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
-import ru.vladsaybulin.database.models.common.ImagePOJO
-import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.character.Character
-import ru.vladsaybulin.model.character.CharacterWithRole
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.genre.Genre
-import ru.vladsaybulin.model.common.IncompleteDate
-import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
-import ru.vladsaybulin.model.person.Person
-import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.common.Poster
-import ru.vladsaybulin.model.manga.Publisher
-import ru.vladsaybulin.model.related.RelatedEntry
-import ru.vladsaybulin.model.common.Statistic
-import ru.vladsaybulin.model.related.asRelationType
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.network.models.NetworkGenre
+import ru.vladsaybulin.network.models.NetworkPublisher
+import ru.vladsaybulin.network.models.character.NetworkCharacterWithRole
+import ru.vladsaybulin.network.models.common.NetworkStatisticsItem
+import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
+import ru.vladsaybulin.network.models.person.NetworkPersonWithRoles
+import ru.vladsaybulin.network.models.related.NetworkRelated
 
-fun MangaDetailsQuery.Manga.asExternalModel() = MangaDetails(
+fun NetworkMangaDetails.asExternalModel() = MangaDetails(
     id = id,
     originalName = name,
-    russianName = russian,
-    englishName = english,
-    japaneseName = japanese,
-    alternativeName = synonyms,
+    russianName = nameRu,
+    englishName = nameRu,
+    japaneseName = nameJp,
+    alternativeName = alternativeName,
     licenseNameRu = licenseNameRu,
-    poster = poster?.asPoster(),
-    kind = kind.asMangaKind(),
-    score = score?.toScore(),
-    status = status.asEntryStatus(),
+    poster = poster?.asExternalModel(),
+    kind = kind,
+    score = score ?: 0f,
+    status = status,
     chapters = chapters,
     volumes = volumes,
-    airedOn = airedOn?.asIncompleteDate(),
-    releasedOn = releasedOn?.asIncompleteDate(),
-    descriptionHtml = descriptionHtml?.takeIf { it.isNotBlank() },
-    descriptionSource = descriptionSource?.takeIf { it.isNotBlank() },
-    genres = genres?.map(MangaDetailsQuery.Genre::asGenre),
-    scoreStats = scoresStats?.map(MangaDetailsQuery.ScoresStat::asScoreStat),
-    userRateStatusStats = statusesStats?.map(MangaDetailsQuery.StatusesStat::asStatusStat),
-    publishers = publishers.map(MangaDetailsQuery.Publisher::asPublisher),
-    authors = personRoles?.map(MangaDetailsQuery.PersonRole::asPersonWithRoles),
-    characters = characterRoles?.map(MangaDetailsQuery.CharacterRole::asCharacterWithRole),
-    related = related?.mapNotNull(MangaDetailsQuery.Related::asRelatedEntry),
+    airedOn = airedOn?.asExternalModel(),
+    releasedOn = releasedOn?.asExternalModel(),
+    descriptionHtml = descriptionHtml,
+    descriptionSource = descriptionSource,
+    genres = genres?.map(NetworkGenre::asExternalModel),
+    scoreStats = scoreStats?.map(NetworkStatisticsItem<Int>::asExternalModel),
+    userRateStatusStats = userRateStatusStats?.map(NetworkStatisticsItem<UserRateStatus>::asExternalModel),
+    publishers = publishers.map(NetworkPublisher::asExternalModel),
+    authors = authors?.map(NetworkPersonWithRoles::asExternalModel),
+    characters = characters?.map(NetworkCharacterWithRole::asExternalModel),
+    related = related?.map(NetworkRelated::asExternalModel)
 )
 
-fun MangaDetailsQuery.Manga.asEntity() = MangaEntity(
+fun NetworkMangaDetails.asEntity() = MangaEntity(
     id = id,
     originalName = name,
-    russianName = russian,
-    poster = poster?.asEntity(),
-    kind = kind.asMangaKind(),
-    status = status.asEntryStatus(),
-    score = score?.toFloat() ?: 0f,
+    russianName = nameRu,
+    poster = poster?.asPOJO(),
+    kind = kind,
+    status = status,
+    score = score ?: 0f,
     chapters = chapters,
     volumes = volumes,
-    airedOn = airedOn?.asEntity(),
-    releasedOn = releasedOn?.asEntity()
+    airedOn = airedOn?.asPOJO(),
+    releasedOn = releasedOn?.asPOJO()
 )
-
-private fun MangaDetailsQuery.Poster.asEntity() = ImagePOJO(originalUrl, previewUrl)
-
-private fun MangaDetailsQuery.AiredOn.asEntity() = IncompleteDateEntity(day, month, year)
-
-private fun MangaDetailsQuery.ReleasedOn.asEntity() = IncompleteDateEntity(day, month, year)
-
-private fun Double.toScore() = this.toFloat().takeIf { it != 0.0f }
-
-private fun MangaDetailsQuery.Poster.asPoster() = Poster(
-    originalUrl = originalUrl,
-    previewUrl = previewUrl
-)
-
-private fun MangaDetailsQuery.AiredOn.asIncompleteDate() = IncompleteDate(day, month, year)
-
-private fun MangaDetailsQuery.ReleasedOn.asIncompleteDate() = IncompleteDate(day, month, year)
-
-private fun MangaDetailsQuery.Genre.asGenre() = Genre(
-    id = id,
-    englishName = name,
-    russianName = russian,
-    entryType = EntryType.Anime,
-    kind = kind.asGenreKind()
-)
-
-private fun MangaDetailsQuery.ScoresStat.asScoreStat() = Statistic(score, count)
-
-private fun MangaDetailsQuery.StatusesStat.asStatusStat() = Statistic(status.asUserRateStatus(), count)
-
-private fun MangaDetailsQuery.Publisher.asPublisher() = Publisher(
-    id = id,
-    name = name
-)
-
-private fun MangaDetailsQuery.PersonRole.asPersonWithRoles() = PersonWithRoles(
-    person = Person(
-        id = person.id,
-        originalName = person.name,
-        russianName = person.russian,
-        poster = person.poster?.let {
-            Poster(originalUrl = it.originalUrl, previewUrl = it.previewUrl)
-        }
-    ),
-    englishRoles = rolesEn,
-    russianRoles = rolesRu
-)
-
-private fun MangaDetailsQuery.CharacterRole.asCharacterWithRole() = CharacterWithRole(
-    character = Character(
-        id = character.id,
-        originalName = character.name,
-        russianName = character.russian,
-        poster = character.poster?.let {
-            Poster(originalUrl = it.originalUrl, previewUrl = it.previewUrl)
-        }
-    ),
-    isMain = rolesEn.contains("Main")
-)
-
-fun MangaDetailsQuery.Related.asRelatedEntry() = if (anime != null || manga != null) {
-    RelatedEntry(
-        anime = anime?.run {
-            Anime(
-                id = id,
-                name = name,
-                russianName = russian,
-                poster = poster?.let { p ->
-                    Poster(
-                        previewUrl = p.previewUrl,
-                        originalUrl = p.originalUrl
-                    )
-                },
-                kind = kind.asAnimeKind(),
-                status = status.asEntryStatus(),
-                score = score?.toScore(),
-                episodes = episodes,
-                episodesAired = episodesAired,
-                airedOn = airedOn?.let { IncompleteDate(it.day, it.month, it.year) },
-                releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) },
-                userRate = null
-            )
-        },
-        manga = manga?.run {
-            Manga(
-                id = id,
-                name = name,
-                russianName = russian,
-                poster = poster?.let { p ->
-                    Poster(
-                        previewUrl = p.previewUrl,
-                        originalUrl = p.originalUrl
-                    )
-                },
-                kind = kind.asMangaKind(),
-                status = status.asEntryStatus(),
-                score = score?.toScore(),
-                chapters = chapters,
-                volumes = volumes,
-                airedOn = airedOn?.let { IncompleteDate(it.day, it.month, it.year) },
-                releasedOn = releasedOn?.let { IncompleteDate(it.day, it.month, it.year) }
-            )
-        },
-        relationType = relationEn.asRelationType()
-    )
-} else null

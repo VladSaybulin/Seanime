@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.json.Json
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.data.model.asPOJO
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.database.ShikiDatabase
 import ru.vladsaybulin.database.models.anime.AnimeEntity
@@ -49,7 +50,7 @@ class TopicsRepository @Inject constructor(
 
         for (topic in freshTopics) {
 
-            val topicDbo = topic.asEntity(
+            val topicDbo = topic.asPOJO(
                 linkedAnimeId = if (topic.hasLinked() && topic.linkedIsAnime()) {
                     topic.decodeLinkedAnime(json)
                         .also { anime.add(it.asEntity()) }
@@ -57,11 +58,11 @@ class TopicsRepository @Inject constructor(
                 } else null,
                 linkedMangaId = if (topic.hasLinked() && topic.linkedIsManga()) {
                     topic.decodeLinkedManga(json)
-                        .also { manga.add(it.asEntity()) }
+                        .also { manga.add(it.asPOJO()) }
                         .id
                 } else null
             )
-            users.add(topic.user.asEntity())
+            users.add(topic.user.asPOJO())
             topics.add(topicDbo)
         }
 

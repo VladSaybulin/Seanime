@@ -9,10 +9,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
-import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
+import ru.vladsaybulin.data.model.asPOJO
 import ru.vladsaybulin.data.model.asSimilarEntry
 import ru.vladsaybulin.data.model.asUserRate
 import ru.vladsaybulin.data.model.userRateEntityShell
@@ -26,6 +25,8 @@ import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.MangaDataSource
 import ru.vladsaybulin.network.datasource.UserRateDataSource
+import ru.vladsaybulin.network.models.NetworkUserRate
+import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
 import javax.inject.Inject
 
 class MangaRepository @Inject constructor(
@@ -67,8 +68,8 @@ class MangaRepository @Inject constructor(
         .flowOn(ioDispatcher)
 
     private suspend fun saveUserRate(
-        mangaDetails: MangaDetailsQuery.Manga,
-        userRate: MangaUserRateQuery.UserRate
+        mangaDetails: NetworkMangaDetails,
+        userRate: NetworkUserRate
     ) {
         mangaDao.insertOrReplaceMangaEntity(mangaDetails.asEntity())
         userRateDao.insertOrReplaceUserRate(userRate.asEntity(mangaDetails.id))
@@ -85,7 +86,7 @@ class MangaRepository @Inject constructor(
                     limit = pageSize,
                     queryMap = queryMap
                 )
-                val mangaEntities = networkMangas.map { it.asEntity() }
+                val mangaEntities = networkMangas.map { it.asPOJO() }
                 val userRatesEntities = networkMangas.mapNotNull { it.userRateEntityShell() }
 
                 if (mangaEntities.isNotEmpty()) {

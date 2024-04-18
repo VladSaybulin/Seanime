@@ -22,12 +22,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
-import ru.vladsaybulin.model.anime.Screenshot
+import ru.vladsaybulin.model.common.Image
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ScreenshotsBottomSheet(
-    screenshots: ImmutableList<Screenshot>,
+    screenshots: ImmutableList<Image>,
     onScreenshotClick: (Int) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
@@ -45,7 +45,7 @@ internal fun ScreenshotsBottomSheet(
 
 @Composable
 private fun ScreenshotsBottomSheetContent(
-    screenshots: ImmutableList<Screenshot>,
+    screenshots: ImmutableList<Image>,
     onScreenshotClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -65,7 +65,7 @@ private fun ScreenshotsBottomSheetContent(
                     .clickable(onClick = { onScreenshotClick(index) }),
             ) {
                 AsyncImage(
-                    model = screenshot.x332Url,
+                    model = screenshot.previewUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()

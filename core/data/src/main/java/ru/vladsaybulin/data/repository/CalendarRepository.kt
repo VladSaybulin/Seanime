@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.onStart
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.animeShell
-import ru.vladsaybulin.data.model.asEntity
+import ru.vladsaybulin.data.model.asPOJO
 import ru.vladsaybulin.data.util.sync
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CalendarDao
@@ -28,23 +28,26 @@ class CalendarRepository @Inject constructor(
     private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
-    fun getCalendarItems(searchQuery: String? = null): Flow<List<CalendarItem>> =
+    fun getCalendarItems(): Flow<List<CalendarItem>> =
         calendarDao.getAllCalendarItems()
-            .onStart { syncCalendarItems(false) }
+            .onStart { syncCalendarItems() }
             .map { items -> items.map(PopulatedCalendarItem::asExternalModel) }
             .flowOn(ioDispatcher)
 
-    suspend fun syncCalendarItems(forceRefresh: Boolean = true) {
+    suspend fun refreshCalendarItems() {
+        val response = calendarDataSource.getAllCalendarItems()
+        calendarDao.deleteAllItems()
+        animeDao.insertOrReplaceAnimes(response.map(CalendarItemDto::animeShell))
+        calendarDao.insertCalendarItems(response.map(CalendarItemDto::asPOJO))
+    }
+
+    private suspend fun syncCalendarItems() {
         sync(
             ttl = CALENDAR_TTL,
             lastRequestDateFlow = shikiPreferencesDataSource.calendarLastRequestDate,
-            updateLastRequest = shikiPreferencesDataSource::setLastCalendarRequestDate
-        ) {
-            val response = calendarDataSource.getAllCalendarItems()
-            calendarDao.deleteAllItems()
-            animeDao.insertOrReplaceAnimes(response.map(CalendarItemDto::animeShell))
-            calendarDao.insertCalendarItems(response.map(CalendarItemDto::asEntity))
-        }
+            updateLastRequest = shikiPreferencesDataSource::setLastCalendarRequestDate,
+            refresh = ::refreshCalendarItems
+        )
     }
 }
 

@@ -4,16 +4,16 @@ import ru.vladsaybulin.core.network.graphql.MangaUserRatesQuery
 import ru.vladsaybulin.network.mapper.enums.asEntryStatus
 import ru.vladsaybulin.network.mapper.enums.asMangaKind
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatus
-import ru.vladsaybulin.network.models.IncompleteDateDto
+import ru.vladsaybulin.network.models.NetworkIncompleteDate
 import ru.vladsaybulin.network.models.NetworkManga
-import ru.vladsaybulin.network.models.PosterDto
-import ru.vladsaybulin.network.models.UserRateDto
+import ru.vladsaybulin.network.models.NetworkUserRate
 import ru.vladsaybulin.network.models.UserRateWithEntryDto
+import ru.vladsaybulin.network.models.common.NetworkImage
 
-internal fun MangaUserRatesQuery.UserRate.asDto(): UserRateWithEntryDto {
+internal fun MangaUserRatesQuery.UserRate.asNetworkModels(): UserRateWithEntryDto {
     require(manga != null)
     return UserRateWithEntryDto(
-        userRateDto = UserRateDto(
+        networkUserRate = NetworkUserRate(
             id = id,
             createdAt = createdAt,
             updatedAt = updatedAt,
@@ -25,27 +25,21 @@ internal fun MangaUserRatesQuery.UserRate.asDto(): UserRateWithEntryDto {
             rewatches = rewatches,
             text = text ?: ""
         ),
-        networkManga = manga!!.asDto(),
+        networkManga = manga!!.asNetworkModel(),
         networkAnime = null
     )
 }
 
-private fun MangaUserRatesQuery.Manga.asDto() = NetworkManga(
+private fun MangaUserRatesQuery.Manga.asNetworkModel() = NetworkManga(
     id = id,
     originalName = name,
     russianName = russian,
-    poster = poster?.asDto(),
+    poster = poster?.run { NetworkImage(originalUrl, previewUrl) },
     kind = kind.asMangaKind(),
     status = status.asEntryStatus(),
     score = score?.toFloat() ?: 0f,
     chapters = chapters,
     volumes = volumes,
-    airedOn = airedOn?.asDto(),
-    releasedOn = releasedOn?.asDto()
+    airedOn = airedOn?.run { NetworkIncompleteDate(day, month, year) },
+    releasedOn = releasedOn?.run { NetworkIncompleteDate(day, month, year) },
 )
-
-private fun MangaUserRatesQuery.Poster.asDto() = PosterDto(originalUrl, previewUrl)
-
-private fun MangaUserRatesQuery.AiredOn.asDto() = IncompleteDateDto(day, month, year)
-
-private fun MangaUserRatesQuery.ReleasedOn.asDto() = IncompleteDateDto(day, month, year)

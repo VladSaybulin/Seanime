@@ -1,7 +1,7 @@
 package ru.vladsaybulin.database.models.common
 
 import androidx.room.ColumnInfo
-import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.common.Image
 
 data class ImagePOJO(
 
@@ -12,4 +12,4 @@ data class ImagePOJO(
     val previewUrl: String
 )
 
-fun ImagePOJO.asExternalModel() = Poster(originalUrl, previewUrl)
+fun ImagePOJO.asExternalModel() = Image(originalUrl, previewUrl)

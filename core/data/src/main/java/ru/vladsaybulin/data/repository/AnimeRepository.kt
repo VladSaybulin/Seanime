@@ -11,9 +11,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
-import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
-import ru.vladsaybulin.data.model.asAnime
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.data.model.asSimilarEntry
@@ -28,15 +25,17 @@ import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
+import ru.vladsaybulin.model.EntryDetails
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
-import ru.vladsaybulin.model.EntryDetails
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.datasource.UserRateDataSource
 import ru.vladsaybulin.network.models.NetworkAnime
+import ru.vladsaybulin.network.models.NetworkUserRate
+import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 import javax.inject.Inject
 
 class AnimeRepository @Inject constructor(
@@ -138,7 +137,7 @@ class AnimeRepository @Inject constructor(
 
                 val animes = networkAnimes.map {
                     AnimeWithUserRate(
-                        anime = it.asAnime(),
+                        anime = it.asExternalModel(),
                         userRate = it.userRate?.asExternalModel()
                     )
                 }
@@ -154,11 +153,11 @@ class AnimeRepository @Inject constructor(
         }
 
     private suspend fun saveUserRate(
-        animeDetails: AnimeDetailsQuery.Anime,
-        userRate: AnimeUserRateQuery.UserRate
+        animeDetails: NetworkAnimeDetails,
+        userRate: NetworkUserRate
     ) {
         animeDao.insertOrReplaceAnimeEntity(animeDetails.asEntity())
-        userRateDao.insertOrReplaceUserRate(userRate.asEntity(animeDetails.id))
+        userRateDao.insertOrReplaceUserRate(userRate.asEntity(animeId = animeDetails.id))
     }
 }
 

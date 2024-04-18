@@ -27,9 +27,8 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
-import ru.vladsaybulin.model.common.Poster
-import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.common.Image
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun EntryListItem(
@@ -98,7 +97,7 @@ fun EntryListItemPreview() {
     ShikimoriTheme {
         EntryListItem(
             name = "Entry name",
-            poster = Poster(""),
+            poster = Image("", ""),
             onClick = { },
             modifier = Modifier.fillMaxWidth(),
             userRateStatus = UserRateStatus.Watching,
@@ -119,7 +118,7 @@ fun EntryListWithLongNamePreview() {
     ShikimoriTheme {
         EntryListItem(
             name = "This is a long entry name that does not fit into 2 lines",
-            poster = Poster(""),
+            poster = Image("", ""),
             modifier = Modifier.fillMaxWidth(),
             userRateStatus = UserRateStatus.None,
             onClick = { },

@@ -28,7 +28,7 @@ class CalendarViewModel @Inject constructor(
         )
 
     suspend fun forceRefresh() {
-        calendarRepository.syncCalendarItems(true)
+        calendarRepository.refreshCalendarItems()
     }
 }
 

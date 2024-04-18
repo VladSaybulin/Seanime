@@ -5,7 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.vladsaybulin.database.models.common.ImagePOJO
-import ru.vladsaybulin.database.models.common.IncompleteDateEntity
+import ru.vladsaybulin.database.models.common.IncompleteDatePOJO
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.manga.Manga
@@ -43,10 +43,10 @@ class MangaEntity(
     val volumes: Int,
 
     @Embedded("aired_on_")
-    val airedOn: IncompleteDateEntity?,
+    val airedOn: IncompleteDatePOJO?,
 
     @Embedded("released_on")
-    val releasedOn: IncompleteDateEntity?
+    val releasedOn: IncompleteDatePOJO?
 )
 
 fun MangaEntity.asExternalModel() = Manga(

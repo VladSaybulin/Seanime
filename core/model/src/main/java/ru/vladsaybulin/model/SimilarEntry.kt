@@ -1,12 +1,12 @@
 package ru.vladsaybulin.model
 
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.common.Image
 
 data class SimilarEntry(
     val entryId: Long,
     val entryType: EntryType,
     val originalName: String,
     val russianName: String?,
-    val poster: Poster?,
+    val poster: Image?,
 )

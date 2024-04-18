@@ -5,23 +5,23 @@ import kotlinx.datetime.Clock
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaKind
-import ru.vladsaybulin.model.common.Poster
-import ru.vladsaybulin.model.userrate.UserRate
-import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.model.topic.NewsTopic
 import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.model.user.UserImage
+import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 val previewAnimes = listOf(
     Anime(
         id = 16498,
         name = "Shingeki no Kyojin",
         russianName = "Атака титанов",
-        poster = Poster("url"),
+        poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 8.54f,
         status = EntryStatus.Released,
@@ -35,7 +35,7 @@ val previewAnimes = listOf(
         id = 1535,
         name = "Death Note",
         russianName = "Тетрадь смерти",
-        poster = Poster(originalUrl = "url"),
+        poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 8.62f,
         status = EntryStatus.Released,
@@ -49,7 +49,7 @@ val previewAnimes = listOf(
         id = 5114,
         name = "Fullmetal Alchemist: Brotherhood",
         russianName = "Стальной алхимик: Братство",
-        poster = Poster("url"),
+        poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 9.09f,
         status = EntryStatus.Released,
@@ -63,10 +63,7 @@ val previewAnimes = listOf(
         id = 30276,
         name = "One Punch Man",
         russianName = "Ванпанчмен",
-        poster = Poster(
-            originalUrl = "https://desu.shikimori.one/uploads/poster/animes/30276/1c07fa5cce615e2a2b85be3c3695ed73.jpeg",
-            previewUrl = "https://desu.shikimori.one/uploads/poster/animes/30276/preview-ce8600d3027776312e4e2d16c8f04629.webp"
-        ),
+        poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 8.5f,
         status = EntryStatus.Released,
@@ -80,10 +77,7 @@ val previewAnimes = listOf(
         id = 11757,
         name = "Sword Art Online",
         russianName = "Мастера Меча Онлайн",
-        poster = Poster(
-            originalUrl = "https://desu.shikimori.one/uploads/poster/animes/11757/8958e24041338f53bdab4955ed395d66.jpeg",
-            previewUrl = "https://desu.shikimori.one/uploads/poster/animes/11757/preview-211fcfe59648bad484ca8560b55a2d48.webp"
-        ),
+        poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 7.21f,
         status = EntryStatus.Released,
@@ -100,7 +94,7 @@ val previewMangas = listOf(
         id = 2,
         name = "Berserk",
         russianName = "Берсерк",
-        poster = Poster("url"),
+        poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 9.47f,
         status = EntryStatus.Ongoing,
@@ -113,7 +107,7 @@ val previewMangas = listOf(
         id = 23390,
         name = "Shingeki no Kyojin ",
         russianName = "Атака титанов",
-        poster = Poster("url"),
+        poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 8.55f,
         status = EntryStatus.Released,
@@ -126,7 +120,7 @@ val previewMangas = listOf(
         id = 13,
         name = "One Piece",
         russianName = "Ван-Пис",
-        poster = Poster("url"),
+        poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 9.22f,
         status = EntryStatus.Ongoing,
@@ -139,7 +133,7 @@ val previewMangas = listOf(
         id = 116778,
         name = "Chainsaw Man",
         russianName = "Человек-бензопила",
-        poster = Poster("url"),
+        poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 8.73f,
         status = EntryStatus.Ongoing,
@@ -152,7 +146,7 @@ val previewMangas = listOf(
         id = 33327,
         name = "Tokyo Ghoul",
         russianName = "Токийский гуль",
-        poster = Poster("url"),
+        poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 8.53f,
         status = EntryStatus.Released,

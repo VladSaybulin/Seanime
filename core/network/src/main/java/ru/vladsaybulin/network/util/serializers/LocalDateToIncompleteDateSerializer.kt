@@ -8,29 +8,29 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import ru.vladsaybulin.network.models.IncompleteDateDto
+import ru.vladsaybulin.network.models.NetworkIncompleteDate
 
-class LocalDateToIncompleteDateSerializer : KSerializer<IncompleteDateDto?> {
+class LocalDateToIncompleteDateSerializer : KSerializer<NetworkIncompleteDate?> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
         serialName = "incomplete_date",
         kind = PrimitiveKind.STRING
     )
 
     @OptIn(ExperimentalSerializationApi::class)
-    override fun deserialize(decoder: Decoder): IncompleteDateDto? {
+    override fun deserialize(decoder: Decoder): NetworkIncompleteDate? {
         val localDate = decoder.decodeNullableSerializableValue(LocalDate.serializer())
             ?: return null
         val day = localDate.dayOfMonth.takeIf { it != 1 }
         val month = localDate.monthNumber.takeIf { day != null || it != 1 }
 
-        return IncompleteDateDto(
+        return NetworkIncompleteDate(
             day = day,
             month = month,
             year = localDate.year
         )
     }
 
-    override fun serialize(encoder: Encoder, value: IncompleteDateDto?) {
+    override fun serialize(encoder: Encoder, value: NetworkIncompleteDate?) {
         throw UnsupportedOperationException()
     }
 }

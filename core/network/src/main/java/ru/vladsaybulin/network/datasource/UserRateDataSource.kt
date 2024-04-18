@@ -20,9 +20,11 @@ import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRatesQuery
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.network.di.AuthorizedClient
-import ru.vladsaybulin.network.mapper.queries.asDto
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatusEnum
+import ru.vladsaybulin.network.mapper.queries.asNetworkModel
+import ru.vladsaybulin.network.mapper.queries.asNetworkModels
 import ru.vladsaybulin.network.models.CreateUserRateDto
+import ru.vladsaybulin.network.models.NetworkUserRate
 import ru.vladsaybulin.network.models.UserRateValuesDto
 import ru.vladsaybulin.network.models.UserRateWithEntryDto
 import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
@@ -66,7 +68,7 @@ class UserRateDataSource @Inject constructor(
             userId = Optional.presentIfNotNull(userId)
         )
         val response = apolloClient.query(query).execute().dataAssertNoErrors
-        return response.userRates.map { it.asDto() }
+        return response.userRates.map { it.asNetworkModel() }
     }
 
     suspend fun getMangaUserRates(
@@ -82,21 +84,21 @@ class UserRateDataSource @Inject constructor(
             userId = Optional.presentIfNotNull(userId)
         )
         val response = apolloClient.query(query).execute().dataAssertNoErrors
-        return response.userRates.map { it.asDto() }
+        return response.userRates.map { it.asNetworkModels() }
     }
 
-    suspend fun getAnimeUserRate(animeId: Long): AnimeUserRateQuery.UserRate? {
+    suspend fun getAnimeUserRate(animeId: Long): NetworkUserRate? {
         val response = apolloClient.query(AnimeUserRateQuery(id = animeId.toString())).execute()
         val anime = response.dataAssertNoErrors.animes.firstOrNull()
             ?: throw ShikimoriException("Not found anime where id = $animeId")
-        return anime.userRate
+        return anime.userRate?.asNetworkModel()
     }
 
-    suspend fun getMangaUserRate(mangaId: Long): MangaUserRateQuery.UserRate? {
+    suspend fun getMangaUserRate(mangaId: Long): NetworkUserRate? {
         val response = apolloClient.query(MangaUserRateQuery(id = mangaId.toString())).execute()
         val manga = response.dataAssertNoErrors.mangas.firstOrNull()
             ?: throw ShikimoriException("Not found manga where id = $mangaId")
-        return manga.userRate
+        return manga.userRate?.asNetworkModel()
     }
 
     suspend fun createUserRate(createUserRateDto: CreateUserRateDto): UserRateWithEntryLinkDto? {

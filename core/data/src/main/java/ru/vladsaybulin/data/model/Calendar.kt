@@ -3,7 +3,7 @@ package ru.vladsaybulin.data.model
 import ru.vladsaybulin.database.models.calendar.CalendarItemEntity
 import ru.vladsaybulin.network.models.CalendarItemDto
 
-fun CalendarItemDto.asEntity() = CalendarItemEntity(
+fun CalendarItemDto.asPOJO() = CalendarItemEntity(
     nextEpisode = nextEpisode,
     nextEpisodeAt = nextEpisodeAt,
     duration = duration.takeIf { it != 0 },

@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.CreateUserRateDto
+import ru.vladsaybulin.data.model.asPOJO
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asDto
 import ru.vladsaybulin.data.model.userRateDboShell
@@ -79,13 +80,13 @@ class UserRateRepository @Inject constructor(
 
     suspend fun createUserRate(userRateValues: UserRateValues, anime: Anime) {
         createUserRate(EntryType.Anime, anime.id, userRateValues) {
-            database.animeDao.insertOrReplaceAnimeEntity(anime.asEntity())
+            database.animeDao.insertOrReplaceAnimeEntity(anime.asPOJO())
         }
     }
 
     suspend fun createUserRate(userRateValues: UserRateValues, manga: Manga) {
         createUserRate(EntryType.Manga, manga.id, userRateValues) {
-            database.mangaDao.insertOrReplaceMangaEntity(manga.asEntity())
+            database.mangaDao.insertOrReplaceMangaEntity(manga.asPOJO())
         }
     }
 
@@ -93,7 +94,7 @@ class UserRateRepository @Inject constructor(
         withContext(ioDispatcher) {
             val response = userRateDataSource.updateUserRate(userRateId, userRateValues.asDto())
             if (response != null) {
-                database.userRateDao.insertOrReplaceUserRate(response.asEntity())
+                database.userRateDao.insertOrReplaceUserRate(response.asPOJO())
             }
         }
     }
@@ -130,7 +131,7 @@ class UserRateRepository @Inject constructor(
             if (response != null) {
                 database.withTransaction {
                     onSaveEntity()
-                    database.userRateDao.insertOrReplaceUserRate(response.asEntity())
+                    database.userRateDao.insertOrReplaceUserRate(response.asPOJO())
                     database.userRateDao.deleteOrderUserRateByStatus(userRateValues.status)
                 }
             }
@@ -162,8 +163,8 @@ class UserRateRepository @Inject constructor(
                 response.forEachIndexed { index, dto ->
                     userRates.add(dto.userRateDboShell())
                     dto.networkAnime?.let { animes.add(it.asEntity()) }
-                    dto.networkManga?.let { mangas.add(it.asEntity()) }
-                    order.add(UserRateOrderDbo(dto.userRateDto.id, start + index))
+                    dto.networkManga?.let { mangas.add(it.asPOJO()) }
+                    order.add(UserRateOrderDbo(dto.networkUserRate.id, start + index))
                 }
 
                 if (loadType == LoadType.REFRESH) {

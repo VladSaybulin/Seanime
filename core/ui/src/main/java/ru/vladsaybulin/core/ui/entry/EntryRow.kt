@@ -33,13 +33,13 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
-import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun EntryRow(
     name: String,
-    poster: Poster?,
+    poster: Image?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
@@ -215,7 +215,7 @@ fun EntryRowPreview() {
     ShikimoriTheme {
         EntryRow(
             name = "Entry name",
-            poster = Poster(""),
+            poster = Image("", ""),
             onClick = {},
             userRateStatus = UserRateStatus.Planned
         ) {

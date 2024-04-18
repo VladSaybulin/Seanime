@@ -1,11 +1,11 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.database.models.common.IncompleteDateEntity
+import ru.vladsaybulin.database.models.common.IncompleteDatePOJO
 import ru.vladsaybulin.model.common.IncompleteDate
-import ru.vladsaybulin.network.models.IncompleteDateDto
+import ru.vladsaybulin.network.models.NetworkIncompleteDate
 
-fun IncompleteDateDto.asEntity() = IncompleteDateEntity(day, month, year)
+fun NetworkIncompleteDate.asPOJO() = IncompleteDatePOJO(day, month, year)
 
-fun IncompleteDateDto.asIncompleteDate() = IncompleteDate(day, month, year)
+fun NetworkIncompleteDate.asExternalModel() = IncompleteDate(day, month, year)
 
-fun IncompleteDate.asEntity() = IncompleteDateEntity(day, month, year)
+fun IncompleteDate.asPOJO() = IncompleteDatePOJO(day, month, year)

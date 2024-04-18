@@ -5,32 +5,26 @@ import ru.vladsaybulin.network.mapper.enums.asAnimeKind
 import ru.vladsaybulin.network.mapper.enums.asEntryStatus
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatus
 import ru.vladsaybulin.network.models.NetworkAnime
-import ru.vladsaybulin.network.models.IncompleteDateDto
-import ru.vladsaybulin.network.models.PosterDto
-import ru.vladsaybulin.network.models.UserRateDto
+import ru.vladsaybulin.network.models.NetworkIncompleteDate
+import ru.vladsaybulin.network.models.NetworkUserRate
+import ru.vladsaybulin.network.models.common.NetworkImage
 
-internal fun AnimeQuery.Anime.asDto() = NetworkAnime(
+internal fun AnimeQuery.Anime.asNetworkModels() = NetworkAnime(
     id = id,
     originalName = name,
     russianName = russian,
-    poster = poster?.asDto(),
+    poster = poster?.run { NetworkImage(originalUrl, previewUrl) },
     kind = kind.asAnimeKind(),
     status = status.asEntryStatus(),
     score = score?.toFloat() ?: 0f,
     episodes = episodes,
     episodesAired = episodesAired,
-    airedOn = airedOn?.asDto(),
-    releasedOn = releasedOn?.asDto(),
-    userRate = userRate?.asDto()
+    airedOn = airedOn?.run { NetworkIncompleteDate(day, month, year) },
+    releasedOn = releasedOn?.run { NetworkIncompleteDate(day, month, year) },
+    userRate = userRate?.asNetworkModel()
 )
 
-private fun AnimeQuery.Poster.asDto() = PosterDto(originalUrl, previewUrl)
-
-private fun AnimeQuery.AiredOn.asDto() = IncompleteDateDto(day, month, year)
-
-private fun AnimeQuery.ReleasedOn.asDto() = IncompleteDateDto(day, month, year)
-
-private fun AnimeQuery.UserRate.asDto() = UserRateDto(
+private fun AnimeQuery.UserRate.asNetworkModel() = NetworkUserRate(
     id = id,
     createdAt = createdAt,
     updatedAt = updatedAt,

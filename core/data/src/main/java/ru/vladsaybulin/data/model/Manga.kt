@@ -5,32 +5,32 @@ import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.network.models.NetworkManga
 
-fun Manga.asEntity() = MangaEntity(
+fun Manga.asPOJO() = MangaEntity(
     id = id,
     originalName = name,
     russianName = russianName,
-    poster = poster?.asEntity(),
+    poster = poster?.asPOJO(),
     kind = kind,
     status = status,
     score = score ?: 0f,
     chapters = chapters,
     volumes = volumes,
-    airedOn = airedOn?.asEntity(),
-    releasedOn = releasedOn?.asEntity()
+    airedOn = airedOn?.asPOJO(),
+    releasedOn = releasedOn?.asPOJO()
 )
 
-fun NetworkManga.asEntity() = MangaEntity(
+fun NetworkManga.asPOJO() = MangaEntity(
     id = id,
     originalName = originalName,
     russianName = russianName,
-    poster = poster?.asEntity(),
+    poster = poster?.asPOJO(),
     kind = kind,
     status = status,
     score = score ?: 0f,
     chapters = chapters,
     volumes = volumes,
-    airedOn = airedOn?.asEntity(),
-    releasedOn = releasedOn?.asEntity()
+    airedOn = airedOn?.asPOJO(),
+    releasedOn = releasedOn?.asPOJO()
 )
 
 fun NetworkManga.userRateEntityShell() = userRate?.let { userRate ->
@@ -54,12 +54,12 @@ fun NetworkManga.asExternalModel() = Manga(
     id = id,
     name = originalName,
     russianName = russianName,
-    poster = poster?.asPoster(),
+    poster = poster?.asExternalModel(),
     kind = kind,
     status = status,
     score = score ?: 0f,
     chapters = chapters,
     volumes = volumes,
-    airedOn = airedOn?.asIncompleteDate(),
-    releasedOn = releasedOn?.asIncompleteDate()
+    airedOn = airedOn?.asExternalModel(),
+    releasedOn = releasedOn?.asExternalModel()
 )

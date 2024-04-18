@@ -5,23 +5,22 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.core.navigation.ImageViewArgs
 import ru.vladsaybulin.core.navigation.SearchArgs
-import ru.vladsaybulin.model.anime.AnimeKind
-import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.EntryDetails
+import ru.vladsaybulin.model.SimilarEntry
+import ru.vladsaybulin.model.anime.AnimeKind
+import ru.vladsaybulin.model.anime.Studio
+import ru.vladsaybulin.model.anime.Video
+import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
+import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.manga.MangaKind
-import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.common.Poster
 import ru.vladsaybulin.model.manga.Publisher
+import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedEntry
-import ru.vladsaybulin.model.anime.Screenshot
-import ru.vladsaybulin.model.SimilarEntry
-import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.userrate.UserRate
-import ru.vladsaybulin.model.anime.Video
 
 sealed class DetailsUiState {
     data object Loading : DetailsUiState()
@@ -31,7 +30,7 @@ sealed class DetailsUiState {
     data class Success(
         val entryType: EntryType,
         val entryId: Long,
-        val poster: Poster?,
+        val poster: Image?,
         val name: String,
         val russianName: String?,
         val status: EntryStatus,
@@ -54,7 +53,7 @@ sealed class DetailsUiState {
         val authors: ImmutableList<PersonWithRoles>?,
         val related: ImmutableList<RelatedEntry>?,
         val characters: ImmutableList<CharacterWithRole>?,
-        val screenshots: ImmutableList<Screenshot>?,
+        val screenshots: ImmutableList<Image>?,
         val videos: ImmutableList<Video>?,
         val similar: ImmutableList<SimilarEntry>,
         val userRate: UserRate?
@@ -73,14 +72,14 @@ private fun EntryDetails.animeDetailsToUiState() = with(anime!!) {
         russianName = russianName,
         status = status,
         animeKind = kind,
-        score = score ?: 0f,
+        score = score,
         episodes = episodes,
         episodesAired = episodesAired,
         episodeDuration = duration?.takeIf { it > 0 },
         nextEpisodeAt = nextEpisodeAt,
         airedOn = airedOn,
         releasedOn = releasedOn,
-        studios = studios.toImmutableList(),
+        studios = studios?.toImmutableList(),
         genres = genres?.toImmutableList(),
         descriptionHtml = descriptionHtml,
         descriptionSource = descriptionSource,

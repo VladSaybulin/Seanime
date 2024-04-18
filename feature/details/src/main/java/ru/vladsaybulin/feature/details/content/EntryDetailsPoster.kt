@@ -24,10 +24,10 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
-import ru.vladsaybulin.model.common.Poster
+import ru.vladsaybulin.model.common.Image
 
 internal fun LazyListScope.poster(
-    poster: Poster?,
+    poster: Image?,
     topSpace: Dp,
     onPosterClick: () -> Unit
 ) {
@@ -42,7 +42,7 @@ internal fun LazyListScope.poster(
 
 @Composable
 private fun EntryDetailsPoster(
-    poster: Poster?,
+    poster: Image?,
     topSpaceDp: Dp,
     onPosterClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -76,7 +76,7 @@ private fun EntryDetailsPoster(
 
 @Composable
 private fun PosterBackground(
-    poster: Poster,
+    poster: Image,
     modifier: Modifier = Modifier
 ) {
     AsyncImage(
@@ -100,7 +100,7 @@ private fun PosterBackground(
 fun PosterPreview() {
     ShikimoriTheme {
         EntryDetailsPoster(
-            poster = Poster(""),
+            poster = Image("", ""),
             topSpaceDp = 48.dp,
             onPosterClick = { }
         )

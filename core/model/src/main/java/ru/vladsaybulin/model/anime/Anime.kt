@@ -3,7 +3,6 @@ package ru.vladsaybulin.model.anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
-import ru.vladsaybulin.model.common.Poster
 import ru.vladsaybulin.model.userrate.UserRate
 
 data class Anime(
@@ -29,7 +28,7 @@ val previewAnimes = listOf(
         id = 17201,
         name = "Toki no Daichi: Hana no Oukoku no Majo",
         russianName = "Земля времени: Ведьма королевства цветов",
-        poster = Poster("https://desu.shikimori.one/uploads/poster/animes/17201/cad687fc14b233c1503518de4ab888f2.jpeg"),
+        poster = Image("", ""),
         kind = AnimeKind.Ova,
         score = 5.8f,
         status = EntryStatus.Released,
@@ -43,7 +42,7 @@ val previewAnimes = listOf(
         id = 42603,
         name = "Boku no Hero Academia: Ikinokore! Kesshi no Survival Kunren",
         russianName = null,
-        poster = Poster("https://desu.shikimori.one/uploads/poster/animes/42603/e578c38eff69123948e5f1165d1ec061.jpeg"),
+        poster = Image("", ""),
         kind = AnimeKind.None,
         score = 7.16f,
         status = EntryStatus.Ongoing,
@@ -71,7 +70,7 @@ val previewAnimes = listOf(
         id = 35921,
         name = "Da Wei Bei Ken: Daomei Tegong Xiong",
         russianName = "Бернард: Агент 008",
-        poster= Poster("https://desu.shikimori.one/uploads/poster/animes/35921/51c4332d69cbb9b80dfa6084a916c7c0.jpeg"),
+        poster= Image("", ""),
         kind = AnimeKind.Movie,
         score = 5.43f,
         status = EntryStatus.Anons,
@@ -85,7 +84,7 @@ val previewAnimes = listOf(
         id = 6823,
         name = "Omocha Bako Series Dai 3 Wa: Ehon 1936-nen",
         russianName="Момотаро против Микки Мауса",
-        poster= Poster("https://desu.shikimori.one/uploads/poster/animes/6823/b21ce53a5e9d18a80949f2ad156e171c.jpeg"),
+        poster= Image("", ""),
         kind = AnimeKind.None,
         score = 4.63f,
         status = EntryStatus.None,

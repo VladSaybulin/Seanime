@@ -26,12 +26,12 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.anime.Screenshot
+import ru.vladsaybulin.model.common.Image
 import kotlin.math.min
 
 @Composable
 fun ScreenshotsCarousel(
-    screenshots: ImmutableList<Screenshot>,
+    screenshots: ImmutableList<Image>,
     onScreenshotClick: (Int) -> Unit,
     onShowAllClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -77,7 +77,7 @@ fun ScreenshotsCarousel(
 
 @Composable
 private fun ShowMoreCard(
-    screenshot: Screenshot,
+    screenshot: Image,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -93,7 +93,7 @@ private fun ShowMoreCard(
                 .clickable(onClick = onClick)
         ) {
             ScreenshotImage(
-                url = screenshot.x166Url,
+                url = screenshot.previewUrl,
                 modifier = Modifier
                     .fillMaxSize()
                     .blur(32.dp)
@@ -115,7 +115,7 @@ private fun ShowMoreCard(
 
 @Composable
 private fun ScreenshotCard(
-    screenshot: Screenshot,
+    screenshot: Image,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -126,7 +126,7 @@ private fun ScreenshotCard(
             .clip(ShikimoriTheme.shapes.large)
             .clickable(onClick = onClick),
     ) {
-        ScreenshotImage(url = screenshot.x332Url)
+        ScreenshotImage(url = screenshot.previewUrl)
     }
 }
 
