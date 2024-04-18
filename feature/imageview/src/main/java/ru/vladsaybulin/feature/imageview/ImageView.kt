@@ -122,6 +122,7 @@ private fun SystemBarsVisible(visible: Boolean) {
         if (visible) {
             controller.show(WindowInsetsCompat.Type.systemBars())
         } else {
+            controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
