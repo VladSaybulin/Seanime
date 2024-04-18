@@ -14,3 +14,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Project exclude paths
+/gradle/build-logic/convention/build/
+/gradle/build-logic/convention/build/classes/kotlin/main/
