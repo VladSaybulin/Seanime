@@ -1,18 +1,16 @@
 package ru.vladsaybulin.model.anime
 
-import ru.vladsaybulin.model.Entry
 import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.Poster
 import ru.vladsaybulin.model.userrate.UserRate
-import ru.vladsaybulin.model.common.Image
 
 data class Anime(
-    override val id: Long,
-    override val name: String,
-    override val russianName: String?,
-    override val poster: Image?,
+    val id: Long,
+    val name: String,
+    val russianName: String?,
+    val poster: Image?,
     val kind: AnimeKind,
     val status: EntryStatus,
     val score: Float?,
@@ -21,9 +19,7 @@ data class Anime(
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
     val userRate: UserRate?,
-) : Entry {
-    override val type = EntryType.Anime
-}
+)
 
 /**
  * Preview data
