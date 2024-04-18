@@ -5,18 +5,18 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.database.models.topic.PopulatedTopicDbo
-import ru.vladsaybulin.database.models.topic.TopicDbo
+import ru.vladsaybulin.database.models.topic.PopulatedTopic
+import ru.vladsaybulin.database.models.topic.TopicEntity
 
 @Dao
 interface TopicsDao {
 
     @Transaction
     @Query("SELECT * FROM topics WHERE forum = 'news' ORDER BY created_at DESC")
-    fun getNewsTopic(): Flow<List<PopulatedTopicDbo>>
+    fun getNewsTopic(): Flow<List<PopulatedTopic>>
 
     @Insert
-    fun insertTopicEntities(topics: List<TopicDbo>)
+    fun insertTopicEntities(topics: List<TopicEntity>)
 
     @Query("DELETE FROM topics")
     fun deleteAll()

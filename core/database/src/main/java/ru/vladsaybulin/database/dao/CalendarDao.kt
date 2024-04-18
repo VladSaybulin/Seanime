@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.database.models.calendar.CalendarItemDbo
+import ru.vladsaybulin.database.models.calendar.CalendarItemEntity
 import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
 
 @Dao
@@ -26,7 +26,7 @@ interface CalendarDao {
     suspend fun searchCalendarItems(searchQuery: String): List<PopulatedCalendarItem>
 
     @Insert
-    fun insertCalendarItems(items: List<CalendarItemDbo>)
+    fun insertCalendarItems(items: List<CalendarItemEntity>)
 
     @Query("DELETE FROM calendar_items")
     fun deleteAllItems()

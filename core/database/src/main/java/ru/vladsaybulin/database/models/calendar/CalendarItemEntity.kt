@@ -8,7 +8,6 @@ import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 
-
 @Entity(
     tableName = "calendar_items",
     foreignKeys = [
@@ -20,10 +19,21 @@ import ru.vladsaybulin.database.models.anime.AnimeEntity
     ],
     indices = [Index("anime_id")]
 )
-data class CalendarItemDbo(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo("episode") val nextEpisode: Int,
-    @ColumnInfo("next_episode_at") val nextEpisodeAt: Instant,
-    @ColumnInfo("duration") val duration: Int?,
-    @ColumnInfo("anime_id") val animeId: Long
+data class CalendarItemEntity(
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo("id")
+    val id: Int = 0,
+
+    @ColumnInfo("episode")
+    val nextEpisode: Int,
+
+    @ColumnInfo("next_episode_at")
+    val nextEpisodeAt: Instant,
+
+    @ColumnInfo("duration")
+    val duration: Int?,
+
+    @ColumnInfo("anime_id")
+    val animeId: Long
 )

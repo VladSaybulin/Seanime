@@ -4,7 +4,8 @@ import androidx.room.ColumnInfo
 import ru.vladsaybulin.model.common.IncompleteDate
 
 
-data class IncompleteDateEntity(
+data class IncompleteDatePOJO(
+
     @ColumnInfo("day")
     val day: Int?,
 
@@ -15,4 +16,4 @@ data class IncompleteDateEntity(
     val year: Int?
 )
 
-fun IncompleteDateEntity.asExternalModel() = IncompleteDate(day, month, year)
+fun IncompleteDatePOJO.asExternalModel() = IncompleteDate(day, month, year)

@@ -9,7 +9,7 @@ import kotlin.time.Duration.Companion.minutes
 
 class PopulatedCalendarItem(
     @Embedded
-    val calendarItemDbo: CalendarItemDbo,
+    val calendarItemEntity: CalendarItemEntity,
 
     @Relation(
         entity = AnimeEntity::class,
@@ -22,7 +22,7 @@ class PopulatedCalendarItem(
 fun PopulatedCalendarItem.asExternalModel() =
     CalendarItem(
         anime = animeDbo.asExternalModel(),
-        nextEpisode = calendarItemDbo.nextEpisode,
-        nextEpisodeAt = calendarItemDbo.nextEpisodeAt,
-        duration = calendarItemDbo.duration?.minutes
+        nextEpisode = calendarItemEntity.nextEpisode,
+        nextEpisodeAt = calendarItemEntity.nextEpisodeAt,
+        duration = calendarItemEntity.duration?.minutes
     )

@@ -1,11 +1,11 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.database.models.UserDbo
-import ru.vladsaybulin.database.models.UserImageDbo
+import ru.vladsaybulin.database.models.user.UserEntity
+import ru.vladsaybulin.database.models.user.UserImagePOJO
 import ru.vladsaybulin.network.models.BriefUserDto
 import ru.vladsaybulin.network.models.UserImageDto
 
-fun BriefUserDto.asEntity() = UserDbo(
+fun BriefUserDto.asEntity() = UserEntity(
     id = id,
     nickname = nickname,
     avatarUrl = avatarUrl,
@@ -14,7 +14,7 @@ fun BriefUserDto.asEntity() = UserDbo(
     url = url
 )
 
-private fun UserImageDto.asEntity() = UserImageDbo(
+private fun UserImageDto.asEntity() = UserImagePOJO(
     x160Url = x160Url,
     x148Url = x148Url,
     x80Url = x80Url,

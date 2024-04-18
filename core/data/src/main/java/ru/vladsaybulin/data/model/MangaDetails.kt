@@ -3,7 +3,7 @@ package ru.vladsaybulin.data.model
 import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
 import ru.vladsaybulin.database.models.common.IncompleteDateEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
-import ru.vladsaybulin.database.models.common.ImageEntity
+import ru.vladsaybulin.database.models.common.ImagePOJO
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.model.character.CharacterWithRole
@@ -61,7 +61,7 @@ fun MangaDetailsQuery.Manga.asEntity() = MangaEntity(
     releasedOn = releasedOn?.asEntity()
 )
 
-private fun MangaDetailsQuery.Poster.asEntity() = ImageEntity(originalUrl, previewUrl)
+private fun MangaDetailsQuery.Poster.asEntity() = ImagePOJO(originalUrl, previewUrl)
 
 private fun MangaDetailsQuery.AiredOn.asEntity() = IncompleteDateEntity(day, month, year)
 

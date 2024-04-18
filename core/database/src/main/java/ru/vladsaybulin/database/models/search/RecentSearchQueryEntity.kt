@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 
 @Entity(tableName = "recent_search_query")
-class RecentSearchQueryDbo(
+class RecentSearchQueryEntity(
 
     @PrimaryKey
     @ColumnInfo("query")

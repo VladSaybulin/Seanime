@@ -5,7 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.vladsaybulin.database.models.common.IncompleteDateEntity
-import ru.vladsaybulin.database.models.common.ImageEntity
+import ru.vladsaybulin.database.models.common.ImagePOJO
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind
@@ -25,7 +25,7 @@ data class AnimeEntity(
     val russianName: String?,
 
     @Embedded("image")
-    val poster: ImageEntity?,
+    val poster: ImagePOJO?,
 
     @ColumnInfo("kind")
     val kind: AnimeKind,

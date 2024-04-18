@@ -12,9 +12,9 @@ import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.database.ShikiDatabase
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
-import ru.vladsaybulin.database.models.UserDbo
-import ru.vladsaybulin.database.models.topic.PopulatedTopicDbo
-import ru.vladsaybulin.database.models.topic.TopicDbo
+import ru.vladsaybulin.database.models.user.UserEntity
+import ru.vladsaybulin.database.models.topic.PopulatedTopic
+import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.database.models.topic.asExternalModel
 import ru.vladsaybulin.model.topic.Topic
 import ru.vladsaybulin.model.topic.TopicLinkedType
@@ -32,7 +32,7 @@ class TopicsRepository @Inject constructor(
 ) {
     fun getNewsTopics(): Flow<List<Topic>> = database.topicsDao.getNewsTopic()
         .onStart { refreshNewResources() }
-        .map { topics -> topics.map(PopulatedTopicDbo::asExternalModel) }
+        .map { topics -> topics.map(PopulatedTopic::asExternalModel) }
         .flowOn(ioDispatcher)
 
 
@@ -44,8 +44,8 @@ class TopicsRepository @Inject constructor(
 
         val anime = mutableListOf<AnimeEntity>()
         val manga = mutableListOf<MangaEntity>()
-        val users = mutableListOf<UserDbo>()
-        val topics = mutableListOf<TopicDbo>()
+        val users = mutableListOf<UserEntity>()
+        val topics = mutableListOf<TopicEntity>()
 
         for (topic in freshTopics) {
 

@@ -5,16 +5,16 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.database.models.search.RecentSearchQueryDbo
+import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
 
 @Dao
 interface RecentSearchQueriesDao {
 
     @Query("SELECT * FROM recent_search_query ORDER BY queried_at DESC LIMIT :limit")
-    fun getRecentSearchQueries(limit: Int): Flow<List<RecentSearchQueryDbo>>
+    fun getRecentSearchQueries(limit: Int): Flow<List<RecentSearchQueryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceSearchQueries(recentSearchQuery: RecentSearchQueryDbo)
+    suspend fun insertOrReplaceSearchQueries(recentSearchQuery: RecentSearchQueryEntity)
 
     @Query("DELETE FROM recent_search_query")
     suspend fun deleteAllSearchQueries()

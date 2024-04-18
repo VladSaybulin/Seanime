@@ -11,7 +11,7 @@ import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.RecentSearchQuery
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.database.dao.RecentSearchQueriesDao
-import ru.vladsaybulin.database.models.search.RecentSearchQueryDbo
+import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
 import javax.inject.Inject
 
 class RecentSearchQueryRepository @Inject constructor(
@@ -22,7 +22,7 @@ class RecentSearchQueryRepository @Inject constructor(
     fun getRecentSearchQuery(limit: Int): Flow<List<RecentSearchQuery>> =
         recentSearchQueriesDao.getRecentSearchQueries(limit)
             .map {
-                it.map(RecentSearchQueryDbo::asExternalModel)
+                it.map(RecentSearchQueryEntity::asExternalModel)
             }
             .flowOn(ioDispatcher)
 
@@ -35,7 +35,7 @@ class RecentSearchQueryRepository @Inject constructor(
     suspend fun insertOrReplaceRecentSearchQuery(query: String) {
         withContext(ioDispatcher) {
             recentSearchQueriesDao.insertOrReplaceSearchQueries(
-                RecentSearchQueryDbo(
+                RecentSearchQueryEntity(
                     query = query,
                     queriedDate = Clock.System.now()
                 )

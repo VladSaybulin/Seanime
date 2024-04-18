@@ -28,24 +28,57 @@ import ru.vladsaybulin.model.topic.TopicType
         )
     ]
 )
-data class TopicDbo(
+data class TopicEntity(
+
     @ColumnInfo("id")
     @PrimaryKey
     val id: Long,
-    @ColumnInfo("topic_title") val title: String,
-    @ColumnInfo("body") val body: String?,
-    @ColumnInfo("html_body") val bodyHtml: String?,
-    @ColumnInfo("html_footer") val footerHtml: String?,
-    @ColumnInfo("created_at") val createdAt: Instant,
-    @ColumnInfo("comments_count") val commentsCount: Int,
-    @ColumnInfo("forum") val forumPermalink: String,
-    @ColumnInfo("user_id") val userId: Long,
-    @ColumnInfo("type") val type: TopicType,
-    @ColumnInfo("linked_type") val linkedType: TopicLinkedType,
-    @ColumnInfo("anime_id") val animeId: Long?,
-    @ColumnInfo("manga_id") val mangaId: Long?,
-    @ColumnInfo("viewed") val viewed: Boolean,
-    @ColumnInfo("last_comment_viewed") val lastCommentViewed: Boolean,
-    @ColumnInfo("event") val event: TopicEvent,
-    @ColumnInfo("episode") val episode: Int?
+
+    @ColumnInfo("topic_title")
+    val title: String,
+
+    @ColumnInfo("body")
+    val body: String?,
+
+    @ColumnInfo("html_body")
+    val bodyHtml: String?,
+
+    @ColumnInfo("html_footer")
+    val footerHtml: String?,
+
+    @ColumnInfo("created_at")
+    val createdAt: Instant,
+
+    @ColumnInfo("comments_count")
+    val commentsCount: Int,
+
+    @ColumnInfo("forum")
+    val forumPermalink: String,
+
+    @ColumnInfo("user_id")
+    val userId: Long,
+
+    @ColumnInfo("type")
+    val type: TopicType,
+
+    @ColumnInfo("linked_type")
+    val linkedType: TopicLinkedType,
+
+    @ColumnInfo("anime_id")
+    val animeId: Long?,
+
+    @ColumnInfo("manga_id")
+    val mangaId: Long?,
+
+    @ColumnInfo("viewed")
+    val viewed: Boolean,
+
+    @ColumnInfo("last_comment_viewed")
+    val lastCommentViewed: Boolean,
+
+    @ColumnInfo("event")
+    val event: TopicEvent,
+
+    @ColumnInfo("episode")
+    val episode: Int?
 )

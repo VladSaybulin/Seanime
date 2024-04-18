@@ -3,7 +3,7 @@ package ru.vladsaybulin.database.models.common
 import androidx.room.ColumnInfo
 import ru.vladsaybulin.model.common.Poster
 
-data class ImageEntity(
+data class ImagePOJO(
 
     @ColumnInfo("original")
     val originalUrl: String,
@@ -12,4 +12,4 @@ data class ImageEntity(
     val previewUrl: String
 )
 
-fun ImageEntity.asExternalModel() = Poster(originalUrl, previewUrl)
+fun ImagePOJO.asExternalModel() = Poster(originalUrl, previewUrl)

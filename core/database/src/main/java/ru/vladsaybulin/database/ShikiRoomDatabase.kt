@@ -15,16 +15,16 @@ import ru.vladsaybulin.database.dao.StudioDao
 import ru.vladsaybulin.database.dao.TopicsDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.dao.UsersDao
-import ru.vladsaybulin.database.models.UserDbo
+import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.StudioEntity
-import ru.vladsaybulin.database.models.calendar.CalendarItemDbo
+import ru.vladsaybulin.database.models.calendar.CalendarItemEntity
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.PublisherEntity
-import ru.vladsaybulin.database.models.search.RecentSearchQueryDbo
-import ru.vladsaybulin.database.models.topic.TopicDbo
+import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
+import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.models.userrate.UserRateOrderDbo
 import ru.vladsaybulin.database.utils.AnimeKindTypeConverter
@@ -40,15 +40,15 @@ import javax.inject.Inject
 
 @Database(
     entities = [
-        CalendarItemDbo::class,
+        CalendarItemEntity::class,
         AnimeEntity::class,
         MangaEntity::class,
         UserRateEntity::class,
-        UserDbo::class,
-        TopicDbo::class,
+        UserEntity::class,
+        TopicEntity::class,
         OngoingAnimeEntity::class,
         UserRateOrderDbo::class,
-        RecentSearchQueryDbo::class,
+        RecentSearchQueryEntity::class,
         GenreEntity::class,
         StudioEntity::class,
         PublisherEntity::class

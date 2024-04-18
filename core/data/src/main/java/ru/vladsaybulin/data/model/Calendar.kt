@@ -1,9 +1,9 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.database.models.calendar.CalendarItemDbo
+import ru.vladsaybulin.database.models.calendar.CalendarItemEntity
 import ru.vladsaybulin.network.models.CalendarItemDto
 
-fun CalendarItemDto.asEntity() = CalendarItemDbo(
+fun CalendarItemDto.asEntity() = CalendarItemEntity(
     nextEpisode = nextEpisode,
     nextEpisodeAt = nextEpisodeAt,
     duration = duration.takeIf { it != 0 },

@@ -1,12 +1,12 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.database.models.topic.TopicDbo
+import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.network.models.TopicDto
 
 fun TopicDto.asEntity(
     linkedAnimeId: Long? = null,
     linkedMangaId: Long? = null
-) = TopicDbo(
+) = TopicEntity(
     id = id,
     title = title,
     body = body,

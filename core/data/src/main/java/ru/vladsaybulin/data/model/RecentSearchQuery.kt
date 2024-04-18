@@ -1,14 +1,14 @@
 package ru.vladsaybulin.data.model
 
 import kotlinx.datetime.Instant
-import ru.vladsaybulin.database.models.search.RecentSearchQueryDbo
+import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
 
 data class RecentSearchQuery(
     val query: String,
     val queriedDate: Instant
 )
 
-fun RecentSearchQueryDbo.asExternalModel() = RecentSearchQuery(
+fun RecentSearchQueryEntity.asExternalModel() = RecentSearchQuery(
     query = query,
     queriedDate = queriedDate
 )

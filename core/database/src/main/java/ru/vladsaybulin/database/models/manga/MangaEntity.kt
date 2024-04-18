@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.vladsaybulin.database.models.common.ImageEntity
-import ru.vladsaybulin.database.models.common.asExternalModel
+import ru.vladsaybulin.database.models.common.ImagePOJO
 import ru.vladsaybulin.database.models.common.IncompleteDateEntity
+import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaKind
@@ -25,7 +25,7 @@ class MangaEntity(
     val russianName: String?,
 
     @Embedded("image")
-    val poster: ImageEntity?,
+    val poster: ImagePOJO?,
 
     @ColumnInfo("kind")
     val kind: MangaKind,
