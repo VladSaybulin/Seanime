@@ -25,6 +25,7 @@ import ru.vladsaybulin.feature.details.studioSearchParams
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.anime.Studio
+import ru.vladsaybulin.model.genre.Genre
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -45,7 +46,7 @@ internal fun LazyListScope.animeInformation(
 private fun AnimeInformation(
     state: DetailsUiState.Success,
     onStudioClick: (Long) -> Unit,
-    onGenreClick: (Long) -> Unit
+    onGenreClick: (Genre) -> Unit
 ) {
     AnimeKindAndEpisodeInfoLine(
         animeKind = state.animeKind,
@@ -90,8 +91,7 @@ private fun StudiosLineInfo(
         labelSingleStringRes = ru.vladsaybulin.feature.details.R.string.studios,
         labelSeveralStringRes = ru.vladsaybulin.feature.details.R.string.single_studio,
         name = { it.name },
-        annotation = { it.id.toString() },
-        onItemClick = { onStudioClick(it.toLong()) }
+        onItemClick = { onStudioClick(it.id) }
     )
 }
 

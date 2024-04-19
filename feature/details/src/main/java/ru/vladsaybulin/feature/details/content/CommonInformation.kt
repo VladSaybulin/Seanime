@@ -23,8 +23,8 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.ui.EntryStatusBadge
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.common.IncompleteDate
+import ru.vladsaybulin.model.genre.Genre
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -56,15 +56,14 @@ internal fun StatusAndDatesInfoLine(
 @Composable
 internal fun GenresInfoLine(
     genres: ImmutableList<Genre>,
-    onGenreClick: (Long) -> Unit,
+    onGenreClick: (Genre) -> Unit,
 ) {
     ListedInformation(
         items = genres,
         labelSingleStringRes = R.string.genre,
         labelSeveralStringRes = R.string.genres,
         name = { it.russianName ?: it.englishName },
-        annotation = { it.id.toString() },
-        onItemClick = { onGenreClick(it.toLong()) }
+        onItemClick = onGenreClick
     )
 }
 
@@ -75,8 +74,7 @@ internal fun <T>ListedInformation(
     labelSingleStringRes: Int,
     labelSeveralStringRes: Int,
     name: (T) -> String,
-    annotation: (T) -> String,
-    onItemClick: (String) -> Unit
+    onItemClick: (T) -> Unit
 ) {
     InfoLine(icon = { InfoIconPlaceholder() }) {
         val textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current)
@@ -91,15 +89,15 @@ internal fun <T>ListedInformation(
             append(": ")
 
             var appendSeparator = false
-            items.forEach {
+            items.forEachIndexed { index, item ->
                 if (appendSeparator) {
                     append(", ")
                 } else {
                     appendSeparator = true
                 }
-                withAnnotation(tag = "item", annotation = annotation(it)) {
+                withAnnotation(tag = "item", annotation = index.toString()) {
                     withStyle(linkSpanStyle) {
-                        append(name(it))
+                        append(name(item))
                     }
                 }
             }
@@ -111,7 +109,7 @@ internal fun <T>ListedInformation(
         ) { offset ->
             val ranges = annotatedString.getStringAnnotations("item", offset, offset)
             ranges.firstOrNull()?.let {
-                onItemClick(it.item)
+                onItemClick(items[it.item.toInt()])
             }
         }
     }

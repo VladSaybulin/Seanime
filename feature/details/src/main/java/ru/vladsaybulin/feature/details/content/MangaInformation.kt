@@ -13,6 +13,7 @@ import ru.vladsaybulin.feature.details.DetailsUiState
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.feature.details.genreSearchParams
 import ru.vladsaybulin.feature.details.publisherSearchParams
+import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.manga.Publisher
 
 internal fun LazyListScope.mangaInformation(
@@ -32,7 +33,7 @@ internal fun LazyListScope.mangaInformation(
 fun MangaInformation(
     state: DetailsUiState.Success,
     onPublisherClick: (Long) -> Unit,
-    onGenreClick: (Long) -> Unit,
+    onGenreClick: (Genre) -> Unit,
 ) {
     Column {
         KindAndVolumeInfoLine(state = state)
@@ -89,8 +90,7 @@ private fun PublishersInfoLine(
             labelSingleStringRes = R.string.publisher,
             labelSeveralStringRes = R.string.publishers,
             name = Publisher::name,
-            annotation = { it.id.toString() },
-            onItemClick = { onPublisherClick(it.toLong()) }
+            onItemClick = { onPublisherClick(it.id) }
         )
     }
 }

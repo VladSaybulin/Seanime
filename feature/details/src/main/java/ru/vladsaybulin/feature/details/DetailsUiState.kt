@@ -147,10 +147,10 @@ internal fun DetailsUiState.Success.studioSearchParams(studioId: Long) =
         studioId = studioId
     )
 
-internal fun DetailsUiState.Success.genreSearchParams(genreId: Long) =
+internal fun DetailsUiState.Success.genreSearchParams(genre: Genre) =
     SearchArgs(
         entryType = entryType,
-        genreId = genreId
+        genreId = genre.id
     )
 
 internal fun DetailsUiState.Success.posterViewParams(): ImageViewArgs {
