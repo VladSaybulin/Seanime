@@ -44,7 +44,7 @@ fun NavGraphBuilder.listGraph(
     nested: NavGraphBuilder.() -> Unit
 ) {
     navigation(
-        startDestination = "$MY_LIST_GRAPH_ROUTE/$LIST_SCREEN_ROUTE",
+        startDestination = "$MY_LIST_GRAPH_ROUTE/$LIST_SCREEN_ROUTE?$RouteArguments",
         route = MY_LIST_GRAPH_ROUTE
     ) {
         listScreen(onEntryClick)

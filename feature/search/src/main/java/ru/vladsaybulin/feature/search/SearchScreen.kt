@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -106,82 +107,89 @@ private fun SearchScreen(
     onDeleteRecentSearchQuery: (String) -> Unit,
     onEntryClick: (EntryDetailsArgs) -> Unit
 ) {
-    var showFilters by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .padding(bottom = 80.dp)
+    ) {
 
-    val filtersLoadingState = uiState.filtersLoadingState
-    val filtersState = if (filtersLoadingState is FiltersLoadingState.Success) {
-        rememberFiltersState(
-            filters = filtersLoadingState.filters,
-            appliedFilters = uiState.appliedFilters
-        )
-    } else null
+        var showFilters by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            val (active, setActive) = remember { mutableStateOf(false) }
-            SearchSearchBar(
-                searchQuery = searchQuery,
-                active = active,
-                title = uiState.title,
-                onSearchQueryChanged = onSearchQueryChanged,
-                onSearchTriggered = onSearchTriggered,
-                onActiveChanged = setActive
+        val filtersLoadingState = uiState.filtersLoadingState
+        val filtersState = if (filtersLoadingState is FiltersLoadingState.Success) {
+            rememberFiltersState(
+                filters = filtersLoadingState.filters,
+                appliedFilters = uiState.appliedFilters
+            )
+        } else null
+
+        Column(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.TopCenter
             ) {
-                if (searchQuery.isEmpty()) {
-                    RecentSearchQueries(
-                        recentSearchQueriesState = recentSearchQueriesState,
-                        onSearchTriggered = {
-                            onSearchTriggered(it)
-                            setActive(false)
-                        },
-                        onDeleteRecentSearchQuery = onDeleteRecentSearchQuery
-                    )
-                } else {
-                    SearchQuickResult(
-                        searchType = uiState.currentSearchType,
-                        pagingFlows = searchResultFlows,
-                        onEntryClick = onEntryClick
-                    )
+                val (active, setActive) = remember { mutableStateOf(false) }
+                SearchSearchBar(
+                    searchQuery = searchQuery,
+                    active = active,
+                    title = uiState.title,
+                    onSearchQueryChanged = onSearchQueryChanged,
+                    onSearchTriggered = onSearchTriggered,
+                    onActiveChanged = setActive
+                ) {
+                    if (searchQuery.isEmpty()) {
+                        RecentSearchQueries(
+                            recentSearchQueriesState = recentSearchQueriesState,
+                            onSearchTriggered = {
+                                onSearchTriggered(it)
+                                setActive(false)
+                            },
+                            onDeleteRecentSearchQuery = onDeleteRecentSearchQuery
+                        )
+                    } else {
+                        SearchQuickResult(
+                            searchType = uiState.currentSearchType,
+                            pagingFlows = searchResultFlows,
+                            onEntryClick = onEntryClick
+                        )
+                    }
                 }
             }
-        }
 
-        val appliedFiltersCount by remember {
-            derivedStateOf {
-                uiState.appliedFilters.count { (_, filter) ->
-                    filter.any { it.value != OptionValue.Unselected }
+            val appliedFiltersCount by remember {
+                derivedStateOf {
+                    uiState.appliedFilters.count { (_, filter) ->
+                        filter.any { it.value != OptionValue.Unselected }
+                    }
                 }
             }
+
+            SearchPanel(
+                currentSearchType = uiState.currentSearchType,
+                currentOrder = uiState.currentOrder,
+                availableSearchTypes = uiState.availableSearchTypes,
+                availableOrders = uiState.availableOrders,
+                isFiltersLoading = filtersState == null,
+                appliedFiltersCount = appliedFiltersCount,
+                onEntryTypeChanged = onEntryTypeChanged,
+                onOrderChanged = onOrderChanged,
+                onFiltersClick = { showFilters = true }
+            )
+
+            SearchResult(
+                searchType = uiState.currentSearchType,
+                pagingFlows = searchResultFlows,
+                onEntryClick = onEntryClick
+            )
         }
 
-        SearchPanel(
-            currentSearchType = uiState.currentSearchType,
-            currentOrder = uiState.currentOrder,
-            availableSearchTypes = uiState.availableSearchTypes,
-            availableOrders = uiState.availableOrders,
-            isFiltersLoading = filtersState == null,
-            appliedFiltersCount = appliedFiltersCount,
-            onEntryTypeChanged = onEntryTypeChanged,
-            onOrderChanged = onOrderChanged,
-            onFiltersClick = { showFilters = true }
-        )
-
-        SearchResult(
-            searchType = uiState.currentSearchType,
-            pagingFlows = searchResultFlows,
-            onEntryClick = onEntryClick
-        )
-    }
-
-    if (filtersState != null && showFilters) {
-        FiltersBottomSheet(
-            filtersState = filtersState,
-            onDismissRequest = { showFilters = false },
-            onApplyFilters = onApplyFilters
-        )
+        if (filtersState != null && showFilters) {
+            FiltersBottomSheet(
+                filtersState = filtersState,
+                onDismissRequest = { showFilters = false },
+                onApplyFilters = onApplyFilters
+            )
+        }
     }
 }
 

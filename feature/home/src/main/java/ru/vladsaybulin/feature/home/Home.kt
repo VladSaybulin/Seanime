@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -36,6 +38,7 @@ import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.SearchArgs
+import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
@@ -69,17 +72,30 @@ private fun HomeScreen(
     onMoreAnimeOngoingClick: () -> Unit,
     onAllNewsTopicsClick: () -> Unit
 ) {
-    when (uiState) {
-        is HomeUiState.Success -> HomeContent(
-            uiState = uiState,
-            onEntryClick = onEntryClick,
-            onMoreAnimeOngoingClick = onMoreAnimeOngoingClick,
-            onAllNewsTopicsClick = onAllNewsTopicsClick
-        )
+    Box(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .padding(bottom = 80.dp)
+    ) {
+        when (uiState) {
+            is HomeUiState.Success -> HomeContent(
+                uiState = uiState,
+                onEntryClick = onEntryClick,
+                onMoreAnimeOngoingClick = onMoreAnimeOngoingClick,
+                onAllNewsTopicsClick = onAllNewsTopicsClick
+            )
 
-        is HomeUiState.Error -> uiState.throwable.printStackTrace()
+            is HomeUiState.Error -> FullScreenErrorMessage(throwable = uiState.throwable)
 
-        else -> Unit
+            else -> HomeLoading()
+        }
+    }
+}
+
+@Composable
+fun HomeLoading() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
     }
 }
 
@@ -100,37 +116,37 @@ private fun HomeContent(
                 scrollBehavior = topBarScrollBehaviour
             )
         },
-        modifier = Modifier
-            .navigationBarsPadding()
-            .nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
+        modifier = Modifier.nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
     ) { scaffoldPadding ->
-        LazyColumn(contentPadding = scaffoldPadding) {
+        Box(modifier = Modifier.padding(scaffoldPadding)) {
+            LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
 
-            if (uiState.inProgressUserRates.isNotEmpty()) {
-                inProgressUserRatesPager(
-                    userRates = uiState.inProgressUserRates,
-                    onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
+                if (uiState.inProgressUserRates.isNotEmpty()) {
+                    inProgressUserRatesPager(
+                        userRates = uiState.inProgressUserRates,
+                        onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
+                    )
+                    sectionSpace()
+                }
+
+                animeOngoingHeader(onMoreClick = onMoreAnimeOngoingClick)
+                animeOngoingCarousel(
+                    ongoingAnime = uiState.ongoings,
+                    onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it.id)) }
                 )
+
                 sectionSpace()
+
+                newsTopicsHeader()
+                newsTopicsFeed(
+                    newsTopics = uiState.newsTopics,
+                    onTopicClick = {},
+                    onUserClick = {}
+                )
+                allNewsTopicsButton(onAllNewsTopicsClick = onAllNewsTopicsClick)
+
+                bottomSpace()
             }
-
-            animeOngoingHeader(onMoreClick = onMoreAnimeOngoingClick)
-            animeOngoingCarousel(
-                ongoingAnime = uiState.ongoings,
-                onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it.id)) }
-            )
-
-            sectionSpace()
-
-            newsTopicsHeader()
-            newsTopicsFeed(
-                newsTopics = uiState.newsTopics,
-                onTopicClick = {},
-                onUserClick = {}
-            )
-            allNewsTopicsButton(onAllNewsTopicsClick = onAllNewsTopicsClick)
-
-            bottomSpace()
         }
     }
 }

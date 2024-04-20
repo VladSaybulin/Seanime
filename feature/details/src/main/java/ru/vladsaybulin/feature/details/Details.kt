@@ -1,8 +1,6 @@
 package ru.vladsaybulin.feature.details
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +10,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -32,14 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.ImageViewArgs
 import ru.vladsaybulin.core.navigation.args.SearchArgs
+import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
@@ -121,62 +115,34 @@ fun DetailsScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    when (uiState) {
-        is DetailsUiState.Error -> DetailsError(
-            errorState = uiState,
-            modifier = modifier,
-            onRetry = onRetry
-        )
-
-        DetailsUiState.Loading -> DetailsLoading()
-
-        is DetailsUiState.Success -> DetailsContent(
-            state = uiState,
-            enabledAutocorrect = enabledAutocorrect,
-            isAuthorized = isAuthorized,
-            refresh = refresh,
-            onCreateUserRate = onCreateUserRate,
-            onEntryClick = onEntryClick,
-            onSearchClick = onSearchClick,
-            onAuthorClick = onAuthorClick,
-            onCharacterClick = onCharacterClick,
-            onShowRequireAuthDialog = onShowRequireAuthDialog,
-            onShowUserRate = onShowUserRate,
-            onShowImage = onShowImage,
-            onBackClick = onBackClick,
-            modifier = modifier,
-        )
-    }
-}
-
-@Composable
-private fun DetailsError(
-    errorState: DetailsUiState.Error,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    Box(modifier = Modifier
+        .navigationBarsPadding()
+        .padding(bottom = 80.dp)
     ) {
-        Text(
-            text = stringResource(id = R.string.error_message_title),
-            style = ShikimoriTheme.typography.titleLarge
-        )
-        Text(
-            text = stringResource(id = R.string.error_message),
-            style = ShikimoriTheme.typography.bodyMedium
-        )
-        errorState.throwable.message?.let {
-            Text(
-                text = it,
-                color = LocalContentColor.current.copy(alpha = 0.5f),
-                style = ShikimoriTheme.typography.bodySmall
+
+        when (uiState) {
+            is DetailsUiState.Error -> FullScreenErrorMessage(
+                throwable = uiState.throwable
             )
-        }
-        Button(onClick = onRetry) {
-            Text(text = "Повторить")
+
+            DetailsUiState.Loading -> DetailsLoading()
+
+            is DetailsUiState.Success -> DetailsContent(
+                state = uiState,
+                enabledAutocorrect = enabledAutocorrect,
+                isAuthorized = isAuthorized,
+                refresh = refresh,
+                onCreateUserRate = onCreateUserRate,
+                onEntryClick = onEntryClick,
+                onSearchClick = onSearchClick,
+                onAuthorClick = onAuthorClick,
+                onCharacterClick = onCharacterClick,
+                onShowRequireAuthDialog = onShowRequireAuthDialog,
+                onShowUserRate = onShowUserRate,
+                onShowImage = onShowImage,
+                onBackClick = onBackClick,
+                modifier = modifier,
+            )
         }
     }
 }
@@ -230,8 +196,6 @@ private fun DetailsContent(
 
     Scaffold(
         modifier = modifier
-            .navigationBarsPadding()
-            .padding(bottom = 80.dp)
             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
             .nestedScroll(pullToRefreshState.nestedScrollConnection),
         topBar = {
@@ -263,7 +227,7 @@ private fun DetailsContent(
     ) { scaffoldPadding ->
         LazyColumn(
             state = listState,
-            //FAB 56.dp + horizontal padding 16.dp
+            //FAB padding
             contentPadding = PaddingValues(bottom = 56.dp + 32.dp)
         ) {
 

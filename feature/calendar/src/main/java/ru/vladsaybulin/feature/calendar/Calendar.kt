@@ -8,10 +8,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -20,7 +24,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -50,6 +53,7 @@ import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.domain.CalendarDay
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.anime.AnimeGridItem
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
@@ -67,28 +71,24 @@ fun CalendarRoute(
 
     CalendarScreen(
         uiState = uiState,
-        modifier = modifier,
-        onRefresh = viewModel::forceRefresh,
-        onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it)) }
+        onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it)) },
+        onRefresh = viewModel::forceRefresh
     )
 }
 
 @Composable
 fun CalendarScreen(
     uiState: CalendarUiState,
-    modifier: Modifier = Modifier,
     onAnimeClick: (animeId: Long) -> Unit = {},
     onRefresh: suspend () -> Unit = {},
 ) {
-    Scaffold { contentPadding ->
+    Box(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .padding(bottom = 80.dp)
+    ) {
         when (uiState) {
-            is CalendarUiState.Error -> CalendarError(
-                modifier = modifier
-                    .padding(contentPadding)
-                    .padding(horizontal = 16.dp),
-                errorState = uiState
-            )
-
+            is CalendarUiState.Error -> FullScreenErrorMessage(throwable = uiState.throwable)
             CalendarUiState.Loading -> CalendarLoading(modifier = Modifier.fillMaxSize())
             is CalendarUiState.Success -> CalendarContent(
                 calendarDays = uiState.calendarDays,
@@ -118,7 +118,7 @@ fun CalendarContent(
     LazyColumn(
         modifier = modifier.nestedScroll(pullToRefreshState.nestedScrollConnection),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+        contentPadding = PaddingValues(top = 16.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(), bottom = 16.dp)
     ) {
         items(calendarDays) { calendarDay ->
             CalendarSection(

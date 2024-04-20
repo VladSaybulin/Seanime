@@ -1,6 +1,7 @@
 package ru.vladsaybulin.feature.list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -54,54 +55,60 @@ fun MyListScreen(
     onEntryTypeChange: (EntryType) -> Unit,
     userRateStatus: UserRateStatus,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    modifier: Modifier = Modifier
+    onEntryClick: (EntryDetailsArgs) -> Unit
 ) {
-    val loadState = userRates.loadState.refresh
-    if (loadState is LoadState.Error) {
-        loadState.error.printStackTrace()
-    }
-
-    Column(modifier.systemBarsPadding()) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            ShikimoriDropdownChip(
-                items = listOf(EntryType.Anime, EntryType.Manga),
-                onItemClick = onEntryTypeChange,
-                selected = true,
-                selectedLabel = { Text(entryType.name) },
-                itemLabel = { Text(it.name) }
-            )
-
-            ShikimoriDropdownChip(
-                items = UserRateStatus.entries.filter { it != UserRateStatus.None },
-                onItemClick = onUserRateStatusChange,
-                selected = true,
-                selectedLabel = { Text(userRateStatus.name) },
-                itemLabel = { Text(it.name) }
-            )
+    Box(
+        modifier = Modifier
+            .systemBarsPadding()
+            .padding(bottom = 80.dp)
+    ) {
+        val loadState = userRates.loadState.refresh
+        if (loadState is LoadState.Error) {
+            loadState.error.printStackTrace()
         }
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            items(
-                count = userRates.itemCount,
-                key = userRates.itemKey { it.anime?.id ?: it.manga!!.id }
+        Column {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                userRates[it]?.let {
-                    UserRateEntryCard(
-                        userRateWithEntry = it,
-                        onClick = {
-                            onEntryClick(
-                                it.anime?.asEntryDetailsArgs() ?: it.manga!!.asEntryDetailsArgs()
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                ShikimoriDropdownChip(
+                    items = listOf(EntryType.Anime, EntryType.Manga),
+                    onItemClick = onEntryTypeChange,
+                    selected = true,
+                    selectedLabel = { Text(entryType.name) },
+                    itemLabel = { Text(it.name) }
+                )
+
+                ShikimoriDropdownChip(
+                    items = UserRateStatus.entries.filter { it != UserRateStatus.None },
+                    onItemClick = onUserRateStatusChange,
+                    selected = true,
+                    selectedLabel = { Text(userRateStatus.name) },
+                    itemLabel = { Text(it.name) }
+                )
+            }
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                items(
+                    count = userRates.itemCount,
+                    key = userRates.itemKey { it.anime?.id ?: it.manga!!.id }
+                ) {
+                    userRates[it]?.let {
+                        UserRateEntryCard(
+                            userRateWithEntry = it,
+                            onClick = {
+                                onEntryClick(
+                                    it.anime?.asEntryDetailsArgs()
+                                        ?: it.manga!!.asEntryDetailsArgs()
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
