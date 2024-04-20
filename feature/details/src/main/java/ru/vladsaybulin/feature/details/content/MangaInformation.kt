@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.navigation.SearchArgs
+import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.strings.chaptersAndVolumesString
 import ru.vladsaybulin.core.ui.strings.mangaKindString
 import ru.vladsaybulin.feature.details.DetailsUiState

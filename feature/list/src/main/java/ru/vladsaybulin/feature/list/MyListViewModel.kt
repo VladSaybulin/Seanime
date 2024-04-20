@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.core.domain.GetPagedUserRatesUseCase
-import ru.vladsaybulin.feature.list.navigation.MyListArgs
+import ru.vladsaybulin.feature.list.navigation.ListArgs
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
@@ -24,7 +24,7 @@ class MyListViewModel @Inject constructor(
     private val getPagedUserRatesUseCase: GetPagedUserRatesUseCase
 ) : ViewModel() {
 
-    private val args =  MyListArgs(savedStateHandle)
+    private val args =  ListArgs(savedStateHandle)
 
     private val _entryType = MutableStateFlow(args.entryType ?: EntryType.Anime)
     val entryType = _entryType.asStateFlow()

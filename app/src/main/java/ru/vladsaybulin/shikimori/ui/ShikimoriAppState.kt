@@ -3,6 +3,7 @@ package ru.vladsaybulin.shikimori.ui
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.util.fastAny
 import androidx.navigation.NavDestination
@@ -11,11 +12,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import ru.vladsaybulin.feature.calendar.navigation.navigateToCalendar
-import ru.vladsaybulin.feature.home.navigation.navigateToHome
+import ru.vladsaybulin.feature.calendar.navigation.navigateToCalendarGraph
+import ru.vladsaybulin.feature.home.navigation.navigateToHomeGraph
 import ru.vladsaybulin.feature.imageview.navigation.IMAGE_VIEW_ROUTE
-import ru.vladsaybulin.feature.list.navigation.navigateToMyList
-import ru.vladsaybulin.feature.search.navigation.navigateToSearch
+import ru.vladsaybulin.feature.list.navigation.navigateToMyListGraph
+import ru.vladsaybulin.feature.search.navigation.navigateToSearchGraph
 import ru.vladsaybulin.shikimori.navigation.TopLevelDestination
 import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.CALENDAR
 import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.HOME
@@ -36,6 +37,7 @@ fun rememberShikimoriAppState(
     )
 }
 
+@Stable
 class ShikimoriAppState(
     val navController: NavHostController,
     val windowSizeClass: WindowSizeClass,
@@ -70,10 +72,10 @@ class ShikimoriAppState(
         }
 
         when (topLevelDestination) {
-            HOME -> navController.navigateToHome(topLevelNavOptions)
-            SEARCH -> navController.navigateToSearch(navOptions = topLevelNavOptions)
-            CALENDAR -> navController.navigateToCalendar(topLevelNavOptions)
-            LIST -> navController.navigateToMyList(navOptions = topLevelNavOptions)
+            HOME -> navController.navigateToHomeGraph(navOptions = topLevelNavOptions)
+            SEARCH -> navController.navigateToSearchGraph(navOptions = topLevelNavOptions)
+            CALENDAR -> navController.navigateToCalendarGraph(navOptions = topLevelNavOptions)
+            LIST -> navController.navigateToMyListGraph(navOptions = topLevelNavOptions)
         }
     }
 }

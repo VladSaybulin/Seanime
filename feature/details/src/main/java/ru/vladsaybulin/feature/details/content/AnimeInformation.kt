@@ -15,7 +15,7 @@ import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.navigation.SearchArgs
+import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.LocalTimeZone
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.strings.animeKindString

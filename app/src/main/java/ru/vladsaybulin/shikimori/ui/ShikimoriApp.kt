@@ -107,7 +107,7 @@ private fun ShikimoriBottomBar(
         destinations.fastForEach {
             val selected = currentDestination.isTopLevelDestinationInHierarchy(it)
             NavigationBarItem(
-                selected = currentDestination.isTopLevelDestinationInHierarchy(it),
+                selected = selected,
                 onClick = { onNavigateToDestination(it) },
                 icon = {
                     if (selected) {
@@ -128,9 +128,5 @@ private fun ShikimoriBottomBar(
     }
 }
 
-
 private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: TopLevelDestination) =
-    this?.hierarchy?.any {
-        it.route?.contains(destination.name, true) ?: false
-    } ?: false
-
+    this?.hierarchy?.any { it.route == destination.graphRoute } ?: false

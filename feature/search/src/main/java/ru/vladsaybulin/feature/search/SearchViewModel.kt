@@ -26,7 +26,7 @@ import ru.vladsaybulin.core.domain.GetSearchFiltersUseCase
 import ru.vladsaybulin.core.domain.SearchAnimeUseCase
 import ru.vladsaybulin.core.domain.SearchMangaUseCase
 import ru.vladsaybulin.core.domain.SearchRanobeUseCase
-import ru.vladsaybulin.core.navigation.SearchArgs
+import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.AppliedOptionValues
 import ru.vladsaybulin.core.ui.filters.OptionValue

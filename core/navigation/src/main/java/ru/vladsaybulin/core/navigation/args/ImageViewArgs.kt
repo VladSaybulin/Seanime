@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.navigation
+package ru.vladsaybulin.core.navigation.args
 
 import ru.vladsaybulin.model.common.Image
 

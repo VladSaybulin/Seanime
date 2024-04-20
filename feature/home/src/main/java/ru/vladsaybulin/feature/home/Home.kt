@@ -34,7 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.navigation.SearchArgs
+import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
@@ -47,7 +48,7 @@ import ru.vladsaybulin.model.userrate.UserRateWithEntry
 @Composable
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
-    onEntryClick: (EntryType, Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     onSearchClick: (SearchArgs) -> Unit,
     onAllNewsTopicsClick: () -> Unit
 ) {
@@ -64,7 +65,7 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     uiState: HomeUiState,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     onMoreAnimeOngoingClick: () -> Unit,
     onAllNewsTopicsClick: () -> Unit
 ) {
@@ -86,7 +87,7 @@ private fun HomeScreen(
 @Composable
 private fun HomeContent(
     uiState: HomeUiState.Success,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     onMoreAnimeOngoingClick: () -> Unit,
     onAllNewsTopicsClick: () -> Unit
 ) {
@@ -108,7 +109,7 @@ private fun HomeContent(
             if (uiState.inProgressUserRates.isNotEmpty()) {
                 inProgressUserRatesPager(
                     userRates = uiState.inProgressUserRates,
-                    onEntryClick = onEntryClick,
+                    onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
                 )
                 sectionSpace()
             }
@@ -116,9 +117,7 @@ private fun HomeContent(
             animeOngoingHeader(onMoreClick = onMoreAnimeOngoingClick)
             animeOngoingCarousel(
                 ongoingAnime = uiState.ongoings,
-                onAnimeClick = {
-                    onEntryClick(EntryType.Anime, it.id)
-                }
+                onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it.id)) }
             )
 
             sectionSpace()

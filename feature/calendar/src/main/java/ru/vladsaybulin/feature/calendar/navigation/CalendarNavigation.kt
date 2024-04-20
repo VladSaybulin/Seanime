@@ -4,21 +4,31 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
+import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.feature.calendar.CalendarRoute
-import ru.vladsaybulin.model.common.EntryType
 
-const val CALENDAR_ROUTE = "calendar"
+const val CALENDAR_GRAPH_ROUTE = "calendar_graph"
+private const val CALENDAR_SCREEN_ROUTE = "$CALENDAR_GRAPH_ROUTE/calendar_route"
 
-fun NavController.navigateToCalendar(navOptions: NavOptions?) {
-    navigate(CALENDAR_ROUTE, navOptions)
+fun NavController.navigateToCalendarGraph(navOptions: NavOptions?) {
+    navigate(CALENDAR_SCREEN_ROUTE, navOptions)
 }
 
-fun NavGraphBuilder.calendarScreen(
-    onEntryClick: (EntryType, Long) -> Unit,
+fun NavGraphBuilder.calendarGraph(
+    onEntryClick: (EntryDetailsArgs) -> Unit,
+    nested: NavGraphBuilder.() -> Unit
 ) {
-    composable(route = CALENDAR_ROUTE) {
-        CalendarRoute(
-            onEntryClick = onEntryClick
-        )
+    navigation(
+        startDestination = CALENDAR_SCREEN_ROUTE,
+        route = CALENDAR_GRAPH_ROUTE
+    ) {
+        composable(route = CALENDAR_SCREEN_ROUTE) {
+            CalendarRoute(
+                onEntryClick = onEntryClick
+            )
+        }
+        nested()
     }
+
 }

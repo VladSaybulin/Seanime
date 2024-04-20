@@ -3,8 +3,8 @@ package ru.vladsaybulin.feature.details
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
-import ru.vladsaybulin.core.navigation.ImageViewArgs
-import ru.vladsaybulin.core.navigation.SearchArgs
+import ru.vladsaybulin.core.navigation.args.ImageViewArgs
+import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.model.EntryDetails
 import ru.vladsaybulin.model.SimilarEntry
 import ru.vladsaybulin.model.anime.AnimeKind

@@ -20,6 +20,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
+import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.args.asEntryDetailsArgs
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -27,7 +29,7 @@ import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun MyListRoute(
-    onEntryClick: (type: EntryType, entryId: Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     viewModel: MyListViewModel = hiltViewModel()
 ) {
 
@@ -52,7 +54,7 @@ fun MyListScreen(
     onEntryTypeChange: (EntryType) -> Unit,
     userRateStatus: UserRateStatus,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
-    onEntryClick: (type: EntryType, entryId: Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val loadState = userRates.loadState.refresh
@@ -95,12 +97,7 @@ fun MyListScreen(
                         userRateWithEntry = it,
                         onClick = {
                             onEntryClick(
-                                when {
-                                    it.anime != null -> EntryType.Anime
-                                    it.manga != null -> EntryType.Manga
-                                    else -> throw IllegalStateException()
-                                },
-                                it.anime?.id ?: it.manga!!.id
+                                it.anime?.asEntryDetailsArgs() ?: it.manga!!.asEntryDetailsArgs()
                             )
                         },
                         modifier = Modifier.fillMaxWidth()

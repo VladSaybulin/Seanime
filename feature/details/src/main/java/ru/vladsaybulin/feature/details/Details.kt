@@ -37,8 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.navigation.ImageViewArgs
-import ru.vladsaybulin.core.navigation.SearchArgs
+import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.args.ImageViewArgs
+import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
@@ -65,7 +66,7 @@ import ru.vladsaybulin.model.userrate.UserRateWithEntry
 @Composable
 fun DetailsRoute(
     modifier: Modifier = Modifier,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     onSearchClick: (SearchArgs) -> Unit,
     onAuthorClick: (Long) -> Unit,
     onCharacterClick: (Long) -> Unit,
@@ -110,7 +111,7 @@ fun DetailsScreen(
     onRetry: () -> Unit,
     refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     onSearchClick: (SearchArgs) -> Unit,
     onAuthorClick: (Long) -> Unit,
     onCharacterClick: (Long) -> Unit,
@@ -195,7 +196,7 @@ private fun DetailsContent(
     isAuthorized: Boolean,
     refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     onSearchClick: (SearchArgs) -> Unit,
     onAuthorClick: (Long) -> Unit,
     onCharacterClick: (Long) -> Unit,
@@ -317,7 +318,7 @@ private fun DetailsContent(
             if (!state.related.isNullOrEmpty()) {
                 relatedItems(
                     relatedEntries = state.related,
-                    onEntryClick = onEntryClick,
+                    onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
                     onShowAllClick = { showAllRelatedEntries = true }
                 )
             }
@@ -358,7 +359,7 @@ private fun DetailsContent(
                 item(key = "similar") {
                     SimilarCarousel(
                         similarEntries = state.similar,
-                        onEntryClick = onEntryClick,
+                        onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
                         onShowAll = { showAllSimilarEntries = true }
                     )
                 }
@@ -396,7 +397,7 @@ private fun DetailsContent(
     if (state.related != null && showAllRelatedEntries) {
         RelatedBottomSheet(
             related = state.related,
-            onEntryClick = onEntryClick,
+            onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
             onDismissRequest = { showAllRelatedEntries = false }
         )
     }

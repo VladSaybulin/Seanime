@@ -15,7 +15,7 @@ import ru.vladsaybulin.core.domain.CreateUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEntryDetailsUseCase
 import ru.vladsaybulin.data.repository.AuthRepository
-import ru.vladsaybulin.feature.details.navigation.DetailsArgs
+import ru.vladsaybulin.feature.details.navigation.EntryDetailsArgs
 import ru.vladsaybulin.model.EntryDetails
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
@@ -30,7 +30,7 @@ class DetailsViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val args = DetailsArgs(savedStateHandle)
+    private val args = EntryDetailsArgs(savedStateHandle)
 
     private val entryDetails = MutableSharedFlow<EntryDetails>(replay = 1)
 

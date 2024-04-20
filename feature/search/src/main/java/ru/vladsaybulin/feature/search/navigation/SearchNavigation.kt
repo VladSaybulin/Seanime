@@ -4,133 +4,112 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import ru.vladsaybulin.core.navigation.SearchArgs
+import androidx.navigation.navigation
+import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.navigation.util.appendArg
+import ru.vladsaybulin.core.navigation.util.nullableNavArgument
+import ru.vladsaybulin.core.navigation.util.withParentGraphRoute
 import ru.vladsaybulin.feature.search.SearchRoute
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.asEntryStatus
 import ru.vladsaybulin.model.search.SearchType
 
-private const val SEARCH_ROUTE = "search"
+const val SEARCH_GRAPH_ROUTE = "search_graph"
+private const val SEARCH_SCREEN_ROUTE = "search_route"
 
-private const val EntryTypeArg = "type"
-private const val EntryStatusArg = "status"
-private const val GenreIdArg = "genre"
-private const val DemographicIdArg = "demographic"
-private const val ThemeIdArg = "theme"
-private const val StudioIdArg = "studio"
-private const val PublisherIdArg = "publisher"
+private const val SEARCH_TYPE_ARG = "type"
+private const val ENTRY_STATUS_ARG = "status"
+private const val GENRE_ID_ARG = "genre"
+private const val DEMOGRAPHIC_ID_ARG = "demographic"
+private const val THEME_ID_ARG = "theme"
+private const val STUDIO_ID_ARG = "studio"
+private const val PUBLISHER_ID_ARG = "publisher"
 
+private const val RouteArguments = "$SEARCH_TYPE_ARG={$SEARCH_TYPE_ARG}&" +
+        "$ENTRY_STATUS_ARG={$ENTRY_STATUS_ARG}&" +
+        "$GENRE_ID_ARG={$GENRE_ID_ARG}&" +
+        "$DEMOGRAPHIC_ID_ARG={$DEMOGRAPHIC_ID_ARG}&" +
+        "$THEME_ID_ARG={$THEME_ID_ARG}&" +
+        "$STUDIO_ID_ARG={$STUDIO_ID_ARG}&" +
+        "$PUBLISHER_ID_ARG={$PUBLISHER_ID_ARG}"
 
-internal fun SearchArgs(savedStateHandle: SavedStateHandle): SearchArgs {
-    val searchType: SearchType? = savedStateHandle.get<String>(EntryTypeArg)?.asSearchType()
-    val entryStatus: EntryStatus? = savedStateHandle.get<String>(EntryStatusArg)?.asEntryStatus()
-    check(entryStatus == null || searchType != null)
+fun NavController.navigateToSearchGraph(navOptions: NavOptions? = null) {
+    navigate(SEARCH_GRAPH_ROUTE, navOptions)
+}
 
-    val genreId: String? = savedStateHandle[GenreIdArg]
-    check(genreId == null || searchType != null)
-
-    val demographicId: String? = savedStateHandle[DemographicIdArg]
-    check(demographicId == null || searchType != null)
-
-    val themeId: String? = savedStateHandle[ThemeIdArg]
-    check(demographicId == null || searchType != null)
-
-    val studioId: String? = savedStateHandle[StudioIdArg]
-    check(studioId == null || searchType == SearchType.Anime)
-
-    val publishedId: String? = savedStateHandle[PublisherIdArg]
-    check(publishedId == null || searchType == SearchType.Manga)
-
-    return SearchArgs(
-        searchType = searchType,
-        entryStatus = entryStatus,
-        genreId = genreId?.toLong(),
-        demographicId = demographicId?.toLong(),
-        themeId = themeId?.toLong(),
-        studioId = studioId?.toLong(),
-        publisherId = publishedId?.toLong()
+fun NavController.navigateToSearch(
+    args: SearchArgs = SearchArgs(),
+    navOptions: NavOptions? = null
+) {
+    navigate(
+        route = "${withParentGraphRoute(SEARCH_SCREEN_ROUTE)}?${args.encode()}",
+        navOptions = navOptions
     )
 }
 
-fun NavController.navigateToSearch(args: SearchArgs = SearchArgs(), navOptions: NavOptions? = null) {
-    val encodedArgs = buildString {
-        args.searchType?.let { appendArg(EntryTypeArg, it.asString()) }
-        args.entryStatus?.let { appendArg(EntryStatusArg, it.serializedName) }
-        args.genreId?.let { appendArg(GenreIdArg, it.toString()) }
-        args.themeId?.let { appendArg(ThemeIdArg, it.toString()) }
-        args.demographicId?.let { appendArg(DemographicIdArg, it.toString()) }
-        args.studioId?.let { appendArg(StudioIdArg, it.toString()) }
-    }
-    if (encodedArgs.isNotEmpty()) {
-        navigate("$SEARCH_ROUTE?$encodedArgs", navOptions)
-    } else {
-        navigate(SEARCH_ROUTE, navOptions)
+fun NavGraphBuilder.searchGraph(
+    onEntryClick: (EntryDetailsArgs) -> Unit,
+    nested: NavGraphBuilder.() -> Unit,
+) {
+    navigation(
+        startDestination = "$SEARCH_GRAPH_ROUTE/$SEARCH_SCREEN_ROUTE?$RouteArguments",
+        route = SEARCH_GRAPH_ROUTE
+    ) {
+        searchScreen(onEntryClick)
+        nested()
     }
 }
 
 fun NavGraphBuilder.searchScreen(
-    onEntryClick: (EntryType, Long) -> Unit
+    onEntryClick: (EntryDetailsArgs) -> Unit
 ) {
     composable(
-        route = "$SEARCH_ROUTE?" +
-                "$EntryTypeArg={$EntryTypeArg}&" +
-                "$EntryStatusArg={$EntryStatusArg}&" +
-                "$GenreIdArg={$GenreIdArg}&" +
-                "$DemographicIdArg={$DemographicIdArg}&" +
-                "$ThemeIdArg={$ThemeIdArg}&" +
-                "$StudioIdArg={$StudioIdArg}&" +
-                "$PublisherIdArg={$PublisherIdArg}",
+        route = "${withParentGraphRoute(SEARCH_SCREEN_ROUTE)}?$RouteArguments",
         arguments = listOf(
-            navArgument(EntryTypeArg) {
-                type = NavType.StringType
-                defaultValue = null
-                nullable = true
-            },
-            navArgument(EntryStatusArg) {
-                type = NavType.StringType
-                defaultValue = null
-                nullable = true
-            },
-            navArgument(GenreIdArg) {
-                type = NavType.StringType
-                defaultValue = null
-                nullable = true
-            },
-            navArgument(DemographicIdArg) {
-                type = NavType.StringType
-                defaultValue = null
-                nullable = true
-            },
-            navArgument(ThemeIdArg) {
-                type = NavType.StringType
-                defaultValue = null
-                nullable = true
-            },
-            navArgument(StudioIdArg) {
-                type = NavType.StringType
-                defaultValue = null
-                nullable = true
-            },
-            navArgument(PublisherIdArg) {
-                type = NavType.StringType
-                defaultValue = null
-                nullable = true
-            }
+            nullableNavArgument(SEARCH_TYPE_ARG),
+            nullableNavArgument(ENTRY_STATUS_ARG),
+            nullableNavArgument(GENRE_ID_ARG),
+            nullableNavArgument(DEMOGRAPHIC_ID_ARG),
+            nullableNavArgument(THEME_ID_ARG),
+            nullableNavArgument(STUDIO_ID_ARG),
+            nullableNavArgument(PUBLISHER_ID_ARG)
         )
     ) {
         SearchRoute(onEntryClick = onEntryClick)
     }
 }
 
-fun String.asSearchType(): SearchType =
+internal fun SearchArgs(savedStateHandle: SavedStateHandle) = SearchArgs(
+    searchType = savedStateHandle.get<String>(SEARCH_TYPE_ARG)?.asSearchType(),
+    entryStatus = savedStateHandle.get<String>(ENTRY_STATUS_ARG)?.asEntryStatus(),
+    genreId = savedStateHandle.get<String>(GENRE_ID_ARG)?.toLong(),
+    demographicId = savedStateHandle.get<String>(DEMOGRAPHIC_ID_ARG)?.toLong(),
+    themeId = savedStateHandle.get<String>(THEME_ID_ARG)?.toLong(),
+    studioId = savedStateHandle.get<String>(STUDIO_ID_ARG)?.toLong(),
+    publisherId = savedStateHandle.get<String>(PUBLISHER_ID_ARG)?.toLong()
+).apply {
+    check(entryStatus == null || searchType != null)
+    check(genreId == null || searchType != null)
+    check(demographicId == null || searchType != null)
+    check(demographicId == null || searchType != null)
+    check(studioId == null || searchType == SearchType.Anime)
+    check(publisherId == null || searchType == SearchType.Manga)
+}
+
+private fun SearchArgs.encode() = buildString {
+    searchType?.let { appendArg(SEARCH_TYPE_ARG, it.asString()) }
+    entryStatus?.let { appendArg(ENTRY_STATUS_ARG, it.serializedName) }
+    genreId?.let { appendArg(GENRE_ID_ARG, it.toString()) }
+    themeId?.let { appendArg(THEME_ID_ARG, it.toString()) }
+    demographicId?.let { appendArg(DEMOGRAPHIC_ID_ARG, it.toString()) }
+    studioId?.let { appendArg(STUDIO_ID_ARG, it.toString()) }
+}
+
+private fun String.asSearchType(): SearchType =
     searchTypeToString.entries.first { it.value == this }.key
 
-fun SearchType.asString(): String =
+private fun SearchType.asString(): String =
     checkNotNull(searchTypeToString[this])
 
 

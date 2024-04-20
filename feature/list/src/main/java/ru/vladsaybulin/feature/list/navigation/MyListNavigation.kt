@@ -7,58 +7,63 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
+import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.args.ListArgs
+import ru.vladsaybulin.core.navigation.util.appendArg
+import ru.vladsaybulin.core.navigation.util.withParentGraphRoute
 import ru.vladsaybulin.feature.list.MyListRoute
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.common.asEntryType
 import ru.vladsaybulin.model.userrate.asUserRateStatus
 
-private const val EntryTypeArg = "entry_type"
-private const val UserRateStatusArg = "status"
+const val MY_LIST_GRAPH_ROUTE = "my_list_graph"
+private const val LIST_SCREEN_ROUTE = "list_route"
 
-private const val MyListScreenRoute = "my_list"
+private const val ENTRY_TYPE_ARG = "entry_type"
+private const val USER_RATE_STATUS_ARG = "status"
 
-internal data class MyListArgs(
-    val entryType: EntryType?,
-    val userRateStatus: UserRateStatus?
+private const val RouteArguments = "$ENTRY_TYPE_ARG={$ENTRY_TYPE_ARG}&" +
+        "$USER_RATE_STATUS_ARG={$USER_RATE_STATUS_ARG}"
+
+fun NavController.navigateToMyListGraph(navOptions: NavOptions? = null) {
+    navigate(MY_LIST_GRAPH_ROUTE, navOptions)
+}
+
+fun NavController.navigateToList(
+    args: ListArgs,
+    navOptions: NavOptions? = null
 ) {
-    constructor(savedStateHandle: SavedStateHandle) : this(
-        entryType = savedStateHandle.get<String>(EntryTypeArg)?.asEntryType(),
-        userRateStatus = savedStateHandle.get<String>(UserRateStatusArg)?.asUserRateStatus()
+    navigate(
+        route = "${withParentGraphRoute(LIST_SCREEN_ROUTE)}?${args.encode()}",
+        navOptions = navOptions
     )
 }
 
-fun NavController.navigateToMyList(
-    entryType: EntryType? = null,
-    userRateStatus: UserRateStatus? = null,
-    navOptions: NavOptions? = null
+fun NavGraphBuilder.listGraph(
+    onEntryClick: (EntryDetailsArgs) -> Unit,
+    nested: NavGraphBuilder.() -> Unit
 ) {
-    val args = buildString {
-        if (entryType != null) {
-            if (isNotEmpty()) append("&")
-            append(EntryTypeArg).append("=").append(entryType.serializedName)
-        }
-        if (userRateStatus != null) {
-            if (isNotEmpty()) append("&")
-            append(EntryTypeArg).append("=").append(userRateStatus.serializedName)
-        }
+    navigation(
+        startDestination = "$MY_LIST_GRAPH_ROUTE/$LIST_SCREEN_ROUTE",
+        route = MY_LIST_GRAPH_ROUTE
+    ) {
+        listScreen(onEntryClick)
+        nested()
     }
-    val route = if (args.isNotEmpty()) "$MyListScreenRoute?$args" else MyListScreenRoute
-    navigate(route, navOptions)
 }
 
-fun NavGraphBuilder.myListScreen(
-    onEntryClick: (type: EntryType, entryId: Long) -> Unit
+fun NavGraphBuilder.listScreen(
+    onEntryClick: (EntryDetailsArgs) -> Unit
 ) {
     composable(
-        route = "$MyListScreenRoute?$EntryTypeArg={$EntryTypeArg}&$UserRateStatusArg={$UserRateStatusArg}",
+        route = "${withParentGraphRoute(LIST_SCREEN_ROUTE)}?$RouteArguments",
         arguments = listOf(
-            navArgument(EntryTypeArg) {
+            navArgument(ENTRY_TYPE_ARG) {
                 type = NavType.StringType
                 nullable = true
                 defaultValue = null
             },
-            navArgument(UserRateStatusArg) {
+            navArgument(USER_RATE_STATUS_ARG) {
                 type = NavType.StringType
                 nullable = true
                 defaultValue = null
@@ -69,4 +74,14 @@ fun NavGraphBuilder.myListScreen(
             onEntryClick = onEntryClick
         )
     }
+}
+
+internal fun ListArgs(savedStateHandle: SavedStateHandle) = ListArgs(
+    entryType = savedStateHandle.get<String>(ENTRY_TYPE_ARG)?.asEntryType(),
+    userRateStatus = savedStateHandle.get<String>(USER_RATE_STATUS_ARG)?.asUserRateStatus()
+)
+
+private fun ListArgs.encode() = buildString {
+    entryType?.let { appendArg(ENTRY_TYPE_ARG, it.serializedName) }
+    userRateStatus?.let { appendArg(USER_RATE_STATUS_ARG, it.serializedName) }
 }

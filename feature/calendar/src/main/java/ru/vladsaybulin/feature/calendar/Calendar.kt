@@ -49,6 +49,7 @@ import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.domain.CalendarDay
+import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.ui.anime.AnimeGridItem
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
@@ -58,7 +59,7 @@ import java.time.format.FormatStyle
 
 @Composable
 fun CalendarRoute(
-    onEntryClick: (EntryType, Long) -> Unit,
+    onEntryClick: (EntryDetailsArgs) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
@@ -68,9 +69,7 @@ fun CalendarRoute(
         uiState = uiState,
         modifier = modifier,
         onRefresh = viewModel::forceRefresh,
-        onAnimeClick = { animeId ->
-            onEntryClick(EntryType.Anime, animeId)
-        }
+        onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it)) }
     )
 }
 
