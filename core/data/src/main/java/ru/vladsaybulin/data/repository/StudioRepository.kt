@@ -10,6 +10,7 @@ import ru.vladsaybulin.database.dao.StudioDao
 import ru.vladsaybulin.database.models.anime.StudioEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
+import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.network.datasource.StudioDataSource
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.days
@@ -21,6 +22,11 @@ class StudioRepository @Inject constructor(
     @Dispatcher(ShikiDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
+    suspend fun getStudioById(studioId: Long): Studio? =
+        withContext(ioDispatcher) {
+            syncStudios()
+            studioDao.getStudioById(studioId)?.asExternalModel()
+        }
     suspend fun getStudios() = withContext(ioDispatcher) {
         syncStudios()
         studioDao.getAllStudios()

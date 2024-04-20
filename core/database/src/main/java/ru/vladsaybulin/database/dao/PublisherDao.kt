@@ -9,6 +9,9 @@ import ru.vladsaybulin.database.models.manga.PublisherEntity
 @Dao
 interface PublisherDao {
 
+    @Query("SELECT * FROM publishers WHERE id = :publisherId")
+    fun getPublisherById(publisherId: Long): PublisherEntity?
+
     @Query("SELECT * FROM publishers")
     fun getAllPublishers(): List<PublisherEntity>
 

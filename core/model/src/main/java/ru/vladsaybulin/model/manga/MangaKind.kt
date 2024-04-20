@@ -14,6 +14,19 @@ enum class MangaKind(val serializedName: String) {
     None("")
 }
 
+val mangaKind = listOf(
+    MangaKind.Manga,
+    MangaKind.Manhwa,
+    MangaKind.Manhua,
+    MangaKind.OneShot,
+    MangaKind.Doujin
+)
+
+val ranobeKind = listOf(
+    MangaKind.LightNovel,
+    MangaKind.Novel
+)
+
 fun String?.asMangaKind() = when (this) {
     null -> MangaKind.None
     else -> MangaKind.entries.firstOrNull { it.serializedName == this } ?: MangaKind.None

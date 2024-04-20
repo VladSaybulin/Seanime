@@ -3,91 +3,148 @@ package ru.vladsaybulin.feature.search
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.core.domain.GetFiltersUseCase
 import ru.vladsaybulin.core.domain.GetRecentSearchQueriesUseCase
+import ru.vladsaybulin.core.domain.GetSearchFiltersUseCase
+import ru.vladsaybulin.core.domain.SearchAnimeUseCase
+import ru.vladsaybulin.core.domain.SearchMangaUseCase
+import ru.vladsaybulin.core.domain.SearchRanobeUseCase
+import ru.vladsaybulin.core.navigation.SearchArgs
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.AppliedOptionValues
 import ru.vladsaybulin.core.ui.filters.OptionValue
-import ru.vladsaybulin.data.repository.AnimeRepository
-import ru.vladsaybulin.data.repository.MangaRepository
+import ru.vladsaybulin.data.repository.GenreRepository
+import ru.vladsaybulin.data.repository.PublisherRepository
 import ru.vladsaybulin.data.repository.RecentSearchQueryRepository
+import ru.vladsaybulin.data.repository.StudioRepository
+import ru.vladsaybulin.data.util.flowOf
 import ru.vladsaybulin.feature.search.navigation.SearchArgs
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.FilterType
+import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
+import ru.vladsaybulin.model.search.SearchType
 import javax.inject.Inject
 import javax.inject.Provider
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    getFiltersUseCase: GetFiltersUseCase,
+    getSearchFiltersUseCase: GetSearchFiltersUseCase,
     getRecentSearchQueriesUseCase: GetRecentSearchQueriesUseCase,
+    searchAnimeUseCaseProvider: Provider<SearchAnimeUseCase>,
+    searchMangaUseCaseProvider: Provider<SearchMangaUseCase>,
+    searchRanobeUseCaseProvider: Provider<SearchRanobeUseCase>,
+    private val studioRepositoryProvider: Provider<StudioRepository>,
+    private val publisherRepositoryProvider: Provider<PublisherRepository>,
+    private val genreRepositoryProvider: Provider<GenreRepository>,
     private val recentSearchQueryRepository: RecentSearchQueryRepository,
-    animeRepositoryProvider: Provider<AnimeRepository>,
-    mangaRepositoryProvider: Provider<MangaRepository>
 ) : ViewModel() {
 
     private val args = SearchArgs(savedStateHandle)
 
     private val constAppliedFilters = buildMap {
-        args.entryStatus?.let { put(FilterType.Status, selected(it.serializedName)) }
-        args.genreId?.let { put(FilterType.Genre, selected(it.toString())) }
-        args.studioId?.let { put(FilterType.Studio, selected(it.toString())) }
-        args.publisherId?.let { put(FilterType.Publisher, selected(it.toString())) }
+        putAsSelectedIfNotNull(FilterType.Status, args.entryStatus?.serializedName)
+        putAsSelectedIfNotNull(FilterType.Genre, args.genreId?.toString())
+        putAsSelectedIfNotNull(FilterType.Demographic, args.demographicId?.toString())
+        putAsSelectedIfNotNull(FilterType.Theme, args.themeId?.toString())
+        putAsSelectedIfNotNull(FilterType.Studio, args.studioId?.toString())
+        putAsSelectedIfNotNull(FilterType.Publisher, args.publisherId?.toString())
     }
 
     private var debouncedSearchJob: Job? = null
 
-    private val isEntryTypeLocked = args.entryType != null
+    private val availableSearchTypes = if (args.searchType != null) {
+        persistentListOf(args.searchType!!)
+    } else SearchType.entries.toImmutableList()
 
-    private val _searchControlPanelUiState = MutableStateFlow(
-        SearchControlPanelUiState(
-            isEntryTypeLocked = isEntryTypeLocked,
-            currentEntryType = args.entryType ?: EntryType.Anime,
-            currentOrder = DefaultOrder
-        )
-    )
-    val controlPanelState = _searchControlPanelUiState.asStateFlow()
+    private val availableOrders = Order.entries.toImmutableList()
 
-    private val appliedFilters = MutableStateFlow(constAppliedFilters)
+    private val currentSearchType = MutableStateFlow(args.searchType ?: SearchType.Anime)
+    private val currentOrder = MutableStateFlow(DefaultOrder)
 
-    private val filters = controlPanelState
-        .map { it.currentEntryType }
-        .distinctUntilChanged()
-        .map { getFiltersUseCase(it) }
+    private val appliedFilters = MutableStateFlow<AppliedFilters>(emptyMap())
 
-    val filtersUiState = (combine(
-        filters,
-        appliedFilters,
-        transform = SearchFiltersUiState::Success
-    ) as Flow<SearchFiltersUiState>)
-        .onStart { emit(SearchFiltersUiState.Loading) }
-        .distinctUntilChanged()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = SearchFiltersUiState.Loading
-        )
+    private val filtersLoadingState = currentSearchType
+        .map<SearchType, FiltersLoadingState> { searchType ->
+            FiltersLoadingState.Success(
+                getSearchFiltersUseCase(
+                    searchType = searchType,
+                    statusEnabled = args.entryStatus == null,
+                    studioEnabled = args.studioId == null,
+                    publisherEnabled = args.publisherId == null,
+                    genreEnabled = args.genreId == null,
+                    demographicEnabled = args.demographicId == null,
+                    themesEnabled = args.themeId == null
+                )
+            )
+        }
+        .onStart { emit(FiltersLoadingState.Loading) }
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
+
+    private val searchParams = MutableStateFlow(
+        SearchParams(
+            searchType = currentSearchType.value,
+            order = currentOrder.value,
+            searchQuery = _searchQuery.value,
+            appliedFilters = appliedFilters.value
+        )
+    )
+
+    val uiState = combine(
+        currentSearchType,
+        currentOrder,
+        filtersLoadingState,
+        appliedFilters,
+        flowOf { args.getTitle() },
+        ::createSearchUiState
+    ).stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        createSearchUiState(
+            currentSearchType = currentSearchType.value,
+            currentOrder = currentOrder.value,
+            filtersLoadingState = FiltersLoadingState.Loading,
+            appliedFilters = appliedFilters.value,
+            title = SearchTitle.Search
+        )
+    )
+
+    val searchResultFlows = SearchResultFlows(
+        searchAnimeResult = searchParams.flatMapLatest { params ->
+            if (params.searchType == SearchType.Anime) {
+                searchAnimeUseCaseProvider.get().invoke(params.buildQueryMap())
+            } else flowOf(PagingData.empty())
+        }.cachedIn(viewModelScope),
+        searchMangaResult = searchParams.flatMapLatest { params ->
+            when (params.searchType) {
+                SearchType.Manga -> searchMangaUseCaseProvider.get().invoke(params.buildQueryMap())
+                SearchType.Ranobe -> searchRanobeUseCaseProvider.get()
+                    .invoke(params.buildQueryMap())
+
+                else -> flowOf(PagingData.empty())
+            }.cachedIn(viewModelScope)
+        }
+    )
 
     val recentSearchQueriesState = getRecentSearchQueriesUseCase()
         .map { RecentSearchQueriesState.Success(it) }
@@ -97,45 +154,20 @@ class SearchViewModel @Inject constructor(
             initialValue = RecentSearchQueriesState.Loading
         )
 
-    private val searchParams = MutableStateFlow(
-        SearchParams(
-            entryType = _searchControlPanelUiState.value.currentEntryType,
-            order = _searchControlPanelUiState.value.currentOrder,
-            searchQuery = _searchQuery.value,
-            appliedFilters = appliedFilters.value
-        )
-    )
-
-    val searchResultState = searchParams.map { params ->
-        when (params.entryType) {
-            EntryType.Anime -> animeRepositoryProvider.get()
-                .getPagedAnime(params.buildQueryMap())
-                .let { SearchResultState.Animes(it.cachedIn(viewModelScope)) }
-
-            EntryType.Manga -> mangaRepositoryProvider.get()
-                .getPagedManga(params.buildQueryMap())
-                .let { SearchResultState.Mangas(it.cachedIn(viewModelScope)) }
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Lazily,
-        initialValue = SearchResultState.None
-    )
-
-    fun onEntryTypeChanged(entryType: EntryType) {
-        if (isEntryTypeLocked) return
-        _searchControlPanelUiState.update { it.copy(currentEntryType = entryType) }
+    fun onSearchTypeChanged(searchType: SearchType) {
+        if (availableSearchTypes.size == 1) return
+        currentSearchType.value = searchType
         appliedFilters.value = emptyMap()
         searchParams.update {
             it.copy(
-                entryType = entryType,
+                searchType = searchType,
                 appliedFilters = emptyMap()
             )
         }
     }
 
     fun onOrderChanged(order: Order) {
-        _searchControlPanelUiState.update { it.copy(currentOrder = order) }
+        currentOrder.value = order
         searchParams.update { it.copy(order = order) }
     }
 
@@ -175,10 +207,51 @@ class SearchViewModel @Inject constructor(
             put(QueryMapKey.Search, searchQuery)
             put(QueryMapKey.Order, order.serializedValue)
         }
+
+    private fun createSearchUiState(
+        currentSearchType: SearchType,
+        currentOrder: Order,
+        filtersLoadingState: FiltersLoadingState,
+        appliedFilters: AppliedFilters,
+        title: SearchTitle
+    ) = SearchUiState(
+        currentSearchType = currentSearchType,
+        currentOrder = currentOrder,
+        filtersLoadingState = filtersLoadingState,
+        appliedFilters = appliedFilters,
+        availableSearchTypes = availableSearchTypes,
+        availableOrders = availableOrders,
+        title = title
+    )
+
+    private suspend fun SearchArgs.getTitle() = when {
+        publisherId != null -> publisherRepositoryProvider.get()
+            .getPublisherById(publisherId!!)
+            ?.let { SearchTitle.Publisher(it.name) }
+
+        studioId != null -> studioRepositoryProvider.get()
+            .getStudioById(studioId!!)
+            ?.let { SearchTitle.Studio(it.name) }
+
+        genreId != null -> genreRepositoryProvider.get()
+            .getGenreById(searchType!!.toEntryType, genreId!!)
+            ?.let { SearchTitle.Genre(it.russianName ?: it.englishName) }
+
+        demographicId != null -> genreRepositoryProvider.get()
+            .getGenreById(searchType!!.toEntryType, demographicId!!)
+            ?.let { SearchTitle.Demographic(it.russianName ?: it.englishName) }
+
+        themeId != null -> genreRepositoryProvider.get()
+            .getGenreById(searchType!!.toEntryType, themeId!!)
+            ?.let { SearchTitle.Theme(it.russianName ?: it.englishName) }
+
+        entryStatus != null -> SearchTitle.Status(entryStatus!!)
+        else -> null
+    } ?: SearchTitle.Search
 }
 
 private data class SearchParams(
-    val entryType: EntryType,
+    val searchType: SearchType,
     val order: Order,
     val searchQuery: String,
     val appliedFilters: AppliedFilters,
@@ -206,8 +279,19 @@ fun AppliedOptionValues.serializeOptions() = mapNotNull { (serializedValue, opti
     }
 }
 
-private fun selected(optionValue: String): Map<String, OptionValue> =
-    mapOf(optionValue to OptionValue.Selected)
+fun MutableMap<FilterType, AppliedOptionValues>.putAsSelectedIfNotNull(
+    filterType: FilterType,
+    optionValue: String?
+) {
+    if (optionValue == null) return
+    this[filterType] = mapOf(optionValue to OptionValue.Selected)
+}
+
+val SearchType.toEntryType: EntryType
+    get() = when (this) {
+        SearchType.Anime -> EntryType.Anime
+        SearchType.Manga, SearchType.Ranobe -> EntryType.Manga
+    }
 
 private const val DebounceSearchQueryMs = 500L
 private val DefaultOrder = Order.Popularity

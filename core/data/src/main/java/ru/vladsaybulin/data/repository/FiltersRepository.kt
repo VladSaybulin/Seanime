@@ -2,19 +2,21 @@ package ru.vladsaybulin.data.repository
 
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
+import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
-import ru.vladsaybulin.model.anime.Studio
-import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.manga.mangaKind
+import ru.vladsaybulin.model.manga.ranobeKind
 import ru.vladsaybulin.model.search.Duration
 import ru.vladsaybulin.model.search.FilterOption
 import ru.vladsaybulin.model.search.Filters
 import ru.vladsaybulin.model.search.Season
 import ru.vladsaybulin.model.search.SeasonFilter
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,6 +30,8 @@ class FiltersRepository @Inject constructor(
     private var cachedAnimeFilters: Filters? = null
 
     private var cachedMangaFilters: Filters? = null
+
+    private var cachedRanobeFilters: Filters? = null
 
     suspend fun getAnimeFilters() = if (cachedAnimeFilters == null) {
         Filters(
@@ -56,13 +60,25 @@ class FiltersRepository @Inject constructor(
         ).also { cachedMangaFilters = it }
     } else cachedMangaFilters!!
 
+    suspend fun getRanobeFilters() = if (cachedRanobeFilters == null) {
+        Filters(
+            mangaKindOptions = ranobeKindOptions(),
+            statusOptions = mangaStatusOptions(),
+            myListStatus = myListStatusOptions(),
+            genresOption = mangaGenresOptions(),
+            themesOptions = mangaThemesOptions(),
+            demographicOptions = mangaDemographicOptions(),
+            publishersOptions = publisherOptions()
+        )
+    } else cachedRanobeFilters!!
+
     private fun animeKindOptions() = AnimeKind.entries
         .filter { it != AnimeKind.None }
         .map(AnimeKind::toOption)
 
-    private fun mangaKindOptions() = MangaKind.entries
-        .filter { it != MangaKind.None }
-        .map(MangaKind::toOption)
+    private fun mangaKindOptions() = mangaKind.map(MangaKind::toOption)
+
+    private fun ranobeKindOptions() = ranobeKind.map(MangaKind::toOption)
 
     private fun animeStatusOptions() = listOf(
         EntryStatus.Anons,

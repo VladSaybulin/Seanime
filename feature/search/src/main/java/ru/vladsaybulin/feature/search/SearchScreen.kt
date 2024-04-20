@@ -26,34 +26,43 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateGrid
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
 import ru.vladsaybulin.core.ui.manga.MangaWithUserRateGrid
-import ru.vladsaybulin.core.ui.strings.entryTypeString
+import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
+import ru.vladsaybulin.core.ui.strings.TargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.orderString
 import ru.vladsaybulin.data.model.RecentSearchQuery
+import ru.vladsaybulin.model.anime.AnimeWithUserRate
+import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.search.Order
+import ru.vladsaybulin.model.search.SearchType
 
 @Composable
 fun SearchRoute(
@@ -61,19 +70,16 @@ fun SearchRoute(
     viewModel: SearchViewModel = hiltViewModel()
 ) {
 
-    val controlPanelState by viewModel.controlPanelState.collectAsStateWithLifecycle()
-    val filtersUiState by viewModel.filtersUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val recentSearchQueriesState by viewModel.recentSearchQueriesState.collectAsStateWithLifecycle()
-    val searchResultState by viewModel.searchResultState.collectAsStateWithLifecycle()
 
     SearchScreen(
-        controlPanelState = controlPanelState,
-        filtersUiState = filtersUiState,
+        uiState = uiState,
         searchQuery = searchQuery,
         recentSearchQueriesState = recentSearchQueriesState,
-        searchResultState = searchResultState,
-        onEntryTypeChanged = viewModel::onEntryTypeChanged,
+        searchResultFlows = viewModel.searchResultFlows,
+        onEntryTypeChanged = viewModel::onSearchTypeChanged,
         onOrderChanged = viewModel::onOrderChanged,
         onApplyFilters = viewModel::onApplyFilters,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
@@ -85,12 +91,11 @@ fun SearchRoute(
 
 @Composable
 private fun SearchScreen(
-    controlPanelState: SearchControlPanelUiState,
-    filtersUiState: SearchFiltersUiState,
+    uiState: SearchUiState,
     searchQuery: String,
     recentSearchQueriesState: RecentSearchQueriesState,
-    searchResultState: SearchResultState,
-    onEntryTypeChanged: (EntryType) -> Unit,
+    searchResultFlows: SearchResultFlows,
+    onEntryTypeChanged: (SearchType) -> Unit,
     onOrderChanged: (Order) -> Unit,
     onApplyFilters: (AppliedFilters) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
@@ -100,10 +105,13 @@ private fun SearchScreen(
 ) {
     var showFilters by remember { mutableStateOf(false) }
 
-    val successFiltersUiState = when (filtersUiState) {
-        SearchFiltersUiState.Loading -> null
-        is SearchFiltersUiState.Success -> filtersUiState
-    }
+    val filtersLoadingState = uiState.filtersLoadingState
+    val filtersState = if (filtersLoadingState is FiltersLoadingState.Success) {
+        rememberFiltersState(
+            filters = filtersLoadingState.filters,
+            appliedFilters = uiState.appliedFilters
+        )
+    } else null
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -114,6 +122,7 @@ private fun SearchScreen(
             SearchSearchBar(
                 searchQuery = searchQuery,
                 active = active,
+                title = uiState.title,
                 onSearchQueryChanged = onSearchQueryChanged,
                 onSearchTriggered = onSearchTriggered,
                 onActiveChanged = setActive
@@ -128,19 +137,29 @@ private fun SearchScreen(
                         onDeleteRecentSearchQuery = onDeleteRecentSearchQuery
                     )
                 } else {
-                    /* TODO */
+                    SearchQuickResult(
+                        searchType = uiState.currentSearchType,
+                        pagingFlows = searchResultFlows,
+                        onEntryClick = onEntryClick
+                    )
                 }
             }
         }
 
-        val isFiltersLoading: Boolean = successFiltersUiState == null
-        val appliedFiltersCount: Int = successFiltersUiState?.applied?.count { optionStates ->
-            optionStates.value.any { it.value != OptionValue.Unselected }
-        } ?: 0
+        val appliedFiltersCount by remember {
+            derivedStateOf {
+                uiState.appliedFilters.count { (_, filter) ->
+                    filter.any { it.value != OptionValue.Unselected }
+                }
+            }
+        }
 
         SearchPanel(
-            panelState = controlPanelState,
-            isFiltersLoading = isFiltersLoading,
+            currentSearchType = uiState.currentSearchType,
+            currentOrder = uiState.currentOrder,
+            availableSearchTypes = uiState.availableSearchTypes,
+            availableOrders = uiState.availableOrders,
+            isFiltersLoading = filtersState == null,
             appliedFiltersCount = appliedFiltersCount,
             onEntryTypeChanged = onEntryTypeChanged,
             onOrderChanged = onOrderChanged,
@@ -148,15 +167,15 @@ private fun SearchScreen(
         )
 
         SearchResult(
-            state = searchResultState,
+            searchType = uiState.currentSearchType,
+            pagingFlows = searchResultFlows,
             onEntryClick = onEntryClick
         )
     }
 
-    if (successFiltersUiState != null) {
-        SearchFilters(
-            filtersUiState = successFiltersUiState,
-            showFilters = showFilters,
+    if (filtersState != null && showFilters) {
+        FiltersBottomSheet(
+            filtersState = filtersState,
             onDismissRequest = { showFilters = false },
             onApplyFilters = onApplyFilters
         )
@@ -164,67 +183,55 @@ private fun SearchScreen(
 }
 
 @Composable
-private fun SearchFilters(
-    filtersUiState: SearchFiltersUiState.Success,
-    showFilters: Boolean,
-    onDismissRequest: () -> Unit,
-    onApplyFilters: (AppliedFilters) -> Unit,
-) {
-    val filtersState = rememberFiltersState(
-        filters = filtersUiState.filters,
-        appliedFilters = filtersUiState.applied
-    )
-
-    if (showFilters) {
-        FiltersBottomSheet(
-            filtersState = filtersState,
-            onDismissRequest = onDismissRequest,
-            onApplyFilters = onApplyFilters
-        )
-    }
-}
-
-@Composable
 private fun SearchPanel(
-    panelState: SearchControlPanelUiState,
+    currentSearchType: SearchType,
+    currentOrder: Order,
+    availableSearchTypes: List<SearchType>,
+    availableOrders: List<Order>,
     isFiltersLoading: Boolean,
     appliedFiltersCount: Int,
-    onEntryTypeChanged: (EntryType) -> Unit,
+    onEntryTypeChanged: (SearchType) -> Unit,
     onOrderChanged: (Order) -> Unit,
     onFiltersClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
-    Row(
+    Box(
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .horizontalScroll(scrollState)
-            .widthIn(max = ControlPanelMaxWidth),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth()
+            .widthIn(min = ControlPanelMinWidth, max = ControlPanelMaxWidth)
     ) {
-        FiltersButton(
-            isFiltersLoading = isFiltersLoading,
-            appliedFiltersCount = appliedFiltersCount,
-            onFiltersClick = onFiltersClick
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(scrollState),
+            horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FiltersButton(
+                isFiltersLoading = isFiltersLoading,
+                appliedFiltersCount = appliedFiltersCount,
+                onFiltersClick = onFiltersClick
+            )
 
-        ShikimoriDropdownChip(
-            items = panelState.availableEntryTypes,
-            onItemClick = onEntryTypeChanged,
-            selected = true,
-            selectedLabel = { Text(text = entryTypeString(panelState.currentEntryType)) },
-            itemLabel = { Text(text = entryTypeString(it)) },
-            enabled = !panelState.isEntryTypeLocked
-        )
+            ShikimoriDropdownChip(
+                items = availableSearchTypes,
+                onItemClick = onEntryTypeChanged,
+                selected = true,
+                selectedLabel = { SearchTypeText(currentSearchType) },
+                itemLabel = { SearchTypeText(it) },
+                enabled = availableSearchTypes.size > 1
+            )
 
-        ShikimoriDropdownChip(
-            items = panelState.availableOrders,
-            onItemClick = onOrderChanged,
-            selected = true,
-            selectedLabel = { Text(text = orderString(panelState.currentOrder)) },
-            itemLabel = { Text(text = orderString(it)) }
-        )
+            ShikimoriDropdownChip(
+                items = availableOrders,
+                onItemClick = onOrderChanged,
+                selected = true,
+                selectedLabel = { Text(text = orderString(currentOrder)) },
+                itemLabel = { Text(text = orderString(it)) }
+            )
+        }
     }
 }
 
@@ -269,6 +276,7 @@ private fun FiltersButton(
 private fun SearchSearchBar(
     searchQuery: String,
     active: Boolean,
+    title: SearchTitle,
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: (String) -> Unit,
     onActiveChanged: (Boolean) -> Unit,
@@ -287,7 +295,10 @@ private fun SearchSearchBar(
             active = active,
             onActiveChange = onActiveChanged,
             placeholder = {
-                Text(text = stringResource(id = R.string.core_ui_search))
+                Text(
+                    text = searchTitleText(title = title),
+                    modifier = Modifier.alpha(0.6f)
+                )
             },
             leadingIcon = {
                 when {
@@ -379,29 +390,29 @@ private fun SearchLoading() {
 
 @Composable
 private fun SearchResult(
-    state: SearchResultState,
+    searchType: SearchType,
+    pagingFlows: SearchResultFlows,
     onEntryClick: (EntryType, Long) -> Unit
 ) {
-    when (state) {
-        is SearchResultState.Animes -> AnimeSearchResult(
-            state = state,
+    when (searchType) {
+        SearchType.Anime -> SearchAnimeResult(
+            searchAnimeResult = pagingFlows.searchAnimeResult,
             onAnimeClick = { onEntryClick(EntryType.Anime, it) }
         )
 
-        is SearchResultState.Mangas -> MangaSearchResult(
-            state = state,
-            onMangaClick = { onEntryClick(EntryType.Manga, it) })
-
-        SearchResultState.None -> SearchLoading()
+        SearchType.Manga, SearchType.Ranobe -> SearchMangaResult(
+            searchMangaResult = pagingFlows.searchMangaResult,
+            onMangaClick = { onEntryClick(EntryType.Manga, it) }
+        )
     }
 }
 
 @Composable
-private fun AnimeSearchResult(
-    state: SearchResultState.Animes,
+private fun SearchAnimeResult(
+    searchAnimeResult: Flow<PagingData<AnimeWithUserRate>>,
     onAnimeClick: (Long) -> Unit
 ) {
-    val items = state.pagingDataFlow.collectAsLazyPagingItems()
+    val items = searchAnimeResult.collectAsLazyPagingItems()
 
     AnimeWithUserRateGrid(
         items = items,
@@ -411,11 +422,11 @@ private fun AnimeSearchResult(
 }
 
 @Composable
-private fun MangaSearchResult(
-    state: SearchResultState.Mangas,
+private fun SearchMangaResult(
+    searchMangaResult: Flow<PagingData<MangaWithUserRate>>,
     onMangaClick: (Long) -> Unit
 ) {
-    val items = state.pagingDataFlow.collectAsLazyPagingItems()
+    val items = searchMangaResult.collectAsLazyPagingItems()
 
     MangaWithUserRateGrid(
         items = items,
@@ -424,4 +435,108 @@ private fun MangaSearchResult(
     )
 }
 
+
+@Composable
+private fun SearchQuickResult(
+    searchType: SearchType,
+    pagingFlows: SearchResultFlows,
+    onEntryClick: (EntryType, Long) -> Unit
+) {
+    when (searchType) {
+        SearchType.Anime -> SearchAnimeQuickResult(
+            searchAnimeResult = pagingFlows.searchAnimeResult,
+            onAnimeClick = { onEntryClick(EntryType.Anime, it) }
+        )
+
+        SearchType.Manga, SearchType.Ranobe -> SearchMangaQuickResult(
+            searchMangaResult = pagingFlows.searchMangaResult,
+            onMangaClick = { onEntryClick(EntryType.Manga, it) }
+        )
+    }
+}
+
+@Composable
+private fun SearchAnimeQuickResult(
+    searchAnimeResult: Flow<PagingData<AnimeWithUserRate>>,
+    onAnimeClick: (Long) -> Unit
+) {
+    val items = searchAnimeResult.collectAsLazyPagingItems()
+
+    AnimeWithUserRateGrid(
+        items = items.itemSnapshotList.subList(0, FastSearchSize).filterNotNull(),
+        onEntryClick = { onAnimeClick(it.anime.id) },
+        modifier = Modifier.fillMaxSize()
+    )
+}
+
+@Composable
+private fun SearchMangaQuickResult(
+    searchMangaResult: Flow<PagingData<MangaWithUserRate>>,
+    onMangaClick: (Long) -> Unit
+) {
+    val items = searchMangaResult.collectAsLazyPagingItems()
+
+    MangaWithUserRateGrid(
+        items = items.itemSnapshotList.subList(0, FastSearchSize).filterNotNull(),
+        onEntryClick = { onMangaClick(it.manga.id) },
+        modifier = Modifier.fillMaxSize()
+    )
+}
+
+@Composable
+private fun SearchTypeText(searchType: SearchType) {
+    Text(
+        text = stringResource(
+            id = when (searchType) {
+                SearchType.Anime -> R.string.feature_search_search_type_anime
+                SearchType.Manga -> R.string.feature_search_search_type_manga
+                SearchType.Ranobe -> R.string.feature_search_search_type_ranobe
+            }
+        )
+    )
+}
+
+@Composable
+@ReadOnlyComposable
+private fun searchTitleText(title: SearchTitle) = when (title) {
+    SearchTitle.Search -> stringResource(id = R.string.feature_search_title)
+    is SearchTitle.Demographic -> title.demographicName
+    is SearchTitle.Genre -> title.genreName
+    is SearchTitle.Theme -> title.themeName
+    is SearchTitle.Status -> statusTitleText(entryStatus = title.entryStatus)
+
+    is SearchTitle.Publisher -> stringResource(
+        id = R.string.feature_search_title_publisher,
+        title.publisherName
+    )
+
+    is SearchTitle.Studio -> stringResource(
+        id = R.string.feature_search_title_studio,
+        title.studioName
+    )
+}
+
+
+@Composable
+@ReadOnlyComposable
+private fun statusTitleText(entryStatus: EntryStatus) = stringResource(
+    when (entryStatus) {
+        EntryStatus.Anons -> R.string.feature_search_title_status_anonses
+        EntryStatus.Ongoing -> R.string.feature_search_title_status_ongoings
+        EntryStatus.Released -> if (LocalTargetStringsEntry.current == TargetStringsEntry.Anime) {
+            R.string.feature_search_title_status_anime_releases
+        } else {
+            R.string.feature_search_title_status_manga_releases
+        }
+
+        EntryStatus.Paused -> R.string.feature_search_title_status_paused
+        EntryStatus.Discontinued -> R.string.feature_search_title_status_discontonued
+        EntryStatus.None -> R.string.feature_search_title
+    }
+)
+
+
+private val FastSearchSize = 10
+
+private val ControlPanelMinWidth: Dp = 360.dp
 private val ControlPanelMaxWidth: Dp = 720.dp

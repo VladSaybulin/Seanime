@@ -23,6 +23,12 @@ class GenreRepository @Inject constructor(
     private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
+    suspend fun getGenreById(entryType: EntryType, genreId: Long): Genre? =
+        withContext(ioDispatcher) {
+            syncGenres(entryType)
+            genreDao.getGenreById(genreId)?.asExternalModel()
+        }
+
     suspend fun getGenres(entryType: EntryType, genreKind: GenreKind): List<Genre> =
         withContext(ioDispatcher) {
             syncGenres(entryType)

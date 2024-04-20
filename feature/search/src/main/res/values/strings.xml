@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_search_title">Поиск</string>
+    <string name="feature_search_search_type_anime">Аниме</string>
+    <string name="feature_search_search_type_manga">Манга</string>
+    <string name="feature_search_search_type_ranobe">Ранобэ</string>
+    <string name="feature_search_title_studio">Студия %1$s</string>
+    <string name="feature_search_title_theme">Тема: %1$s</string>
+    <string name="feature_search_title_status_anonses">Анонсы</string>
+    <string name="feature_search_title_status_ongoings">Онгоинги</string>
+    <string name="feature_search_title_status_anime_releases">Выпущенное</string>
+    <string name="feature_search_title_status_manga_releases">Изданное</string>
+    <string name="feature_search_title_status_paused">Приостановленное</string>
+    <string name="feature_search_title_status_discontonued">Не вышедшее</string>
+    <string name="feature_search_title_publisher">Издатель %1$s</string>
 </resources>

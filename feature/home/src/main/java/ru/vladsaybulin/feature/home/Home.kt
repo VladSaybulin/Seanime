@@ -41,6 +41,7 @@ import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
@@ -245,6 +246,6 @@ private fun LazyListScope.inProgressUserRatesPager(
 }
 
 private val AnimeOngoingSearchArgs = SearchArgs(
-    entryType = EntryType.Anime,
+    searchType = SearchType.Anime,
     entryStatus = EntryStatus.Ongoing
 )

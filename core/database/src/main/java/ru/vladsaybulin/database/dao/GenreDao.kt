@@ -11,6 +11,9 @@ import ru.vladsaybulin.model.genre.GenreKind
 @Dao
 interface GenreDao {
 
+    @Query("SELECT * FROM genres WHERE id = :genreId")
+    suspend fun getGenreById(genreId: Long): GenreEntity?
+
     @Query("SELECT * FROM genres WHERE entry_type = :entryType AND kind = :genreKind")
     fun getGenresByKind(entryType: EntryType, genreKind: GenreKind): List<GenreEntity>
 

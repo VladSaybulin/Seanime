@@ -9,6 +9,9 @@ import ru.vladsaybulin.database.models.anime.StudioEntity
 @Dao
 interface StudioDao {
 
+    @Query("SELECT * FROM studios WHERE id = :studioId")
+    fun getStudioById(studioId: Long): StudioEntity?
+
     @Query("SELECT * FROM studios")
     fun getAllStudios(): List<StudioEntity>
 

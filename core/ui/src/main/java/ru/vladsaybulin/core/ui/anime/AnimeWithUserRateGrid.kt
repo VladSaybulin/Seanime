@@ -16,6 +16,41 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun AnimeWithUserRateGrid(
+    items: List<AnimeWithUserRate>,
+    onEntryClick: (AnimeWithUserRate) -> Unit,
+    modifier: Modifier = Modifier,
+    key: ((AnimeWithUserRate) -> Any)? = { it.anime.id },
+    columns: GridCells = EntryGridDefaults.DefaultColumns,
+    state: LazyGridState = rememberLazyGridState(),
+    contentPadding: PaddingValues = EntryGridDefaults.DefaultContentPadding,
+    horizontalArrangement: Arrangement.Horizontal = EntryGridDefaults.DefaultHorizontalArrangement,
+    verticalArrangement: Arrangement.Vertical = EntryGridDefaults.DefaultVerticalArrangement,
+    detailsContent: (@Composable (AnimeWithUserRate) -> Unit)? = { AnimeGridMetadata(it.anime) }
+) {
+    EntryGrid(
+        items = items,
+        modifier = modifier,
+        key = key,
+        columns = columns,
+        state = state,
+        contentPadding = contentPadding,
+        horizontalArrangement = horizontalArrangement,
+        verticalArrangement = verticalArrangement,
+    ) { animeWithUSerRate ->
+        AnimeGridItem(
+            anime = animeWithUSerRate.anime,
+            onClick = { onEntryClick(animeWithUSerRate) },
+            modifier = Modifier.fillMaxWidth(),
+            userRateStatus = animeWithUSerRate.userRate?.status ?: UserRateStatus.None,
+            detailsContent = if (detailsContent != null) {
+                { detailsContent(animeWithUSerRate) }
+            } else null
+        )
+    }
+}
+
+@Composable
+fun AnimeWithUserRateGrid(
     items: LazyPagingItems<AnimeWithUserRate>,
     onEntryClick: (AnimeWithUserRate) -> Unit,
     modifier: Modifier = Modifier,

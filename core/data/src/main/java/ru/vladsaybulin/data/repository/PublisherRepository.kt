@@ -22,6 +22,12 @@ class PublisherRepository @Inject constructor(
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
+    suspend fun getPublisherById(publisherId: Long): Publisher? =
+        withContext(ioDispatcher) {
+            syncPublishers()
+            publisherDao.getPublisherById(publisherId)?.asExternalModel()
+        }
+
     suspend fun getPublishers(): List<Publisher> = withContext(ioDispatcher) {
         syncPublishers()
         publisherDao.getAllPublishers()

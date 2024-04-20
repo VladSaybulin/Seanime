@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -18,6 +19,36 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import ru.vladsaybulin.core.ui.ErrorMessage
+
+@Composable
+fun <T: Any> EntryGrid(
+    items: List<T>,
+    modifier: Modifier = Modifier,
+    key: ((T) -> Any)? = null,
+    columns: GridCells = EntryGridDefaults.DefaultColumns,
+    state: LazyGridState = rememberLazyGridState(),
+    contentPadding: PaddingValues = EntryGridDefaults.DefaultContentPadding,
+    horizontalArrangement: Arrangement.Horizontal = EntryGridDefaults.DefaultHorizontalArrangement,
+    verticalArrangement: Arrangement.Vertical = EntryGridDefaults.DefaultVerticalArrangement,
+    itemContent: @Composable (T) -> Unit,
+) {
+    LazyVerticalGrid(
+        columns = columns,
+        state = state,
+        contentPadding = contentPadding,
+        horizontalArrangement = horizontalArrangement,
+        verticalArrangement = verticalArrangement,
+        modifier = modifier
+    ) {
+        items(
+            items = items,
+            key = key,
+        ) { item ->
+            itemContent(item)
+        }
+    }
+}
+
 
 @Composable
 fun <T: Any> EntryGrid(

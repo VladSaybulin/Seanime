@@ -16,10 +16,12 @@ import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRate
 
 sealed class DetailsUiState {
@@ -137,20 +139,22 @@ private fun EntryDetails.mangaDetailsToUiState() = with(manga!!) {
 
 internal fun DetailsUiState.Success.publisherSearchParams(publisherId: Long) =
     SearchArgs(
-        entryType = entryType,
+        searchType = if (entryType == EntryType.Anime) SearchType.Anime else SearchType.Manga,
         publisherId = publisherId
     )
 
 internal fun DetailsUiState.Success.studioSearchParams(studioId: Long) =
     SearchArgs(
-        entryType = entryType,
+        searchType = if (entryType == EntryType.Anime) SearchType.Anime else SearchType.Manga,
         studioId = studioId
     )
 
 internal fun DetailsUiState.Success.genreSearchParams(genre: Genre) =
     SearchArgs(
-        entryType = entryType,
-        genreId = genre.id
+        searchType = if (entryType == EntryType.Anime) SearchType.Anime else SearchType.Manga,
+        genreId = if (genre.kind == GenreKind.Genre) genre.id else null,
+        demographicId = if (genre.kind == GenreKind.Demographic) genre.id else null,
+        themeId = if (genre.kind == GenreKind.Theme) genre.id else null,
     )
 
 internal fun DetailsUiState.Success.posterViewParams(): ImageViewArgs {

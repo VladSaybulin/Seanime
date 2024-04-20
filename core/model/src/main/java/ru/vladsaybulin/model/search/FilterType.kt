@@ -9,6 +9,8 @@ enum class FilterType(val queryMapKey: QueryMapKey) {
     Rating(QueryMapKey.Rating),
     Score(QueryMapKey.Score),
     Genre(QueryMapKey.Genre),
+    Theme(QueryMapKey.Genre),
+    Demographic(QueryMapKey.Genre),
     Studio(QueryMapKey.Studio),
     Publisher(QueryMapKey.Publisher)
 }

@@ -33,7 +33,7 @@ fun ShikimoriNavHost(
     ) {
         homeScreen(
             onEntryClick = navController::navigateToEntryDetails,
-            onSearchClick = {},
+            onSearchClick = navController::navigateToSearch,
             onAllNewsTopicsClick = {}
         )
 
