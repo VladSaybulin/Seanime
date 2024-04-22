@@ -3,9 +3,7 @@ package ru.vladsaybulin.feature.details.content
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.datetime.Clock
@@ -17,14 +15,13 @@ import kotlinx.datetime.todayIn
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.LocalTimeZone
-import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.strings.animeKindString
+import ru.vladsaybulin.core.ui.anime.AnimeInfoKindAndEpisodesAndDurationText
 import ru.vladsaybulin.feature.details.DetailsUiState
 import ru.vladsaybulin.feature.details.genreSearchParams
 import ru.vladsaybulin.feature.details.studioSearchParams
 import ru.vladsaybulin.model.anime.AnimeKind
-import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.anime.Studio
+import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.genre.Genre
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -113,94 +110,17 @@ private fun AnimeKindAndEpisodeInfoLine(
     isOngoing: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val text = buildKindAndEpisodesString(
-        kind = animeKind ?: AnimeKind.None,
-        episodes = episodes,
-        episodesAired = episodesAired,
-        duration = episodeDuration,
-        isOngoing = isOngoing
-    ) ?: return
-
     InfoLine(
         icon = { InfoIcon(imageVector = ShikimoriIcons.Tv) },
         modifier = modifier
     ) {
-        Text(text)
-    }
-}
-
-@Composable
-@ReadOnlyComposable
-private fun buildKindAndEpisodesString(
-    kind: AnimeKind,
-    episodes: Int,
-    episodesAired: Int,
-    duration: Int?,
-    isOngoing: Boolean
-): String? {
-    val kindText = animeKindString(animeKind = kind)
-    val episodesText = buildEpisodesString(
-        episodes = episodes,
-        episodesAired = episodesAired,
-        ongoing = isOngoing
-    )
-    val durationText = duration?.let {
-        buildDurationString(it)
-    }
-
-    if (kindText == null && episodesText == null && durationText == null) return null
-
-    return buildString {
-        kindText?.let { append(it) }
-
-        if (episodesText == null && durationText == null) return@buildString
-
-        if (isNotEmpty()) append(", ")
-        when {
-            episodesText != null && durationText != null -> stringResource(
-                id = R.string.episodes_x_duration,
-                episodesText,
-                durationText
-            ).let { append(it) }
-
-            episodesText != null -> stringResource(
-                id = R.string.episodes,
-                episodesText
-            ).let { append(it) }
-
-            else -> append(durationText)
-        }
-    }
-}
-
-@Composable
-@ReadOnlyComposable
-private fun buildDurationString(duration: Int): String {
-    val hours = duration / 60
-    val minutes = duration % 60
-
-    val hoursText = hours.takeIf { it > 0 }?.let {
-        pluralStringResource(id = R.plurals.duration_hours, count = it, it)
-    }
-    val minutesText = stringResource(id = R.string.duration_minutes, minutes)
-
-    return buildString {
-        hoursText?.let { append(it) }
-        if (isNotEmpty()) append(' ')
-        append(minutesText)
-    }
-}
-
-@Composable
-@ReadOnlyComposable
-private fun buildEpisodesString(episodes: Int, episodesAired: Int, ongoing: Boolean): String? {
-    if (episodes <= 0 && episodesAired <= 0) return null
-
-    return when {
-        ongoing && episodes > 0 && episodesAired > 0 -> "$episodesAired/$episodes"
-        ongoing && episodesAired > 0 -> "$episodesAired/-"
-        episodes > 0 -> episodes.toString()
-        else -> null
+        AnimeInfoKindAndEpisodesAndDurationText(
+            kind = animeKind ?: AnimeKind.None,
+            episodes = episodes,
+            episodesAired = episodesAired,
+            duration = episodeDuration ?: 0,
+            isOngoing = isOngoing
+        )
     }
 }
 

@@ -20,4 +20,4 @@ fun mangaKindStringResId(mangaKind: MangaKind) = when (mangaKind) {
 @Composable
 @ReadOnlyComposable
 fun mangaKindString(mangaKind: MangaKind) =
-    mangaKindStringResId(mangaKind)?.let { stringResource(id = it) }
+    mangaKindStringResId(mangaKind)?.let { stringResource(id = it) } ?: mangaKind.name

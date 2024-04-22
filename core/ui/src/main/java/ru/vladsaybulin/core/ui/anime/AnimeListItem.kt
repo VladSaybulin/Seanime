@@ -1,38 +1,36 @@
 package ru.vladsaybulin.core.ui.anime
 
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.entry.EntryGridItem
+import ru.vladsaybulin.core.ui.entry.EntryInfoScore
+import ru.vladsaybulin.core.ui.entry.EntryInfoStatusAndDatesText
+import ru.vladsaybulin.core.ui.entry.EntryListItem
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
+import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
-fun AnimeGridItem(
+fun AnimeListItem(
     anime: Anime,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
     metadata: (@Composable ColumnScope.() -> Unit)? = { AnimeGridMetadata(anime) },
 ) {
-    EntryGridItem(
-        modifier = modifier,
+    EntryListItem(
         name = anime.russianName ?: anime.name,
         userRateStatus = userRateStatus,
         imageUrl = anime.poster?.previewUrl,
         onClick = onClick,
+        modifier = modifier,
         metadata = metadata
     )
 }
 
 @Composable
-fun AnimeGridItem(
+fun AnimeListItem(
     animeWithUserRate: AnimeWithUserRate,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -40,32 +38,31 @@ fun AnimeGridItem(
 ) {
     val anime = animeWithUserRate.anime
 
-    EntryGridItem(
-        modifier = modifier,
+    EntryListItem(
         name = anime.russianName ?: anime.name,
         userRateStatus = animeWithUserRate.userRate?.status ?: UserRateStatus.None,
         imageUrl = anime.poster?.previewUrl,
         onClick = onClick,
+        modifier = modifier,
         metadata = metadata
     )
 }
 
 @Composable
-fun AnimeGridMetadata(anime: Anime) {
-    AnimeInfoKindAndYearText(
+fun ColumnScope.DefaultAnimeListItemData(anime: Anime) {
+    AnimeInfoKindAndEpisodesAndDurationText(
         kind = anime.kind,
-        year = anime.airedOn?.year
+        episodes = anime.episodes,
+        episodesAired = anime.episodesAired,
+        duration = 0,
+        isOngoing = anime.status == EntryStatus.Ongoing
     )
-}
 
-@Preview
-@Composable
-fun AnimeGridItemPreview(@PreviewParameter(AnimePreviewProvider::class) anime: Anime) {
-    ShikimoriTheme {
-        AnimeGridItem(
-            anime = anime,
-            onClick = { },
-            modifier = Modifier.width(150.dp)
-        )
-    }
+    EntryInfoStatusAndDatesText(
+        entryStatus = anime.status,
+        airedOn = anime.airedOn,
+        releasedOn = anime.releasedOn
+    )
+
+    EntryInfoScore(score = anime.score ?: 0f)
 }

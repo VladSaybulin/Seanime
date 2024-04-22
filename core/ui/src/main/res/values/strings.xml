@@ -100,19 +100,50 @@
     <string name="core_ui_order_random">Случайно</string>
     <string name="core_ui_apply">Применить</string>
     <string name="core_ui_reset">Сбросить всё</string>
-    <plurals name="duration_hours">
+    <string name="core_ui_metadata_kind_and_year">%1$s • %2$d г.</string>
+    <string name="core_ui_metadata_year">%1$d г.</string>
+    <string name="core_ui_anime_info_kind_episodes_duration">%1$s • %2$s • %3$s</string>
+    <string name="core_ui_anime_info_kind_episodes_by_duration">%1$s • %2$s эп. по %3$s</string>
+    <string name="core_ui_anime_info_episodes_of_episodes">%1$s/%1$s эп.</string>
+    <string name="core_ui_anime_info_episodes_of_unknown_episodes">%1$d/? эп.</string>
+    <string name="core_ui_anime_info_episodes">%1$d эп.</string>
+    <string name="core_ui_anime_info_duration_hours_minutes">%1$s %2$s</string>
+    <string name="core_ui_anime_info_by_duration_hours_minutes">по %1$s %2$s</string>
+    <string name="core_ui_anime_info_by_duration_minutes">%1$s</string>
+    <string name="core_ui_info_separator">" • "</string>
+    <string name="core_ui_incomplete_date_full">d MMM yyyy</string>
+    <string name="core_ui_incomplete_date_full_genitive">d LLL yyyy</string>
+    <string name="core_ui_incomplete_date_year_month">MMM yyyy</string>
+    <string name="core_ui_incomplete_date_year_month_genitive">LLL yyyy</string>
+    <string name="core_ui_incomplete_date_year">yyyy</string>
+    <string name="core_ui_incomplete_date_year_genitive">yyyy</string>
+    <string name="core_ui_info_dates_range">с %1$s по %2$s</string>
+    <string name="core_ui_info_dates_from">с %1$s</string>
+    <plurals name="core_ui_anime_info_duration_hours">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>
         <item quantity="many">%d часов</item>
         <item quantity="other">%d часа</item>
     </plurals>
-    <plurals name="volumes">
+    <plurals name="core_ui_anime_info_by_duration_hours">
+        <item quantity="one">%d часу</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+        <item quantity="other">%d ч.</item>
+    </plurals>
+    <plurals name="core_ui_anime_info_duration_minutes">
+        <item quantity="other">%d мин.</item>
+    </plurals>
+    <plurals name="core_ui_anime_info_by_duration_minutes">
+        <item quantity="other">%d мин.</item>
+    </plurals>
+    <plurals name="core_ui_manga_info_volumes">
         <item quantity="one">%d том</item>
         <item quantity="few">%d тома</item>
         <item quantity="many">%d томов</item>
         <item quantity="other">%d тома</item>
     </plurals>
-    <plurals name="chapters">
+    <plurals name="core_ui_manga_info_chapters">
         <item quantity="one">%d глава</item>
         <item quantity="few">%d главы</item>
         <item quantity="many">%d глав</item>

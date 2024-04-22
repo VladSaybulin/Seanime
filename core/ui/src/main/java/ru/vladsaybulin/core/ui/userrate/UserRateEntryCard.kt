@@ -1,50 +1,43 @@
 package ru.vladsaybulin.core.ui.userrate
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.EntryPoster
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.ScoreStars
 import ru.vladsaybulin.core.ui.SmallStarSize
-import ru.vladsaybulin.core.ui.entry.EntryKindAndYearMetadata
-import ru.vladsaybulin.core.ui.entry.UserRateStatusBadge
+import ru.vladsaybulin.core.ui.entry.EntryInfoKindAndYear
+import ru.vladsaybulin.core.ui.entry.EntryListItem
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.mangaKindString
 import ru.vladsaybulin.model.common.EntryStatus.Ongoing
-import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.model.userrate.UserRateStatus.Rewatching
-import ru.vladsaybulin.model.userrate.UserRateStatus.Watching
-import ru.vladsaybulin.model.userrate.UserRateWithEntry
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.userrate.UserRateProgressLimit
 import ru.vladsaybulin.model.userrate.UserRateProgressLimit.Companion.Unlimited
+import ru.vladsaybulin.model.userrate.UserRateStatus.None
+import ru.vladsaybulin.model.userrate.UserRateStatus.Rewatching
+import ru.vladsaybulin.model.userrate.UserRateStatus.Watching
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.model.userrate.toLimit
 
 @Composable
 fun UserRateEntryCard(
     userRateWithEntry: UserRateWithEntry,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: (EntryType, Long) -> Unit,
+    modifier: Modifier = Modifier,
+    showUserRateBadge: Boolean = true
 ) {
     val userRate = userRateWithEntry.userRate
 
@@ -56,10 +49,16 @@ fun UserRateEntryCard(
     val kindString: String?
     val airedInYear: Int?
 
+    val entryType: EntryType
+    val entryId: Long
+
     val inProgress = userRate.status == Watching || userRate.status == Rewatching
 
     if (userRateWithEntry.anime != null) {
         val anime = userRateWithEntry.anime!!
+        entryType = EntryType.Anime
+        entryId = anime.id
+
         name = anime.russianName ?: anime.name
         poster = anime.poster
         episodesLimit = when {
@@ -74,6 +73,9 @@ fun UserRateEntryCard(
         airedInYear = anime.airedOn?.year
     } else if (userRateWithEntry.manga != null) {
         val manga = userRateWithEntry.manga!!
+        entryType = EntryType.Manga
+        entryId = manga.id
+
         name = manga.russianName ?: manga.name
         poster = manga.poster
         episodesLimit = null
@@ -87,79 +89,56 @@ fun UserRateEntryCard(
         airedInYear = manga.airedOn?.year
     } else throw IllegalArgumentException()
 
-    Surface(
-        onClick = onClick,
-        modifier = modifier,
+    EntryListItem(
+        name = name,
+        imageUrl = poster?.previewUrl,
+        onClick = { onClick(entryType, entryId) },
+        userRateStatus = if (showUserRateBadge) userRate.status else None,
         border = BorderStroke(1.dp, ShikimoriTheme.colorScheme.outlineVariant),
-        shape = RoundedCornerShape(16.dp),
-        tonalElevation = 1.dp
+        imageIgnoresPadding = true,
+        containerShape = ShikimoriTheme.shapes.large,
+        imageShape = ShikimoriTheme.shapes.large,
+        containerColor = ShikimoriTheme.colorScheme.surfaceColorAtElevation(1.dp),
+        modifier = modifier
     ) {
-        Row(
-            modifier = Modifier.height(IntrinsicSize.Max),
-        ) {
-            Box(modifier = Modifier.clip(RoundedCornerShape(16.dp))) {
-                EntryPoster(
-                    poster = poster,
-                    modifier = Modifier.width(128.dp)
-                )
-                if (userRate.status != UserRateStatus.None) {
-                    UserRateStatusBadge(
-                        userRateStatus = userRate.status,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                    )
-                }
-            }
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = name,
-                    style = ShikimoriTheme.typography.titleMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                EntryKindAndYearMetadata(
-                    entryKindString = kindString,
-                    airedInYear = airedInYear,
-                    textStyle = ShikimoriTheme.typography.bodySmall
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                ScoreStars(
-                    score = userRate.score.toFloat(),
-                    starSize = SmallStarSize
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                when {
-                    episodesLimit != null -> Progress(
-                        progress = userRate.episodes,
-                        limit = episodesLimit,
-                        unlimitedProgressStringRes = R.string.episodes_progress,
-                        limitedProgressStringRes = R.string.episodes_progress_of_limit
-                    )
+        Spacer(modifier = Modifier.height(4.dp))
+        EntryInfoKindAndYear(
+            kindText = kindString,
+            year = airedInYear,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        ScoreStars(
+            score = userRate.score.toFloat(),
+            starSize = SmallStarSize
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        when {
+            episodesLimit != null -> ProgressIndicator(
+                progress = userRate.episodes,
+                limit = episodesLimit,
+                unlimitedProgressStringRes = R.string.episodes_progress,
+                limitedProgressStringRes = R.string.episodes_progress_of_limit
+            )
 
-                    volumesLimit != null -> Progress(
-                        progress = userRate.volumes,
-                        limit = volumesLimit,
-                        unlimitedProgressStringRes = R.string.volumes_progress,
-                        limitedProgressStringRes = R.string.volumes_progress_of_limit
-                    )
+            volumesLimit != null -> ProgressIndicator(
+                progress = userRate.volumes,
+                limit = volumesLimit,
+                unlimitedProgressStringRes = R.string.volumes_progress,
+                limitedProgressStringRes = R.string.volumes_progress_of_limit
+            )
 
-                    chaptersLimit != null -> Progress(
-                        progress = userRate.chapters,
-                        limit = chaptersLimit,
-                        unlimitedProgressStringRes = R.string.chapters_progress,
-                        limitedProgressStringRes = R.string.chapters_progress_of_limit
-                    )
-                }
-            }
+            chaptersLimit != null -> ProgressIndicator(
+                progress = userRate.chapters,
+                limit = chaptersLimit,
+                unlimitedProgressStringRes = R.string.chapters_progress,
+                limitedProgressStringRes = R.string.chapters_progress_of_limit
+            )
         }
     }
 }
 
 @Composable
-private fun Progress(
+private fun ProgressIndicator(
     progress: Int,
     limit: UserRateProgressLimit,
     unlimitedProgressStringRes: Int,

@@ -1,8 +1,5 @@
 package ru.vladsaybulin.feature.calendar
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,9 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
@@ -31,13 +26,11 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,7 +47,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.domain.CalendarDay
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
-import ru.vladsaybulin.core.ui.anime.AnimeGridItem
+import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
 import ru.vladsaybulin.model.common.EntryType
@@ -64,8 +57,7 @@ import java.time.format.FormatStyle
 @Composable
 fun CalendarRoute(
     onEntryClick: (EntryDetailsArgs) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: CalendarViewModel = hiltViewModel(),
+    viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -175,27 +167,6 @@ private fun CalendarLoading(modifier: Modifier) {
 }
 
 @Composable
-private fun CalendarGridItem(
-    modifier: Modifier = Modifier,
-    calendarItem: CalendarItem,
-    wasOnAir: Boolean = false,
-    onClick: () -> Unit
-) {
-    AnimeGridItem(
-        modifier = modifier,
-        anime = calendarItem.anime,
-        onClick = onClick,
-        detailsContent = {
-            CalendarItemDetails(
-                nextEpisodeAt = calendarItem.nextEpisodeAt,
-                wasOnAir = wasOnAir,
-                nextEpisode = calendarItem.nextEpisode
-            )
-        }
-    )
-}
-
-@Composable
 private fun CalendarSection(
     calendarDay: CalendarDay,
     modifier: Modifier = Modifier,
@@ -204,10 +175,18 @@ private fun CalendarSection(
     Column(modifier = modifier) {
         CalendarSectionHeader(date = calendarDay.date)
         Spacer(modifier = Modifier.height(4.dp))
-        CalendarSectionItemsCarousel(
-            calendarItems = calendarDay.items,
-            wasOnAir = calendarDay.date == null,
-            onItemClick = onCalendarItemClick
+
+        AnimeCarousel(
+            items = calendarDay.items,
+            mapAnime = { it.anime },
+            onClick = onCalendarItemClick,
+            metadata = {
+                CalendarItemDetails(
+                    nextEpisodeAt = it.nextEpisodeAt,
+                    wasOnAir = calendarDay.date == null,
+                    nextEpisode = it.nextEpisode
+                )
+            }
         )
     }
 }
@@ -224,44 +203,6 @@ private fun CalendarSectionHeader(date: LocalDate?) {
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(text = headerText, style = ShikimoriTheme.typography.titleMedium)
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun CalendarSectionItemsCarousel(
-    modifier: Modifier = Modifier,
-    calendarItems: List<CalendarItem>,
-    wasOnAir: Boolean = false,
-    onItemClick: (CalendarItem) -> Unit
-) {
-    val listState = rememberLazyListState()
-
-    LazyRow(
-        state = listState,
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        flingBehavior = rememberSnapFlingBehavior(
-            snapLayoutInfoProvider = remember(listState) {
-                SnapLayoutInfoProvider(
-                    lazyListState = listState,
-                    positionInLayout = { _, _, _, _, _ -> 0 },
-                )
-            },
-        ),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(
-            items = calendarItems,
-            key = { it.nextEpisodeAt.toString() + it.anime.id.toString() }
-        ) { calendarItem ->
-            CalendarGridItem(
-                modifier = Modifier.width(160.dp),
-                calendarItem = calendarItem,
-                wasOnAir = wasOnAir,
-                onClick = { onItemClick(calendarItem) }
-            )
-        }
     }
 }
 
@@ -300,18 +241,6 @@ private fun CalendarItemDetails(
     }
 
     Text(text = text)
-}
-
-@Preview
-@Composable
-fun CalendarItemPreview(@PreviewParameter(CalendarPreviewProvider::class) calendarItem: CalendarItem) {
-    ShikimoriTheme {
-        CalendarGridItem(
-            modifier = Modifier.width(128.dp),
-            calendarItem = calendarItem,
-            onClick = { }
-        )
-    }
 }
 
 class CalendarPreviewProvider : PreviewParameterProvider<CalendarItem> {

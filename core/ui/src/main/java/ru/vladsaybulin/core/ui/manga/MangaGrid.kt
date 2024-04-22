@@ -1,6 +1,7 @@
-package ru.vladsaybulin.core.ui.anime
+package ru.vladsaybulin.core.ui.manga
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -11,21 +12,21 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 import ru.vladsaybulin.core.ui.entry.EntryGrid
 import ru.vladsaybulin.core.ui.entry.EntryGridDefaults
-import ru.vladsaybulin.model.anime.AnimeWithUserRate
+import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
-fun AnimeWithUserRateGrid(
-    items: List<AnimeWithUserRate>,
-    onEntryClick: (AnimeWithUserRate) -> Unit,
+fun MangaGrid(
+    items: List<MangaWithUserRate>,
+    onEntryClick: (MangaWithUserRate) -> Unit,
     modifier: Modifier = Modifier,
-    key: ((AnimeWithUserRate) -> Any)? = { it.anime.id },
+    key: ((MangaWithUserRate) -> Any)? = { it.manga.id },
     columns: GridCells = EntryGridDefaults.DefaultColumns,
     state: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = EntryGridDefaults.DefaultContentPadding,
     horizontalArrangement: Arrangement.Horizontal = EntryGridDefaults.DefaultHorizontalArrangement,
     verticalArrangement: Arrangement.Vertical = EntryGridDefaults.DefaultVerticalArrangement,
-    detailsContent: (@Composable (AnimeWithUserRate) -> Unit)? = { AnimeGridMetadata(it.anime) }
+    metadata: (@Composable ColumnScope.(MangaWithUserRate) -> Unit)? = { MangaGridMetadata(it.manga) }
 ) {
     EntryGrid(
         items = items,
@@ -35,32 +36,32 @@ fun AnimeWithUserRateGrid(
         state = state,
         contentPadding = contentPadding,
         horizontalArrangement = horizontalArrangement,
-        verticalArrangement = verticalArrangement,
-    ) { animeWithUSerRate ->
-        AnimeGridItem(
-            anime = animeWithUSerRate.anime,
-            onClick = { onEntryClick(animeWithUSerRate) },
+        verticalArrangement = verticalArrangement
+    ) { mangaWithUserRate ->
+        MangaGridItem(
+            manga = mangaWithUserRate.manga,
+            onClick = { onEntryClick(mangaWithUserRate) },
             modifier = Modifier.fillMaxWidth(),
-            userRateStatus = animeWithUSerRate.userRate?.status ?: UserRateStatus.None,
-            detailsContent = if (detailsContent != null) {
-                { detailsContent(animeWithUSerRate) }
+            userRateStatus = mangaWithUserRate.userRate?.status ?: UserRateStatus.None,
+            metadata = if (metadata != null) {
+                { metadata(mangaWithUserRate) }
             } else null
         )
     }
 }
 
 @Composable
-fun AnimeWithUserRateGrid(
-    items: LazyPagingItems<AnimeWithUserRate>,
-    onEntryClick: (AnimeWithUserRate) -> Unit,
+fun MangaGrid(
+    items: LazyPagingItems<MangaWithUserRate>,
+    onEntryClick: (MangaWithUserRate) -> Unit,
     modifier: Modifier = Modifier,
-    key: ((AnimeWithUserRate) -> Any)? = { it.anime.id },
+    key: ((MangaWithUserRate) -> Any)? = { it.manga.id },
     columns: GridCells = EntryGridDefaults.DefaultColumns,
     state: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = EntryGridDefaults.DefaultContentPadding,
     horizontalArrangement: Arrangement.Horizontal = EntryGridDefaults.DefaultHorizontalArrangement,
     verticalArrangement: Arrangement.Vertical = EntryGridDefaults.DefaultVerticalArrangement,
-    detailsContent: (@Composable (AnimeWithUserRate) -> Unit)? = { AnimeGridMetadata(it.anime) }
+    metadata: (@Composable (MangaWithUserRate) -> Unit)? = { MangaGridMetadata(it.manga) }
 ) {
     EntryGrid(
         items = items,
@@ -70,15 +71,15 @@ fun AnimeWithUserRateGrid(
         state = state,
         contentPadding = contentPadding,
         horizontalArrangement = horizontalArrangement,
-        verticalArrangement = verticalArrangement,
-    ) { animeWithUSerRate ->
-        AnimeGridItem(
-            anime = animeWithUSerRate.anime,
-            onClick = { onEntryClick(animeWithUSerRate) },
+        verticalArrangement = verticalArrangement
+    ) { mangaWithUserRate ->
+        MangaGridItem(
+            manga = mangaWithUserRate.manga,
+            onClick = { onEntryClick(mangaWithUserRate) },
             modifier = Modifier.fillMaxWidth(),
-            userRateStatus = animeWithUSerRate.userRate?.status ?: UserRateStatus.None,
-            detailsContent = if (detailsContent != null) {
-                { detailsContent(animeWithUSerRate) }
+            userRateStatus = mangaWithUserRate.userRate?.status ?: UserRateStatus.None,
+            metadata = if (metadata != null) {
+                { metadata(mangaWithUserRate) }
             } else null
         )
     }

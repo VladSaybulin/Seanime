@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +21,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
-import ru.vladsaybulin.core.navigation.args.asEntryDetailsArgs
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -100,13 +98,8 @@ fun MyListScreen(
                     userRates[it]?.let {
                         UserRateEntryCard(
                             userRateWithEntry = it,
-                            onClick = {
-                                onEntryClick(
-                                    it.anime?.asEntryDetailsArgs()
-                                        ?: it.manga!!.asEntryDetailsArgs()
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth()
+                            onClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
+                            showUserRateBadge = false
                         )
                     }
                 }

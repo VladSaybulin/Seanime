@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.SimilarEntry
+import ru.vladsaybulin.model.common.EntryType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +54,7 @@ private fun SimilarBottomSheetContent(
         items(items = similarEntries) { entry ->
             EntryGridItem(
                 name = entry.run { russianName ?: originalName },
-                poster = entry.poster,
+                imageUrl = entry.poster?.previewUrl,
                 onClick = { onEntryClick(entry.entryType, entry.entryId) },
                 modifier = Modifier.fillMaxWidth(),
                 nameTextStyle = ShikimoriTheme.typography.labelLarge,

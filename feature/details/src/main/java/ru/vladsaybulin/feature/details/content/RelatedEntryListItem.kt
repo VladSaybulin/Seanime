@@ -1,13 +1,22 @@
 package ru.vladsaybulin.feature.details.content
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
+import ru.vladsaybulin.core.ui.EntryStatusBadge
+import ru.vladsaybulin.core.ui.R
+import ru.vladsaybulin.core.ui.anime.AnimeInfoKindAndYearText
+import ru.vladsaybulin.core.ui.entry.EntryInfoScore
 import ru.vladsaybulin.core.ui.entry.EntryListItem
-import ru.vladsaybulin.core.ui.entry.EntryListItemDetails
-import ru.vladsaybulin.core.ui.entry.listItemDetailsData
+import ru.vladsaybulin.core.ui.manga.MangaInfoKindAndYearText
 import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.related.RelatedEntry
@@ -47,18 +56,31 @@ private fun RelatedAnimeListItem(
 ) {
     EntryListItem(
         name = anime.run { russianName ?: name },
-        poster = anime.poster,
+        imageUrl = anime.poster?.previewUrl,
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        posterWidth = 72.dp,
-        detailsContent = {
-            EntryListItemDetails(
-                data = anime.listItemDetailsData()
-                    .copy(
-                        volumeText = null,
-                        relationType = relationType
+        imageWidth = 72.dp,
+        metadata = {
+            AnimeInfoKindAndYearText(kind = anime.kind, year = anime.airedOn?.year)
+
+            Row {
+                if (anime.status != EntryStatus.None) {
+                    EntryStatusBadge(
+                        status = anime.status,
+                        modifier = Modifier.padding(
+                            top = 2.dp,
+                            bottom = 2.dp,
+                            end = 4.dp
+                        )
                     )
-            )
+                }
+
+                ShikimoriTextBadge {
+                    relationTypeString(relationType)
+                }
+            }
+
+            EntryInfoScore(score = anime.score ?: 0f)
         }
     )
 }
@@ -72,17 +94,48 @@ private fun RelatedMangaListItem(
 ) {
     EntryListItem(
         name = manga.run { russianName ?: name },
-        poster = manga.poster,
+        imageUrl = manga.poster?.previewUrl,
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        posterWidth = 72.dp,
-        detailsContent = {
-            EntryListItemDetails(
-                data = manga.listItemDetailsData().copy(
-                    volumeText = null,
-                    relationType = relationType
-                )
-            )
+        imageWidth = 72.dp,
+        metadata = {
+            MangaInfoKindAndYearText(kind = manga.kind, year = manga.airedOn?.year)
+
+            Row {
+                if (manga.status != EntryStatus.None) {
+                    EntryStatusBadge(
+                        status = manga.status,
+                        modifier = Modifier.padding(
+                            top = 2.dp,
+                            bottom = 2.dp,
+                            end = 4.dp
+                        ),
+                    )
+                }
+
+                ShikimoriTextBadge {
+                    relationTypeString(relationType)
+                }
+            }
+
+            EntryInfoScore(score = manga.score ?: 0f)
         }
     )
+}
+
+@Composable
+@ReadOnlyComposable
+private fun relationTypeString(relationType: RelationType) =
+    stringResource(id = relationTypeStringResId(relationType))
+
+private fun relationTypeStringResId(relationType: RelationType) = when (relationType) {
+    RelationType.Adaptation -> R.string.relation_type_adaptation
+    RelationType.AltHistory -> R.string.relation_type_alt_history
+    RelationType.SideStory -> R.string.relation_type_side_story
+    RelationType.SpinOff -> R.string.relation_type_spin_off
+    RelationType.Sequel -> R.string.relation_type_sequel
+    RelationType.Prequel -> R.string.relation_type_prequel
+    RelationType.Summary -> R.string.relation_type_summary
+    RelationType.Character -> R.string.relation_type_character
+    RelationType.Other -> R.string.relation_type_other
 }
