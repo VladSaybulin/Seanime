@@ -50,12 +50,12 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.asEntryDetailsArgs
-import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateGrid
+import ru.vladsaybulin.core.ui.anime.AnimeGrid
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
-import ru.vladsaybulin.core.ui.manga.MangaWithUserRateGrid
+import ru.vladsaybulin.core.ui.manga.MangaGrid
 import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.TargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.orderString
@@ -425,7 +425,7 @@ private fun SearchAnimeResult(
 ) {
     val items = searchAnimeResult.collectAsLazyPagingItems()
 
-    AnimeWithUserRateGrid(
+    AnimeGrid(
         items = items,
         onEntryClick = { onAnimeClick(it.anime) },
         modifier = Modifier.fillMaxSize()
@@ -439,7 +439,7 @@ private fun SearchMangaResult(
 ) {
     val items = searchMangaResult.collectAsLazyPagingItems()
 
-    MangaWithUserRateGrid(
+    MangaGrid(
         items = items,
         onEntryClick = { onMangaClick(it.manga) },
         modifier = Modifier.fillMaxSize()
@@ -471,12 +471,13 @@ private fun SearchAnimeQuickResult(
     onAnimeClick: (Anime) -> Unit
 ) {
     val items = searchAnimeResult.collectAsLazyPagingItems()
-
-    AnimeWithUserRateGrid(
-        items = items.itemSnapshotList.subList(0, FastSearchSize).filterNotNull(),
-        onEntryClick = { onAnimeClick(it.anime) },
-        modifier = Modifier.fillMaxSize()
-    )
+    if (items.itemCount > 0) {
+        AnimeGrid(
+            items = items.itemSnapshotList.subList(0, FastSearchSize).filterNotNull(),
+            onEntryClick = { onAnimeClick(it.anime) },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 }
 
 @Composable
@@ -486,11 +487,13 @@ private fun SearchMangaQuickResult(
 ) {
     val items = searchMangaResult.collectAsLazyPagingItems()
 
-    MangaWithUserRateGrid(
-        items = items.itemSnapshotList.subList(0, FastSearchSize).filterNotNull(),
-        onEntryClick = { onMangaClick(it.manga) },
-        modifier = Modifier.fillMaxSize()
-    )
+    if (items.itemCount > 0) {
+        MangaGrid(
+            items = items.itemSnapshotList.subList(0, FastSearchSize).filterNotNull(),
+            onEntryClick = { onMangaClick(it.manga) },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 }
 
 @Composable

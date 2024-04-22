@@ -2,18 +2,19 @@ package ru.vladsaybulin.feature.details.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.navigation.args.SearchArgs
-import ru.vladsaybulin.core.ui.strings.chaptersAndVolumesString
-import ru.vladsaybulin.core.ui.strings.mangaKindString
+import ru.vladsaybulin.core.ui.entry.EntryInfoStatusAndDatesText
+import ru.vladsaybulin.core.ui.manga.MangaInfoKindAndChaptersAndVolumesText
 import ru.vladsaybulin.feature.details.DetailsUiState
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.feature.details.genreSearchParams
 import ru.vladsaybulin.feature.details.publisherSearchParams
 import ru.vladsaybulin.model.genre.Genre
+import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
 
 internal fun LazyListScope.mangaInformation(
@@ -36,13 +37,25 @@ fun MangaInformation(
     onGenreClick: (Genre) -> Unit,
 ) {
     Column {
-        KindAndVolumeInfoLine(state = state)
+        InfoLine(
+            icon = { Icon(imageVector = ShikimoriIcons.Book, contentDescription = null) },
+        ) {
+            MangaInfoKindAndChaptersAndVolumesText(
+                kind = state.mangaKind ?: MangaKind.None,
+                chapters = state.chapters,
+                volumes = state.volumes
+            )
+        }
 
-        StatusAndDatesInfoLine(
-            airedOn = state.airedOn,
-            releasedOn = state.releasedOn,
-            status = state.status
-        )
+        InfoLine(
+            icon = { Icon(imageVector = ShikimoriIcons.CalendarToday, contentDescription = null) },
+        ) {
+            EntryInfoStatusAndDatesText(
+                entryStatus = state.status,
+                airedOn = state.airedOn,
+                releasedOn = state.releasedOn
+            )
+        }
 
         if (!state.publishers.isNullOrEmpty()) {
             PublishersInfoLine(
@@ -55,25 +68,6 @@ fun MangaInformation(
             GenresInfoLine(
                 genres = state.genres,
                 onGenreClick = onGenreClick
-            )
-        }
-    }
-}
-
-@Composable
-private fun KindAndVolumeInfoLine(state: DetailsUiState.Success) {
-    val kind = mangaKindString(mangaKind = checkNotNull(state.mangaKind))
-    val chaptersAndVolumes = chaptersAndVolumesString(
-        volumes = state.volumes,
-        chapters = state.chapters
-    )
-
-    if (kind != null || chaptersAndVolumes != null) {
-        InfoLine(
-            icon = { InfoIcon(imageVector = ShikimoriIcons.Book) }
-        ) {
-            Text(
-                text = listOfNotNull(kind, chaptersAndVolumes).joinToString(separator = ",")
             )
         }
     }

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.pager.HorizontalPager
@@ -217,8 +216,7 @@ private fun LazyListScope.animeOngoingCarousel(
     item {
         AnimeCarousel(
             anime = ongoingAnime,
-            onClick = onAnimeClick,
-            itemModifier = Modifier.width(148.dp)
+            onClick = onAnimeClick
         )
     }
 }
@@ -238,23 +236,9 @@ private fun LazyListScope.inProgressUserRatesPager(
             key = { userRates[it].userRate.id },
             modifier = modifier
         ) {
-            val userRateWithEntry = userRates[it]
             UserRateEntryCard(
                 userRateWithEntry = userRates[it],
-                onClick = {
-                    if (userRateWithEntry.anime != null) {
-                        onEntryClick(
-                            EntryType.Anime,
-                            userRateWithEntry.anime!!.id
-                        )
-                    } else {
-                        onEntryClick(
-                            EntryType.Manga,
-                            userRateWithEntry.manga!!.id
-                        )
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
+                onClick = { type, id -> onEntryClick(type, id) }
             )
         }
     }

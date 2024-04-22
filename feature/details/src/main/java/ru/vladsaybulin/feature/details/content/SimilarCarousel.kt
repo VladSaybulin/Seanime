@@ -10,8 +10,8 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.SimilarEntry
+import ru.vladsaybulin.model.common.EntryType
 import kotlin.math.min
 
 @Composable
@@ -61,7 +61,7 @@ private fun SimilarEntryCard(
 ) {
     EntryGridItem(
         name = entry.run { russianName ?: originalName },
-        poster = entry.poster,
+        imageUrl = entry.poster?.previewUrl,
         onClick = onClick,
         modifier = modifier.width(SimilarCardWidth),
         nameTextStyle = ShikimoriTheme.typography.labelSmall

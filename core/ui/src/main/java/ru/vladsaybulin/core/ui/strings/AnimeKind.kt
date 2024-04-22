@@ -21,5 +21,5 @@ fun animeKindStringResId(kind: AnimeKind): Int? = when (kind) {
 
 @Composable
 @ReadOnlyComposable
-fun animeKindString(animeKind: AnimeKind): String? =
-    animeKindStringResId(animeKind)?.let { stringResource(id = it) }
+fun animeKindString(animeKind: AnimeKind): String =
+    animeKindStringResId(animeKind)?.let { stringResource(id = it) } ?: animeKind.name

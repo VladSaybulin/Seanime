@@ -14,7 +14,7 @@ fun CharacterCard(
 ) {
     EntryGridItem(
         name = character.run { russianName ?: originalName },
-        poster = character.poster,
+        imageUrl = character.poster?.previewUrl,
         onClick = onClick,
         modifier = modifier,
         nameTextStyle = ShikimoriTheme.typography.labelSmall

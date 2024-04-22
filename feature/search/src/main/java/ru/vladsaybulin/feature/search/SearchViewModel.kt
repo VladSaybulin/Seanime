@@ -182,7 +182,7 @@ class SearchViewModel @Inject constructor(
         debouncedSearchJob = viewModelScope.launch {
             delay(DebounceSearchQueryMs)
             searchParams.emit(searchParams.value.copy(searchQuery = searchQuery))
-        }
+        }.also { it.invokeOnCompletion { debouncedSearchJob = null } }
     }
 
     fun onSearchTriggered(searchQuery: String) {

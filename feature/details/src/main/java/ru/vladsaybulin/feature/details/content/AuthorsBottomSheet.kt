@@ -53,11 +53,9 @@ private fun AuthorsBottomSheetContent(
         ) { (person, _, russianRoles) ->
             EntryListItem(
                 name = person.russianName ?: person.originalName,
-                poster = person.poster,
+                imageUrl = person.poster?.previewUrl,
                 onClick = { onAuthorClick(person.id) },
-                detailsContent = {
-                    Text(text = russianRoles.joinToString(separator = ", "))
-                }
+                metadata = { Text(text = russianRoles.joinToString(separator = ", ")) }
             )
         }
     }
