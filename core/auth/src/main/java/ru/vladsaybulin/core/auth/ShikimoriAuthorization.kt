@@ -18,8 +18,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers
 import ru.vladsaybulin.common.network.di.ApplicationScope
-import ru.vladsaybulin.core.auth.ShikimoriAuthState.Error
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
+import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -100,10 +100,10 @@ class ShikimoriAuthorization @Inject internal constructor(
         }
     }
 
-    private fun getCurrentState() = when {
+    private fun getCurrentState(): ShikimoriAuthState = when {
         appAuthState.isAuthorized -> ShikimoriAuthState.Authorized
         appAuthState.authorizationException == null -> ShikimoriAuthState.NotAuthorized
-        else -> Error(appAuthState.authorizationException!!)
+        else -> ShikimoriAuthState.Error(appAuthState.authorizationException!!)
     }
 
     companion object {
