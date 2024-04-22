@@ -104,7 +104,7 @@
     <string name="core_ui_metadata_year">%1$d г.</string>
     <string name="core_ui_anime_info_kind_episodes_duration">%1$s • %2$s • %3$s</string>
     <string name="core_ui_anime_info_kind_episodes_by_duration">%1$s • %2$s эп. по %3$s</string>
-    <string name="core_ui_anime_info_episodes_of_episodes">%1$s/%1$s эп.</string>
+    <string name="core_ui_anime_info_episodes_of_episodes">%1$s/%2$s эп.</string>
     <string name="core_ui_anime_info_episodes_of_unknown_episodes">%1$d/? эп.</string>
     <string name="core_ui_anime_info_episodes">%1$d эп.</string>
     <string name="core_ui_anime_info_duration_hours_minutes">%1$s %2$s</string>
