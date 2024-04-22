@@ -21,4 +21,6 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:datastore"))
     api(libs.appauth)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 }

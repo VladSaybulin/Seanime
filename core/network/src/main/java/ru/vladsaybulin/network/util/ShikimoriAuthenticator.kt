@@ -4,18 +4,18 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
-import ru.vladsaybulin.core.auth.ShikimoriAuthState
+import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import javax.inject.Inject
 
 class ShikimoriAuthenticator @Inject constructor(
-    private val authState: ShikimoriAuthState
+    private val authorization: ShikimoriAuthorization
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.code != 401) return null
-        val freshAccessToken = authState.accessToken ?: return null
+        val freshAccessToken = authorization.accessToken ?: return null
         val tokenFromResponse = response.request.getAccessToken() ?: return null
         if (freshAccessToken == tokenFromResponse) {
-            authState.onLogout()
+            authorization.signOut()
             return response.request.newBuilder()
                 .removeAuthorizationHeader()
                 .build()

@@ -1,22 +1,18 @@
 package ru.vladsaybulin.data.repository
 
 import ru.vladsaybulin.core.auth.ShikimoriAuthState
+import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import ru.vladsaybulin.database.ShikiDatabase
-import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
-import ru.vladsaybulin.network.datasource.AuthDataSource
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
-    private val authState: ShikimoriAuthState,
-    private val database: ShikiDatabase,
-    private val authDataSource: AuthDataSource,
-    private val shikiPreferences: ShikiPreferencesDataSource
+    private val authorization: ShikimoriAuthorization,
+    private val database: ShikiDatabase
 ) {
-    fun isAuthorized() = authState.isAuthorized
+    fun isAuthorized() = authorization.authState.value == ShikimoriAuthState.Authorized
 
     suspend fun logOut() {
-        authDataSource.signOut()
-        authState.onLogout()
+        authorization.signOut()
         database.userRateDao.deleteAll()
     }
 }

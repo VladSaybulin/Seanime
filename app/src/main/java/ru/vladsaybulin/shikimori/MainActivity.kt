@@ -8,7 +8,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import dagger.hilt.android.AndroidEntryPoint
 import ru.vladsaybulin.core.auth.AuthorizationLauncher
-import ru.vladsaybulin.core.auth.ShikimoriAuthState
+import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import ru.vladsaybulin.core.auth.launch
 import ru.vladsaybulin.core.auth.registerAuthorizationLauncher
 import ru.vladsaybulin.shikimori.ui.ShikimoriApp
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject lateinit var authState: ShikimoriAuthState
+    @Inject lateinit var authorization: ShikimoriAuthorization
 
     private lateinit var authorizationLauncher: AuthorizationLauncher
 
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        authorizationLauncher = registerAuthorizationLauncher(authState)
+        authorizationLauncher = registerAuthorizationLauncher(authorization)
 
         enableEdgeToEdge()
 

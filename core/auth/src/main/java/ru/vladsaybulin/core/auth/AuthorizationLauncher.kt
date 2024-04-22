@@ -17,24 +17,17 @@ import net.openid.appauth.ResponseTypeValues
 typealias AuthorizationLauncher = ActivityResultLauncher<Unit>
 
 fun ComponentActivity.registerAuthorizationLauncher(
-    shikimoriAuthState: ShikimoriAuthState
+    shikimoriAuthorization: ShikimoriAuthorization
 ): AuthorizationLauncher = registerForActivityResult(
-    AuthorizationContract(
-        checkNotNull(shikimoriAuthState.authState.authorizationServiceConfiguration)
-    ),
-    AuthorizationCallback(shikimoriAuthState)
+    AuthorizationContract(ShikimoriAuthorizationServiceConfiguration),
+    AuthorizationCallback(shikimoriAuthorization)
 )
 
 fun AuthorizationLauncher.launch() = launch(Unit)
 
-private data class AuthResult(
-    val response: AuthorizationResponse?,
-    val exception: AuthorizationException?
-)
-
 private class AuthorizationContract(
     private val authorizationConfig: AuthorizationServiceConfiguration,
-) : ActivityResultContract<Unit, AuthResult?>() {
+) : ActivityResultContract<Unit, AuthorizationResult?>() {
     override fun createIntent(context: Context, input: Unit): Intent {
         val request = AuthorizationRequest.Builder(
             authorizationConfig,
@@ -48,9 +41,9 @@ private class AuthorizationContract(
         return AuthorizationService(context).getAuthorizationRequestIntent(request)
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): AuthResult? {
+    override fun parseResult(resultCode: Int, intent: Intent?): AuthorizationResult? {
         if (intent == null) return null
-        return AuthResult(
+        return AuthorizationResult(
             AuthorizationResponse.fromIntent(intent),
             AuthorizationException.fromIntent(intent)
         )
@@ -58,29 +51,12 @@ private class AuthorizationContract(
 }
 
 private class AuthorizationCallback(
-    private val shikimoriAuthState: ShikimoriAuthState
-) : ActivityResultCallback<AuthResult?> {
+    private val shikimoriAuthorization: ShikimoriAuthorization
+) : ActivityResultCallback<AuthorizationResult?> {
 
-    override fun onActivityResult(result: AuthResult?) {
+    override fun onActivityResult(result: AuthorizationResult?) {
         if (result == null) return
-
-        if (result.response == null) {
-            shikimoriAuthState.onAuthorizationFailed(checkNotNull(result.exception))
-            return
-        }
-
-        val tokenExchangeRequest = result.response.createTokenExchangeRequest(
-            mapOf(UserAgent, ClientSecret)
-        )
-
-        shikimoriAuthState.service.performTokenRequest(tokenExchangeRequest) { tokenResponse, tokenException ->
-            if (tokenResponse == null) {
-                shikimoriAuthState.onTokenExchangeFailed(requireNotNull(tokenException))
-                return@performTokenRequest
-            }
-
-            shikimoriAuthState.onLogin(tokenResponse)
-        }
+        shikimoriAuthorization.onAuthorizationResult(result)
     }
 }
 
