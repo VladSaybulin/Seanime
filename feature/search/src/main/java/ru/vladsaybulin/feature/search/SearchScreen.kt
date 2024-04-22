@@ -473,7 +473,7 @@ private fun SearchAnimeQuickResult(
     val items = searchAnimeResult.collectAsLazyPagingItems()
     if (items.itemCount > 0) {
         AnimeGrid(
-            items = items.itemSnapshotList.subList(0, FastSearchSize).filterNotNull(),
+            items = items.itemSnapshotList.subList(0, QuickSearchSize).filterNotNull(),
             onEntryClick = { onAnimeClick(it.anime) },
             modifier = Modifier.fillMaxSize()
         )
@@ -486,10 +486,12 @@ private fun SearchMangaQuickResult(
     onMangaClick: (Manga) -> Unit
 ) {
     val items = searchMangaResult.collectAsLazyPagingItems()
+    val subList = items.itemSnapshotList.subList(0, QuickSearchSize.coerceAtMost(items.itemCount))
+        .filterNotNull()
 
     if (items.itemCount > 0) {
         MangaGrid(
-            items = items.itemSnapshotList.subList(0, FastSearchSize).filterNotNull(),
+            items = subList,
             onEntryClick = { onMangaClick(it.manga) },
             modifier = Modifier.fillMaxSize()
         )
@@ -549,7 +551,7 @@ private fun statusTitleText(entryStatus: EntryStatus) = stringResource(
 )
 
 
-private val FastSearchSize = 10
+private val QuickSearchSize = 20
 
 private val ControlPanelMinWidth: Dp = 360.dp
 private val ControlPanelMaxWidth: Dp = 720.dp
