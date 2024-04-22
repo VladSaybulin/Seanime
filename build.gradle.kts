@@ -12,5 +12,7 @@ plugins {
     alias(libs.plugins.androidx.room) apply false
     alias(libs.plugins.apollo.graphql) apply false
     alias(libs.plugins.secrets) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.google.firebase.crashlytics) apply false
 }
 true // Needed to make the Suppress annotation work for the plugins block

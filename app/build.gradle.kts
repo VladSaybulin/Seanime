@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.shikimori.android.application)
     alias(libs.plugins.shikimori.android.application.compose)
     alias(libs.plugins.shikimori.android.hilt)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -34,6 +36,7 @@ android {
             versionNameSuffix = "-debug"
 
             resValue("string", "app_name", "Shikimori [DEBUG]")
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = false
         }
 
         release {
@@ -43,6 +46,7 @@ android {
                 "proguard-rules.pro"
             )
 
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = true
             signingConfig = buildTypes.getAt("debug").signingConfig
         }
     }
@@ -80,5 +84,9 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.analytics)
+    implementation(libs.google.firebase.crashlytics)
 
 }
