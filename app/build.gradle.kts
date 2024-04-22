@@ -32,6 +32,8 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
+
+            resValue("string", "app_name", "Shikimori [DEBUG]")
         }
 
         release {
