@@ -15,6 +15,7 @@ import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
+import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.manga.MangaKind
@@ -23,6 +24,7 @@ import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedEntry
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 sealed class DetailsUiState {
     data object Loading : DetailsUiState()
@@ -53,6 +55,8 @@ sealed class DetailsUiState {
         val descriptionHtml: String?,
         val descriptionSource: String?,
         val authors: ImmutableList<PersonWithRoles>?,
+        val scoreStatisticsItems: List<StatisticsItem<Int>>?,
+        val userRateStatusStatisticItems: List<StatisticsItem<UserRateStatus>>?,
         val related: ImmutableList<RelatedEntry>?,
         val characters: ImmutableList<CharacterWithRole>?,
         val screenshots: ImmutableList<Image>?,
@@ -86,6 +90,8 @@ private fun EntryDetails.animeDetailsToUiState() = with(anime!!) {
         descriptionHtml = descriptionHtml,
         descriptionSource = descriptionSource,
         authors = authors?.toImmutableList(),
+        scoreStatisticsItems = scoreStats,
+        userRateStatusStatisticItems = userRateStatusStats?.filter { it.count > 0 },
         characters = characters?.toImmutableList(),
         related = related?.toImmutableList(),
         screenshots = screenshots.toImmutableList(),
@@ -120,6 +126,8 @@ private fun EntryDetails.mangaDetailsToUiState() = with(manga!!) {
         descriptionHtml = descriptionHtml,
         descriptionSource = descriptionSource,
         authors = authors?.toImmutableList(),
+        scoreStatisticsItems = scoreStats ?: emptyList(),
+        userRateStatusStatisticItems = userRateStatusStats?.filter { it.count > 0 },
         characters = characters?.toImmutableList(),
         related = related?.toImmutableList(),
         similar = similarEntries.toImmutableList(),

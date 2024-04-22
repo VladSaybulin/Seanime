@@ -51,6 +51,8 @@ import ru.vladsaybulin.feature.details.content.mangaInformation
 import ru.vladsaybulin.feature.details.content.name
 import ru.vladsaybulin.feature.details.content.poster
 import ru.vladsaybulin.feature.details.content.relatedItems
+import ru.vladsaybulin.feature.details.content.score
+import ru.vladsaybulin.feature.details.content.userRateStatusDiagram
 import ru.vladsaybulin.feature.details.model.getUserRateWithEntry
 import ru.vladsaybulin.model.common.EntryStatus.Anons
 import ru.vladsaybulin.model.common.EntryType
@@ -277,6 +279,14 @@ private fun DetailsContent(
                         onShowAllClick = { showAllAuthors = true }
                     )
                 }
+            }
+
+            if (state.score > 0f) {
+                score(state.score, state.scoreStatisticsItems ?: emptyList())
+            }
+
+            if (!state.userRateStatusStatisticItems.isNullOrEmpty()) {
+                userRateStatusDiagram(state.userRateStatusStatisticItems)
             }
 
             if (!state.related.isNullOrEmpty()) {
