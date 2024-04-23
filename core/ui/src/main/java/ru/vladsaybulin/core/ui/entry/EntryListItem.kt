@@ -205,7 +205,7 @@ class EntryListItemMeasurePolicy(
         return layout(constraints.minWidth, height) {
             imagePlaceable.placeRelative(imageOffset)
             userRateStatusPlaceable?.placeRelative(
-                x = imageOffset.x + imageHeight - userRateStatusSizePx,
+                x = imageOffset.x + imageWidth - userRateStatusSizePx,
                 y = imageOffset.y
             )
 

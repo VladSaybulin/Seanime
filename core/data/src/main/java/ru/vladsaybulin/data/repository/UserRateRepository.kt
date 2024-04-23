@@ -15,9 +15,9 @@ import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.CreateUserRateDto
-import ru.vladsaybulin.data.model.asPOJO
-import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asDto
+import ru.vladsaybulin.data.model.asEntity
+import ru.vladsaybulin.data.model.asPOJO
 import ru.vladsaybulin.data.model.userRateDboShell
 import ru.vladsaybulin.data.util.AbstractShikimoriRemoteMediator
 import ru.vladsaybulin.database.ShikiDatabase
@@ -68,7 +68,7 @@ class UserRateRepository @Inject constructor(
         config: PagingConfig = DefaultUserRatePagingConfig
     ) = getPagedUserRates(
         config = config,
-        pagingSourceFactory = { database.userRateDao.getPagedAnimeUserRates(status) },
+        pagingSourceFactory = { database.userRateDao.getPagedMangaUserRates(status) },
         load = { pageNumber, pageSize ->
             userRateDataSource.getMangaUserRates(
                 page = pageNumber,

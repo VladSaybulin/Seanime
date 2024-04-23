@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_list_title">Списки</string>
+    <string name="feature_list_authorization">Авторизация</string>
+    <string name="feature_list_authorization_description">Для того, чтобы добавлять и изменять свой список тайтлов, тебе необходимо войти в учётную запись Shikimori</string>
+    <string name="feature_list_sign_in">Войти</string>
+    <string name="feature_list_authorization_error">Ошибка во время авторизации</string>
+    <string name="feature_list_authorization_error_description">При входе в аккаунт произошла ошибка. Попробуй снова</string>
+    <string name="feature_list_refresh_error">Ошибка</string>
+    <string name="feature_list_refresh_error_description">При загрузке списка произошла ошибка</string>
 </resources>

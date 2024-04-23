@@ -41,19 +41,21 @@ fun NavController.navigateToList(
 
 fun NavGraphBuilder.listGraph(
     onEntryClick: (EntryDetailsArgs) -> Unit,
+    onSignIn: () -> Unit,
     nested: NavGraphBuilder.() -> Unit
 ) {
     navigation(
         startDestination = "$MY_LIST_GRAPH_ROUTE/$LIST_SCREEN_ROUTE?$RouteArguments",
         route = MY_LIST_GRAPH_ROUTE
     ) {
-        listScreen(onEntryClick)
+        listScreen(onEntryClick, onSignIn)
         nested()
     }
 }
 
 fun NavGraphBuilder.listScreen(
-    onEntryClick: (EntryDetailsArgs) -> Unit
+    onEntryClick: (EntryDetailsArgs) -> Unit,
+    onSignIn: () -> Unit,
 ) {
     composable(
         route = "${withParentGraphRoute(LIST_SCREEN_ROUTE)}?$RouteArguments",
@@ -71,7 +73,8 @@ fun NavGraphBuilder.listScreen(
         )
     ) {
         MyListRoute(
-            onEntryClick = onEntryClick
+            onEntryClick = onEntryClick,
+            onSignIn = onSignIn
         )
     }
 }

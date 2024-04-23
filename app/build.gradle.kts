@@ -36,7 +36,7 @@ android {
             versionNameSuffix = "-debug"
 
             resValue("string", "app_name", "Shikimori [DEBUG]")
-            manifestPlaceholders["crashlyticsCollectionEnabled"] = false
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = true
         }
 
         release {

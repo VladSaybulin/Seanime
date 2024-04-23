@@ -61,7 +61,8 @@ fun ShikimoriApp(
                         onShowImage = {
                             imageViewViewModel.setImages(it)
                             appState.navController.navigateToImageView()
-                        }
+                        },
+                        onSignIn = signIn
                     )
 
                     androidx.compose.animation.AnimatedVisibility(

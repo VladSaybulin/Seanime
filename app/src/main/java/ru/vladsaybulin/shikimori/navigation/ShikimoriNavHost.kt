@@ -27,6 +27,7 @@ fun ShikimoriNavHost(
     startDestination: String = TopLevelDestination.HOME.graphRoute,
     onShowUserRate: (UserRateWithEntry) -> Unit,
     onShowImage: (ImageViewArgs) -> Unit,
+    onSignIn: () -> Unit,
     onShowRequireAuthDialog: () -> Unit,
 ) {
     val navController = shikimoriAppState.navController
@@ -41,6 +42,7 @@ fun ShikimoriNavHost(
             onShowRequireAuthDialog = onShowRequireAuthDialog,
             onShowUserRate = onShowUserRate,
             onShowImage = onShowImage,
+            onSignIn = onSignIn,
             onBackClick = navController::navigateUp
         )
     }
@@ -68,7 +70,8 @@ fun ShikimoriNavHost(
 
         listGraph(
             onEntryClick = navController::navigateToEntryDetails,
-            nested = { nested(TopLevelDestination.LIST) }
+            nested = { nested(TopLevelDestination.LIST) },
+            onSignIn = onSignIn
         )
 
         imageViewScreen(
@@ -87,6 +90,7 @@ private fun NavGraphBuilder.nestedScreens(
     onShowRequireAuthDialog: () -> Unit,
     onShowUserRate: (UserRateWithEntry) -> Unit,
     onShowImage: (ImageViewArgs) -> Unit,
+    onSignIn: () -> Unit,
     onBackClick: () -> Unit,
 ) {
     detailsScreen(
@@ -105,6 +109,9 @@ private fun NavGraphBuilder.nestedScreens(
     }
 
     if (topLevelDestination != TopLevelDestination.LIST) {
-        listScreen(onEntryClick)
+        listScreen(
+            onEntryClick = onEntryClick,
+            onSignIn = onSignIn
+        )
     }
 }

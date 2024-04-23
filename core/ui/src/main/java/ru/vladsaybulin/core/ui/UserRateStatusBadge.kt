@@ -49,7 +49,6 @@ object UserRateStatusBadgeDefaults {
 
     @Composable
     fun topEndShape(from: CornerBasedShape = ShikimoriTheme.shapes.medium) = from.copy(
-        topEnd = ZeroCornerSize,
         bottomEnd = ZeroCornerSize,
         topStart = ZeroCornerSize
     )
