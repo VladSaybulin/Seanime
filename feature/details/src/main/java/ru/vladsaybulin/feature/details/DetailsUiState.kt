@@ -5,8 +5,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.core.navigation.args.ImageViewArgs
 import ru.vladsaybulin.core.navigation.args.SearchArgs
-import ru.vladsaybulin.model.EntryDetails
-import ru.vladsaybulin.model.SimilarEntry
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.anime.Video
@@ -18,6 +18,8 @@ import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.model.person.PersonWithRoles
@@ -61,15 +63,17 @@ sealed class DetailsUiState {
         val characters: ImmutableList<CharacterWithRole>?,
         val screenshots: ImmutableList<Image>?,
         val videos: ImmutableList<Video>?,
-        val similar: ImmutableList<SimilarEntry>,
+        val similarAnime: ImmutableList<Anime>?,
+        val similarManga: ImmutableList<Manga>?,
         val userRate: UserRate?
     ) : DetailsUiState()
 }
 
-internal fun EntryDetails.toUiState(): DetailsUiState =
-    if (anime != null) animeDetailsToUiState() else mangaDetailsToUiState()
-
-private fun EntryDetails.animeDetailsToUiState() = with(anime!!) {
+fun DetailsUiState.successAnime(
+    animeDetails: AnimeDetails,
+    similarAnime: List<Anime>?,
+    userRate: UserRate?
+) = with(animeDetails) {
     DetailsUiState.Success(
         entryType = EntryType.Anime,
         entryId = id,
@@ -96,18 +100,23 @@ private fun EntryDetails.animeDetailsToUiState() = with(anime!!) {
         related = related?.toImmutableList(),
         screenshots = screenshots.toImmutableList(),
         videos = videos?.toImmutableList(),
-        similar = similarEntries.toImmutableList(),
+        similarAnime = similarAnime?.toImmutableList(),
         userRate = userRate,
 
         //Manga only fields
         chapters = 0,
         volumes = 0,
         mangaKind = null,
-        publishers = null
+        publishers = null,
+        similarManga = null
     )
 }
 
-private fun EntryDetails.mangaDetailsToUiState() = with(manga!!) {
+fun DetailsUiState.successManga(
+    mangaDetails: MangaDetails,
+    similarManga: List<Manga>?,
+    userRate: UserRate?
+) = with(mangaDetails) {
     DetailsUiState.Success(
         entryType = EntryType.Manga,
         entryId = id,
@@ -130,7 +139,7 @@ private fun EntryDetails.mangaDetailsToUiState() = with(manga!!) {
         userRateStatusStatisticItems = userRateStatusStats?.filter { it.count > 0 },
         characters = characters?.toImmutableList(),
         related = related?.toImmutableList(),
-        similar = similarEntries.toImmutableList(),
+        similarManga = similarManga?.toImmutableList(),
         userRate = userRate,
 
         //Anime only fields
@@ -142,6 +151,7 @@ private fun EntryDetails.mangaDetailsToUiState() = with(manga!!) {
         studios = null,
         screenshots = null,
         videos = null,
+        similarAnime = null
     )
 }
 
