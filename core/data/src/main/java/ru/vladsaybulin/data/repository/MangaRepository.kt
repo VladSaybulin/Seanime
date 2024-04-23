@@ -65,10 +65,10 @@ class MangaRepository @Inject constructor(
         }.flowOn(ioDispatcher)
     }
 
-    fun getAnimeDetailsUserRate(animeId: Long) =
+    fun getMangaDetailsUserRate(animeId: Long) =
         userRateDao.getAnimeUserRate(animeId).map { it?.asUserRate() }
 
-    fun getSimilarAnimes(animeId: Long): Flow<List<Manga>> =
+    fun getSimilarMangas(animeId: Long): Flow<List<Manga>> =
         flowOf {
             mangaDataSource.getSimilarManga(animeId).map { it.asExternalModel() }
         }.flowOn(ioDispatcher)
