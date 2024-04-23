@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.IntState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,9 +58,9 @@ fun FiltersBottomSheet(
     onApplyFilters: (AppliedFilters) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val closeSheet = {
+    val closeSheet: () -> Unit = {
         coroutineScope.launch {
             sheetState.hide()
         }.invokeOnCompletion { onDismissRequest() }
@@ -70,17 +68,14 @@ fun FiltersBottomSheet(
 
     ShikimoriModalBottomSheet(
         onDismissRequest = {
-            filtersState.cancelChanges()
+            onApplyFilters(filtersState.getAppliedFilters())
             onDismissRequest()
         },
         sheetState = sheetState
     ) {
         FiltersContent(
             filtersState = filtersState,
-            onApplyFilters = {
-                onApplyFilters(it)
-                closeSheet()
-            }
+            onDismissRequest = closeSheet
         )
     }
 }
@@ -88,7 +83,7 @@ fun FiltersBottomSheet(
 @Composable
 fun FiltersContent(
     filtersState: FiltersState,
-    onApplyFilters: (AppliedFilters) -> Unit
+    onDismissRequest: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -188,6 +183,13 @@ fun FiltersContent(
                 )
             }
 
+            mayBeDivider()
+            filterHeader(headerTextId = R.string.core_ui_filter_header_score)
+            scoreFilter(
+                selected = filtersState.selectedMinScoreState,
+                onScoreChange = filtersState::changeMinScore
+            )
+
             if (!filtersState.demographicOptions.isNullOrEmpty()) {
                 mayBeDivider()
                 filterHeader(headerTextId = R.string.core_ui_filter_header_demographic)
@@ -220,26 +222,21 @@ fun FiltersContent(
                     }
                 )
             }
-
-            mayBeDivider()
-            filterHeader(headerTextId = R.string.core_ui_filter_header_score)
-            scoreFilter(
-                selected = filtersState.selectedMinScoreState,
-                onScoreChange = filtersState::changeMinScore
-            )
         }
-        Button(
-            onClick = { onApplyFilters(filtersState.getAppliedFilters()) },
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .align(Alignment.CenterHorizontally)
+
+        TextButton(
+            onClick = {
+                filtersState.cancelChanges()
+                onDismissRequest()
+            },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
         ) {
-            Text(text = stringResource(id = R.string.core_ui_apply))
+            Text(text = stringResource(id = R.string.core_ui_cancel))
         }
 
         TextButton(
             onClick = { filtersState.resetAll() },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.core_ui_reset),
@@ -408,7 +405,7 @@ fun FiltersContentPreview() {
                     ),
                     appliedFilters = mapOf(FilterType.Score to mapOf("7" to OptionValue.Selected))
                 ),
-                onApplyFilters = {}
+                onDismissRequest = { }
             )
         }
     }

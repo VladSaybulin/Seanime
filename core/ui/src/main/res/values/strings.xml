@@ -120,6 +120,7 @@
     <string name="core_ui_info_dates_range">с %1$s по %2$s</string>
     <string name="core_ui_info_dates_from">с %1$s</string>
     <string name="core_ui_error_retry">Повторить</string>
+    <string name="core_ui_cancel">Отменить</string>
     <plurals name="core_ui_anime_info_duration_hours">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>
