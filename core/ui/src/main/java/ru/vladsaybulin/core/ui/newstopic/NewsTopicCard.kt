@@ -90,7 +90,8 @@ fun NewsResourceHeaderImage(
             .fillMaxWidth()
             .aspectRatio(16 / 9f)
             .clip(RoundedCornerShape(16.dp)),
-        contentDescription = null
+        contentDescription = null,
+        alignment = Alignment.TopCenter
     )
 }
 
