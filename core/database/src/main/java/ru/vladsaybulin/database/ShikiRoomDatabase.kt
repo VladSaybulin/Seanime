@@ -3,7 +3,6 @@ package ru.vladsaybulin.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.room.withTransaction
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.AnimeDetailsDao
 import ru.vladsaybulin.database.dao.CalendarDao
@@ -68,7 +67,6 @@ import ru.vladsaybulin.database.utils.TopicLinkedTypeTypeConverter
 import ru.vladsaybulin.database.utils.TopicTypeTypeConverter
 import ru.vladsaybulin.database.utils.UserRateTypeConverter
 import ru.vladsaybulin.database.utils.VideoKindTypeConverter
-import javax.inject.Inject
 
 @Database(
     entities = [
@@ -162,34 +160,4 @@ abstract class ShikiRoomDatabase : RoomDatabase() {
 
     abstract fun ongoingAnimeDao(): OngoingAnimeDao
 
-}
-
-class ShikiDatabase @Inject constructor(private val database: ShikiRoomDatabase) {
-
-    val animeDao: AnimeDao
-        get() = database.animeDao()
-
-    val mangaDao: MangaDao
-        get() = database.mangaDao()
-
-    val calendarDao: CalendarDao
-        get() = database.calendarDao()
-
-    val userRateDao: UserRateDao
-        get() = database.userRateDao()
-
-    val topicsDao: TopicsDao
-        get() = database.topicsDao()
-
-    val usersDao: UsersDao
-        get() = database.usersDao()
-
-    val ongoingAnimeDao: OngoingAnimeDao
-        get() = database.ongoingAnimeDao()
-
-    val recentSearchQueriesDao: RecentSearchQueriesDao
-        get() = database.recentSearchQueriesDao()
-
-    suspend fun <R> withTransaction(block: suspend () -> R): R =
-        database.withTransaction(block)
 }

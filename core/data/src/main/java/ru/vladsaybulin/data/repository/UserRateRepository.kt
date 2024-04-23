@@ -20,7 +20,10 @@ import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asPOJO
 import ru.vladsaybulin.data.model.userRateDboShell
 import ru.vladsaybulin.data.util.AbstractShikimoriRemoteMediator
-import ru.vladsaybulin.database.ShikiDatabase
+import ru.vladsaybulin.database.DatabaseTransactionRunner
+import ru.vladsaybulin.database.dao.AnimeDao
+import ru.vladsaybulin.database.dao.MangaDao
+import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRateDbo
@@ -39,12 +42,15 @@ import javax.inject.Inject
 
 class UserRateRepository @Inject constructor(
     private val userRateDataSource: UserRateDataSource,
-    private val database: ShikiDatabase,
+    private val userRateDao: UserRateDao,
+    private val animeDao: AnimeDao,
+    private val mangaDao: MangaDao,
+    private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val userRepository: UserRepository,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     fun getLastInProgressUserRates(): Flow<List<UserRateWithEntry>> =
-        database.userRateDao.getLastInProgressUserRates(10)
+        userRateDao.getLastInProgressUserRates(10)
             .map { it.map(PopulatedUserRateDbo::asExternalModel) }
             .flowOn(ioDispatcher)
 
@@ -53,7 +59,7 @@ class UserRateRepository @Inject constructor(
         config: PagingConfig = DefaultUserRatePagingConfig
     ) = getPagedUserRates(
         config = config,
-        pagingSourceFactory = { database.userRateDao.getPagedAnimeUserRates(status) },
+        pagingSourceFactory = { userRateDao.getPagedAnimeUserRates(status) },
         load = { pageNumber, pageSize ->
             userRateDataSource.getAnimeUserRates(
                 page = pageNumber,
@@ -68,7 +74,7 @@ class UserRateRepository @Inject constructor(
         config: PagingConfig = DefaultUserRatePagingConfig
     ) = getPagedUserRates(
         config = config,
-        pagingSourceFactory = { database.userRateDao.getPagedMangaUserRates(status) },
+        pagingSourceFactory = { userRateDao.getPagedMangaUserRates(status) },
         load = { pageNumber, pageSize ->
             userRateDataSource.getMangaUserRates(
                 page = pageNumber,
@@ -80,13 +86,13 @@ class UserRateRepository @Inject constructor(
 
     suspend fun createUserRate(userRateValues: UserRateValues, anime: Anime) {
         createUserRate(EntryType.Anime, anime.id, userRateValues) {
-            database.animeDao.insertOrReplaceAnimeEntity(anime.asPOJO())
+            animeDao.insertOrReplaceAnimeEntity(anime.asPOJO())
         }
     }
 
     suspend fun createUserRate(userRateValues: UserRateValues, manga: Manga) {
         createUserRate(EntryType.Manga, manga.id, userRateValues) {
-            database.mangaDao.insertOrReplaceManga(manga.asPOJO())
+            mangaDao.insertOrReplaceManga(manga.asPOJO())
         }
     }
 
@@ -94,7 +100,7 @@ class UserRateRepository @Inject constructor(
         withContext(ioDispatcher) {
             val response = userRateDataSource.updateUserRate(userRateId, userRateValues.asDto())
             if (response != null) {
-                database.userRateDao.insertOrReplaceUserRate(response.asPOJO())
+                userRateDao.insertOrReplaceUserRate(response.asPOJO())
             }
         }
     }
@@ -102,7 +108,7 @@ class UserRateRepository @Inject constructor(
     suspend fun deleteUserRate(userRateId: Long) {
         withContext(ioDispatcher) {
             userRateDataSource.deleteUSerRate(userRateId)
-            database.userRateDao.deleteUserRate(userRateId)
+            userRateDao.deleteUserRate(userRateId)
         }
     }
 
@@ -129,10 +135,10 @@ class UserRateRepository @Inject constructor(
                 throw exception
             }
             if (response != null) {
-                database.withTransaction {
+                databaseTransactionRunner {
                     onSaveEntity()
-                    database.userRateDao.insertOrReplaceUserRate(response.asPOJO())
-                    database.userRateDao.deleteOrderUserRateByStatus(userRateValues.status)
+                    userRateDao.insertOrReplaceUserRate(response.asPOJO())
+                    userRateDao.deleteOrderUserRateByStatus(userRateValues.status)
                 }
             }
         }
@@ -168,12 +174,12 @@ class UserRateRepository @Inject constructor(
                 }
 
                 if (loadType == LoadType.REFRESH) {
-                    database.userRateDao.deleteAllOrderedUserRates()
+                    userRateDao.deleteAllOrderedUserRates()
                 }
-                database.animeDao.insertOrReplaceAnimes(animes)
-                database.mangaDao.insertOrReplaceMangas(mangas)
-                database.userRateDao.insertOrReplaceUserRates(userRates)
-                database.userRateDao.insertUserRateOrder(order)
+                animeDao.insertOrReplaceAnimes(animes)
+                mangaDao.insertOrReplaceMangas(mangas)
+                userRateDao.insertOrReplaceUserRates(userRates)
+                userRateDao.insertUserRateOrder(order)
 
                 return MediatorResult.Success(endOfPaginationReached = userRates.size < pageSize)
             }

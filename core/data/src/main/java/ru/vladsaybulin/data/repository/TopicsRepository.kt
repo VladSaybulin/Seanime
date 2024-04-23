@@ -8,15 +8,19 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.json.Json
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.model.asPOJO
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.database.ShikiDatabase
+import ru.vladsaybulin.data.model.asPOJO
+import ru.vladsaybulin.database.DatabaseTransactionRunner
+import ru.vladsaybulin.database.dao.AnimeDao
+import ru.vladsaybulin.database.dao.MangaDao
+import ru.vladsaybulin.database.dao.TopicsDao
+import ru.vladsaybulin.database.dao.UsersDao
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
-import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.database.models.topic.PopulatedTopic
 import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.database.models.topic.asExternalModel
+import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.model.topic.Topic
 import ru.vladsaybulin.model.topic.TopicLinkedType
 import ru.vladsaybulin.network.datasource.TopicsDataSource
@@ -27,11 +31,15 @@ import javax.inject.Inject
 
 class TopicsRepository @Inject constructor(
     private val topicsDataSource: TopicsDataSource,
-    private val database: ShikiDatabase,
+    private val topicsDao: TopicsDao,
+    private val animeDao: AnimeDao,
+    private val mangaDao: MangaDao,
+    private val userDao: UsersDao,
+    private val databaseTransactionRunner: DatabaseTransactionRunner,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
     private val json: Json,
 ) {
-    fun getNewsTopics(): Flow<List<Topic>> = database.topicsDao.getNewsTopic()
+    fun getNewsTopics(): Flow<List<Topic>> = topicsDao.getNewsTopic()
         .onStart { refreshNewResources() }
         .map { topics -> topics.map(PopulatedTopic::asExternalModel) }
         .flowOn(ioDispatcher)
@@ -50,7 +58,7 @@ class TopicsRepository @Inject constructor(
 
         for (topic in freshTopics) {
 
-            val topicDbo = topic.asPOJO(
+            val topicDbo = topic.asEntity(
                 linkedAnimeId = if (topic.hasLinked() && topic.linkedIsAnime()) {
                     topic.decodeLinkedAnime(json)
                         .also { anime.add(it.asEntity()) }
@@ -66,18 +74,18 @@ class TopicsRepository @Inject constructor(
             topics.add(topicDbo)
         }
 
-        database.withTransaction {
+        databaseTransactionRunner {
             if (anime.isNotEmpty()) {
-                database.animeDao.insertOrReplaceAnimes(anime)
+                animeDao.insertOrReplaceAnimes(anime)
             }
             if (manga.isNotEmpty()) {
-                database.mangaDao.insertOrReplaceMangas(manga)
+                mangaDao.insertOrReplaceMangas(manga)
             }
             if (users.isNotEmpty()) {
-                database.usersDao.insertOrReplaceUserEntities(users)
+                userDao.insertOrReplaceUserEntities(users)
             }
             if (topics.isNotEmpty()) {
-                database.topicsDao.run {
+                topicsDao.run {
                     deleteAll()
                     insertTopicEntities(topics)
                 }

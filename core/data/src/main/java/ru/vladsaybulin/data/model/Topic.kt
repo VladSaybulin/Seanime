@@ -3,7 +3,7 @@ package ru.vladsaybulin.data.model
 import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.network.models.TopicDto
 
-fun TopicDto.asPOJO(
+fun TopicDto.asEntity(
     linkedAnimeId: Long? = null,
     linkedMangaId: Long? = null
 ) = TopicEntity(
