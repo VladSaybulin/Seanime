@@ -1,74 +1,61 @@
 package ru.vladsaybulin.feature.details.content
 
-import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
-import ru.vladsaybulin.core.ui.entry.EntryGridItem
+import ru.vladsaybulin.core.ui.anime.AnimeCarousel
+import ru.vladsaybulin.core.ui.manga.MangaCarousel
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.SimilarEntry
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.manga.Manga
 import kotlin.math.min
 
-@Composable
-fun SimilarCarousel(
-    similarEntries: List<SimilarEntry>,
-    onEntryClick: (EntryType, Long) -> Unit,
-    onShowAll: () -> Unit,
-    modifier: Modifier = Modifier,
+fun LazyListScope.similarAnimeCarousel(
+    animes: List<Anime>,
+    onShowAllClick: () -> Unit,
+    onAnimeClick: (Anime) -> Unit,
 ) {
-    val shownSimilarEntriesSize = min(similarEntries.size, MaxShownSimilarEntriesSize)
-    val showShowAll = shownSimilarEntriesSize < similarEntries.size
+    item(key = "anime_similar") {
+        val shownAnimes = min(animes.size, MaxShownSimilarEntriesSize)
+        val showShowAll = shownAnimes < animes.size
 
-    ContentWithClickableHeader(
-        headerText = {
-            ShowAllHeaderText(
-                headerText = stringResource(id = R.string.similar),
-                shouldShownShowAll = showShowAll
-            )
-        },
-        onClick = onShowAll,
-        enabled = showShowAll,
-        modifier = modifier
-    ) {
-        ShikimoriCarousel {
-            items(
-                count = shownSimilarEntriesSize,
-                key = {
-                    //Similar entries have the same EntryType, so the entryId is sufficient for the key
-                    similarEntries[it].entryId
-                }
-            ) {
-                val entry = similarEntries[it]
-                SimilarEntryCard(
-                    entry = entry,
-                    onClick = { onEntryClick(entry.entryType, entry.entryId) },
+        ContentWithClickableHeader(
+            headerText = {
+                ShowAllHeaderText(
+                    headerText = stringResource(id = R.string.similar),
+                    shouldShownShowAll = showShowAll,
                 )
-            }
+            },
+            onClick = onShowAllClick,
+            enabled = showShowAll
+        ) {
+            AnimeCarousel(anime = animes, onClick = onAnimeClick)
         }
     }
 }
 
-@Composable
-private fun SimilarEntryCard(
-    entry: SimilarEntry,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+fun LazyListScope.mangaSimilarCarousel(
+    mangas: List<Manga>,
+    onShowAllClick: () -> Unit,
+    onMangaClick: (Manga) -> Unit,
 ) {
-    EntryGridItem(
-        name = entry.run { russianName ?: originalName },
-        imageUrl = entry.poster?.previewUrl,
-        onClick = onClick,
-        modifier = modifier.width(SimilarCardWidth),
-        nameTextStyle = ShikimoriTheme.typography.labelSmall
-    )
+    item(key = "manga_similar") {
+        val shownMangas = min(mangas.size, MaxShownSimilarEntriesSize)
+        val showShowAll = shownMangas < mangas.size
 
-
+        ContentWithClickableHeader(
+            headerText = {
+                ShowAllHeaderText(
+                    headerText = stringResource(id = R.string.similar),
+                    shouldShownShowAll = showShowAll,
+                )
+            },
+            onClick = onShowAllClick,
+            enabled = showShowAll
+        ) {
+            MangaCarousel(manga = mangas, onClick = onMangaClick)
+        }
+    }
 }
 
 private const val MaxShownSimilarEntriesSize = 10
-private val SimilarCardWidth = 128.dp

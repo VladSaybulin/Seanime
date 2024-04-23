@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.shikimori.android.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -23,5 +24,7 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     implementation(libs.room.paging)
+
+    implementation(libs.kotlinx.serialization.json)
 
 }

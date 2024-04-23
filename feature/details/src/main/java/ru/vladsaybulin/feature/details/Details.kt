@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -27,13 +29,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.ImageViewArgs
 import ru.vladsaybulin.core.navigation.args.SearchArgs
-import ru.vladsaybulin.core.ui.FullScreenErrorMessage
+import ru.vladsaybulin.core.ui.ErrorMessageColumn
+import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
@@ -42,15 +46,19 @@ import ru.vladsaybulin.feature.details.content.Description
 import ru.vladsaybulin.feature.details.content.RelatedBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
+import ru.vladsaybulin.feature.details.content.SimilarAnimeBottomSheet
+import ru.vladsaybulin.feature.details.content.SimilarMangaBottomSheet
 import ru.vladsaybulin.feature.details.content.UserRateFab
 import ru.vladsaybulin.feature.details.content.UserRateStatusSelectionBottomSheet
 import ru.vladsaybulin.feature.details.content.VideosCarousel
 import ru.vladsaybulin.feature.details.content.animeInformation
 import ru.vladsaybulin.feature.details.content.mangaInformation
+import ru.vladsaybulin.feature.details.content.mangaSimilarCarousel
 import ru.vladsaybulin.feature.details.content.name
 import ru.vladsaybulin.feature.details.content.poster
 import ru.vladsaybulin.feature.details.content.relatedItems
 import ru.vladsaybulin.feature.details.content.score
+import ru.vladsaybulin.feature.details.content.similarAnimeCarousel
 import ru.vladsaybulin.feature.details.content.userRateStatusDiagram
 import ru.vladsaybulin.feature.details.model.getUserRateWithEntry
 import ru.vladsaybulin.model.common.EntryStatus.Anons
@@ -122,8 +130,15 @@ fun DetailsScreen(
     ) {
 
         when (uiState) {
-            is DetailsUiState.Error -> FullScreenErrorMessage(
-                throwable = uiState.throwable
+            is DetailsUiState.Error -> ErrorMessageColumn(
+                description = if (uiState.throwable.message != null) {
+                    { Text(uiState.throwable.message!!) }
+                } else null,
+                action = {
+                    TextButton(onClick = onRetry) {
+                        Text(text = stringResource(id = R.string.core_ui_error_retry))
+                    }
+                }
             )
 
             DetailsUiState.Loading -> DetailsLoading()
@@ -328,15 +343,21 @@ private fun DetailsContent(
                 }
             }
 
-//            if (state.()) {
-//                item(key = "similar") {
-//                    SimilarCarousel(
-//                        similarEntries = state.similar,
-//                        onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
-//                        onShowAll = { showAllSimilarEntries = true }
-//                    )
-//                }
-//            }
+            if (!state.similarAnime.isNullOrEmpty()) {
+                similarAnimeCarousel(
+                    animes = state.similarAnime,
+                    onShowAllClick = { showAllSimilarEntries = true },
+                    onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it.id)) }
+                )
+            }
+
+            if (!state.similarManga.isNullOrEmpty()) {
+                mangaSimilarCarousel(
+                    mangas = state.similarManga,
+                    onShowAllClick = { showAllSimilarEntries = true },
+                    onMangaClick = { onEntryClick(EntryDetailsArgs(EntryType.Manga, it.id)) }
+                )
+            }
         }
 
         if (pullToRefreshState.isRefreshing) {
@@ -381,6 +402,21 @@ private fun DetailsContent(
             onScreenshotClick = { onShowImage(state.screenshotViewParams(it)) },
             onDismissRequest = { showAllScreenshots = false }
         )
+    }
+
+    if (showAllSimilarEntries) {
+        when {
+            !state.similarAnime.isNullOrEmpty() -> SimilarAnimeBottomSheet(
+                animes = state.similarAnime,
+                onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it.id)) },
+                onDismissRequest = { showAllSimilarEntries = false }
+            )
+            !state.similarManga.isNullOrEmpty() -> SimilarMangaBottomSheet(
+                mangas = state.similarManga,
+                onMangaClick = { onEntryClick(EntryDetailsArgs(EntryType.Manga, it.id)) },
+                onDismissRequest = { showAllSimilarEntries = false }
+            )
+        }
     }
 
     if (showUserRateStatusSelection) {

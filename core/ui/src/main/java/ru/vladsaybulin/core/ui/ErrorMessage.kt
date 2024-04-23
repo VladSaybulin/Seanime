@@ -18,15 +18,17 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 
 @Composable
 fun ErrorMessageColumn(
-    header: @Composable () -> Unit,
-    description: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    header: @Composable () -> Unit = { ErrorMessageColumnDefaults.HeaderText() },
+    description: (@Composable () -> Unit)? = null,
     action: (@Composable () -> Unit)? = null
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.CenterVertically),
-        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
         val primaryColor = ShikimoriTheme.colorScheme.primary
         val headerTextStyle = ShikimoriTheme.typography.headlineMedium
@@ -35,8 +37,10 @@ fun ErrorMessageColumn(
             header()
         }
 
-        ProvideTextStyle(value = ShikimoriTheme.typography.bodyMedium) {
-            description()
+        if (description != null) {
+            ProvideTextStyle(value = ShikimoriTheme.typography.bodyMedium) {
+                description()
+            }
         }
 
         if (action != null) {
@@ -74,6 +78,14 @@ fun ErrorMessageRow(
         if (action != null) {
             action()
         }
+    }
+}
+
+object ErrorMessageColumnDefaults {
+
+    @Composable
+    fun HeaderText() {
+        Text(text = stringResource(id = R.string.core_ui_error))
     }
 }
 

@@ -12,11 +12,46 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 import ru.vladsaybulin.core.ui.entry.EntryGrid
 import ru.vladsaybulin.core.ui.entry.EntryGridDefaults
+import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun MangaGrid(
+    items: List<Manga>,
+    onEntryClick: (Manga) -> Unit,
+    modifier: Modifier = Modifier,
+    key: ((Manga) -> Any)? = { it.id },
+    columns: GridCells = EntryGridDefaults.DefaultColumns,
+    state: LazyGridState = rememberLazyGridState(),
+    contentPadding: PaddingValues = EntryGridDefaults.DefaultContentPadding,
+    horizontalArrangement: Arrangement.Horizontal = EntryGridDefaults.DefaultHorizontalArrangement,
+    verticalArrangement: Arrangement.Vertical = EntryGridDefaults.DefaultVerticalArrangement,
+    metadata: (@Composable ColumnScope.(Manga) -> Unit)? = { MangaGridMetadata(it) }
+) {
+    EntryGrid(
+        items = items,
+        modifier = modifier,
+        key = key,
+        columns = columns,
+        state = state,
+        contentPadding = contentPadding,
+        horizontalArrangement = horizontalArrangement,
+        verticalArrangement = verticalArrangement
+    ) { manga ->
+        MangaGridItem(
+            manga = manga,
+            onClick = { onEntryClick(manga) },
+            modifier = Modifier.fillMaxWidth(),
+            metadata = if (metadata != null) {
+                { metadata(manga) }
+            } else null
+        )
+    }
+}
+
+@Composable
+fun MangaWithUserRateGrid(
     items: List<MangaWithUserRate>,
     onEntryClick: (MangaWithUserRate) -> Unit,
     modifier: Modifier = Modifier,
@@ -51,7 +86,7 @@ fun MangaGrid(
 }
 
 @Composable
-fun MangaGrid(
+fun MangaWithUserRateGrid(
     items: LazyPagingItems<MangaWithUserRate>,
     onEntryClick: (MangaWithUserRate) -> Unit,
     modifier: Modifier = Modifier,

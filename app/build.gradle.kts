@@ -13,8 +13,8 @@ android {
 
     defaultConfig {
         applicationId = "ru.vladsaybulin.shikimori"
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "0.1.0-preview1"
 
         vectorDrawables {
             useSupportLibrary = true

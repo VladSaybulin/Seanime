@@ -50,12 +50,12 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.asEntryDetailsArgs
-import ru.vladsaybulin.core.ui.anime.AnimeGrid
+import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateGrid
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
-import ru.vladsaybulin.core.ui.manga.MangaGrid
+import ru.vladsaybulin.core.ui.manga.MangaWithUserRateGrid
 import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.TargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.orderString
@@ -425,7 +425,7 @@ private fun SearchAnimeResult(
 ) {
     val items = searchAnimeResult.collectAsLazyPagingItems()
 
-    AnimeGrid(
+    AnimeWithUserRateGrid(
         items = items,
         onEntryClick = { onAnimeClick(it.anime) },
         modifier = Modifier.fillMaxSize()
@@ -439,7 +439,7 @@ private fun SearchMangaResult(
 ) {
     val items = searchMangaResult.collectAsLazyPagingItems()
 
-    MangaGrid(
+    MangaWithUserRateGrid(
         items = items,
         onEntryClick = { onMangaClick(it.manga) },
         modifier = Modifier.fillMaxSize()
@@ -472,7 +472,7 @@ private fun SearchAnimeQuickResult(
 ) {
     val items = searchAnimeResult.collectAsLazyPagingItems()
     if (items.itemCount > 0) {
-        AnimeGrid(
+        AnimeWithUserRateGrid(
             items = items.itemSnapshotList.subList(0, QuickSearchSize).filterNotNull(),
             onEntryClick = { onAnimeClick(it.anime) },
             modifier = Modifier.fillMaxSize()
@@ -490,7 +490,7 @@ private fun SearchMangaQuickResult(
         .filterNotNull()
 
     if (items.itemCount > 0) {
-        MangaGrid(
+        MangaWithUserRateGrid(
             items = subList,
             onEntryClick = { onMangaClick(it.manga) },
             modifier = Modifier.fillMaxSize()
