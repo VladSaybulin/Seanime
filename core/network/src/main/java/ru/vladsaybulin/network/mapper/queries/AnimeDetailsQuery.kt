@@ -33,7 +33,7 @@ internal fun AnimeDetailsQuery.Anime.asNetworkModel() = NetworkAnimeDetails(
     nameJp = japanese,
     alternativeName = synonyms,
     licenseNameRu = licenseNameRu,
-    poster = poster?.run { NetworkImage(originalUrl, previewUrl) },
+    poster = poster?.run { NetworkImage(originalUrl, mini2xUrl) },
     kind = kind.asAnimeKind(),
     score = score?.toScore(),
     status = status.asEntryStatus(),
@@ -88,7 +88,7 @@ private fun AnimeDetailsQuery.PersonRole.asNetworkModel() = NetworkPersonWithRol
         image = person.poster?.let {
             NetworkImage(
                 originalUrl = it.originalUrl,
-                previewUrl = it.previewUrl
+                previewUrl = it.main2xUrl
             )
         }
     ),
@@ -101,7 +101,7 @@ private fun AnimeDetailsQuery.CharacterRole.asNetworkModel() = NetworkCharacterW
         id = character.id,
         name = character.name,
         nameRu = character.russian,
-        image = character.poster?.let { NetworkImage(it.originalUrl, it.previewUrl) }
+        image = character.poster?.let { NetworkImage(it.originalUrl, it.main2xUrl) }
     ),
     isMain = rolesEn.contains("Main")
 )
@@ -115,7 +115,7 @@ private fun AnimeDetailsQuery.Related.asNetworkModel() = if (anime != null || ma
                 russianName = russian,
                 poster = poster?.let { p ->
                     NetworkImage(
-                        previewUrl = p.previewUrl,
+                        previewUrl = p.main2xUrl,
                         originalUrl = p.originalUrl
                     )
                 },
@@ -136,7 +136,7 @@ private fun AnimeDetailsQuery.Related.asNetworkModel() = if (anime != null || ma
                 russianName = russian,
                 poster = poster?.let { p ->
                     NetworkImage(
-                        previewUrl = p.previewUrl,
+                        previewUrl = p.main2xUrl,
                         originalUrl = p.originalUrl
                     )
                 },

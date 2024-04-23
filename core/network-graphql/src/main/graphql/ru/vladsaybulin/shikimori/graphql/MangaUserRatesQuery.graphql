@@ -26,7 +26,7 @@ query MangaUserRatesQuery(
             russian
             poster {
                 originalUrl
-                previewUrl
+                main2xUrl
             }
             kind
             score

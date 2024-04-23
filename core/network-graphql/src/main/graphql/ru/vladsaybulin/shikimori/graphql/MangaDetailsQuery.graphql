@@ -8,7 +8,7 @@ query MangaDetailsQuery($id: String!) {
         synonyms
         licenseNameRu
         poster {
-            previewUrl
+            main2xUrl
             originalUrl
         }
         kind
@@ -52,7 +52,7 @@ query MangaDetailsQuery($id: String!) {
                 name
                 russian
                 poster {
-                    previewUrl
+                    main2xUrl
                     originalUrl
                 }
             }
@@ -65,7 +65,7 @@ query MangaDetailsQuery($id: String!) {
                 name
                 russian
                 poster {
-                    previewUrl
+                    main2xUrl
                     originalUrl
                 }
             }
@@ -77,7 +77,7 @@ query MangaDetailsQuery($id: String!) {
                 name
                 russian
                 poster {
-                    previewUrl
+                    main2xUrl
                     originalUrl
                 }
                 kind
@@ -101,7 +101,7 @@ query MangaDetailsQuery($id: String!) {
                 name
                 russian
                 poster {
-                    previewUrl
+                    main2xUrl
                     originalUrl
                 }
                 kind

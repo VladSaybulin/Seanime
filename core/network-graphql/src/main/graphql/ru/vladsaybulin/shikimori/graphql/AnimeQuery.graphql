@@ -39,7 +39,7 @@ query AnimeQuery(
         id
         name
         russian
-        poster { originalUrl previewUrl }
+        poster { originalUrl main2xUrl }
         kind
         score
         status

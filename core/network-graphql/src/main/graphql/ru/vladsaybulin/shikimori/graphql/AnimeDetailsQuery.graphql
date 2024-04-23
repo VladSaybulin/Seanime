@@ -8,7 +8,7 @@ query AnimeDetailsQuery($id: String!) {
         synonyms
         licenseNameRu
         poster {
-            previewUrl
+            mini2xUrl
             originalUrl
         }
         kind
@@ -58,7 +58,7 @@ query AnimeDetailsQuery($id: String!) {
                 name
                 russian
                 poster {
-                    previewUrl
+                    main2xUrl
                     originalUrl
                 }
             }
@@ -71,7 +71,7 @@ query AnimeDetailsQuery($id: String!) {
                 name
                 russian
                 poster {
-                    previewUrl
+                    main2xUrl
                     originalUrl
                 }
             }
@@ -83,7 +83,7 @@ query AnimeDetailsQuery($id: String!) {
                 name
                 russian
                 poster {
-                    previewUrl
+                    main2xUrl
                     originalUrl
                 }
                 kind
@@ -107,7 +107,7 @@ query AnimeDetailsQuery($id: String!) {
                 name
                 russian
                 poster {
-                    previewUrl
+                    main2xUrl
                     originalUrl
                 }
                 kind

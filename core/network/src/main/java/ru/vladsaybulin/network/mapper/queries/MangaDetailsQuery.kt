@@ -53,7 +53,7 @@ private fun Double?.toScore() = this?.toFloat() ?: 0f
 
 private fun MangaDetailsQuery.Poster.asNetworkModel() = NetworkImage(
     originalUrl = originalUrl,
-    previewUrl = previewUrl
+    previewUrl = main2xUrl
 )
 
 private fun MangaDetailsQuery.Genre.asNetworkModel() = NetworkGenre(
@@ -80,7 +80,7 @@ private fun MangaDetailsQuery.PersonRole.asNetworkModel() = NetworkPersonWithRol
         name = person.name,
         nameRu = person.russian,
         image = person.poster?.let {
-            NetworkImage(originalUrl = it.originalUrl, previewUrl = it.previewUrl)
+            NetworkImage(originalUrl = it.originalUrl, previewUrl = it.main2xUrl)
         }
     ),
     roles = rolesEn,
@@ -93,7 +93,7 @@ private fun MangaDetailsQuery.CharacterRole.asCharacterWithRole() = NetworkChara
         name = character.name,
         nameRu = character.russian,
         image = character.poster?.let {
-            NetworkImage(originalUrl = it.originalUrl, previewUrl = it.previewUrl)
+            NetworkImage(originalUrl = it.originalUrl, previewUrl = it.main2xUrl)
         }
     ),
     isMain = rolesEn.contains("Main")
@@ -108,7 +108,7 @@ fun MangaDetailsQuery.Related.asNetworkModel() = if (anime != null || manga != n
                 russianName = russian,
                 poster = poster?.let { p ->
                     NetworkImage(
-                        previewUrl = p.previewUrl,
+                        previewUrl = p.main2xUrl,
                         originalUrl = p.originalUrl
                     )
                 },
@@ -129,7 +129,7 @@ fun MangaDetailsQuery.Related.asNetworkModel() = if (anime != null || manga != n
                 russianName = russian,
                 poster = poster?.let { p ->
                     NetworkImage(
-                        previewUrl = p.previewUrl,
+                        previewUrl = p.main2xUrl,
                         originalUrl = p.originalUrl
                     )
                 },
