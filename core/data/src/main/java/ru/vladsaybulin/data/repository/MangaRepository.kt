@@ -7,12 +7,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.data.model.asPOJO
-import ru.vladsaybulin.data.model.asSimilarEntry
 import ru.vladsaybulin.data.model.asUserRate
 import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.util.AbstractShikimoriPagingSource
@@ -20,7 +20,9 @@ import ru.vladsaybulin.data.util.DefaultSearchPagingConfig
 import ru.vladsaybulin.data.util.flowOf
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.UserRateDao
-import ru.vladsaybulin.model.EntryDetails
+import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.MangaDataSource
@@ -34,6 +36,7 @@ class MangaRepository @Inject constructor(
     private val userRateDataSource: UserRateDataSource,
     private val mangaDao: MangaDao,
     private val userRateDao: UserRateDao,
+    private val authRepository: AuthRepository,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
@@ -47,25 +50,28 @@ class MangaRepository @Inject constructor(
         .flow
         .flowOn(ioDispatcher)
 
-    fun getEntryDetails(mangaId: Long): Flow<EntryDetails> = combine(
-        flowOf { mangaDataSource.getMangaDetails(mangaId) },
-        flowOf { mangaDataSource.getSimilarManga(mangaId) },
-        flowOf { userRateDataSource.getMangaUserRate(mangaId) }
-    ) { details, similar, userRate ->
-        if (userRate != null) {
-            saveUserRate(details, userRate)
+    fun getMangaDetails(mangaId: Long): Flow<MangaDetails> {
+        val detailsFlow = flowOf { mangaDataSource.getMangaDetails(mangaId) }
+        val userRateFlow = authRepository.authState.map {
+            if (it == ShikimoriAuthState.Authorized) {
+                userRateDataSource.getAnimeUserRate(mangaId)
+            } else null
         }
-        Pair(details, similar)
+        return detailsFlow.combine(userRateFlow) { details, userRate ->
+            if (userRate != null) {
+                saveUserRate(details, userRate)
+            }
+            details.asExternalModel()
+        }.flowOn(ioDispatcher)
     }
-        .combine(userRateDao.getMangaUserRate(mangaId)) { (details, similar), userRate ->
-            EntryDetails(
-                anime = null,
-                manga = details.asExternalModel(),
-                similarEntries = similar.map { it.asSimilarEntry() },
-                userRate = userRate?.asUserRate()
-            )
-        }
-        .flowOn(ioDispatcher)
+
+    fun getAnimeDetailsUserRate(animeId: Long) =
+        userRateDao.getAnimeUserRate(animeId).map { it?.asUserRate() }
+
+    fun getSimilarAnimes(animeId: Long): Flow<List<Manga>> =
+        flowOf {
+            mangaDataSource.getSimilarManga(animeId).map { it.asExternalModel() }
+        }.flowOn(ioDispatcher)
 
     private suspend fun saveUserRate(
         mangaDetails: NetworkMangaDetails,

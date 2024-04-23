@@ -13,7 +13,6 @@ import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
-import ru.vladsaybulin.data.model.asSimilarEntry
 import ru.vladsaybulin.data.model.asUserRate
 import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.util.AbstractShikimoriPagingSource
@@ -25,9 +24,10 @@ import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
-import ru.vladsaybulin.model.EntryDetails
 import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
+import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
@@ -44,6 +44,7 @@ class AnimeRepository @Inject constructor(
     private val animeDao: AnimeDao,
     private val userRateDao: UserRateDao,
     private val ongoingAnimeDao: OngoingAnimeDao,
+    private val authRepository: AuthRepository,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
@@ -63,26 +64,28 @@ class AnimeRepository @Inject constructor(
             .map { it.map(AnimeEntity::asExternalModel) }
             .flowOn(ioDispatcher)
 
-
-    fun getEntryDetails(animeId: Long): Flow<EntryDetails> = combine(
-        flowOf { animeDataSource.getAnimeDetails(animeId) },
-        flowOf { animeDataSource.getSimilarAnimes(animeId) },
-        flowOf { userRateDataSource.getAnimeUserRate(animeId) }
-    ) { details, similar, userRate ->
-        if (userRate != null) {
-            saveUserRate(details, userRate)
+    fun getAnimeDetails(animeId: Long): Flow<AnimeDetails> {
+        val detailsFlow = flowOf { animeDataSource.getAnimeDetails(animeId) }
+        val userRateFlow = authRepository.authState.map {
+            if (it == ShikimoriAuthState.Authorized) {
+                userRateDataSource.getAnimeUserRate(animeId)
+            } else null
         }
-        Pair(details, similar)
+        return detailsFlow.combine(userRateFlow) { details, userRate ->
+            if (userRate != null) {
+                saveUserRate(details, userRate)
+            }
+            details.asExternalModel()
+        }.flowOn(ioDispatcher)
     }
-        .combine(userRateDao.getAnimeUserRate(animeId)) { (details, similar), userRate ->
-            EntryDetails(
-                anime = details.asExternalModel(),
-                manga = null,
-                similarEntries = similar.map { it.asSimilarEntry() },
-                userRate = userRate?.asUserRate()
-            )
-        }
-        .flowOn(ioDispatcher)
+
+    fun getAnimeDetailsUserRate(animeId: Long) =
+        userRateDao.getAnimeUserRate(animeId).map { it?.asUserRate() }
+
+    fun getSimilarAnimes(animeId: Long): Flow<List<Anime>> =
+        flowOf {
+            animeDataSource.getSimilarAnimes(animeId).map { it.asExternalModel() }
+        }.flowOn(ioDispatcher)
 
     private suspend fun loadOngoingAnime(
         pageNumber: Int,
