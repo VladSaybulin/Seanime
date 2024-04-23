@@ -69,7 +69,7 @@ sealed class DetailsUiState {
     ) : DetailsUiState()
 }
 
-fun DetailsUiState.successAnime(
+fun successAnime(
     animeDetails: AnimeDetails,
     similarAnime: List<Anime>?,
     userRate: UserRate?
@@ -112,7 +112,7 @@ fun DetailsUiState.successAnime(
     )
 }
 
-fun DetailsUiState.successManga(
+fun successManga(
     mangaDetails: MangaDetails,
     similarManga: List<Manga>?,
     userRate: UserRate?
