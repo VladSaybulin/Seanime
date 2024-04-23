@@ -30,10 +30,10 @@ import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.AppliedOptionValues
 import ru.vladsaybulin.core.ui.filters.OptionValue
-import ru.vladsaybulin.data.repository.GenreRepository
-import ru.vladsaybulin.data.repository.PublisherRepository
+import ru.vladsaybulin.data.repository.FilterGenreRepository
+import ru.vladsaybulin.data.repository.FilterPublisherRepository
 import ru.vladsaybulin.data.repository.RecentSearchQueryRepository
-import ru.vladsaybulin.data.repository.StudioRepository
+import ru.vladsaybulin.data.repository.FilterStudioRepository
 import ru.vladsaybulin.data.util.flowOf
 import ru.vladsaybulin.feature.search.navigation.SearchArgs
 import ru.vladsaybulin.model.common.EntryType
@@ -52,9 +52,9 @@ class SearchViewModel @Inject constructor(
     searchAnimeUseCaseProvider: Provider<SearchAnimeUseCase>,
     searchMangaUseCaseProvider: Provider<SearchMangaUseCase>,
     searchRanobeUseCaseProvider: Provider<SearchRanobeUseCase>,
-    private val studioRepositoryProvider: Provider<StudioRepository>,
-    private val publisherRepositoryProvider: Provider<PublisherRepository>,
-    private val genreRepositoryProvider: Provider<GenreRepository>,
+    private val filterStudioRepositoryProvider: Provider<FilterStudioRepository>,
+    private val filterPublisherRepositoryProvider: Provider<FilterPublisherRepository>,
+    private val filterGenreRepositoryProvider: Provider<FilterGenreRepository>,
     private val recentSearchQueryRepository: RecentSearchQueryRepository,
 ) : ViewModel() {
 
@@ -225,23 +225,23 @@ class SearchViewModel @Inject constructor(
     )
 
     private suspend fun SearchArgs.getTitle() = when {
-        publisherId != null -> publisherRepositoryProvider.get()
-            .getPublisherById(publisherId!!)
+        publisherId != null -> filterPublisherRepositoryProvider.get()
+            .getFilterPublisherById(publisherId!!)
             ?.let { SearchTitle.Publisher(it.name) }
 
-        studioId != null -> studioRepositoryProvider.get()
-            .getStudioById(studioId!!)
+        studioId != null -> filterStudioRepositoryProvider.get()
+            .getFilterStudioById(studioId!!)
             ?.let { SearchTitle.Studio(it.name) }
 
-        genreId != null -> genreRepositoryProvider.get()
+        genreId != null -> filterGenreRepositoryProvider.get()
             .getGenreById(searchType!!.toEntryType, genreId!!)
             ?.let { SearchTitle.Genre(it.russianName ?: it.englishName) }
 
-        demographicId != null -> genreRepositoryProvider.get()
+        demographicId != null -> filterGenreRepositoryProvider.get()
             .getGenreById(searchType!!.toEntryType, demographicId!!)
             ?.let { SearchTitle.Demographic(it.russianName ?: it.englishName) }
 
-        themeId != null -> genreRepositoryProvider.get()
+        themeId != null -> filterGenreRepositoryProvider.get()
             .getGenreById(searchType!!.toEntryType, themeId!!)
             ?.let { SearchTitle.Theme(it.russianName ?: it.englishName) }
 

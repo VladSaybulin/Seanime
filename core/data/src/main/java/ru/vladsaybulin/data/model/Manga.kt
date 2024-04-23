@@ -19,7 +19,7 @@ fun Manga.asPOJO() = MangaEntity(
     releasedOn = releasedOn?.asPOJO()
 )
 
-fun NetworkManga.asPOJO() = MangaEntity(
+fun NetworkManga.asEntity() = MangaEntity(
     id = id,
     originalName = originalName,
     russianName = russianName,

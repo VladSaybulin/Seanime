@@ -58,7 +58,7 @@ class TopicsRepository @Inject constructor(
                 } else null,
                 linkedMangaId = if (topic.hasLinked() && topic.linkedIsManga()) {
                     topic.decodeLinkedManga(json)
-                        .also { manga.add(it.asPOJO()) }
+                        .also { manga.add(it.asEntity()) }
                         .id
                 } else null
             )

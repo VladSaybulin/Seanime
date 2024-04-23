@@ -42,7 +42,6 @@ import ru.vladsaybulin.feature.details.content.Description
 import ru.vladsaybulin.feature.details.content.RelatedBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsBottomSheet
 import ru.vladsaybulin.feature.details.content.ScreenshotsCarousel
-import ru.vladsaybulin.feature.details.content.SimilarCarousel
 import ru.vladsaybulin.feature.details.content.UserRateFab
 import ru.vladsaybulin.feature.details.content.UserRateStatusSelectionBottomSheet
 import ru.vladsaybulin.feature.details.content.VideosCarousel
@@ -329,15 +328,15 @@ private fun DetailsContent(
                 }
             }
 
-            if (state.similar.isNotEmpty()) {
-                item(key = "similar") {
-                    SimilarCarousel(
-                        similarEntries = state.similar,
-                        onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
-                        onShowAll = { showAllSimilarEntries = true }
-                    )
-                }
-            }
+//            if (state.()) {
+//                item(key = "similar") {
+//                    SimilarCarousel(
+//                        similarEntries = state.similar,
+//                        onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
+//                        onShowAll = { showAllSimilarEntries = true }
+//                    )
+//                }
+//            }
         }
 
         if (pullToRefreshState.isRefreshing) {

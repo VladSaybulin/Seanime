@@ -97,7 +97,7 @@ fun ScoreHistogram(
     val color = ShikimoriTheme.colorScheme.primary
     val outlineColor = ShikimoriTheme.colorScheme.outlineVariant
 
-    val maxCount = statistics.maxOf { it.count }
+    val maxCount = statistics.maxOfOrNull { it.count } ?: 0
 
     Column {
         Row(

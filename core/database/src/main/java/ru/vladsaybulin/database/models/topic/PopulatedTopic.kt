@@ -2,12 +2,12 @@ package ru.vladsaybulin.database.models.topic
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
-import ru.vladsaybulin.database.models.user.asExternalModel
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.asExternalModel
+import ru.vladsaybulin.database.models.user.UserEntity
+import ru.vladsaybulin.database.models.user.asExternalModel
 import ru.vladsaybulin.model.topic.Topic
 import ru.vladsaybulin.model.topic.TopicLinkedEntry
 

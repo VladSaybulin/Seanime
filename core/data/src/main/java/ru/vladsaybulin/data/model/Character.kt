@@ -1,5 +1,6 @@
 package ru.vladsaybulin.data.model
 
+import ru.vladsaybulin.database.models.character.CharacterEntity
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.network.models.character.NetworkCharacter
@@ -15,4 +16,11 @@ fun NetworkCharacter.asExternalModel() = Character(
     originalName = name,
     russianName = nameRu,
     poster = image?.asExternalModel()
+)
+
+fun NetworkCharacter.asEntity() = CharacterEntity(
+    id = id,
+    name = name,
+    nameRu = nameRu,
+    image = image?.asPOJO()
 )

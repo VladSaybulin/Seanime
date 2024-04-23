@@ -4,33 +4,33 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers
-import ru.vladsaybulin.data.model.asEntity
+import ru.vladsaybulin.data.model.asFilterEntity
 import ru.vladsaybulin.data.util.sync
-import ru.vladsaybulin.database.dao.StudioDao
-import ru.vladsaybulin.database.models.anime.StudioEntity
-import ru.vladsaybulin.database.models.anime.asExternalModel
+import ru.vladsaybulin.database.dao.FilterStudioDao
+import ru.vladsaybulin.database.models.filters.FilterStudioEntity
+import ru.vladsaybulin.database.models.filters.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.network.datasource.StudioDataSource
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.days
 
-class StudioRepository @Inject constructor(
+class FilterStudioRepository @Inject constructor(
     private val studioDataSource: StudioDataSource,
-    private val studioDao: StudioDao,
+    private val filtersStudioDao: FilterStudioDao,
     private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
     @Dispatcher(ShikiDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    suspend fun getStudioById(studioId: Long): Studio? =
+    suspend fun getFilterStudioById(studioId: Long): Studio? =
         withContext(ioDispatcher) {
             syncStudios()
-            studioDao.getStudioById(studioId)?.asExternalModel()
+            filtersStudioDao.getFilterStudioById(studioId)?.asExternalModel()
         }
-    suspend fun getStudios() = withContext(ioDispatcher) {
+    suspend fun getFilterStudios() = withContext(ioDispatcher) {
         syncStudios()
-        studioDao.getAllStudios()
-            .map(StudioEntity::asExternalModel)
+        filtersStudioDao.getAllFilterStudios()
+            .map(FilterStudioEntity::asExternalModel)
     }
 
     private suspend fun syncStudios() {
@@ -40,11 +40,10 @@ class StudioRepository @Inject constructor(
             updateLastRequest = shikiPreferencesDataSource::setLastStudiosRequestDate
         ) {
             val response = studioDataSource.getStudios()
-            studioDao.deleteAllStudios()
-            studioDao.insertAllStudios(response.map { it.asEntity() })
+            filtersStudioDao.deleteAllFilterStudios()
+            filtersStudioDao.insertOrIgnoreFilterStudios(response.map { it.asFilterEntity() })
         }
     }
-
 }
 
 private val STUDIO_TTL = 7.days

@@ -13,8 +13,8 @@ interface MangaDao {
     suspend fun getMangaById(mangaId: Long): MangaEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceMangaEntity(manga: MangaEntity)
+    suspend fun insertOrReplaceManga(manga: MangaEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceMangas(manga: List<MangaEntity>)
+    suspend fun insertOrReplaceMangas(mangas: List<MangaEntity>)
 }

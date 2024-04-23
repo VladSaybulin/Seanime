@@ -13,6 +13,9 @@ interface AnimeDao {
     suspend fun getAnimeById(animeId: Long): AnimeEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrReplaceAnime(anime: AnimeEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceAnimes(anime: List<AnimeEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

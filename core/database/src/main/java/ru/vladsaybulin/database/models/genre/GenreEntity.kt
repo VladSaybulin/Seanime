@@ -7,8 +7,8 @@ import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
 
-@Entity(tableName = "genres")
-data class GenreEntity(
+@Entity(tableName = "genre")
+class GenreEntity(
 
     @PrimaryKey
     @ColumnInfo("id")

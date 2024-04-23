@@ -5,53 +5,119 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.withTransaction
 import ru.vladsaybulin.database.dao.AnimeDao
+import ru.vladsaybulin.database.dao.AnimeDetailsDao
 import ru.vladsaybulin.database.dao.CalendarDao
+import ru.vladsaybulin.database.dao.CharacterDao
+import ru.vladsaybulin.database.dao.FilterGenreDao
+import ru.vladsaybulin.database.dao.FilterStudioDao
+import ru.vladsaybulin.database.dao.FiltersPublisherDao
 import ru.vladsaybulin.database.dao.GenreDao
+import ru.vladsaybulin.database.dao.LastRequestDao
 import ru.vladsaybulin.database.dao.MangaDao
+import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.OngoingAnimeDao
-import ru.vladsaybulin.database.dao.PublisherDao
+import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.RecentSearchQueriesDao
-import ru.vladsaybulin.database.dao.StudioDao
 import ru.vladsaybulin.database.dao.TopicsDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.dao.UsersDao
-import ru.vladsaybulin.database.models.user.UserEntity
+import ru.vladsaybulin.database.models.anime.AnimeCharacterEntity
+import ru.vladsaybulin.database.models.anime.AnimeDetailsEntity
 import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.anime.AnimeGenreCrossRef
+import ru.vladsaybulin.database.models.anime.AnimePersonRolesEntity
+import ru.vladsaybulin.database.models.anime.AnimeRelatedEntity
+import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
+import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
+import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.StudioEntity
 import ru.vladsaybulin.database.models.calendar.CalendarItemEntity
+import ru.vladsaybulin.database.models.character.CharacterEntity
+import ru.vladsaybulin.database.models.filters.FilterGenreEntity
+import ru.vladsaybulin.database.models.filters.FilterPublisherEntity
+import ru.vladsaybulin.database.models.filters.FilterStudioEntity
 import ru.vladsaybulin.database.models.genre.GenreEntity
+import ru.vladsaybulin.database.models.lastrequest.LastAnimeDetailsRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastMangaDetailsRequestEntity
+import ru.vladsaybulin.database.models.manga.MangaCharacterEntity
+import ru.vladsaybulin.database.models.manga.MangaDetailsEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
+import ru.vladsaybulin.database.models.manga.MangaGenreCrossRef
+import ru.vladsaybulin.database.models.manga.MangaPersonRolesEntity
+import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
+import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
 import ru.vladsaybulin.database.models.manga.PublisherEntity
+import ru.vladsaybulin.database.models.person.PersonEntity
 import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
 import ru.vladsaybulin.database.models.topic.TopicEntity
+import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.models.userrate.UserRateOrderDbo
 import ru.vladsaybulin.database.utils.AnimeKindTypeConverter
+import ru.vladsaybulin.database.utils.AnimeRatingTypeConverter
 import ru.vladsaybulin.database.utils.EntryStatusTypeConverter
 import ru.vladsaybulin.database.utils.GenreKindTypeConverter
 import ru.vladsaybulin.database.utils.InstantTypeConverter
+import ru.vladsaybulin.database.utils.IntStatisticsItemsConverter
 import ru.vladsaybulin.database.utils.MangaKindTypeConverter
+import ru.vladsaybulin.database.utils.StatusStatisticsItemsConverter
+import ru.vladsaybulin.database.utils.StringListTypeConverter
 import ru.vladsaybulin.database.utils.TopicEventTypeConverter
 import ru.vladsaybulin.database.utils.TopicLinkedTypeTypeConverter
 import ru.vladsaybulin.database.utils.TopicTypeTypeConverter
 import ru.vladsaybulin.database.utils.UserRateTypeConverter
+import ru.vladsaybulin.database.utils.VideoKindTypeConverter
 import javax.inject.Inject
 
 @Database(
     entities = [
-        CalendarItemEntity::class,
+        /* Base entities */
         AnimeEntity::class,
         MangaEntity::class,
+        PersonEntity::class,
+        CharacterEntity::class,
         UserRateEntity::class,
         UserEntity::class,
         TopicEntity::class,
-        OngoingAnimeEntity::class,
-        UserRateOrderDbo::class,
+
+        /* Search entities */
         RecentSearchQueryEntity::class,
+        FilterStudioEntity::class,
+        FilterPublisherEntity::class,
+        FilterGenreEntity::class,
+
+        /* Details common entities */
         GenreEntity::class,
         StudioEntity::class,
-        PublisherEntity::class
+        PublisherEntity::class,
+
+        /* Anime details entities */
+        AnimeDetailsEntity::class,
+        AnimeGenreCrossRef::class,
+        AnimePersonRolesEntity::class,
+        AnimeCharacterEntity::class,
+        AnimeRelatedEntity::class,
+        AnimeStudioCrossRef::class,
+        AnimeScreenshotEntity::class,
+        AnimeVideoEntity::class,
+
+        /* Manga details entities */
+        MangaDetailsEntity::class,
+        MangaGenreCrossRef::class,
+        MangaPersonRolesEntity::class,
+        MangaCharacterEntity::class,
+        MangaRelatedEntity::class,
+        MangaPublisherCrossRef::class,
+
+        /* Last requests */
+        LastAnimeDetailsRequestEntity::class,
+        LastMangaDetailsRequestEntity::class,
+
+        /* Other entities */
+        CalendarItemEntity::class,
+        OngoingAnimeEntity::class,
+        UserRateOrderDbo::class
     ],
     version = 1,
 )
@@ -65,21 +131,37 @@ import javax.inject.Inject
         TopicTypeTypeConverter::class,
         TopicLinkedTypeTypeConverter::class,
         TopicEventTypeConverter::class,
-        GenreKindTypeConverter::class
+        GenreKindTypeConverter::class,
+        StringListTypeConverter::class,
+        AnimeRatingTypeConverter::class,
+        IntStatisticsItemsConverter::class,
+        StatusStatisticsItemsConverter::class,
+        VideoKindTypeConverter::class
     ]
 )
 abstract class ShikiRoomDatabase : RoomDatabase() {
     abstract fun animeDao(): AnimeDao
     abstract fun mangaDao(): MangaDao
-    abstract fun calendarDao(): CalendarDao
+    abstract fun characterDao(): CharacterDao
+    abstract fun personDao(): PersonDao
     abstract fun userRateDao(): UserRateDao
-    abstract fun topicsDao(): TopicsDao
     abstract fun usersDao(): UsersDao
-    abstract fun ongoingAnimeDao(): OngoingAnimeDao
+    abstract fun topicsDao(): TopicsDao
+
     abstract fun recentSearchQueriesDao(): RecentSearchQueriesDao
+    abstract fun filterStudioDao(): FilterStudioDao
+    abstract fun filterPublisherDao(): FiltersPublisherDao
+    abstract fun filterGenreDao(): FilterGenreDao
+
     abstract fun genreDao(): GenreDao
-    abstract fun studioDao(): StudioDao
-    abstract fun publisherDao(): PublisherDao
+    abstract fun animeDetailsDao(): AnimeDetailsDao
+    abstract fun mangaDetailsDao(): MangaDetailsDao
+    abstract fun lastRequestDao(): LastRequestDao
+
+    abstract fun calendarDao(): CalendarDao
+
+    abstract fun ongoingAnimeDao(): OngoingAnimeDao
+
 }
 
 class ShikiDatabase @Inject constructor(private val database: ShikiRoomDatabase) {

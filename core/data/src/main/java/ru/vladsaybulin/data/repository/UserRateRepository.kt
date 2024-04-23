@@ -86,7 +86,7 @@ class UserRateRepository @Inject constructor(
 
     suspend fun createUserRate(userRateValues: UserRateValues, manga: Manga) {
         createUserRate(EntryType.Manga, manga.id, userRateValues) {
-            database.mangaDao.insertOrReplaceMangaEntity(manga.asPOJO())
+            database.mangaDao.insertOrReplaceManga(manga.asPOJO())
         }
     }
 
@@ -163,7 +163,7 @@ class UserRateRepository @Inject constructor(
                 response.forEachIndexed { index, dto ->
                     userRates.add(dto.userRateDboShell())
                     dto.networkAnime?.let { animes.add(it.asEntity()) }
-                    dto.networkManga?.let { mangas.add(it.asPOJO()) }
+                    dto.networkManga?.let { mangas.add(it.asEntity()) }
                     order.add(UserRateOrderDbo(dto.networkUserRate.id, start + index))
                 }
 

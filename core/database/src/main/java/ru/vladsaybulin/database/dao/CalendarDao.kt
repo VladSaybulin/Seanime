@@ -15,19 +15,9 @@ interface CalendarDao {
     @Query("SELECT * FROM calendar_items")
     fun getAllCalendarItems(): Flow<List<PopulatedCalendarItem>>
 
-    @Transaction
-    @Query(
-        value = """
-            SELECT calendar_items.* FROM calendar_items 
-            JOIN animes ON anime_id = animes.id 
-            WHERE name LIKE '%' | :searchQuery | '%' OR russian_name LIKE '%' | :searchQuery | '%'
-        """
-    )
-    suspend fun searchCalendarItems(searchQuery: String): List<PopulatedCalendarItem>
-
     @Insert
-    fun insertCalendarItems(items: List<CalendarItemEntity>)
+    suspend fun insertCalendarItems(items: List<CalendarItemEntity>)
 
     @Query("DELETE FROM calendar_items")
-    fun deleteAllItems()
+    suspend fun deleteAllItems()
 }

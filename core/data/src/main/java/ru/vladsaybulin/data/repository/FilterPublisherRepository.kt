@@ -4,34 +4,34 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.model.asEntity
+import ru.vladsaybulin.data.model.asFilterEntity
 import ru.vladsaybulin.data.util.sync
-import ru.vladsaybulin.database.dao.PublisherDao
-import ru.vladsaybulin.database.models.manga.PublisherEntity
-import ru.vladsaybulin.database.models.manga.asExternalModel
+import ru.vladsaybulin.database.dao.FiltersPublisherDao
+import ru.vladsaybulin.database.models.filters.FilterPublisherEntity
+import ru.vladsaybulin.database.models.filters.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.network.datasource.PublisherDataSource
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.days
 
-class PublisherRepository @Inject constructor(
+class FilterPublisherRepository @Inject constructor(
     private val publisherDataSource: PublisherDataSource,
-    private val publisherDao: PublisherDao,
+    private val filtersPublisherDao: FiltersPublisherDao,
     private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    suspend fun getPublisherById(publisherId: Long): Publisher? =
+    suspend fun getFilterPublisherById(publisherId: Long): Publisher? =
         withContext(ioDispatcher) {
             syncPublishers()
-            publisherDao.getPublisherById(publisherId)?.asExternalModel()
+            filtersPublisherDao.getFilterPublisherById(publisherId)?.asExternalModel()
         }
 
-    suspend fun getPublishers(): List<Publisher> = withContext(ioDispatcher) {
+    suspend fun getFilterPublishers(): List<Publisher> = withContext(ioDispatcher) {
         syncPublishers()
-        publisherDao.getAllPublishers()
-            .map(PublisherEntity::asExternalModel)
+        filtersPublisherDao.getAllFilterPublishers()
+            .map(FilterPublisherEntity::asExternalModel)
     }
 
     private suspend fun syncPublishers() {
@@ -41,8 +41,8 @@ class PublisherRepository @Inject constructor(
             updateLastRequest = shikiPreferencesDataSource::setLastPublishersRequestDate
         ) {
             val response = publisherDataSource.getPublishers()
-            publisherDao.deleteAllPublishers()
-            publisherDao.insertAllPublishers(response.map { it.asEntity() })
+            filtersPublisherDao.deleteAllFilterPublishers()
+            filtersPublisherDao.insertOrIgnoreFilterPublishers(response.map { it.asFilterEntity() })
         }
     }
 }

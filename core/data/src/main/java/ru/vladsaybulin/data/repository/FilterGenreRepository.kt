@@ -4,11 +4,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.model.asPOJO
+import ru.vladsaybulin.data.model.asFilterEntity
 import ru.vladsaybulin.data.util.sync
-import ru.vladsaybulin.database.dao.GenreDao
-import ru.vladsaybulin.database.models.genre.GenreEntity
-import ru.vladsaybulin.database.models.genre.asExternalModel
+import ru.vladsaybulin.database.dao.FilterGenreDao
+import ru.vladsaybulin.database.models.filters.FilterGenreEntity
+import ru.vladsaybulin.database.models.filters.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.genre.Genre
@@ -17,23 +17,23 @@ import ru.vladsaybulin.network.datasource.GenreDataSource
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.days
 
-class GenreRepository @Inject constructor(
+class FilterGenreRepository @Inject constructor(
     private val genreDataSource: GenreDataSource,
-    private val genreDao: GenreDao,
+    private val filtersGenreDao: FilterGenreDao,
     private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend fun getGenreById(entryType: EntryType, genreId: Long): Genre? =
         withContext(ioDispatcher) {
             syncGenres(entryType)
-            genreDao.getGenreById(genreId)?.asExternalModel()
+            filtersGenreDao.getFilterGenreById(genreId)?.asExternalModel()
         }
 
     suspend fun getGenres(entryType: EntryType, genreKind: GenreKind): List<Genre> =
         withContext(ioDispatcher) {
             syncGenres(entryType)
-            genreDao.getGenresByKind(entryType, genreKind)
-                .map(GenreEntity::asExternalModel)
+            filtersGenreDao.getFilterGenresByKind(entryType, genreKind)
+                .map(FilterGenreEntity::asExternalModel)
         }
 
 
@@ -51,8 +51,8 @@ class GenreRepository @Inject constructor(
         ) {
             val response = genreDataSource.getGenres(entryType)
 
-            genreDao.deleteGenresByEntryType(entryType)
-            genreDao.insertAllGenres(response.map { it.asPOJO() })
+            filtersGenreDao.deleteFilterGenresByEntryType(entryType)
+            filtersGenreDao.insertOrIgnoreFilterGenres(response.map { it.asFilterEntity() })
         }
     }
 }

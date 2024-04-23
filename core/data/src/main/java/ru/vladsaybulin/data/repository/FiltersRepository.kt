@@ -22,9 +22,9 @@ import javax.inject.Singleton
 
 @Singleton
 class FiltersRepository @Inject constructor(
-    private val genreRepository: GenreRepository,
-    private val studioRepository: StudioRepository,
-    private val publisherRepository: PublisherRepository
+    private val filterGenreRepository: FilterGenreRepository,
+    private val filterStudioRepository: FilterStudioRepository,
+    private val filterPublisherRepository: FilterPublisherRepository
 ) {
 
     private var cachedAnimeFilters: Filters? = null
@@ -117,33 +117,33 @@ class FiltersRepository @Inject constructor(
         .map(AnimeRating::toOption)
 
     private suspend fun animeGenresOptions() =
-        genreRepository.getGenres(EntryType.Anime, GenreKind.Genre)
+        filterGenreRepository.getGenres(EntryType.Anime, GenreKind.Genre)
             .map(Genre::toOption)
 
     private suspend fun animeThemesOptions() =
-        genreRepository.getGenres(EntryType.Anime, GenreKind.Theme)
+        filterGenreRepository.getGenres(EntryType.Anime, GenreKind.Theme)
             .map(Genre::toOption)
 
     private suspend fun animeDemographicOptions() =
-        genreRepository.getGenres(EntryType.Anime, GenreKind.Demographic)
+        filterGenreRepository.getGenres(EntryType.Anime, GenreKind.Demographic)
             .map(Genre::toOption)
 
     private suspend fun mangaGenresOptions() =
-        genreRepository.getGenres(EntryType.Manga, GenreKind.Genre)
+        filterGenreRepository.getGenres(EntryType.Manga, GenreKind.Genre)
             .map(Genre::toOption)
 
     private suspend fun mangaThemesOptions() =
-        genreRepository.getGenres(EntryType.Manga, GenreKind.Theme)
+        filterGenreRepository.getGenres(EntryType.Manga, GenreKind.Theme)
             .map(Genre::toOption)
 
     private suspend fun mangaDemographicOptions() =
-        genreRepository.getGenres(EntryType.Manga, GenreKind.Demographic)
+        filterGenreRepository.getGenres(EntryType.Manga, GenreKind.Demographic)
             .map(Genre::toOption)
 
-    private suspend fun studioOptions() = studioRepository.getStudios()
+    private suspend fun studioOptions() = filterStudioRepository.getFilterStudios()
         .map(Studio::toOption)
 
-    private suspend fun publisherOptions() = publisherRepository.getPublishers()
+    private suspend fun publisherOptions() = filterPublisherRepository.getFilterPublishers()
         .map(Publisher::toOption)
 }
 
