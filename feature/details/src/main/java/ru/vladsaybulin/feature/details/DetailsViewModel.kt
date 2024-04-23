@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.CreateUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
-import ru.vladsaybulin.core.domain.GetEntryDetailsUseCase
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.feature.details.navigation.EntryDetailsArgs
 import ru.vladsaybulin.model.EntryDetails
