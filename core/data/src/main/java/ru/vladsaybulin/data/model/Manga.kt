@@ -36,8 +36,8 @@ fun NetworkManga.asEntity() = MangaEntity(
 fun NetworkManga.userRateEntityShell() = userRate?.let { userRate ->
     UserRateEntity(
         id = userRate.id,
-        animeId = id,
-        mangaId = null,
+        animeId = null,
+        mangaId = id,
         status = userRate.status,
         score = userRate.score,
         episodes = 0,
