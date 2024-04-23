@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.core.domain.CreateUserRateUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.data.repository.MangaRepository
+import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.feature.details.navigation.EntryDetailsArgs
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
@@ -23,15 +23,15 @@ import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateValues
 import javax.inject.Inject
-import javax.inject.Provider
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val animeRepository: Lazy<AnimeRepository>,
     private val mangaRepository: Lazy<MangaRepository>,
-    private val createUserRateUseCaseProvider: Provider<CreateUserRateUseCase>,
+    private val userRateRepository: Lazy<UserRateRepository>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
     private val authRepository: AuthRepository
 ) : ViewModel() {
@@ -75,12 +75,13 @@ class DetailsViewModel @Inject constructor(
     }
 
     fun createUserRate(status: UserRateStatus) {
-        //viewModelScope.launch {
-        //    createUserRateUseCaseProvider.get().invoke(
-        //        userRateStatus = status,
-        //        entryDetails = entryDetails.first()
-        //    )
-        //}
+        viewModelScope.launch {
+            userRateRepository.get().createUserRate(
+                entryType = args.entryType,
+                entryId = args.entryId,
+                userRateValues = UserRateValues(status = status)
+            )
+        }
     }
 
     fun isAuthorized() = authRepository.isAuthorized()

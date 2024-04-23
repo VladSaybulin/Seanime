@@ -25,7 +25,7 @@ import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.mapper.queries.asNetworkModels
 import ru.vladsaybulin.network.models.CreateUserRateDto
 import ru.vladsaybulin.network.models.NetworkUserRate
-import ru.vladsaybulin.network.models.UserRateValuesDto
+import ru.vladsaybulin.network.models.NetworkUserRateValues
 import ru.vladsaybulin.network.models.UserRateWithEntryDto
 import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
 import javax.inject.Inject
@@ -110,7 +110,7 @@ class UserRateDataSource @Inject constructor(
 
     suspend fun updateUserRate(
         userRateId: Long,
-        userRateValues: UserRateValuesDto
+        userRateValues: NetworkUserRateValues
     ): UserRateWithEntryLinkDto? {
         val wrappedBody = JsonObject(
             mapOf("user_rate" to json.encodeToJsonElement(userRateValues))

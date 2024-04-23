@@ -1,48 +1,9 @@
 package ru.vladsaybulin.core.domain
 
-import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
-import ru.vladsaybulin.model.EntryDetails
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
-import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.model.userrate.UserRateValues
-import javax.inject.Inject
-
-class CreateUserRateUseCase @Inject constructor(
-    private val userRateRepository: UserRateRepository
-) {
-    suspend operator fun invoke(userRateStatus: UserRateStatus, entryDetails: EntryDetails) {
-        if (entryDetails.anime != null) {
-            userRateRepository.createUserRate(
-                anime = entryDetails.anime!!.asBrief(),
-                userRateValues = UserRateValues(
-                    status = userRateStatus,
-                    score = 0,
-                    chapters = 0,
-                    episodes = 0,
-                    volumes = 0,
-                    rewatches = 0,
-                    text = ""
-                )
-            )
-        } else {
-            userRateRepository.createUserRate(
-                manga = entryDetails.manga!!.asBrief(),
-                userRateValues = UserRateValues(
-                    status = userRateStatus,
-                    score = 0,
-                    chapters = 0,
-                    episodes = 0,
-                    volumes = 0,
-                    rewatches = 0,
-                    text = ""
-                )
-            )
-        }
-    }
-}
 
 private fun AnimeDetails.asBrief() = Anime(
     id = id,

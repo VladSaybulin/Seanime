@@ -17,8 +17,7 @@ import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.CreateUserRateDto
 import ru.vladsaybulin.data.model.asDto
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.data.model.asPOJO
-import ru.vladsaybulin.data.model.userRateDboShell
+import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.util.AbstractShikimoriRemoteMediator
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
@@ -30,9 +29,7 @@ import ru.vladsaybulin.database.models.userrate.PopulatedUserRateDbo
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.models.userrate.UserRateOrderDbo
 import ru.vladsaybulin.database.models.userrate.asExternalModel
-import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
@@ -84,39 +81,10 @@ class UserRateRepository @Inject constructor(
         }
     )
 
-    suspend fun createUserRate(userRateValues: UserRateValues, anime: Anime) {
-        createUserRate(EntryType.Anime, anime.id, userRateValues) {
-            animeDao.insertOrReplaceAnimeEntity(anime.asPOJO())
-        }
-    }
-
-    suspend fun createUserRate(userRateValues: UserRateValues, manga: Manga) {
-        createUserRate(EntryType.Manga, manga.id, userRateValues) {
-            mangaDao.insertOrReplaceManga(manga.asPOJO())
-        }
-    }
-
-    suspend fun updateUserRate(userRateId: Long, userRateValues: UserRateValues) {
-        withContext(ioDispatcher) {
-            val response = userRateDataSource.updateUserRate(userRateId, userRateValues.asDto())
-            if (response != null) {
-                userRateDao.insertOrReplaceUserRate(response.asPOJO())
-            }
-        }
-    }
-
-    suspend fun deleteUserRate(userRateId: Long) {
-        withContext(ioDispatcher) {
-            userRateDataSource.deleteUSerRate(userRateId)
-            userRateDao.deleteUserRate(userRateId)
-        }
-    }
-
-    private suspend fun createUserRate(
+    suspend fun createUserRate(
         entryType: EntryType,
         entryId: Long,
-        userRateValues: UserRateValues,
-        onSaveEntity: suspend () -> Unit
+        userRateValues: UserRateValues
     ) {
         require(userRateValues.status != UserRateStatus.None)
         withContext(ioDispatcher) {
@@ -136,11 +104,26 @@ class UserRateRepository @Inject constructor(
             }
             if (response != null) {
                 databaseTransactionRunner {
-                    onSaveEntity()
-                    userRateDao.insertOrReplaceUserRate(response.asPOJO())
+                    userRateDao.insertOrReplaceUserRate(response.asEntity())
                     userRateDao.deleteOrderUserRateByStatus(userRateValues.status)
                 }
             }
+        }
+    }
+
+    suspend fun updateUserRate(userRateId: Long, userRateValues: UserRateValues) {
+        withContext(ioDispatcher) {
+            val response = userRateDataSource.updateUserRate(userRateId, userRateValues.asDto())
+            if (response != null) {
+                userRateDao.insertOrReplaceUserRate(response.asEntity())
+            }
+        }
+    }
+
+    suspend fun deleteUserRate(userRateId: Long) {
+        withContext(ioDispatcher) {
+            userRateDataSource.deleteUSerRate(userRateId)
+            userRateDao.deleteUserRate(userRateId)
         }
     }
 
@@ -167,7 +150,7 @@ class UserRateRepository @Inject constructor(
                 val start = pageNumber * pageSize
 
                 response.forEachIndexed { index, dto ->
-                    userRates.add(dto.userRateDboShell())
+                    userRates.add(dto.userRateEntityShell())
                     dto.networkAnime?.let { animes.add(it.asEntity()) }
                     dto.networkManga?.let { mangas.add(it.asEntity()) }
                     order.add(UserRateOrderDbo(dto.networkUserRate.id, start + index))

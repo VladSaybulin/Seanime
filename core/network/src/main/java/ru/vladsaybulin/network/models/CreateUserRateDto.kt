@@ -17,10 +17,10 @@ class CreateUserRateDto(
     @SerialName("status")
     @Serializable(UserRateStatusSerializer::class)
     val status: UserRateStatus,
-    @SerialName("score") val score: Int,
-    @SerialName("episodes") val episodes: Int,
-    @SerialName("chapters") val chapters: Int,
-    @SerialName("volumes") val volumes: Int,
-    @SerialName("rewatches") val rewatches: Int,
-    @SerialName("text") val text: String
+    @SerialName("score") val score: Int?,
+    @SerialName("episodes") val episodes: Int?,
+    @SerialName("chapters") val chapters: Int?,
+    @SerialName("volumes") val volumes: Int?,
+    @SerialName("rewatches") val rewatches: Int?,
+    @SerialName("text") val text: String?
 )
