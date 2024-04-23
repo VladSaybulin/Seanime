@@ -3,6 +3,7 @@ package ru.vladsaybulin.feature.details.content
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
@@ -76,7 +77,7 @@ private fun RelatedAnimeListItem(
                 }
 
                 ShikimoriTextBadge {
-                    relationTypeString(relationType)
+                    Text(relationTypeString(relationType))
                 }
             }
 
