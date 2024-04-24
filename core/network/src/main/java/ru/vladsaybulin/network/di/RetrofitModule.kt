@@ -23,19 +23,7 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    @AuthorizedClient
-    fun provideAuthorizedRetrofit(
-        @AuthorizedClient okHttpClient: OkHttpClient,
-        json: Json,
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-        .client(okHttpClient)
-        .build()
-
-    @Provides
-    @Singleton
-    fun provideUnauthorizedRetrofit(
+    fun provideRetrofit(
         okHttpClient: OkHttpClient,
         json: Json,
     ): Retrofit = Retrofit.Builder()

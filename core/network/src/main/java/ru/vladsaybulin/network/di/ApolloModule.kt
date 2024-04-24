@@ -15,8 +15,7 @@ import javax.inject.Singleton
 class ApolloModule {
     @Provides
     @Singleton
-    @AuthorizedClient
-    fun provideApolloClient(@AuthorizedClient okHttpClient: OkHttpClient) = ApolloClient.Builder()
+    fun provideApolloClient(okHttpClient: OkHttpClient) = ApolloClient.Builder()
         .okHttpClient(okHttpClient)
         .serverUrl(SERVER_URL)
         .build()

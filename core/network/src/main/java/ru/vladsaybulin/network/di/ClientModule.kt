@@ -22,24 +22,16 @@ class ClientModule {
 
     @Provides
     @Singleton
-    fun provideUnauthorizedOkHttpClient(
+    fun provideOkHttpClient(
         userAgentInterceptor: UserAgentInterceptor,
-        loggingInterceptor: HttpLoggingInterceptor
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(userAgentInterceptor)
-        .addInterceptor(loggingInterceptor)
-        .build()
-
-    @Provides
-    @Singleton
-    @AuthorizedClient
-    fun provideAuthorizedOkHttpClient(
-        unauthorizedOkHttpClient: OkHttpClient,
+        loggingInterceptor: HttpLoggingInterceptor,
         authorizationInterceptor: AuthorizationInterceptor,
         authenticator: ShikimoriAuthenticator
     ): OkHttpClient =
-        unauthorizedOkHttpClient.newBuilder()
+        OkHttpClient.Builder()
+            .addInterceptor(userAgentInterceptor)
             .addInterceptor(authorizationInterceptor)
+            .addInterceptor(loggingInterceptor)
             .authenticator(authenticator)
             .build()
 }

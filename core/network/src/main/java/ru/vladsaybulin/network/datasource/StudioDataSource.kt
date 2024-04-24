@@ -3,7 +3,6 @@ package ru.vladsaybulin.network.datasource
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
-import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.models.NetworkStudio
 import javax.inject.Inject
 
@@ -13,9 +12,7 @@ interface StudioApi {
     suspend fun getStudios(): List<NetworkStudio>
 }
 
-class StudioDataSource @Inject constructor(
-    @AuthorizedClient retrofit: Retrofit
-) {
+class StudioDataSource @Inject constructor(retrofit: Retrofit) {
     private val api: StudioApi = retrofit.create()
 
     suspend fun getStudios(): List<NetworkStudio> = api.getStudios()

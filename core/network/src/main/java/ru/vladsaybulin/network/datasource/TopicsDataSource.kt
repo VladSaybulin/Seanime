@@ -6,7 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.vladsaybulin.model.topic.TopicLinkedType
 import ru.vladsaybulin.model.topic.TopicType
-import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.models.TopicDto
 import javax.inject.Inject
 
@@ -22,9 +21,7 @@ interface TopicApi {
     ): List<TopicDto>
 }
 
-class TopicsDataSource @Inject constructor(
-    @AuthorizedClient retrofit: Retrofit
-) {
+class TopicsDataSource @Inject constructor(retrofit: Retrofit) {
     private val api: TopicApi = retrofit.create()
 
     suspend fun getTopics(

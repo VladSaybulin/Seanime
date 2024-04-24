@@ -10,7 +10,6 @@ import ru.vladsaybulin.common.network.ShikimoriException
 import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
 import ru.vladsaybulin.core.network.graphql.MangaQuery
 import ru.vladsaybulin.model.search.QueryMapKey
-import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.models.NetworkManga
 import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
@@ -23,8 +22,8 @@ interface MangaApi {
 }
 
 class MangaDataSource @Inject constructor(
-    @AuthorizedClient private val apolloClient: ApolloClient,
-    @AuthorizedClient private val retrofit: Retrofit
+    private val apolloClient: ApolloClient,
+    retrofit: Retrofit
 ) {
 
     private val api: MangaApi = retrofit.create()

@@ -12,10 +12,9 @@ import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.core.network.graphql.AnimeQuery
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
-import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.mapper.enums.asOrderEnum
-import ru.vladsaybulin.network.mapper.queries.asNetworkModels
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
+import ru.vladsaybulin.network.mapper.queries.asNetworkModels
 import ru.vladsaybulin.network.models.NetworkAnime
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 import ru.vladsaybulin.network.util.getOrderEnum
@@ -29,7 +28,7 @@ interface AnimeApi {
 
 @Singleton
 class AnimeDataSource @Inject constructor(
-    @AuthorizedClient private val apolloClient: ApolloClient,
+    private val apolloClient: ApolloClient,
     retrofit: Retrofit
 ) {
     private val api: AnimeApi = retrofit.create()

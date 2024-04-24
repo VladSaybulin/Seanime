@@ -19,7 +19,6 @@ import ru.vladsaybulin.core.network.graphql.AnimeUserRatesQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRatesQuery
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.network.di.AuthorizedClient
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatusEnum
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.mapper.queries.asNetworkModels
@@ -48,8 +47,8 @@ private interface UserRateApi {
 
 @Singleton
 class UserRateDataSource @Inject constructor(
-    @AuthorizedClient private val apolloClient: ApolloClient,
-    @AuthorizedClient retrofit: Retrofit,
+    private val apolloClient: ApolloClient,
+    retrofit: Retrofit,
     private val json: Json
 ) {
 
