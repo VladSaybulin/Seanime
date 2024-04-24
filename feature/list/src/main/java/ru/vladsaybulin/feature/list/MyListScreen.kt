@@ -75,9 +75,8 @@ fun MyListScreen(
             .padding(bottom = 80.dp)
     ) {
         when (authState) {
-            is ShikimoriAuthState.Error -> AuthorizationError(onSignIn = onSignIn)
-            ShikimoriAuthState.NotAuthorized -> Authorization(onSignIn = onSignIn)
-            ShikimoriAuthState.Authorized -> ListContent(
+            ShikimoriAuthState.LOGGED_OUT -> Authorization(onSignIn = onSignIn)
+            ShikimoriAuthState.LOGGED_IN -> ListContent(
                 uiState = uiState,
                 userRates = userRates,
                 onEntryTypeChange = onEntryTypeChange,

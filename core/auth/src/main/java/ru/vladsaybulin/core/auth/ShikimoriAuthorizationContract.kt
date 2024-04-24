@@ -3,9 +3,6 @@ package ru.vladsaybulin.core.auth
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
@@ -13,30 +10,20 @@ import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ResponseTypeValues
+import javax.inject.Inject
 
-typealias AuthorizationLauncher = ActivityResultLauncher<Unit>
-
-fun ComponentActivity.registerAuthorizationLauncher(
-    shikimoriAuthorization: ShikimoriAuthorization
-): AuthorizationLauncher = registerForActivityResult(
-    AuthorizationContract(ShikimoriAuthorizationServiceConfiguration),
-    AuthorizationCallback(shikimoriAuthorization)
-)
-
-fun AuthorizationLauncher.launch() = launch(Unit)
-
-private class AuthorizationContract(
+internal class ShikimoriAuthorizationContract @Inject constructor(
     private val authorizationConfig: AuthorizationServiceConfiguration,
+    private val authInfo: ShikimoriAuthInfo,
 ) : ActivityResultContract<Unit, AuthorizationResult?>() {
     override fun createIntent(context: Context, input: Unit): Intent {
         val request = AuthorizationRequest.Builder(
             authorizationConfig,
-            BuildConfig.SHIKIMORI_CLIENT_ID,
+            authInfo.clientId,
             ResponseTypeValues.CODE,
-            Uri.parse(BuildConfig.SHIKIMORI_AUTH_REDIRECT_URI)
+            Uri.parse(authInfo.redirectUri)
         )
-            .setScope("user_rates comments topics")
-            .setAdditionalParameters(mapOf(UserAgent))
+            .setScope(authInfo.scope)
             .build()
         return AuthorizationService(context).getAuthorizationRequestIntent(request)
     }
@@ -50,14 +37,7 @@ private class AuthorizationContract(
     }
 }
 
-private class AuthorizationCallback(
-    private val shikimoriAuthorization: ShikimoriAuthorization
-) : ActivityResultCallback<AuthorizationResult?> {
-
-    override fun onActivityResult(result: AuthorizationResult?) {
-        if (result == null) return
-        shikimoriAuthorization.onAuthorizationResult(result)
-    }
-}
-
-
+internal data class AuthorizationResult(
+    val response: AuthorizationResponse?,
+    val exception: AuthorizationException?
+)

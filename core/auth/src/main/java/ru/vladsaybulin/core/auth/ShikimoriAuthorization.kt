@@ -1,113 +1,110 @@
 package ru.vladsaybulin.core.auth
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import dagger.Lazy
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService
+import net.openid.appauth.ClientAuthentication
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.vladsaybulin.common.network.Dispatcher
-import ru.vladsaybulin.common.network.ShikiDispatchers
+import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.network.di.ApplicationScope
-import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShikimoriAuthorization @Inject internal constructor(
-    private val preferencesDataSource: ShikiPreferencesDataSource,
-    @ApplicationContext context: Context,
+    private val sharedPreferences: SharedPreferences,
+    private val client: Lazy<ClientAuthentication>,
+    private val service: Lazy<AuthorizationService>,
+    private val info: Lazy<ShikimoriAuthInfo>,
     @ApplicationScope private val appScope: CoroutineScope,
-    @Dispatcher(ShikiDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-    private var appAuthState: AuthState = runBlocking {
-        preferencesDataSource.authStateJsonString.firstOrNull()
-            ?.takeIf { it.isNotBlank() }
-            ?.let { AuthState.jsonDeserialize(it) }
-            ?: EmptyAuthState
+    private var appAuthState = AuthState()
+
+    private val _shikimoriAuthState = MutableStateFlow(ShikimoriAuthState.LOGGED_OUT)
+    val shikimoriAuthState = _shikimoriAuthState.asStateFlow()
+
+    init {
+        appScope.launch { readAuthState() }
     }
 
-    private val service = AuthorizationService(context)
-
-    private val _authState = MutableStateFlow(getCurrentState())
-    val authState = _authState.asStateFlow()
-
-    val accessToken: String?
-        get() = getFreshAccessToken()
-
-    internal fun onAuthorizationResult(result: AuthorizationResult) {
-
-        appAuthState.update(result.response, result.exception)
-        if (result.response == null) {
-            onAppAuthStateChanged()
-            return
+    fun getFreshAccessToken(): String? {
+        if (!appAuthState.isAuthorized) return null
+        if (appAuthState.needsTokenRefresh) {
+            refreshToken()
         }
-
-        val tokenRequest = result.response.createTokenExchangeRequest(DefaultAdditionalParams)
-        service.performTokenRequest(tokenRequest) { tokenResponse, tokenException ->
-            appAuthState.update(tokenResponse, tokenException)
-            onAppAuthStateChanged()
-        }
+        return appAuthState.accessToken
     }
 
-    fun signOut() {
-        val currentAccessToken = accessToken
-        appAuthState = EmptyAuthState
-        onAppAuthStateChanged()
-        appScope.launch(ioDispatcher) {
-            val client = OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
-                .build()
-            val request = Request.Builder()
-                .url("${BuildConfig.BASE_URL}/api/users/sign_out")
-                .method("POST", "".toRequestBody())
-                .addHeader(UserAgent.first, UserAgent.second)
-                .addHeader("Authorization", "Bearer $currentAccessToken")
-                .build()
+    suspend fun signOut() {
+        val currentAccessToken = getFreshAccessToken()
+        appAuthState = AuthState()
+        onAuthStateUpdated()
+        val client = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+        val request = Request.Builder()
+            .url("${BuildConfig.BASE_URL}/api/users/sign_out")
+            .method("POST", "".toRequestBody())
+            .addHeader("UserAgent", info.get().userAgent)
+            .addHeader("Authorization", "Bearer $currentAccessToken")
+            .build()
+        withContext(ioDispatcher) {
             client.newCall(request).execute().body
         }
     }
 
-    private fun getFreshAccessToken(): String? {
-        var accessToken: String? = appAuthState.accessToken ?: return null
+    fun onNewAuthState(newAuthState: AuthState?) {
+        appAuthState = newAuthState ?: AuthState()
+        onAuthStateUpdated()
+    }
 
-        appAuthState.performActionWithFreshTokens(
-            service,
-            DefaultAdditionalParams
-        ) { freshAccessToken, _, _ ->
-            if (accessToken != freshAccessToken) {
-                accessToken = freshAccessToken
-                onAppAuthStateChanged()
+    private fun onAuthStateUpdated(skipWrite: Boolean = false) {
+        _shikimoriAuthState.value = when {
+            appAuthState.isAuthorized -> ShikimoriAuthState.LOGGED_IN
+            else -> ShikimoriAuthState.LOGGED_OUT
+        }
+        if (!skipWrite) {
+            appScope.launch(ioDispatcher) {
+                sharedPreferences.edit(commit = true) {
+                    putString(AUTH_STATE_KEY, appAuthState.jsonSerializeString())
+                }
             }
         }
-        return accessToken
     }
 
-    private fun onAppAuthStateChanged() {
-        _authState.value = getCurrentState()
-        appScope.launch {
-            preferencesDataSource.setAuthStateJsonString(appAuthState.jsonSerializeString())
+    private suspend fun readAuthState() {
+        appAuthState = withContext(ioDispatcher) {
+            sharedPreferences.getString(AUTH_STATE_KEY, null)
+                ?.ifBlank { null }
+                ?.let { AuthState.jsonDeserialize(it) }
+                ?: AuthState()
+        }
+        onAuthStateUpdated(skipWrite = true)
+    }
+
+    private fun refreshToken() {
+        val tokenRequest = appAuthState.createTokenRefreshRequest()
+        service.get().performTokenRequest(tokenRequest, client.get()) { response, exception ->
+            appAuthState.update(response, exception)
+            onAuthStateUpdated()
         }
     }
-
-    private fun getCurrentState(): ShikimoriAuthState = when {
-        appAuthState.isAuthorized -> ShikimoriAuthState.Authorized
-        appAuthState.authorizationException == null -> ShikimoriAuthState.NotAuthorized
-        else -> ShikimoriAuthState.Error(appAuthState.authorizationException!!)
-    }
-
-    companion object {
-        val EmptyAuthState: AuthState
-            get() = AuthState(ShikimoriAuthorizationServiceConfiguration)
-    }
 }
+
+private const val AUTH_STATE_KEY = "auth_state"

@@ -10,7 +10,8 @@ class AuthorizationInterceptor @Inject constructor(
     private val authorization: ShikimoriAuthorization
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val accessToken = authorization.accessToken ?: return chain.proceed(chain.request())
+        val accessToken = authorization.getFreshAccessToken()
+            ?: return chain.proceed(chain.request())
         val request = chain.request().newBuilder()
             .addAuthorizationHeader(accessToken)
             .build()

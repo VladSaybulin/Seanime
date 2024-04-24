@@ -1,5 +1,6 @@
 package ru.vladsaybulin.network.util
 
+import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
@@ -12,10 +13,10 @@ class ShikimoriAuthenticator @Inject constructor(
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.code != 401) return null
-        val freshAccessToken = authorization.accessToken ?: return null
+        val freshAccessToken = authorization.getFreshAccessToken() ?: return null
         val tokenFromResponse = response.request.getAccessToken() ?: return null
         if (freshAccessToken == tokenFromResponse) {
-            authorization.signOut()
+            runBlocking { authorization.signOut() }
             return response.request.newBuilder()
                 .removeAuthorizationHeader()
                 .build()

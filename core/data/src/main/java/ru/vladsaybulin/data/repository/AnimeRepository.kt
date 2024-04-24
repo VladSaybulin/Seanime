@@ -100,7 +100,7 @@ class AnimeRepository @Inject constructor(
 
     fun getAnimeDetails(animeId: Long): Flow<AnimeDetails> {
         val userRateFlow = authRepository.authState.map {
-            if (it == ShikimoriAuthState.Authorized) {
+            if (it == ShikimoriAuthState.LOGGED_IN) {
                 userRateDataSource.getAnimeUserRate(animeId)
             } else null
         }

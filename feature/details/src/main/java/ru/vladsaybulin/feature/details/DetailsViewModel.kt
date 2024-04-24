@@ -18,6 +18,7 @@ import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.feature.details.navigation.EntryDetailsArgs
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
+import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
@@ -84,7 +85,7 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun isAuthorized() = authRepository.isAuthorized()
+    fun isAuthorized() = authRepository.authState.value == ShikimoriAuthState.LOGGED_IN
 
     private suspend fun internalRefresh() {
         when (args.entryType) {

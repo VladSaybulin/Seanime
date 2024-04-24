@@ -81,7 +81,7 @@ class MangaRepository @Inject constructor(
 
     fun getMangaDetails(mangaId: Long): Flow<MangaDetails> {
         val userRateFlow = authRepository.authState.map {
-            if (it == ShikimoriAuthState.Authorized) {
+            if (it == ShikimoriAuthState.LOGGED_IN) {
                 userRateDataSource.getAnimeUserRate(mangaId)
             } else null
         }
