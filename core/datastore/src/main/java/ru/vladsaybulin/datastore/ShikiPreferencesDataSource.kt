@@ -10,8 +10,8 @@ import javax.inject.Inject
 class ShikiPreferencesDataSource @Inject constructor(
     private val shikiPreferencesDataStore: DataStore<ShikiPreferences>
 ) {
-    val authStateJsonString = shikiPreferencesDataStore.data
-        .map { it.auth.authStateJsonText }
+    val myId = shikiPreferencesDataStore.data
+        .map { prefs -> prefs.myId.takeIf { it != NULL_MY_ID } }
 
     val calendarLastRequestDate = shikiPreferencesDataStore.data
         .map { Instant.fromEpochMilliseconds(it.lastCalendarRequestDate) }
@@ -58,11 +58,11 @@ class ShikiPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setAuthStateJsonString(newAuthStateJsonText: String) {
+    suspend fun setMyId(newMyId: Long?) {
         shikiPreferencesDataStore.updateData {
-            it.copy {
-                auth = auth.copy { authStateJsonText = newAuthStateJsonText }
-            }
+            it.copy { myId = newMyId ?: NULL_MY_ID }
         }
     }
 }
+
+private const val NULL_MY_ID = -1L

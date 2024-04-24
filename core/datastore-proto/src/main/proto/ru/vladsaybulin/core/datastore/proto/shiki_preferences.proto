@@ -4,6 +4,7 @@ option java_package = "ru.vladsaybulin.core.datastore.proto";
 option java_multiple_files = true;
 
 message ShikiPreferences {
+  int64 myId = 1;
   int64 lastCalendarRequestDate = 2;
   int64 lastAnimeGenresRequestDate = 3;
   int64 lastMangaGenresRequestDate = 4;

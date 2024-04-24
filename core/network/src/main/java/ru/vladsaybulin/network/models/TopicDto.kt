@@ -23,7 +23,7 @@ data class TopicDto(
     @SerialName("created_at") val createdAt: Instant,
     @SerialName("comments_count") val commentsCount: Int,
     @SerialName("forum") val forum: ForumDto,
-    @SerialName("user") val user: BriefUserDto,
+    @SerialName("user") val user: NetworkBriefUser,
     @Serializable(TopicTypeSerializer::class)
     @SerialName("type")
     val type: TopicType,

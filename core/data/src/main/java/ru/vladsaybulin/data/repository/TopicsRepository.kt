@@ -9,7 +9,7 @@ import kotlinx.serialization.json.Json
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.data.model.asPOJO
+import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
@@ -70,7 +70,7 @@ class TopicsRepository @Inject constructor(
                         .id
                 } else null
             )
-            users.add(topic.user.asPOJO())
+            users.add(topic.user.asExternalModel())
             topics.add(topicDbo)
         }
 

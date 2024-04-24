@@ -9,6 +9,9 @@ import ru.vladsaybulin.database.models.user.UserEntity
 interface UsersDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertOrReplaceUser(user: UserEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOrReplaceUserEntities(users: List<UserEntity>)
 
 }

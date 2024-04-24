@@ -2,10 +2,10 @@ package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.database.models.user.UserImagePOJO
-import ru.vladsaybulin.network.models.BriefUserDto
+import ru.vladsaybulin.network.models.NetworkBriefUser
 import ru.vladsaybulin.network.models.UserImageDto
 
-fun BriefUserDto.asPOJO() = UserEntity(
+fun NetworkBriefUser.asExternalModel() = UserEntity(
     id = id,
     nickname = nickname,
     avatarUrl = avatarUrl,
