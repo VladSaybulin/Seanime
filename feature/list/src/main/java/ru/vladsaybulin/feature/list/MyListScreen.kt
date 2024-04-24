@@ -73,6 +73,7 @@ fun MyListScreen(
         modifier = Modifier
             .systemBarsPadding()
             .padding(bottom = 80.dp)
+            .fillMaxSize()
     ) {
         when (authState) {
             ShikimoriAuthState.LOGGED_OUT -> Authorization(onSignIn = onSignIn)

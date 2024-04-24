@@ -22,12 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.ui.ContentWithHeader
+import ru.vladsaybulin.core.ui.Header
 import ru.vladsaybulin.core.ui.colors.userRateStatusColor
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
+import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
@@ -42,17 +46,25 @@ fun LazyListScope.userRateStatusDiagram(statisticItems: List<StatisticsItem<User
 fun UserRateStatusStatisticsContent(
     statisticItems: List<StatisticsItem<UserRateStatus>>
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+    ContentWithHeader(
+        header = {
+            Header(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Text(stringResource(R.string.feature_details_user_statuses))
+            }
+        }
     ) {
-        UserRateStatusStatisticsDiagram(statisticItems = statisticItems)
-        FlowRow(
-            verticalArrangement = Arrangement.spacedBy(space = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(space = 24.dp),
-            modifier = Modifier.padding(top = 8.dp)
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            statisticItems.fastForEach {
-                UserRateStatusLegend(statisticItem = it)
+            UserRateStatusStatisticsDiagram(statisticItems = statisticItems)
+            FlowRow(
+                verticalArrangement = Arrangement.spacedBy(space = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(space = 24.dp),
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                statisticItems.fastForEach {
+                    UserRateStatusLegend(statisticItem = it)
+                }
             }
         }
     }

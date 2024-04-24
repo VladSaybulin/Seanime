@@ -58,8 +58,6 @@ import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.datasource.UserRateDataSource
 import ru.vladsaybulin.network.models.NetworkAnime
-import ru.vladsaybulin.network.models.NetworkUserRate
-import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.days
@@ -258,14 +256,6 @@ class AnimeRepository @Inject constructor(
                 LoadResult.Error(e)
             }
         }
-
-    private suspend fun saveUserRate(
-        animeDetails: NetworkAnimeDetails,
-        userRate: NetworkUserRate
-    ) {
-        animeDao.insertOrReplaceAnimeEntity(animeDetails.asAnimeEntity())
-        userRateDao.insertOrReplaceUserRate(userRate.asEntity(animeId = animeDetails.id))
-    }
 }
 
 private const val INITIAL_PAGE = 1

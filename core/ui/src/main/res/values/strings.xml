@@ -29,7 +29,7 @@
     <string name="episodes">%1$s эп.</string>
     <string name="episodes_x_duration">%1$s эп. по %2$s</string>
     <string name="relation_type_adaptation">Адаптация</string>
-    <string name="relation_type_alt_history">Алтернативная история</string>
+    <string name="relation_type_alt_history">Альтернативная история</string>
     <string name="relation_type_side_story">Другая история</string>
     <string name="relation_type_spin_off">Ответвление от оригинала</string>
     <string name="relation_type_sequel">Продолжение</string>

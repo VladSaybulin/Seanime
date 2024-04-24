@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -102,7 +103,7 @@ private fun RelatedMangaListItem(
         metadata = {
             MangaInfoKindAndYearText(kind = manga.kind, year = manga.airedOn?.year)
 
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 if (manga.status != EntryStatus.None) {
                     EntryStatusBadge(
                         status = manga.status,
@@ -115,7 +116,7 @@ private fun RelatedMangaListItem(
                 }
 
                 ShikimoriTextBadge {
-                    relationTypeString(relationType)
+                    Text(relationTypeString(relationType))
                 }
             }
 

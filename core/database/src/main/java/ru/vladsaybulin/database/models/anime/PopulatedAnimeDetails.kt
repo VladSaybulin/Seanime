@@ -108,7 +108,7 @@ fun PopulatedAnimeDetails.asExternalModel(): AnimeDetails = AnimeDetails(
     studios = studios.map { it.asExternalModel() },
     authors = authors.map { it.asExternalModel() },
     characters = characters.map { it.asExternalModel() },
-    related = related.map { it.asExternalModel() },
+    related = related.sortedBy { it.animeRelatedEntity.order }.map { it.asExternalModel() },
     screenshots = screenshots.map { it.asExternalModel() },
     videos = videos.map { it.asExternalModel() }
 )

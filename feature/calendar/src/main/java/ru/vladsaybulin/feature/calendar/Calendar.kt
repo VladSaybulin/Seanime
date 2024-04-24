@@ -77,6 +77,7 @@ fun CalendarScreen(
         modifier = Modifier
             .navigationBarsPadding()
             .padding(bottom = 80.dp)
+            .fillMaxSize()
     ) {
         when (uiState) {
             is CalendarUiState.Error -> FullScreenErrorMessage(throwable = uiState.throwable)
@@ -107,7 +108,9 @@ fun CalendarContent(
     }
 
     LazyColumn(
-        modifier = modifier.nestedScroll(pullToRefreshState.nestedScrollConnection),
+        modifier = modifier
+            .fillMaxSize()
+            .nestedScroll(pullToRefreshState.nestedScrollConnection),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(top = 16.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(), bottom = 16.dp)
     ) {

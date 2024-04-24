@@ -82,7 +82,7 @@ class MangaRepository @Inject constructor(
     fun getMangaDetails(mangaId: Long): Flow<MangaDetails> {
         val userRateFlow = authRepository.authState.map {
             if (it == ShikimoriAuthState.LOGGED_IN) {
-                userRateDataSource.getAnimeUserRate(mangaId)
+                userRateDataSource.getMangaUserRate(mangaId)
             } else null
         }
         return mangaDetailsDao.getMangaDetails(mangaId)

@@ -26,11 +26,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.ui.ContentWithHeader
+import ru.vladsaybulin.core.ui.Header
+import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.common.StatisticsItem
 import java.text.DecimalFormat
 
@@ -48,15 +52,21 @@ fun ScoreContent(
     score: Float,
     statistics: List<StatisticsItem<Int>>
 ) {
-    Row(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+    ContentWithHeader(
+        header = {
+            Header(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Text(stringResource(R.string.feature_details_score))
+            }
+        }
     ) {
-        ScoreValue(score = score)
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        ScoreHistogram(statistics = statistics)
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ScoreValue(score = score)
+            Spacer(modifier = Modifier.width(16.dp))
+            ScoreHistogram(statistics = statistics)
+        }
     }
 }
 

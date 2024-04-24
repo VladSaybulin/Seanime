@@ -30,4 +30,6 @@
     <string name="publishers">Издатели</string>
     <string name="genre">Жанр</string>
     <string name="genres">Жанры</string>
+    <string name="feature_details_score">Оценка</string>
+    <string name="feature_details_user_statuses">В списках у людей</string>
 </resources>
