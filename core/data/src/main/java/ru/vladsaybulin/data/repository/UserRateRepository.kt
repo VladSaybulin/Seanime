@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -30,15 +31,18 @@ import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.models.userrate.UserRateOrderDbo
 import ru.vladsaybulin.database.models.userrate.asExternalModel
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
+import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.datasource.UserRateDataSource
 import ru.vladsaybulin.network.models.UserRateWithEntryDto
 import javax.inject.Inject
 
 class UserRateRepository @Inject constructor(
     private val userRateDataSource: UserRateDataSource,
+    private val animeDataSource: AnimeDataSource,
     private val userRateDao: UserRateDao,
     private val animeDao: AnimeDao,
     private val mangaDao: MangaDao,
@@ -48,6 +52,7 @@ class UserRateRepository @Inject constructor(
 ) {
     fun getLastInProgressUserRates(): Flow<List<UserRateWithEntry>> =
         userRateDao.getLastInProgressUserRates(10)
+            .onStart { loadLastInProgressUserRates(10) }
             .map { it.map(PopulatedUserRateDbo::asExternalModel) }
             .flowOn(ioDispatcher)
 
@@ -125,6 +130,16 @@ class UserRateRepository @Inject constructor(
             userRateDataSource.deleteUSerRate(userRateId)
             userRateDao.deleteUserRate(userRateId)
         }
+    }
+
+    private suspend fun loadLastInProgressUserRates(limit: Int) {
+        val animeUserRates = animeDataSource.getAnime(
+            page = 1,
+            limit = limit,
+            queryMap = mapOf(QueryMapKey.MyList to UserRateStatus.Watching.serializedName)
+        )
+        animeDao.insertOrReplaceAnimes(animeUserRates.map { it.asEntity() })
+        userRateDao.insertOrReplaceUserRates(animeUserRates.mapNotNull { it.userRateEntityShell() })
     }
 
     @OptIn(ExperimentalPagingApi::class)
