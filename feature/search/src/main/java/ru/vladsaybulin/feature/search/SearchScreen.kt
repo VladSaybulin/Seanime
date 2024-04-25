@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.drop
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
@@ -470,10 +471,12 @@ private fun SearchAnimeQuickResult(
     searchAnimeResult: Flow<PagingData<AnimeWithUserRate>>,
     onAnimeClick: (Anime) -> Unit
 ) {
-    val items = searchAnimeResult.collectAsLazyPagingItems()
+    val pagingFlow = remember { searchAnimeResult.drop(1) }
+    val items = pagingFlow.collectAsLazyPagingItems()
     if (items.itemCount > 0) {
+        val itemSnapshotList = items.itemSnapshotList
         AnimeWithUserRateGrid(
-            items = items.itemSnapshotList.subList(0, QuickSearchSize).filterNotNull(),
+            items = itemSnapshotList.subList(0, QuickSearchSize.coerceAtMost(itemSnapshotList.size)).filterNotNull(),
             onEntryClick = { onAnimeClick(it.anime) },
             modifier = Modifier.fillMaxSize()
         )
