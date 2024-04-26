@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui
+package ru.vladsaybulin.core.ui.score
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas

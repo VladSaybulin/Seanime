@@ -33,9 +33,9 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.AnimatedScoreStars
+import ru.vladsaybulin.core.ui.score.AnimatedScoreStars
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.inputScore
+import ru.vladsaybulin.core.ui.score.inputScore
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.animeRatingString
 import ru.vladsaybulin.core.ui.strings.durationString
