@@ -38,6 +38,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
+import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
@@ -74,7 +75,8 @@ private fun HomeScreen(
     Box(
         modifier = Modifier
             .navigationBarsPadding()
-            .padding(bottom = 80.dp)
+            .padding(LocalScreenContentPadding.current)
+            .fillMaxSize()
     ) {
         when (uiState) {
             is HomeUiState.Success -> HomeContent(

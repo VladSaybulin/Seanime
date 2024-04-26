@@ -46,6 +46,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.domain.CalendarDay
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
+import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
@@ -76,7 +77,7 @@ fun CalendarScreen(
     Box(
         modifier = Modifier
             .navigationBarsPadding()
-            .padding(bottom = 80.dp)
+            .padding(LocalScreenContentPadding.current)
             .fillMaxSize()
     ) {
         when (uiState) {

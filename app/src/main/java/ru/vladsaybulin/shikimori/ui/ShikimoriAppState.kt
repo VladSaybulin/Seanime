@@ -49,12 +49,13 @@ class ShikimoriAppState(
             .currentBackStackEntryAsState().value?.destination
 
     val shouldShowBottomBar: Boolean
-        @Composable get() = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact &&
-                currentDestination.navigationVisible()
+        @Composable get() = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
 
     val shouldShowNavRail: Boolean
-        @Composable get() = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact &&
-                currentDestination.navigationVisible()
+        @Composable get() = !shouldShowBottomBar
+
+    val isNavigationVisible: Boolean
+        @Composable get() = currentDestination.isNavigationVisible()
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         val topLevelNavOptions = navOptions {
@@ -80,7 +81,7 @@ class ShikimoriAppState(
     }
 }
 
-private fun NavDestination?.navigationVisible() =
+private fun NavDestination?.isNavigationVisible() =
     this?.route?.let { r ->
         !HideNavigationOnDestinations.fastAny { r == it }
     } ?: true

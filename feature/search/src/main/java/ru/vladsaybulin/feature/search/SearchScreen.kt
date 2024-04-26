@@ -51,6 +51,7 @@ import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.asEntryDetailsArgs
+import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateGrid
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
@@ -111,7 +112,8 @@ private fun SearchScreen(
     Box(
         modifier = Modifier
             .navigationBarsPadding()
-            .padding(bottom = 80.dp)
+            .padding(LocalScreenContentPadding.current)
+            .fillMaxSize()
     ) {
 
         var showFilters by remember { mutableStateOf(false) }

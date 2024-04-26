@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Button
@@ -27,6 +28,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LazyPagingColumn
+import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.asTargetStringEntry
 import ru.vladsaybulin.core.ui.strings.entryTypeString
@@ -71,8 +73,8 @@ fun MyListScreen(
 ) {
     Box(
         modifier = Modifier
-            .systemBarsPadding()
-            .padding(bottom = 80.dp)
+            .navigationBarsPadding()
+            .padding(LocalScreenContentPadding.current)
             .fillMaxSize()
     ) {
         when (authState) {

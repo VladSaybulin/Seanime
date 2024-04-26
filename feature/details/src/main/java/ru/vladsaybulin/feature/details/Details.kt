@@ -37,6 +37,7 @@ import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.ImageViewArgs
 import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
+import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
@@ -124,9 +125,11 @@ fun DetailsScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = Modifier
-        .navigationBarsPadding()
-        .padding(bottom = 80.dp)
+    Box(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .padding(LocalScreenContentPadding.current)
+            .fillMaxSize()
     ) {
 
         when (uiState) {
