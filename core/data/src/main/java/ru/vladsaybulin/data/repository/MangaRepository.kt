@@ -90,7 +90,7 @@ class MangaRepository @Inject constructor(
             .map { it.asExternalModel() }
             .combine(userRateFlow) { details, userRate ->
                 if (userRate != null) {
-                    userRateDao.insertOrReplaceUserRate(userRate.asEntity(details.id))
+                    userRateDao.insertOrReplaceUserRate(userRate.asEntity(mangaId = details.id))
                 }
                 details
             }
@@ -98,7 +98,7 @@ class MangaRepository @Inject constructor(
     }
 
     fun getMangaDetailsUserRate(mangaId: Long) =
-        userRateDao.getAnimeUserRate(mangaId).map { it?.asUserRate() }
+        userRateDao.getMangaUserRate(mangaId).map { it?.asUserRate() }
 
     fun getSimilarMangas(mangaId: Long): Flow<List<Manga>> =
         flowOf {
@@ -128,7 +128,7 @@ class MangaRepository @Inject constructor(
             mangaDao.insertOrReplaceManga(mangaDetails.asMangaEntity())
             mangaDetailsDao.insertOrReplaceMangaDetails(mangaDetails.asMangaDetailsEntity())
 
-            mangaDetailsDao.deleteMangaStudioCrossReferences(mangaId)
+            mangaDetailsDao.deleteMangaPublisherCrossReferences(mangaId)
             mangaDetails.mangaPublisherCrossRefs().let {
                 mangaDetailsDao.insertMangaPublisherCrossReferences(it)
             }

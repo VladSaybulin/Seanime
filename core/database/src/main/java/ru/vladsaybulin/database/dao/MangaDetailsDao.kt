@@ -54,6 +54,6 @@ interface MangaDetailsDao {
     suspend fun deleteMangaRelated(mangaId: Long)
 
     @Query("DELETE FROM manga_publisher WHERE manga_id = :mangaId")
-    suspend fun deleteMangaStudioCrossReferences(mangaId: Long)
+    suspend fun deleteMangaPublisherCrossReferences(mangaId: Long)
     
 }
