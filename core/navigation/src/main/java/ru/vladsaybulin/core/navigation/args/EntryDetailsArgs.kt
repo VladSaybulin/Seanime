@@ -11,4 +11,4 @@ data class EntryDetailsArgs(
 
 fun Anime.asEntryDetailsArgs() = EntryDetailsArgs(EntryType.Anime, id)
 
-fun Manga.asEntryDetailsArgs() = EntryDetailsArgs(EntryType.Anime, id)
+fun Manga.asEntryDetailsArgs() = EntryDetailsArgs(EntryType.Manga, id)
