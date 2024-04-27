@@ -82,7 +82,7 @@ fun ShikimoriApp(
                         visible = appState.isNavigationVisible,
                         enter = slideInHorizontally { -it },
                         exit = slideOutHorizontally { -it },
-                        modifier = Modifier.align(Alignment.TopCenter)
+                        modifier = Modifier.align(Alignment.TopStart)
                     ) {
                         ShikimoriNavRail(
                             destinations = appState.topLevelDestinations,
