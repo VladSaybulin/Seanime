@@ -1,6 +1,7 @@
 package ru.vladsaybulin.core.ui.score
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -42,6 +43,7 @@ fun AnimatedScoreStars(
 ) {
     val animatedScore by animateFloatAsState(
         targetValue = score,
+        animationSpec = tween(),
         label = "ScoreStars"
     )
 
@@ -165,6 +167,7 @@ class InputScoreNode(
 
     private fun updateScore(position: Offset, bounds: IntSize) {
         val score = ((position.x / bounds.width) * MaxScore).roundToInt()
+            .coerceIn(0..MaxScore)
         onScoreChange(score)
     }
 }
