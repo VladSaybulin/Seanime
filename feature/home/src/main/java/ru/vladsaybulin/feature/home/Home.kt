@@ -119,35 +119,36 @@ private fun HomeContent(
         },
         modifier = Modifier.nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
     ) { scaffoldPadding ->
-        Box(modifier = Modifier.padding(scaffoldPadding)) {
-            LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
+        LazyColumn(
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = Modifier.padding(scaffoldPadding)
+        ) {
 
-                if (uiState.inProgressUserRates.isNotEmpty()) {
-                    inProgressUserRatesPager(
-                        userRates = uiState.inProgressUserRates,
-                        onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
-                    )
-                    sectionSpace()
-                }
-
-                animeOngoingHeader(onMoreClick = onMoreAnimeOngoingClick)
-                animeOngoingCarousel(
-                    ongoingAnime = uiState.ongoings,
-                    onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it.id)) }
+            if (uiState.inProgressUserRates.isNotEmpty()) {
+                inProgressUserRatesPager(
+                    userRates = uiState.inProgressUserRates,
+                    onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
                 )
-
                 sectionSpace()
-
-                newsTopicsHeader()
-                newsTopicsFeed(
-                    newsTopics = uiState.newsTopics,
-                    onTopicClick = {},
-                    onUserClick = {}
-                )
-                allNewsTopicsButton(onAllNewsTopicsClick = onAllNewsTopicsClick)
-
-                bottomSpace()
             }
+
+            animeOngoingHeader(onMoreClick = onMoreAnimeOngoingClick)
+            animeOngoingCarousel(
+                ongoingAnime = uiState.ongoings,
+                onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it.id)) }
+            )
+
+            sectionSpace()
+
+            newsTopicsHeader()
+            newsTopicsFeed(
+                newsTopics = uiState.newsTopics,
+                onTopicClick = {},
+                onUserClick = {}
+            )
+            allNewsTopicsButton(onAllNewsTopicsClick = onAllNewsTopicsClick)
+
+            bottomSpace()
         }
     }
 }
@@ -212,7 +213,7 @@ private fun LazyListScope.sectionSpace() {
 }
 
 private fun LazyListScope.animeOngoingCarousel(
-    ongoingAnime: List<Anime>,
+    ongoingAnime: ImmutableList<Anime>,
     onAnimeClick: (Anime) -> Unit
 ) {
     item {
