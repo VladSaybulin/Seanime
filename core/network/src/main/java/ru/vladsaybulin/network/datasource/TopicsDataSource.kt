@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.vladsaybulin.model.topic.TopicLinkedType
 import ru.vladsaybulin.model.topic.TopicType
-import ru.vladsaybulin.network.models.TopicDto
+import ru.vladsaybulin.network.models.NetworkTopic
 import javax.inject.Inject
 
 interface TopicApi {
@@ -18,7 +18,7 @@ interface TopicApi {
         @Query("linked_type") linkedTypeString: String?,
         @Query("linked_id") linkedId: Long?,
         @Query("type") topicTypeString: String?,
-    ): List<TopicDto>
+    ): List<NetworkTopic>
 }
 
 class TopicsDataSource @Inject constructor(retrofit: Retrofit) {

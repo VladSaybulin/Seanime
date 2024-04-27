@@ -9,24 +9,18 @@ import kotlinx.serialization.json.Json
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.data.model.asExternalModel
+import ru.vladsaybulin.data.model.linkedAnimeEntityShell
+import ru.vladsaybulin.data.model.linkedMangaEntityShell
+import ru.vladsaybulin.data.model.userEntityShell
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.TopicsDao
 import ru.vladsaybulin.database.dao.UsersDao
-import ru.vladsaybulin.database.models.anime.AnimeEntity
-import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.topic.PopulatedTopic
-import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.database.models.topic.asExternalModel
-import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.model.topic.Topic
-import ru.vladsaybulin.model.topic.TopicLinkedType
 import ru.vladsaybulin.network.datasource.TopicsDataSource
-import ru.vladsaybulin.network.models.TopicDto
-import ru.vladsaybulin.network.models.decodeLinkedAnime
-import ru.vladsaybulin.network.models.decodeLinkedManga
 import javax.inject.Inject
 
 class TopicsRepository @Inject constructor(
@@ -47,32 +41,15 @@ class TopicsRepository @Inject constructor(
 
     private suspend fun refreshNewResources() {
         val freshTopics = topicsDataSource.getTopics(
-            limit = 10,
+            limit = 3,
             forumPermalink = "news"
         )
 
-        val anime = mutableListOf<AnimeEntity>()
-        val manga = mutableListOf<MangaEntity>()
-        val users = mutableListOf<UserEntity>()
-        val topics = mutableListOf<TopicEntity>()
+        val anime = freshTopics.mapNotNull { it.linkedAnimeEntityShell(json) }
+        val manga = freshTopics.mapNotNull { it.linkedMangaEntityShell(json) }
+        val users = freshTopics.map { it.userEntityShell() }
+        val topics = freshTopics.map { it.asEntity() }
 
-        for (topic in freshTopics) {
-
-            val topicDbo = topic.asEntity(
-                linkedAnimeId = if (topic.hasLinked() && topic.linkedIsAnime()) {
-                    topic.decodeLinkedAnime(json)
-                        .also { anime.add(it.asEntity()) }
-                        .id
-                } else null,
-                linkedMangaId = if (topic.hasLinked() && topic.linkedIsManga()) {
-                    topic.decodeLinkedManga(json)
-                        .also { manga.add(it.asEntity()) }
-                        .id
-                } else null
-            )
-            users.add(topic.user.asExternalModel())
-            topics.add(topicDbo)
-        }
 
         databaseTransactionRunner {
             if (anime.isNotEmpty()) {
@@ -93,12 +70,3 @@ class TopicsRepository @Inject constructor(
         }
     }
 }
-
-private fun TopicDto.hasLinked() =
-    linked != null
-
-private fun TopicDto.linkedIsAnime() =
-    linkedType == TopicLinkedType.Anime
-
-private fun TopicDto.linkedIsManga() =
-    linkedType == TopicLinkedType.Manga || linkedType == TopicLinkedType.Ranobe
