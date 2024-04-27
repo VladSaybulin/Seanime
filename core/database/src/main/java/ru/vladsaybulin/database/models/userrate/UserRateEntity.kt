@@ -17,14 +17,15 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
             entity = AnimeEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
-            onDelete = ForeignKey.NO_ACTION,
+            onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = MangaEntity::class,
             parentColumns = ["id"],
             childColumns = ["manga_id"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
         )
     ]
 )

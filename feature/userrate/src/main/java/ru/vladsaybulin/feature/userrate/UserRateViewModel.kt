@@ -3,17 +3,13 @@ package ru.vladsaybulin.feature.userrate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.data.repository.UserRateRepository
-import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import javax.inject.Inject
@@ -24,31 +20,18 @@ class UserRateViewModel @Inject constructor(
     private val userRateRepository: UserRateRepository
 ) : ViewModel() {
 
-    private val userRateWithContext =
-        MutableSharedFlow<Pair<UserRate, UserRateEditorContext>>(replay = 1)
+    private val _userRateWithEntry = MutableStateFlow<UserRateWithEntry?>(null)
+    val userRateWithEntry= _userRateWithEntry.asStateFlow()
 
-    val setup = combine(
-        getEnabledAutocorrectUseCase(),
-        userRateWithContext
-    ) { enabledAutocorrect, (userRate, context) ->
-        UserRateSetup.Edit(
-            userRate = userRate,
-            context = context,
-            enabledAutocorrect = enabledAutocorrect
-        )
-    }
+    val autocorrectUserRate = getEnabledAutocorrectUseCase()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = UserRateSetup.None
+            initialValue = false
         )
 
-    fun setUserRate(userRateWithEntry: UserRateWithEntry) {
-        userRateWithContext.tryEmit(userRateWithEntry.userRate to (userRateWithEntry.anime?.context ?: userRateWithEntry.manga!!.context))
-    }
-
-    fun setupUserRate(userRate: UserRate, context: UserRateEditorContext) {
-        userRateWithContext.tryEmit(userRate to context)
+    fun setUserRate(newUserRateWithEntry: UserRateWithEntry) {
+        _userRateWithEntry.tryEmit(newUserRateWithEntry)
     }
 
     fun save(userRateValues: UserRateValues) {
@@ -65,26 +48,5 @@ class UserRateViewModel @Inject constructor(
         }
     }
 
-    private fun getUserRateId(): Long? {
-        val currSetup = setup.value
-        return if (currSetup is UserRateSetup.Edit) {
-            currSetup.userRate.id
-        } else null
-    }
+    private fun getUserRateId(): Long? = userRateWithEntry.value?.userRate?.id
 }
-
-val Anime.context
-    get() = UserRateEditorContext(
-        entryType = EntryType.Anime,
-        entryStatus = status,
-        episodesLimit = Limit.Unlimited
-    )
-
-
-val Manga.context
-    get() = UserRateEditorContext(
-        entryType = EntryType.Manga,
-        entryStatus = status,
-        chaptersLimit = Limit.Unlimited,
-        volumesLimit = Limit.Unlimited
-    )

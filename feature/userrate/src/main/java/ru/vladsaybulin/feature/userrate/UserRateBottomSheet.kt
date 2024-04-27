@@ -3,6 +3,7 @@ package ru.vladsaybulin.feature.userrate
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -30,10 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
 import androidx.compose.ui.util.lerp
@@ -44,12 +47,11 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.UserRateStatusButton
 import ru.vladsaybulin.core.ui.UserRateStatusButtonDefaults
-import ru.vladsaybulin.feature.userrate.components.Counter
-import ru.vladsaybulin.feature.userrate.components.ScoreRow
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.core.ui.score.ScoreInput
+import ru.vladsaybulin.model.anime.previewAnimes
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,35 +61,44 @@ fun UserRateBottomSheet(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit
 ) {
-    val setupState = viewModel.setup.collectAsStateWithLifecycle()
+    val userRateWithEntry by viewModel.userRateWithEntry.collectAsStateWithLifecycle()
+    val autocorrectUserRate by viewModel.autocorrectUserRate.collectAsStateWithLifecycle()
 
-    val state = rememberUserRateState(setup = setupState.value) ?: return
-
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val scope = rememberCoroutineScope()
-
-    val closeSheet = {
-        scope.launch {
-            sheetState.hide()
-        }.invokeOnCompletion { onDismissRequest() }
-    }
-
-    ShikimoriModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        modifier = modifier
-    ) {
-        UserRateContent(
-            state = state,
-            onSave = {
-                state.userRateValues?.let { viewModel.save(it) }
-                closeSheet()
-            },
-            onDelete = {
-                viewModel.delete()
-                closeSheet()
-            }
+    val state = if (userRateWithEntry != null) {
+        rememberUserRateState(
+            userRateWithEntry = userRateWithEntry!!,
+            autoCorrectUserRate = autocorrectUserRate
         )
+    } else null
+
+    if (state != null) {
+
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val scope = rememberCoroutineScope()
+
+        val closeSheet = {
+            scope.launch {
+                sheetState.hide()
+            }.invokeOnCompletion { onDismissRequest() }
+        }
+
+        ShikimoriModalBottomSheet(
+            onDismissRequest = onDismissRequest,
+            sheetState = sheetState,
+            modifier = modifier
+        ) {
+            UserRateContent(
+                state = state,
+                onSave = {
+                    viewModel.save(state.userRateValues)
+                    closeSheet()
+                },
+                onDelete = {
+                    viewModel.delete()
+                    closeSheet()
+                }
+            )
+        }
     }
 }
 
@@ -107,42 +118,50 @@ fun UserRateContent(
         selectedStatus = state.status,
         expandedStatusButtons = expandedStatusButtons,
         onExpandedChange = setExpandedStatusButtons,
-        onStatusChanged = state::setStatus,
+        onStatusChanged = { state.status = it },
         modifier = modifier.clipToBounds()
     ) {
         Spacer(modifier = Modifier.height(8.dp))
-        ScoreRow(
-            state = state.scoreState,
+        ScoreInput(
+            score = { state.score },
+            onScoreChange = { state.score = it },
+            starSize = DpSize(48.dp, 48.dp),
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider()
         Spacer(modifier = Modifier.height(8.dp))
-        Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-            state.episodesState?.let {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            state.episodesCounterState?.let {
                 Counter(
                     state = it,
+                    enabled = state.progressEnabled,
                     label = { Text(stringResource(R.string.counter_label_episodes)) }
                 )
             }
-            state.chaptersState?.let {
+            state.chaptersCounterState?.let {
                 Counter(
                     state = it,
+                    enabled = state.progressEnabled,
                     label = { Text(stringResource(R.string.counter_label_chapters)) }
                 )
             }
-            state.volumesState?.let {
+            state.volumesCounterState?.let {
                 Counter(
                     state = it,
+                    enabled = state.progressEnabled,
                     label = { Text(stringResource(R.string.counter_label_volumes)) }
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Counter(
-            state = state.rewatchesState,
+            state = state.rewatchesCounterState,
+            label = { Text(stringResource(R.string.counter_label_rewatches)) },
             modifier = Modifier.padding(horizontal = 16.dp),
-            label = { Text(stringResource(R.string.counter_label_rewatches)) }
         )
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider()
@@ -191,6 +210,7 @@ private fun UserRateTextField(
             color = ShikimoriTheme.colorScheme.onSurface
         ),
         minLines = TextMinLines,
+        cursorBrush = SolidColor(ShikimoriTheme.colorScheme.primary),
         modifier = modifier,
     ) { innerTextField ->
         if (text.isEmpty()) {
@@ -332,31 +352,23 @@ private fun SelectedStatusButton(
 @Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
 fun UserRateContentPreview() {
 
-    val state = checkNotNull(
-        rememberUserRateState(
-            setup = UserRateSetup.Edit(
-                userRate = UserRate(
-                    id = 1,
-                    createdAt = Clock.System.now(),
-                    updatedAt = Clock.System.now(),
-                    status = UserRateStatus.Planned,
-                    score = 7,
-                    episodes = 14,
-                    chapters = 0,
-                    volumes = 0,
-                    rewatches = 0,
-                    text = ""
-                ),
-                context = UserRateEditorContext(
-                    entryType = EntryType.Anime,
-                    entryStatus = EntryStatus.Released,
-                    episodesLimit = Limit.Limited(17),
-                    chaptersLimit = null,
-                    volumesLimit = null
-                ),
-                enabledAutocorrect = true
-            )
-        )
+    val state = rememberUserRateState(
+        UserRateWithEntry(
+            userRate = UserRate(
+                id = 1,
+                createdAt = Clock.System.now(),
+                updatedAt = Clock.System.now(),
+                status = UserRateStatus.Planned,
+                score = 7,
+                episodes = 14,
+                chapters = 0,
+                volumes = 0,
+                rewatches = 0,
+                text = ""
+            ),
+            anime = previewAnimes.first()
+        ),
+        autoCorrectUserRate = true
     )
 
     ShikimoriTheme(darkTheme = true) {

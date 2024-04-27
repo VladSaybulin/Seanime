@@ -6,5 +6,8 @@
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
     <string name="text_placeholder">Поделись впечатлениями о данном тайтле</string>
-    <string name="counter_label_rewatches">Перепросмотры</string>
+    <string name="counter_label_rewatches">Перепросм.</string>
+    <string name="feature_user_rate_incement">Увеличить</string>
+    <string name="feature_user_rate_decrement">Уменьшить</string>
+    <string name="feature_user_rate_out_of_limit">из %1$d</string>
 </resources>
