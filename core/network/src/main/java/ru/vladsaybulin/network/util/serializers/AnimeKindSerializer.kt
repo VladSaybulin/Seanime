@@ -1,6 +1,8 @@
 package ru.vladsaybulin.network.util.serializers
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -10,10 +12,14 @@ import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.asAnimeKind
 
 internal class AnimeKindSerializer : KSerializer<AnimeKind> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("anime_kind", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        serialName = "anime_kind",
+        kind = PrimitiveKind.STRING
+    )
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun deserialize(decoder: Decoder): AnimeKind =
-        decoder.decodeString().asAnimeKind()
+        decoder.decodeNullableSerializableValue(String.serializer()).asAnimeKind()
 
     override fun serialize(encoder: Encoder, value: AnimeKind) {
         encoder.encodeString(value.serializedName)

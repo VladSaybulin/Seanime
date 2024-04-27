@@ -1,6 +1,8 @@
 package ru.vladsaybulin.network.util.serializers
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -15,7 +17,9 @@ class MangaKindSerializer : KSerializer<MangaKind> {
         kind = PrimitiveKind.STRING
     )
 
-    override fun deserialize(decoder: Decoder): MangaKind = decoder.decodeString().asMangaKind()
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun deserialize(decoder: Decoder): MangaKind =
+        decoder.decodeNullableSerializableValue(String.serializer()).asMangaKind()
 
     override fun serialize(encoder: Encoder, value: MangaKind) {
         encoder.encodeString(value.serializedName)
