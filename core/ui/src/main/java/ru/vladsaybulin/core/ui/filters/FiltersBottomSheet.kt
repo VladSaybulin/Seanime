@@ -33,9 +33,8 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.score.AnimatedScoreStars
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.score.inputScore
+import ru.vladsaybulin.core.ui.score.ScoreInput
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.animeRatingString
 import ru.vladsaybulin.core.ui.strings.durationString
@@ -110,7 +109,7 @@ fun FiltersContent(
                 regularFilter(
                     options = filtersState.animeKindOptions,
                     label = {
-                        Text(text = animeKindString(it.value) ?: it.value.name)
+                        Text(text = animeKindString(it.value))
                     }
                 )
             }
@@ -122,7 +121,7 @@ fun FiltersContent(
                 regularFilter(
                     options = filtersState.mangaKindOptions,
                     label = {
-                        Text(text = mangaKindString(it.value) ?: it.value.name)
+                        Text(text = mangaKindString(it.value))
                     }
                 )
             }
@@ -248,11 +247,11 @@ fun FiltersContent(
 
 fun LazyListScope.scoreFilter(selected: IntState, onScoreChange: (Int) -> Unit) {
     item {
-        AnimatedScoreStars(
-            score = selected.intValue.toFloat(),
-            modifier = Modifier
-                .inputScore(onScoreChange = onScoreChange)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ScoreInput(
+            score = { selected.intValue },
+            onScoreChange = onScoreChange,
+            showLabel = false,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
     }
 }
