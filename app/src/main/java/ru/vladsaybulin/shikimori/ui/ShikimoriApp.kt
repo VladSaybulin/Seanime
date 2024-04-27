@@ -107,20 +107,20 @@ fun ShikimoriApp(
                 }
             }
         }
-    }
 
-    if (showUserRateBottomSheet) {
-        UserRateBottomSheet(
-            viewModel = userRateViewModel,
-            onDismissRequest = { showUserRateBottomSheet = false }
-        )
-    }
+        if (showUserRateBottomSheet) {
+            UserRateBottomSheet(
+                viewModel = userRateViewModel,
+                onDismissRequest = { showUserRateBottomSheet = false }
+            )
+        }
 
-    if (showRequireAuthDialog) {
-        RequireAuthDialog(
-            onSignIn = signIn,
-            onDismissRequest = { showRequireAuthDialog = false }
-        )
+        if (showRequireAuthDialog) {
+            RequireAuthDialog(
+                onSignIn = signIn,
+                onDismissRequest = { showRequireAuthDialog = false }
+            )
+        }
     }
 }
 
