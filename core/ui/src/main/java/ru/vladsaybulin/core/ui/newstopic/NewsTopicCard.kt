@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,15 +46,15 @@ fun NewsTopicCard(
     onUserClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val headerImageUrl = headerImageUrl(topic)
+    val headerImage = remember(topic.id) { getHeaderImage(topic) }
 
     Surface(
         onClick = onClick,
         modifier = modifier
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-            if (headerImageUrl != null) {
-                NewsResourceHeaderImage(headerImageUrl = headerImageUrl)
+            if (headerImage != null) {
+                NewsResourceHeaderImage(headerImage)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -70,13 +71,12 @@ fun NewsTopicCard(
 }
 
 @Composable
-fun NewsResourceHeaderImage(
-    headerImageUrl: String
-) {
+fun NewsResourceHeaderImage(headerImage: NewsTopicHeaderImage) {
     val isLocalInspection = LocalInspectionMode.current
 
     val imageLoader = rememberAsyncImagePainter(
-        model = headerImageUrl
+        model = headerImage.url,
+        contentScale = ContentScale.Crop
     )
 
     Image(
@@ -91,7 +91,7 @@ fun NewsResourceHeaderImage(
             .aspectRatio(16 / 9f)
             .clip(RoundedCornerShape(16.dp)),
         contentDescription = null,
-        alignment = Alignment.TopCenter
+        alignment = headerImage.alignment
     )
 }
 
@@ -181,7 +181,7 @@ fun NewsResourceAuthorNickname(
     Text(userNickname, style = ShikimoriTheme.typography.bodyMedium)
 }
 
-fun headerImageUrl(topic: Topic): String? {
+fun getHeaderImage(topic: Topic): NewsTopicHeaderImage? {
     val doc = HTMLParser().buildDocument(topic.footerHtml, emptyMap())
 
     for (node in doc.children) {
@@ -192,7 +192,7 @@ fun headerImageUrl(topic: Topic): String? {
     return null
 }
 
-fun findFirstImageUrl(node: Node): String? {
+fun findFirstImageUrl(node: Node): NewsTopicHeaderImage? {
     if (node is TagNode) {
         var imageUrl = getImageTagIfImgTag(node)
         if (imageUrl != null) return imageUrl
@@ -204,12 +204,19 @@ fun findFirstImageUrl(node: Node): String? {
     } else return null
 }
 
-fun getImageTagIfImgTag(tagNode: TagNode): String? {
+fun getImageTagIfImgTag(tagNode: TagNode): NewsTopicHeaderImage? {
     if (tagNode.name != "img") return null
     val imageUrl = tagNode.attributes["src"] ?: return null
-    return if (!imageUrl.startsWith("http")) {
-        "https:$imageUrl"
+    val url = if (!imageUrl.startsWith("http")) "https:$imageUrl" else imageUrl
+    val parentTagClass = tagNode.parent?.attributes?.get("class")
+    return if (parentTagClass == "video-link") {
+        NewsTopicHeaderImage(url, Alignment.Center)
     } else {
-        imageUrl
+        NewsTopicHeaderImage(url, Alignment.TopCenter)
     }
 }
+
+data class NewsTopicHeaderImage(
+    val url: String,
+    val alignment: Alignment
+)

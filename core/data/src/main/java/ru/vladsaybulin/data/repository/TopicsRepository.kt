@@ -41,7 +41,7 @@ class TopicsRepository @Inject constructor(
 
     private suspend fun refreshNewResources() {
         val freshTopics = topicsDataSource.getTopics(
-            limit = 3,
+            limit = 10,
             forumPermalink = "news"
         )
 
