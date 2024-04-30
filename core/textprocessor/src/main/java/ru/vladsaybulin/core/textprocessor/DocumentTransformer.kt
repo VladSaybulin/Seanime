@@ -1,7 +1,7 @@
 package ru.vladsaybulin.core.textprocessor
 
-import org.primeframework.transformer.domain.BaseTagNode
 import org.primeframework.transformer.domain.Document
+import org.primeframework.transformer.domain.Node
 import org.primeframework.transformer.domain.TagNode
 import org.primeframework.transformer.domain.TextNode
 
@@ -10,17 +10,17 @@ open class DocumentTransformer <Builder> (
     val textAppender: Builder.(String) -> Unit
 ) {
     fun transform(document: Document, builder: Builder) {
-        baseTagNodeTransform(document, builder)
+        baseTagNodeTransform(document.children, builder)
     }
 
-    private fun baseTagNodeTransform(baseTagNode: BaseTagNode, builder: Builder) {
-        baseTagNode.children.forEach { node ->
+    private fun baseTagNodeTransform(children: List<Node>, builder: Builder) {
+        children.forEach { node ->
             when (node) {
                 is TextNode -> builder.textAppender(node.body)
                 is TagNode -> {
                     val transformers = tagsTransformers[node.name]
                     if (transformers.isNullOrEmpty()) {
-                        baseTagNodeTransform(node, builder)
+                        baseTagNodeTransform(node.children, builder)
                     } else {
                         TagTransformerChain(
                             tagNode = node,
