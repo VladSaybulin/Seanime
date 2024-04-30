@@ -18,7 +18,7 @@ object HtmlToBBCodesTransformer : DocumentTransformer<StringBuilder>(
         "span" to listOf(ColorTransformer, SpoilerInlineTransformer),
         "div" to listOf(SpoilerBlockTransformer),
         "img" to listOf(ImageTransform),
-        "code" to listOf(ImageTransform)
+        "code" to listOf(CodeTransformer)
     ),
     textAppender = StringBuilder::append
 )
