@@ -15,7 +15,6 @@ class CharacterDetails(
     val nameJp: String?,
     val descriptionHtml: String?,
     val descriptionSource: String?,
-    val favoured: Boolean,
     val topicId: Long?,
     val updatedAt: Instant,
     val seyu: List<Person>,

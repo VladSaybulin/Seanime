@@ -23,7 +23,7 @@ data class NetworkCharacterDetails(
 
     @Serializable(ImageSerializer::class)
     @SerialName("image")
-    val poster: NetworkImage?,
+    val image: NetworkImage?,
 
     @SerialName("altname")
     val alternativeName: String?,

@@ -31,3 +31,15 @@ suspend fun sync(
     refresh()
     updateLastRequest(now)
 }
+
+suspend fun <T> sync (
+    param: T,
+    ttl: Duration,
+    readLastUpdateDate: suspend (T) -> Instant?,
+    refresh: suspend (T) -> Unit,
+) {
+    val now = Clock.System.now()
+    val lastRequest = readLastUpdateDate(param) ?: Instant.DISTANT_PAST
+    if (now - lastRequest < ttl) return
+    refresh(param)
+}
