@@ -27,9 +27,8 @@ class TagTransformerChain<Builder>(
             transformChildren()
         }
 
-        copy(index = index + 1).apply {
-            with(tagTransformers[index + 1]) { transform() }
-        }
+        val next = copy(index = index + 1)
+        with(tagTransformers[index]) { next.transform() }
     }
 
     fun transformChildren() {
