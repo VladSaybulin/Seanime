@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
+import ru.vladsaybulin.database.models.common.ProtoTextAnnotation
 
 @Entity(
     tableName = "character_details",
@@ -29,7 +30,10 @@ data class CharacterDetailsEntity(
     val altNames: String?,
 
     @ColumnInfo("description")
-    val description: String?,
+    val descriptionText: String?,
+
+    @ColumnInfo("description_annotations")
+    val descriptionAnnotations: List<ProtoTextAnnotation>,
 
     @ColumnInfo("description_source")
     val descriptionSource: String?,
@@ -42,4 +46,4 @@ data class CharacterDetailsEntity(
 
 
 
-)
+    )

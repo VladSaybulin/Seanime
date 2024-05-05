@@ -25,8 +25,8 @@ data class PopulatedCharacterDetails(
     val characterEntity: CharacterEntity,
 
     @Relation(
+        parentColumn = "id",
         entity = PersonEntity::class,
-        parentColumn = "person_id",
         entityColumn = "id",
         associateBy = Junction(
             value = CharacterSeyuCrossRef::class,
@@ -37,11 +37,11 @@ data class PopulatedCharacterDetails(
     val seyuEntities: List<PersonEntity>,
 
     @Relation(
+        parentColumn = "id",
         entity = AnimeEntity::class,
-        parentColumn = "anime_id",
         entityColumn = "id",
         associateBy = Junction(
-            value = CharacterSeyuCrossRef::class,
+            value = CharacterAnimeCrossRef::class,
             parentColumn = "character_id",
             entityColumn = "anime_id"
         )
@@ -50,10 +50,10 @@ data class PopulatedCharacterDetails(
 
     @Relation(
         entity = MangaEntity::class,
-        parentColumn = "manga_id",
+        parentColumn = "id",
         entityColumn = "id",
         associateBy = Junction(
-            value = CharacterSeyuCrossRef::class,
+            value = CharacterMangaCrossRef::class,
             parentColumn = "character_id",
             entityColumn = "manga_id"
         )
@@ -68,7 +68,7 @@ fun PopulatedCharacterDetails.asExternalModel() = CharacterDetails(
     poster = characterEntity.image?.asExternalModel(),
     alternativeName = characterDetailsEntity.altNames,
     nameJp = characterDetailsEntity.nameJp,
-    descriptionHtml = characterDetailsEntity.description,
+    descriptionHtml = characterDetailsEntity.descriptionText,
     descriptionSource = characterDetailsEntity.descriptionSource,
     topicId = characterDetailsEntity.topicId,
     updatedAt = characterDetailsEntity.updatedAt,

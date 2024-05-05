@@ -32,12 +32,17 @@ import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.StudioEntity
 import ru.vladsaybulin.database.models.calendar.CalendarItemEntity
+import ru.vladsaybulin.database.models.character.CharacterAnimeCrossRef
+import ru.vladsaybulin.database.models.character.CharacterDetailsEntity
 import ru.vladsaybulin.database.models.character.CharacterEntity
+import ru.vladsaybulin.database.models.character.CharacterMangaCrossRef
+import ru.vladsaybulin.database.models.character.CharacterSeyuCrossRef
 import ru.vladsaybulin.database.models.filters.FilterGenreEntity
 import ru.vladsaybulin.database.models.filters.FilterPublisherEntity
 import ru.vladsaybulin.database.models.filters.FilterStudioEntity
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.lastrequest.LastAnimeDetailsRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastCharacterDetailsRequestEntity
 import ru.vladsaybulin.database.models.lastrequest.LastMangaDetailsRequestEntity
 import ru.vladsaybulin.database.models.manga.MangaCharacterEntity
 import ru.vladsaybulin.database.models.manga.MangaDetailsEntity
@@ -60,6 +65,7 @@ import ru.vladsaybulin.database.utils.GenreKindTypeConverter
 import ru.vladsaybulin.database.utils.InstantTypeConverter
 import ru.vladsaybulin.database.utils.IntStatisticsItemsConverter
 import ru.vladsaybulin.database.utils.MangaKindTypeConverter
+import ru.vladsaybulin.database.utils.ProtoTextAnnotationsTypeConverter
 import ru.vladsaybulin.database.utils.StatusStatisticsItemsConverter
 import ru.vladsaybulin.database.utils.StringListTypeConverter
 import ru.vladsaybulin.database.utils.TopicEventTypeConverter
@@ -108,9 +114,16 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         MangaRelatedEntity::class,
         MangaPublisherCrossRef::class,
 
+        /* Character details */
+        CharacterDetailsEntity::class,
+        CharacterSeyuCrossRef::class,
+        CharacterAnimeCrossRef::class,
+        CharacterMangaCrossRef::class,
+
         /* Last requests */
         LastAnimeDetailsRequestEntity::class,
         LastMangaDetailsRequestEntity::class,
+        LastCharacterDetailsRequestEntity::class,
 
         /* Other entities */
         CalendarItemEntity::class,
@@ -134,7 +147,8 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         AnimeRatingTypeConverter::class,
         IntStatisticsItemsConverter::class,
         StatusStatisticsItemsConverter::class,
-        VideoKindTypeConverter::class
+        VideoKindTypeConverter::class,
+        ProtoTextAnnotationsTypeConverter::class
     ]
 )
 abstract class ShikiRoomDatabase : RoomDatabase() {

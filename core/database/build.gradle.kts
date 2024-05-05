@@ -26,5 +26,7 @@ dependencies {
     implementation(libs.room.paging)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.protobuf)
 
+    testImplementation(libs.junit)
 }
