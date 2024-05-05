@@ -21,14 +21,14 @@ open class DocumentTransformer <Builder: Appendable> (
                     if (transformers.isNullOrEmpty()) {
                         baseTagNodeTransform(node.children, builder)
                     } else {
-                        with(transformers.first()) {
-                            TagTransformerChain(
+                        transformers.first().transform(
+                            TagTransformerChainImpl(
                                 tagNode = node,
                                 builder = builder,
-                                tagTransformers = transformers,
-                                transformChildren = ::baseTagNodeTransform
-                            ).transform()
-                        }
+                                transformers = transformers,
+                                transformNodes = ::baseTagNodeTransform
+                            )
+                        )
                     }
                 }
             }
