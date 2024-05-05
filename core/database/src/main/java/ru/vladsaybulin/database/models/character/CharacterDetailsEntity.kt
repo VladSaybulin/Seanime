@@ -1,11 +1,12 @@
 package ru.vladsaybulin.database.models.character
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
-import ru.vladsaybulin.database.models.common.ProtoTextAnnotation
+import ru.vladsaybulin.database.models.common.AnnotatedTextPOJO
 
 @Entity(
     tableName = "character_details",
@@ -29,11 +30,8 @@ data class CharacterDetailsEntity(
     @ColumnInfo("alt_names")
     val altNames: String?,
 
-    @ColumnInfo("description")
-    val descriptionText: String?,
-
-    @ColumnInfo("description_annotations")
-    val descriptionAnnotations: List<ProtoTextAnnotation>,
+    @Embedded("description_")
+    val description: AnnotatedTextPOJO,
 
     @ColumnInfo("description_source")
     val descriptionSource: String?,
