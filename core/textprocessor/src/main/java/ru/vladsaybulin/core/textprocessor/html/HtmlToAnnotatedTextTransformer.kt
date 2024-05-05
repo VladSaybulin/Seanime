@@ -1,9 +1,17 @@
 package ru.vladsaybulin.core.textprocessor.html
 
 import ru.vladsaybulin.core.textprocessor.DocumentTransformer
+import ru.vladsaybulin.core.textprocessor.TagTransformer
 
-val HtmlToAnnotatedTextTransformer = DocumentTransformer(
-    tagsTransformers = mapOf(
+data class HtmlToAnnotatedTextTagTransformers(
+    val tagTransformers: Map<String, List<TagTransformer<AnnotatedTextBuilder>>>
+)
+
+class HtmlToAnnotatedTextTransformer(tagTransformers: HtmlToAnnotatedTextTagTransformers) :
+    DocumentTransformer<AnnotatedTextBuilder>(tagTransformers.tagTransformers)
+
+val DefaultHtmlToAnnotatedTextTagTransformers = HtmlToAnnotatedTextTagTransformers(
+    mapOf(
         "a" to listOf(ShikimoriLinkTransformer, ExternalLinkTransformer),
         "span" to listOf(LocalizedNameTransformer),
         "strong" to listOf(BoldTextStyleTransformer),
