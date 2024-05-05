@@ -7,3 +7,6 @@ val TagNode.rawBody: String
         if (!hasBody()) return ""
         return document.getString(begin + bodyBegin, begin + bodyEnd)
     }
+
+fun TagNode.htmlClasses() =
+    attributes["class"]?.split(' ')
