@@ -1,7 +1,6 @@
 package ru.vladsaybulin.core.textprocessor.html
 
 import ru.vladsaybulin.core.textprocessor.TagTransformer
-import ru.vladsaybulin.model.annotatedtext.AnnotatedText
 
 object ExternalLinkTransformer : TagTransformer<AnnotatedTextBuilder> {
 
@@ -13,8 +12,7 @@ object ExternalLinkTransformer : TagTransformer<AnnotatedTextBuilder> {
             return
         }
 
-        chain.builder.withStyleAndAnnotation(
-            style = AnnotatedText.TextStyle.Link,
+        chain.builder.withAnnotation(
             tag = "url",
             annotation = href
         ) {

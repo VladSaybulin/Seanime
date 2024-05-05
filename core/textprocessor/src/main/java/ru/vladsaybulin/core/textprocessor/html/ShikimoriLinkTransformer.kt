@@ -5,7 +5,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import ru.vladsaybulin.core.textprocessor.TagTransformer
 import ru.vladsaybulin.core.textprocessor.util.htmlClasses
-import ru.vladsaybulin.model.annotatedtext.AnnotatedText
 
 object ShikimoriLinkTransformer : TagTransformer<AnnotatedTextBuilder> {
 
@@ -31,8 +30,7 @@ object ShikimoriLinkTransformer : TagTransformer<AnnotatedTextBuilder> {
             else -> id
         }
 
-        chain.builder.withStyleAndAnnotation(
-            style = AnnotatedText.TextStyle.Link,
+        chain.builder.withAnnotation(
             tag = type,
             annotation = finalId
         ) {

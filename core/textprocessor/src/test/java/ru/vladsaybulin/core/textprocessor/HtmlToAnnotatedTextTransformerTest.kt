@@ -18,18 +18,12 @@ class HtmlToAnnotatedTextTest {
 
         val expected = AnnotatedText(
             text = "Это ссылка на сайт",
-            styles = listOf(
-                AnnotatedText.TextRange(
-                    start = 4,
-                    end = 18,
-                    item = AnnotatedText.TextStyle.Link
-                )
-            ),
             annotations = listOf(
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 4,
                     end = 18,
-                    item = Annotation("url", "https://shikimori.one")
+                    tag = "url",
+                    annotation = "https://shikimori.one"
                 )
             )
         )
@@ -47,18 +41,12 @@ class HtmlToAnnotatedTextTest {
 
         val expected = AnnotatedText(
             text = "Лучшее аниме: Наруто",
-            styles = listOf(
-                AnnotatedText.TextRange(
-                    start = 14,
-                    end = 20,
-                    item = AnnotatedText.TextStyle.Link
-                )
-            ),
             annotations = listOf(
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 14,
                     end = 20,
-                    item = Annotation("anime", "20")
+                    tag = "anime",
+                    annotation = "20"
                 )
             )
         )
@@ -76,29 +64,32 @@ class HtmlToAnnotatedTextTest {
 
         val expected = AnnotatedText(
             text = "Test bold italic underline strikethrough",
-            styles = listOf(
-                AnnotatedText.TextRange(
+            annotations = listOf(
+                Annotation(
                     start = 5,
                     end = 9,
-                    item = AnnotatedText.TextStyle.Bold
+                    tag = "text_style",
+                    annotation = "b"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 10,
                     end = 16,
-                    item = AnnotatedText.TextStyle.Italic
+                    tag = "text_style",
+                    annotation = "i"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 17,
                     end = 26,
-                    item = AnnotatedText.TextStyle.Underline
+                    tag = "text_style",
+                    annotation = "u"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 27,
                     end = 40,
-                    item = AnnotatedText.TextStyle.Strikethrough
+                    tag = "text_style",
+                    annotation = "s"
                 )
-            ),
-            annotations = emptyList()
+            )
         )
 
         assertEquals(expected, builder.toAnnotatedText())
@@ -113,49 +104,56 @@ class HtmlToAnnotatedTextTest {
 
         val expected = AnnotatedText(
             text = "Заголовки: H1\nH2\nH3\nH4\nH5\nH6\nHeadline\nMidHeadline\n",
-            styles = listOf(
-                AnnotatedText.TextRange(
+            annotations = listOf(
+                Annotation(
                     start = 11,
                     end = 14,
-                    item = AnnotatedText.TextStyle.H1
+                    tag = "text_style",
+                    annotation = "h1"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 14,
                     end = 17,
-                    item = AnnotatedText.TextStyle.H2
+                    tag = "text_style",
+                    annotation = "h2"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 17,
                     end = 20,
-                    item = AnnotatedText.TextStyle.H3
+                    tag = "text_style",
+                    annotation = "h3"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 20,
                     end = 23,
-                    item = AnnotatedText.TextStyle.H4
+                    tag = "text_style",
+                    annotation = "h4"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 23,
                     end = 26,
-                    item = AnnotatedText.TextStyle.H5
+                    tag = "text_style",
+                    annotation = "h5"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 26,
                     end = 29,
-                    item = AnnotatedText.TextStyle.H6
+                    tag = "text_style",
+                    annotation = "h6"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 29,
                     end = 38,
-                    item = AnnotatedText.TextStyle.H5
+                    tag = "text_style",
+                    annotation = "h5"
                 ),
-                AnnotatedText.TextRange(
+                Annotation(
                     start = 38,
                     end = 50,
-                    item = AnnotatedText.TextStyle.H6
+                    tag = "text_style",
+                    annotation = "h6"
                 ),
-            ),
-            annotations = emptyList()
+            )
         )
 
         assertEquals(expected, builder.toAnnotatedText())

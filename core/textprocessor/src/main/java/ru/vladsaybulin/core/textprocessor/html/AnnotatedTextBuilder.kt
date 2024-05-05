@@ -2,31 +2,33 @@ package ru.vladsaybulin.core.textprocessor.html
 
 import ru.vladsaybulin.model.annotatedtext.AnnotatedText
 import ru.vladsaybulin.model.annotatedtext.AnnotatedText.Annotation
-import ru.vladsaybulin.model.annotatedtext.AnnotatedText.TextRange
-import ru.vladsaybulin.model.annotatedtext.AnnotatedText.TextStyle
 
 class AnnotatedTextBuilder : Appendable {
 
-    private data class MutableTextRange<T: Any>(
+    private data class MutableAnnotation(
         val start: Int,
-        val item: T,
-        var end: Int = Int.MIN_VALUE
+        val tag: String,
+        val annotation: String,
+        var end: Int = Int.MIN_VALUE,
     ) {
-        fun toTextRange(defaultEnd: Int): TextRange<T> {
+        fun toTextRange(defaultEnd: Int): Annotation {
             val end = if (end == Int.MIN_VALUE) defaultEnd else end
-            return TextRange(start, end, item)
+            return Annotation(
+                start = start,
+                end = end,
+                tag = tag,
+                annotation = annotation
+            )
         }
     }
 
     private val text = StringBuilder()
-    private val styles: MutableList<MutableTextRange<TextStyle>> = mutableListOf()
-    private val annotations: MutableList<MutableTextRange<Annotation>> = mutableListOf()
+    private val annotations: MutableList<MutableAnnotation> = mutableListOf()
 
-    private val stack: MutableList<MutableTextRange<out Any>> = mutableListOf()
+    private val stack: MutableList<MutableAnnotation> = mutableListOf()
 
     fun toAnnotatedText(): AnnotatedText = AnnotatedText(
         text = text.toString(),
-        styles = styles.map { it.toTextRange(text.length) },
         annotations = annotations.map { it.toTextRange(text.length) }
     )
 
@@ -45,16 +47,8 @@ class AnnotatedTextBuilder : Appendable {
         return this
     }
 
-    fun pushStyle(style: TextStyle): Int {
-        MutableTextRange(text.length, style).apply {
-            styles.add(this)
-            stack.add(this)
-        }
-        return stack.size - 1
-    }
-
     fun pushAnnotation(tag: String, annotation: String): Int {
-        MutableTextRange(text.length, Annotation(tag, annotation)).apply {
+        MutableAnnotation(start = text.length, tag = tag, annotation = annotation).apply {
             annotations.add(this)
             stack.add(this)
         }
@@ -76,20 +70,12 @@ class AnnotatedTextBuilder : Appendable {
     }
 }
 
-fun AnnotatedTextBuilder.withStyle(style: TextStyle, block: AnnotatedTextBuilder.() -> Unit) {
-    val index = pushStyle(style)
-    block()
-    pop(index)
-}
-
-fun AnnotatedTextBuilder.withStyleAndAnnotation(
-    style: TextStyle,
+fun AnnotatedTextBuilder.withAnnotation(
     tag: String,
     annotation: String,
     block: AnnotatedTextBuilder.() -> Unit
 ) {
-    val index = pushStyle(style)
-    pushAnnotation(tag, annotation)
+    val index = pushAnnotation(tag, annotation)
     block()
     pop(index)
 }
