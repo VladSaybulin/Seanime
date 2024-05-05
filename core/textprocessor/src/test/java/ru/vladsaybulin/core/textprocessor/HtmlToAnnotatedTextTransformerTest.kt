@@ -1,20 +1,30 @@
 package ru.vladsaybulin.core.textprocessor
 
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import ru.vladsaybulin.core.textprocessor.html.AnnotatedTextBuilder
+import ru.vladsaybulin.core.textprocessor.html.DefaultHtmlToAnnotatedTextTagTransformers
 import ru.vladsaybulin.core.textprocessor.html.HtmlToAnnotatedTextTransformer
 import ru.vladsaybulin.core.textprocessor.util.toHtmlDocument
 import ru.vladsaybulin.model.annotatedtext.AnnotatedText
 import ru.vladsaybulin.model.annotatedtext.AnnotatedText.Annotation
 
 class HtmlToAnnotatedTextTest {
+
+    lateinit var transformer: HtmlToAnnotatedTextTransformer
+
+    @Before
+    fun setup() {
+        transformer = HtmlToAnnotatedTextTransformer(DefaultHtmlToAnnotatedTextTagTransformers)
+    }
+
     @Test
     fun transformExternalLink() {
         val doc = "Это <a href=\"https://shikimori.one\">ссылка на сайт</a>".toHtmlDocument()
         val builder = AnnotatedTextBuilder()
 
-        HtmlToAnnotatedTextTransformer.transform(doc, builder)
+        transformer.transform(doc, builder)
 
         val expected = AnnotatedText(
             text = "Это ссылка на сайт",
@@ -37,7 +47,7 @@ class HtmlToAnnotatedTextTest {
             "Лучшее аниме: <a href=\"https://shikimori.one/animes/z20-naruto\" class=\"b-link bubbled-processed\" data-tooltip_url=\"https://shikimori.one/animes/z20-naruto/tooltip\" data-attrs=\"{&quot;id&quot;:20,&quot;type&quot;:&quot;anime&quot;,&quot;name&quot;:&quot;Naruto&quot;,&quot;russian&quot;:&quot;Наруто&quot;}\"><span class=\"name-en\">Naruto</span><span class=\"name-ru\">Наруто</span></a>".toHtmlDocument()
         val builder = AnnotatedTextBuilder()
 
-        HtmlToAnnotatedTextTransformer.transform(doc, builder)
+        transformer.transform(doc, builder)
 
         val expected = AnnotatedText(
             text = "Лучшее аниме: Наруто",
@@ -60,7 +70,7 @@ class HtmlToAnnotatedTextTest {
             "Test <strong>bold</strong> <em>italic</em> <u>underline</u> <del>strikethrough</del>".toHtmlDocument()
         val builder = AnnotatedTextBuilder()
 
-        HtmlToAnnotatedTextTransformer.transform(doc, builder)
+        transformer.transform(doc, builder)
 
         val expected = AnnotatedText(
             text = "Test bold italic underline strikethrough",
@@ -100,7 +110,7 @@ class HtmlToAnnotatedTextTest {
         val doc = "Заголовки: <h1>H1</h1><h2>H2</h2><h3>H3</h3><h4>H4</h4><h5>H5</h5><h6>H6</h6><div class=\"headline\">Headline</div><div class=\"midheadline\">MidHeadline</div>".toHtmlDocument()
         val builder = AnnotatedTextBuilder()
 
-        HtmlToAnnotatedTextTransformer.transform(doc, builder)
+        transformer.transform(doc, builder)
 
         val expected = AnnotatedText(
             text = "Заголовки: H1\nH2\nH3\nH4\nH5\nH6\nHeadline\nMidHeadline\n",

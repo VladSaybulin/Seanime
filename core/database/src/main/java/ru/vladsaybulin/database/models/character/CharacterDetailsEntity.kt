@@ -31,7 +31,7 @@ data class CharacterDetailsEntity(
     val altNames: String?,
 
     @Embedded("description_")
-    val description: AnnotatedTextPOJO,
+    val description: AnnotatedTextPOJO?,
 
     @ColumnInfo("description_source")
     val descriptionSource: String?,
