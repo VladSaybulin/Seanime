@@ -11,7 +11,7 @@ android {
 dependencies {
     implementation(project(":core:model"))
 
-    implementation(libs.primeTransformer)
+    api(libs.primeTransformer)
     implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
