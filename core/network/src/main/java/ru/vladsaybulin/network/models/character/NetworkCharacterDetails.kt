@@ -49,7 +49,7 @@ data class NetworkCharacterDetails(
     @SerialName("seyu")
     val seyu: List<NetworkPerson>,
 
-    @SerialName("anime")
+    @SerialName("animes")
     val animes: List<NetworkAnime>,
 
     @SerialName("mangas")

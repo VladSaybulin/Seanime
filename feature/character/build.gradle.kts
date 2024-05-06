@@ -9,5 +9,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:data"))
     implementation(project(":core:navigation"))
+    implementation(libs.coil.kt.compose)
 }

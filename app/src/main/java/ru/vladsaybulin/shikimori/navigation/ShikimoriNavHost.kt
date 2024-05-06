@@ -1,12 +1,16 @@
 package ru.vladsaybulin.shikimori.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
+import ru.vladsaybulin.core.navigation.NavigationEvent
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.ImageViewArgs
 import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.feature.calendar.navigation.calendarGraph
+import ru.vladsaybulin.feature.character.navigation.characterDetailsScreen
+import ru.vladsaybulin.feature.character.navigation.navigateToCharacter
 import ru.vladsaybulin.feature.details.navigation.detailsScreen
 import ru.vladsaybulin.feature.details.navigation.navigateToEntryDetails
 import ru.vladsaybulin.feature.home.navigation.homeGraph
@@ -35,10 +39,11 @@ fun ShikimoriNavHost(
     val nested: NavGraphBuilder.(TopLevelDestination) -> Unit = {
         nestedScreens(
             topLevelDestination = it,
+            navController = navController,
             onEntryClick = navController::navigateToEntryDetails,
             onSearchClick = navController::navigateToSearch,
             onAuthorClick = {},
-            onCharacterClick = {},
+            onCharacterClick = navController::navigateToCharacter,
             onShowRequireAuthDialog = onShowRequireAuthDialog,
             onShowUserRate = onShowUserRate,
             onShowImage = onShowImage,
@@ -83,6 +88,7 @@ fun ShikimoriNavHost(
 
 private fun NavGraphBuilder.nestedScreens(
     topLevelDestination: TopLevelDestination,
+    navController: NavController,
     onEntryClick: (EntryDetailsArgs) -> Unit,
     onSearchClick: (SearchArgs) -> Unit,
     onAuthorClick: (Long) -> Unit,
@@ -104,6 +110,10 @@ private fun NavGraphBuilder.nestedScreens(
         onBackClick = onBackClick,
     )
 
+    characterDetailsScreen(
+        onNavigationEvent = { onNavigationEvent(navController, it) }
+    )
+
     if (topLevelDestination != TopLevelDestination.SEARCH) {
         searchScreen(onEntryClick = onEntryClick)
     }
@@ -113,5 +123,16 @@ private fun NavGraphBuilder.nestedScreens(
             onEntryClick = onEntryClick,
             onSignIn = onSignIn
         )
+    }
+}
+
+fun onNavigationEvent(
+    navController: NavController,
+    event: NavigationEvent
+) {
+    when (event) {
+        NavigationEvent.Back -> navController.navigateUp()
+        is NavigationEvent.CharacterDetails -> navController.navigateToCharacter(event.characterId)
+        is NavigationEvent.EntryDetails -> navController.navigateToEntryDetails(EntryDetailsArgs(event.entryType, event.entryId))
     }
 }

@@ -25,6 +25,7 @@ val DefaultHtmlToAnnotatedTextTagTransformers = HtmlToAnnotatedTextTagTransforme
         "h3" to listOf(HeaderTextStyleTransformer),
         "h4" to listOf(HeaderTextStyleTransformer),
         "h5" to listOf(HeaderTextStyleTransformer),
-        "h6" to listOf(HeaderTextStyleTransformer)
+        "h6" to listOf(HeaderTextStyleTransformer),
+        "br" to listOf(BrTransformer)
     )
 )

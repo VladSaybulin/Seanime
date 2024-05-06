@@ -7,14 +7,14 @@ import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.person.Person
 
-class CharacterDetails(
+data class CharacterDetails(
     val id: Long,
     val name: String,
     val nameRu: String?,
     val poster: Image?,
     val alternativeName: String?,
     val nameJp: String?,
-    val description: AnnotatedText,
+    val description: AnnotatedText?,
     val descriptionSource: String?,
     val topicId: Long?,
     val updatedAt: Instant,
