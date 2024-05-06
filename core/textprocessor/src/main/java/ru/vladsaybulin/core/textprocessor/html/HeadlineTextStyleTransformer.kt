@@ -16,6 +16,9 @@ object HeadlineTextStyleTransformer : TagTransformer<AnnotatedTextBuilder> {
         }
 
         chain.builder.withAnnotation(tag = "text_style", annotation = style) {
+            if (get(length - 1) != '\n') {
+                append("\n")
+            }
             chain.transformChildren()
             append("\n")
         }

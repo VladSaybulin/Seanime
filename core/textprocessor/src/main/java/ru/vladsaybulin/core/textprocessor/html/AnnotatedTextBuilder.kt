@@ -3,7 +3,7 @@ package ru.vladsaybulin.core.textprocessor.html
 import ru.vladsaybulin.model.annotatedtext.AnnotatedText
 import ru.vladsaybulin.model.annotatedtext.AnnotatedText.Annotation
 
-class AnnotatedTextBuilder : Appendable {
+class AnnotatedTextBuilder : Appendable, CharSequence {
 
     private data class MutableAnnotation(
         val start: Int,
@@ -26,6 +26,15 @@ class AnnotatedTextBuilder : Appendable {
     private val annotations: MutableList<MutableAnnotation> = mutableListOf()
 
     private val stack: MutableList<MutableAnnotation> = mutableListOf()
+
+    override val length: Int
+        get() = text.length
+
+    override fun get(index: Int): Char =
+        text[index]
+
+    override fun subSequence(startIndex: Int, endIndex: Int) =
+        text.subSequence(startIndex, endIndex)
 
     fun toAnnotatedText(): AnnotatedText = AnnotatedText(
         text = text.toString(),
