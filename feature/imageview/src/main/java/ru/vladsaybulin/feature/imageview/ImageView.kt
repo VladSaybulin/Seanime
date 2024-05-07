@@ -37,8 +37,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
+import ru.vladsaybulin.core.designsystem.components.drawBackgroundGradientScrim
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.ui.drawBackgroundGradientScrim
 import ru.vladsaybulin.model.common.Image
 
 @Composable
@@ -198,8 +198,8 @@ private fun ImageViewTopBar(
             titleContentColor = Color.White
         ),
         modifier = Modifier.drawBackgroundGradientScrim(
-            startColor = Color.Black.copy(alpha = 0.5f),
-            stopColor = Color.Black.copy(alpha = 0.0f),
+            topColor = Color.Black.copy(alpha = 0.5f),
+            bottomColor = Color.Black.copy(alpha = 0.0f),
             decay = 1f
         )
     )

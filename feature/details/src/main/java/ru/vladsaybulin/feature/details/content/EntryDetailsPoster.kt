@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
+import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.model.common.Image
 
 internal fun LazyListScope.poster(
@@ -66,8 +66,8 @@ private fun EntryDetailsPoster(
                 .matchParentSize()
                 //.blur(16.dp)
                 .drawForegroundGradientScrim(
-                    startColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0.8f),
-                    stopColor = ShikimoriTheme.colorScheme.surface
+                    topColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0.8f),
+                    bottomColor = ShikimoriTheme.colorScheme.surface
                 )
         )
 

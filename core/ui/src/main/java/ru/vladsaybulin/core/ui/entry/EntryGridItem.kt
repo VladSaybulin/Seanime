@@ -40,7 +40,7 @@ import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.UserRateStatusBadge
 import ru.vladsaybulin.core.ui.UserRateStatusBadgeDefaults
-import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
+import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import kotlin.math.roundToInt
 
@@ -121,7 +121,7 @@ private fun EntryGridItemImage(imageUrl: String?) {
         modifier = Modifier
             .fillMaxSize()
             .drawForegroundGradientScrim(
-                stopColor = ShikimoriTheme.colorScheme.surface.copy(alpha = GradientScrimAlpha),
+                bottomColor = ShikimoriTheme.colorScheme.surface.copy(alpha = GradientScrimAlpha),
                 decay = 2f
             )
             .layoutId(EntryGridItemLayoutId.Image)

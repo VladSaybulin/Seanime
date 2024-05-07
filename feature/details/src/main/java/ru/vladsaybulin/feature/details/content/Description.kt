@@ -30,7 +30,7 @@ import org.primeframework.transformer.domain.TextNode
 import org.primeframework.transformer.service.HTMLParser
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.ui.drawForegroundGradientScrim
+import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.core.ui.strings.AnnotatedStringBuilderContext
 import ru.vladsaybulin.core.ui.strings.annotatedStringBuilderContext
 import ru.vladsaybulin.core.ui.strings.link
@@ -130,8 +130,8 @@ fun ExpandableText(
             modifier = Modifier
                 .padding(bottom = 40.dp)
                 .drawForegroundGradientScrim(
-                    startColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0f),
-                    stopColor = scrimColor,
+                    topColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0f),
+                    bottomColor = scrimColor,
                     decay = 2f
                 ),
         )
