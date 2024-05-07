@@ -43,6 +43,7 @@ fun ShikimoriExpandableText(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
@@ -71,6 +72,7 @@ fun ShikimoriExpandableText(
     ) { maxLines ->
         Text(
             text = text,
+            modifier = textModifier,
             color = color,
             fontSize = fontSize,
             fontStyle = fontStyle,
@@ -100,6 +102,7 @@ fun ShikimoriExpandableText(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
@@ -128,6 +131,7 @@ fun ShikimoriExpandableText(
     ) { maxLines ->
         Text(
             text = text,
+            modifier = textModifier,
             color = color,
             fontSize = fontSize,
             fontStyle = fontStyle,
