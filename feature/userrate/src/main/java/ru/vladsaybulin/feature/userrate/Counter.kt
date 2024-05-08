@@ -55,10 +55,6 @@ class CounterState(
 ) {
     private val range = 0..limit.value
 
-    init {
-        check(initialCount in range)
-    }
-
     var count by mutableIntStateOf(initialCount)
 
     private var _textFieldValue by mutableStateOf(TextFieldValue(text = initialCount.toString()))
@@ -82,7 +78,7 @@ class CounterState(
             return
         }
 
-        //If text is blank, when set zero
+        //If text is blank then set zero
         if (newTextFieldValue.text.isBlank()) {
             _textFieldValue = TextFieldValue(
                 text = "0",

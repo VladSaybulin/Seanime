@@ -28,15 +28,21 @@ fun rememberUserRateState(
     userRateWithEntry: UserRateWithEntry,
     autoCorrectUserRate: Boolean
 ): UserRateState = with(userRateWithEntry.userRate) {
-    return remember(userRateWithEntry, autoCorrectUserRate) {
+    val entryStatus = userRateWithEntry.anime?.status ?: userRateWithEntry.manga!!.status
+
+    var endAutocorrectUserRate = autoCorrectUserRate
+    var availableStatuses = getAvailableUserRateStatuses(autoCorrectUserRate, entryStatus)
+    if (autoCorrectUserRate && !availableStatuses.contains(userRateWithEntry.userRate.status)) {
+        availableStatuses = getAvailableUserRateStatuses(false)
+        endAutocorrectUserRate = false
+    }
+
+    return remember(userRateWithEntry, endAutocorrectUserRate) {
         UserRateState(
-            availableStatuses = getAvailableUserRateStatuses(
-                autoCorrectUserRate,
-                userRateWithEntry.anime?.status ?: userRateWithEntry.manga!!.status
-            ),
+            availableStatuses = availableStatuses,
             initialScore = score,
             initialStatus = status,
-            episodesLimit = userRateWithEntry.anime?.episodesLimit(autoCorrectUserRate),
+            episodesLimit = userRateWithEntry.anime?.episodesLimit(endAutocorrectUserRate),
             initialEpisodes = episodes,
             chaptersLimit = userRateWithEntry.manga?.chaptersLimit(),
             initialChapters = chapters,
@@ -44,7 +50,8 @@ fun rememberUserRateState(
             initialVolumes = volumes,
             initialRewatches = rewatches,
             initialText = text,
-            enabledAutoCorrect = autoCorrectUserRate
+            isOngoing = entryStatus == EntryStatus.Ongoing,
+            enabledAutoCorrect = endAutocorrectUserRate
         )
     }
 }
@@ -82,6 +89,7 @@ class UserRateState(
     initialVolumes: Int,
     initialRewatches: Int,
     initialText: String,
+    private val isOngoing: Boolean,
     private val enabledAutoCorrect: Boolean,
 ) {
     private var _status = mutableStateOf(initialStatus)
@@ -161,7 +169,7 @@ class UserRateState(
 
     private fun onProgressCountChanged(count: Int, limit: CounterLimit) {
         if (!enabledAutoCorrect || !inProgress) return
-        if (isLimitReached(count, limit)) {
+        if (!isOngoing && isLimitReached(count, limit)) {
             _status.value = Completed
             setMaxProgressCounters()
             if (status == Rewatching) {
@@ -194,14 +202,14 @@ class UserRateState(
 
 fun getAvailableUserRateStatuses(
     autocorrectUserRate: Boolean,
-    entryStatus: EntryStatus
+    entryStatus: EntryStatus = EntryStatus.None
 ) = buildList {
     add(Planned)
-    if (autocorrectUserRate && entryStatus != EntryStatus.Anons) {
+    if (!autocorrectUserRate || entryStatus != EntryStatus.Anons) {
         add(Watching)
         add(Rewatching)
     }
-    if (autocorrectUserRate && entryStatus == EntryStatus.Released) {
+    if (!autocorrectUserRate || entryStatus == EntryStatus.Released) {
         add(Completed)
     }
     add(OnHold)
