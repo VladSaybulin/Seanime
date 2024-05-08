@@ -40,13 +40,12 @@ private fun NetworkTopic.getLinkedId(expectedType: TopicLinkedType) =
 fun NetworkTopic.userEntityShell(): UserEntity = user.asExternalModel()
 
 fun NetworkTopic.linkedAnimeEntityShell(json: Json): AnimeEntity? {
-    if (linkedType != Anime) return null
-    requireNotNull(linked) { "Linked is null" }
-    return linked?.let { json.decodeFromJsonElement<NetworkAnime>(it).asEntity() }
+    if (linkedType != Anime || linked == null) return null
+    return json.decodeFromJsonElement<NetworkAnime>(linked!!).asEntity()
 }
 
 fun NetworkTopic.linkedMangaEntityShell(json: Json): MangaEntity? {
-    if (linkedType != Manga && linkedType != Ranobe) return null
-    return linked?.let { json.decodeFromJsonElement<NetworkManga>(it).asEntity() }
+    if (linkedType != Manga && linkedType != Ranobe || linked == null) return null
+    return json.decodeFromJsonElement<NetworkManga>(linked!!).asEntity()
 }
 
