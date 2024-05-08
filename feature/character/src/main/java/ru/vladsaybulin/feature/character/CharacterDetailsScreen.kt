@@ -43,10 +43,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.datetime.Clock
+import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.components.ShikimoriExpandableText
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.NavigationEvent
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
+import ru.vladsaybulin.core.ui.anime.AnimeCarousel
+import ru.vladsaybulin.core.ui.entry.EntryGridItem
+import ru.vladsaybulin.core.ui.manga.MangaCarousel
 import ru.vladsaybulin.core.ui.toComposeAnnotatedString
 import ru.vladsaybulin.model.annotatedtext.AnnotatedText
 import ru.vladsaybulin.model.character.CharacterDetails
@@ -101,7 +105,7 @@ fun CharacterDetailsContent(
         contentPadding = WindowInsets.navigationBars.asPaddingValues(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        item {
+        item(key = CharacterLazyListItemKey.PosterAndNames) {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
@@ -116,8 +120,74 @@ fun CharacterDetailsContent(
         }
 
         if (details.description != null) {
-            item {
+            item(key = CharacterLazyListItemKey.Description) {
                 CharacterDescription(details.description!!, onNavigationEvent)
+            }
+        }
+
+        if (details.seyu.isNotEmpty()) {
+            item(key = CharacterLazyListItemKey.Seyu) {
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.feature_character_seyu),
+                        style = ShikimoriTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    ShikimoriCarousel(items = details.seyu) {
+                        EntryGridItem(
+                            name = it.russianName ?: it.originalName,
+                            imageUrl = it.poster?.originalUrl,
+                            onClick = { },
+                            modifier = Modifier.width(128.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        if (details.animes.isNotEmpty()) {
+            item(key = CharacterLazyListItemKey.Animes) {
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.feature_character_animes),
+                        style = ShikimoriTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    AnimeCarousel(
+                        anime = details.animes,
+                        onClick = {
+                            onNavigationEvent(
+                                NavigationEvent.EntryDetails(
+                                    entryType = EntryType.Anime,
+                                    entryId = it.id
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+        }
+
+        if (details.mangas.isNotEmpty()) {
+            item(key = CharacterLazyListItemKey.Mangas) {
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.feature_character_mangas),
+                        style = ShikimoriTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    MangaCarousel(
+                        manga = details.mangas,
+                        onClick = {
+                            onNavigationEvent(
+                                NavigationEvent.EntryDetails(
+                                    entryType = EntryType.Manga,
+                                    entryId = it.id
+                                )
+                            )
+                        }
+                    )
+                }
             }
         }
     }
@@ -129,7 +199,7 @@ fun CharacterDescription(
     onNavigationEvent: (NavigationEvent) -> Unit
 ) {
     val (expanded, setExpanded) = remember { mutableStateOf(false) }
-    val layoutResult  = remember { mutableStateOf<TextLayoutResult?>(null) }
+    val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
     val annotatedString = description.toComposeAnnotatedString()
 
@@ -168,7 +238,7 @@ fun handleDescriptionClick(
     val navEventOrNull = when (tag) {
         "anime" -> NavigationEvent.EntryDetails(EntryType.Anime, annotation.toLong())
         "manga", "ranobe" -> NavigationEvent.EntryDetails(EntryType.Manga, annotation.toLong())
-        "character", -> NavigationEvent.CharacterDetails(annotation.toLong())
+        "character" -> NavigationEvent.CharacterDetails(annotation.toLong())
         else -> null
     }
     if (navEventOrNull != null) {
@@ -246,6 +316,10 @@ fun CharacterDetailsPoster(poster: Image?) {
             .aspectRatio(3 / 4f)
             .clip(ShikimoriTheme.shapes.medium)
     )
+}
+
+private enum class CharacterLazyListItemKey {
+    PosterAndNames, Description, Seyu, Animes, Mangas
 }
 
 @Composable
