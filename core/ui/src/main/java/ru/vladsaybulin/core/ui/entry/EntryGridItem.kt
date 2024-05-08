@@ -36,11 +36,11 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.UserRateStatusBadge
 import ru.vladsaybulin.core.ui.UserRateStatusBadgeDefaults
-import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import kotlin.math.roundToInt
 
@@ -176,7 +176,7 @@ data class EntryGridItemMeasurePolicy(private val contentPadding: PaddingValues)
         }?.measure(Constraints.fixed(userRateStatusSizePx, userRateStatusSizePx))
 
         val textConstraints = Constraints(
-            maxWidth = constraints.minWidth - horizontalPadding,
+            maxWidth = imageWidth - horizontalPadding,
         )
 
         val metadataPlaceable = measurables.firstOrNull { it.layoutId == EntryGridItemLayoutId.Metadata }
