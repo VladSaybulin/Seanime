@@ -2,4 +2,7 @@
 <resources>
     <string name="feature_character_japanese">По-японски</string>
     <string name="feature_character_alternative">Другие имена</string>
+    <string name="feature_character_seyu">Сэйю</string>
+    <string name="feature_character_animes">Аниме</string>
+    <string name="feature_character_mangas">Манга</string>
 </resources>
