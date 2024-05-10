@@ -210,7 +210,7 @@ private fun ExpandableTextLayout(
                     modifier = Modifier.layoutId(ExpandableTextLayoutId.Arrow)
                 ) {
                     Icon(
-                        imageVector = ShikimoriIcons.ArrowDropDown,
+                        imageVector = ShikimoriIcons.KeyboardArrowDown,
                         contentDescription = if (expanded) {
                             stringResource(id = R.string.core_designsystem_collapse_text)
                         } else {
@@ -233,7 +233,7 @@ private fun ExpandableTextLayout(
 
             val endWidth = textPlaceable.width
             val endHeight = (textPlaceable.height +
-                    arrowAnimationProgress * (arrowPlaceable?.height ?: 0)).roundToInt()
+                    (arrowAnimationProgress * 0.5 + 0.5) * (arrowPlaceable?.height ?: 0)).roundToInt()
 
             layout(endWidth, endHeight) {
                 textPlaceable.place(x = 0, y = 0)
