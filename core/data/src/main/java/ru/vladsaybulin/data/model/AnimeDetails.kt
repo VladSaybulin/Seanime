@@ -1,7 +1,6 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.anime.AnimeCharacterEntity
-import ru.vladsaybulin.database.models.anime.AnimeDetailsEntity
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.AnimeGenreCrossRef
 import ru.vladsaybulin.database.models.anime.AnimePersonRolesEntity
@@ -9,51 +8,7 @@ import ru.vladsaybulin.database.models.anime.AnimeRelatedEntity
 import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
 import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
-import ru.vladsaybulin.model.anime.AnimeDetails
-import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.network.models.NetworkGenre
-import ru.vladsaybulin.network.models.NetworkStudio
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
-import ru.vladsaybulin.network.models.anime.NetworkVideo
-import ru.vladsaybulin.network.models.character.NetworkCharacterWithRole
-import ru.vladsaybulin.network.models.common.NetworkImage
-import ru.vladsaybulin.network.models.common.NetworkStatisticsItem
-import ru.vladsaybulin.network.models.person.NetworkPersonWithRoles
-import ru.vladsaybulin.network.models.related.NetworkRelated
-
-fun NetworkAnimeDetails.asExternalModel() = AnimeDetails(
-    id = id,
-    originalName = name,
-    russianName = nameRu,
-    englishName = nameRu,
-    japaneseName = nameJp,
-    alternativeName = alternativeName,
-    licenseNameRu = licenseNameRu,
-    poster = poster?.asExternalModel(),
-    kind = kind,
-    score = score ?: 0f,
-    status = status,
-    rating = rating,
-    episodes = episodes,
-    episodesAired = episodesAired,
-    duration = duration,
-    nextEpisodeAt = nextEpisodeAt,
-    airedOn = airedOn?.asExternalModel(),
-    releasedOn = releasedOn?.asExternalModel(),
-    descriptionHtml = descriptionHtml,
-    descriptionSource = descriptionSource,
-    genres = genres?.map(NetworkGenre::asExternalModel),
-    subbers = subbers,
-    dubbers = dubbers,
-    scoreStats = scoreStats?.map(NetworkStatisticsItem<Int>::asExternalModel),
-    userRateStatusStats = userRateStatusStats?.map(NetworkStatisticsItem<UserRateStatus>::asExternalModel),
-    studios = studios.map(NetworkStudio::asExternalModel),
-    authors = authors?.map(NetworkPersonWithRoles::asExternalModel),
-    characters = characters?.map(NetworkCharacterWithRole::asExternalModel),
-    related = related?.map(NetworkRelated::asExternalModel),
-    screenshots = screenshots.map(NetworkImage::asExternalModel),
-    videos = videos?.map(NetworkVideo::asExternalModel)
-)
 
 fun NetworkAnimeDetails.asAnimeEntity() = AnimeEntity(
     id = id,
@@ -67,23 +22,6 @@ fun NetworkAnimeDetails.asAnimeEntity() = AnimeEntity(
     episodesAired = episodesAired,
     airedOn = airedOn?.asPOJO(),
     releasedOn = releasedOn?.asPOJO()
-)
-
-fun NetworkAnimeDetails.asAnimeDetailsEntity() = AnimeDetailsEntity(
-    id = id,
-    nameEn = nameEn,
-    nameJp = nameJp,
-    altNames = alternativeName,
-    licenseNameRu = licenseNameRu,
-    rating = rating,
-    duration = duration ?: 0,
-    nextEpisodeAt = nextEpisodeAt,
-    description = descriptionHtml ?: "",
-    descriptionSource = descriptionSource,
-    subbers = subbers,
-    dubbers = dubbers,
-    scoreStats = scoreStats?.map { it.asExternalModel() },
-    statusStats = userRateStatusStats?.map { it.asExternalModel() },
 )
 
 fun NetworkAnimeDetails.personEntityShells() =

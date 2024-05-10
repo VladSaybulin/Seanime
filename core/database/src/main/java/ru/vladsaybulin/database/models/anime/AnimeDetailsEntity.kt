@@ -1,10 +1,12 @@
 package ru.vladsaybulin.database.models.anime
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
+import ru.vladsaybulin.database.models.common.AnnotatedTextPOJO
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -46,8 +48,8 @@ class AnimeDetailsEntity(
     @ColumnInfo("next_episode_at")
     val nextEpisodeAt: Instant?,
 
-    @ColumnInfo("description")
-    val description: String,
+    @Embedded("description_")
+    val description: AnnotatedTextPOJO?,
 
     @ColumnInfo("description_source")
     val descriptionSource: String?,

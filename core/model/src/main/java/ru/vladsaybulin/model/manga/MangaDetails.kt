@@ -1,5 +1,6 @@
 package ru.vladsaybulin.model.manga
 
+import ru.vladsaybulin.model.annotatedtext.AnnotatedText
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
@@ -26,7 +27,7 @@ data class MangaDetails(
     val volumes: Int,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
-    val descriptionHtml: String?,
+    val description: AnnotatedText?,
     val descriptionSource: String?,
     val genres: List<Genre>?,
     val scoreStats: List<StatisticsItem<Int>>?,

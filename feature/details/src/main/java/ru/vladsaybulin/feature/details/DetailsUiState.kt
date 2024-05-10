@@ -10,6 +10,7 @@ import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.anime.Video
+import ru.vladsaybulin.model.annotatedtext.AnnotatedText
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
@@ -54,7 +55,7 @@ sealed class DetailsUiState {
         val studios: ImmutableList<Studio>?,
         val publishers: ImmutableList<Publisher>?,
         val genres: ImmutableList<Genre>?,
-        val descriptionHtml: String?,
+        val description: AnnotatedText?,
         val descriptionSource: String?,
         val authors: ImmutableList<PersonWithRoles>?,
         val scoreStatisticsItems: List<StatisticsItem<Int>>?,
@@ -91,7 +92,7 @@ fun successAnime(
         releasedOn = releasedOn,
         studios = studios?.toImmutableList(),
         genres = genres?.toImmutableList(),
-        descriptionHtml = descriptionHtml,
+        description = description,
         descriptionSource = descriptionSource,
         authors = authors?.toImmutableList(),
         scoreStatisticsItems = scoreStats,
@@ -132,7 +133,7 @@ fun successManga(
         releasedOn = releasedOn,
         publishers = publishers.toImmutableList(),
         genres = genres?.toImmutableList(),
-        descriptionHtml = descriptionHtml,
+        description = description,
         descriptionSource = descriptionSource,
         authors = authors?.toImmutableList(),
         scoreStatisticsItems = scoreStats ?: emptyList(),

@@ -1,8 +1,10 @@
 package ru.vladsaybulin.database.models.manga
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.vladsaybulin.database.models.common.AnnotatedTextPOJO
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
@@ -25,8 +27,8 @@ data class MangaDetailsEntity(
     @ColumnInfo("license_name")
     val licenseNameRu: String?,
 
-    @ColumnInfo("description")
-    val description: String?,
+    @Embedded("description_")
+    val description: AnnotatedTextPOJO?,
 
     @ColumnInfo("description_source")
     val descriptionSource: String?,
