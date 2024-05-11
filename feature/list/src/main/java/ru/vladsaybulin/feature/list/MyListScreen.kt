@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +35,6 @@ import ru.vladsaybulin.core.ui.strings.asTargetStringEntry
 import ru.vladsaybulin.core.ui.strings.entryTypeString
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
@@ -45,14 +46,10 @@ fun MyListRoute(
     viewModel: MyListViewModel = hiltViewModel()
 ) {
 
-    val authState by viewModel.authState.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val userRates = viewModel.userRatesPagingData.collectAsLazyPagingItems()
+    val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
     MyListScreen(
-        authState = authState,
-        uiState = uiState,
-        userRates = userRates,
+        screenState = screenState,
         onEntryTypeChange = viewModel::onEntryTypeChanged,
         onUserRateStatusChange = viewModel::onUserRateStatusChanged,
         onEntryClick = onEntryClick,
@@ -61,10 +58,8 @@ fun MyListRoute(
 }
 
 @Composable
-fun MyListScreen(
-    authState: ShikimoriAuthState,
-    uiState: ListUiState,
-    userRates: LazyPagingItems<UserRateWithEntry>,
+internal fun MyListScreen(
+    screenState: ListScreenState,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
     onEntryClick: (EntryDetailsArgs) -> Unit,
@@ -76,11 +71,17 @@ fun MyListScreen(
             .padding(LocalScreenContentPadding.current)
             .fillMaxSize()
     ) {
-        when (authState) {
-            ShikimoriAuthState.LOGGED_OUT -> Authorization(onSignIn = onSignIn)
-            ShikimoriAuthState.LOGGED_IN -> ListContent(
-                uiState = uiState,
-                userRates = userRates,
+        when (screenState) {
+            ListScreenState.Loading ->
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+
+            ListScreenState.LoggedOut ->
+                Authorization(onSignIn = onSignIn)
+
+            is ListScreenState.Success -> ListContent(
+                state = screenState,
                 onEntryTypeChange = onEntryTypeChange,
                 onUserRateStatusChange = onUserRateStatusChange,
                 onEntryClick = onEntryClick
@@ -91,21 +92,21 @@ fun MyListScreen(
 
 @Composable
 private fun ListContent(
-    uiState: ListUiState,
-    userRates: LazyPagingItems<UserRateWithEntry>,
+    state: ListScreenState.Success,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
     onEntryClick: (EntryDetailsArgs) -> Unit,
 ) {
-    CompositionLocalProvider(value = LocalTargetStringsEntry provides uiState.entryType.asTargetStringEntry()) {
+    CompositionLocalProvider(value = LocalTargetStringsEntry provides state.controlPanelState.entryType.asTargetStringEntry()) {
         Column {
             ControlPanel(
-                entryType = uiState.entryType,
-                userRateStatus = uiState.userRateStatus,
+                entryType = state.controlPanelState.entryType,
+                userRateStatus = state.controlPanelState.userRateStatus,
                 onEntryTypeChange = onEntryTypeChange,
                 onUserRateStatusChange = onUserRateStatusChange
             )
 
+            val userRates = state.data.collectAsLazyPagingItems()
             UserRatesPaging(
                 userRates = userRates,
                 onEntryClick = onEntryClick

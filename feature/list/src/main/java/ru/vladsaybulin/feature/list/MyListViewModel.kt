@@ -6,12 +6,16 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import ru.vladsaybulin.core.domain.GetPagedUserRatesUseCase
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.feature.list.navigation.ListArgs
+import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
@@ -23,27 +27,43 @@ class MyListViewModel @Inject constructor(
     authRepository: AuthRepository,
 ) : ViewModel() {
 
-    private val args =  ListArgs(savedStateHandle)
+    private val args = ListArgs(savedStateHandle)
 
-    val authState = authRepository.authState
+    private val authState = authRepository.authState
 
-    private val _uiState = MutableStateFlow(
-        ListUiState(
+    private val controlPanel = MutableStateFlow(
+        ListControlPanelState(
             entryType = args.entryType ?: EntryType.Anime,
             userRateStatus = args.userRateStatus ?: UserRateStatus.Watching
         )
     )
-    val uiState = _uiState.asStateFlow()
 
-    val userRatesPagingData = _uiState.flatMapLatest { (type, status) ->
-        getPagedUserRatesUseCase(type, status)
-    }.cachedIn(viewModelScope)
+    internal val screenState = authState.flatMapLatest { currentAuthState ->
+        if (currentAuthState == ShikimoriAuthState.LOGGED_OUT) {
+            flowOf<ListScreenState>(ListScreenState.LoggedOut)
+        } else {
+            val data = controlPanel.flatMapLatest { (type, status) ->
+                getPagedUserRatesUseCase(type, status).cachedIn(viewModelScope)
+            }
+            controlPanel.map { controlPanelState ->
+                ListScreenState.Success(
+                    data = data,
+                    controlPanelState = controlPanelState
+                )
+            }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = ListScreenState.Loading
+    )
+
 
     fun onEntryTypeChanged(entryType: EntryType) {
-        _uiState.update { it.copy(entryType = entryType) }
+        controlPanel.update { it.copy(entryType = entryType) }
     }
 
     fun onUserRateStatusChanged(userRateStatus: UserRateStatus) {
-        _uiState.update { it.copy(userRateStatus = userRateStatus) }
+        controlPanel.update { it.copy(userRateStatus = userRateStatus) }
     }
 }
