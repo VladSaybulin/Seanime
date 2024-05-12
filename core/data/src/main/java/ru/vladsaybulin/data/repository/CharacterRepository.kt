@@ -28,7 +28,7 @@ import ru.vladsaybulin.database.models.lastrequest.LastCharacterDetailsRequestEn
 import ru.vladsaybulin.model.character.CharacterDetails
 import ru.vladsaybulin.network.datasource.CharacterDataSource
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
 
 class CharacterRepository @Inject constructor(
     private val characterDataSource: CharacterDataSource,
@@ -66,6 +66,11 @@ class CharacterRepository @Inject constructor(
 
             characterDao.insertOrReplaceCharacter(entity)
             characterDao.insertOrReplaceCharacterDetails(detailsEntity)
+
+            characterDao.deleteCharacterAnimeCrossRef(characterId)
+            characterDao.deleteCharacterMangaCrossRef(characterId)
+            characterDao.deleteCharacterSeyuCrossRef(characterId)
+
             characterDao.insertCharacterAnimeCrossReferences(animeCrossRefs)
             characterDao.insertCharacterMangaCrossReferences(mangaCrossRefs)
             characterDao.insertCharacterSeyuCrossReferences(seyuCrossRef)
@@ -82,7 +87,7 @@ class CharacterRepository @Inject constructor(
     private suspend fun syncCharacterDetails(characterId: Long) {
         sync(
             param = characterId,
-            ttl = 1.days,
+            ttl = 1.minutes,
             readLastUpdateDate = lastRequestDao::getLastCharacterDetailsRequestDate,
             refresh = ::refreshCharacterDetails
         )
