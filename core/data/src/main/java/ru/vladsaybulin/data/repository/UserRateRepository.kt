@@ -6,6 +6,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import androidx.paging.RemoteMediator
 import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -16,19 +18,18 @@ import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.CreateUserRateDto
+import ru.vladsaybulin.data.model.animeEntityOrNullShells
 import ru.vladsaybulin.data.model.asDto
 import ru.vladsaybulin.data.model.asEntity
+import ru.vladsaybulin.data.model.mangaEntityOrNullShells
 import ru.vladsaybulin.data.model.userRateEntityShell
-import ru.vladsaybulin.data.util.AbstractShikimoriRemoteMediator
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.UserRateDao
-import ru.vladsaybulin.database.models.anime.AnimeEntity
-import ru.vladsaybulin.database.models.manga.MangaEntity
-import ru.vladsaybulin.database.models.userrate.PopulatedUserRateDbo
-import ru.vladsaybulin.database.models.userrate.UserRateEntity
-import ru.vladsaybulin.database.models.userrate.UserRateOrderDbo
+import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
+import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
+import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.asExternalModel
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.search.QueryMapKey
@@ -53,19 +54,20 @@ class UserRateRepository @Inject constructor(
     fun getLastInProgressUserRates(): Flow<List<UserRateWithEntry>> =
         userRateDao.getLastInProgressUserRates(10)
             .onStart { loadLastInProgressUserRates(10) }
-            .map { it.map(PopulatedUserRateDbo::asExternalModel) }
+            .map { it.map(PopulatedUserRate::asExternalModel) }
             .flowOn(ioDispatcher)
 
     fun getPagedAnimeUserRates(
         status: UserRateStatus,
-        config: PagingConfig = DefaultUserRatePagingConfig
+        config: PagingConfig = DefaultPagingConfig
     ) = getPagedUserRates(
         config = config,
         pagingSourceFactory = { userRateDao.getPagedAnimeUserRates(status) },
-        load = { pageNumber, pageSize ->
+        getLastPage = { userRateDao.getLastAnimeUserRatesPage(status) },
+        loadPage = { pageNumber ->
             userRateDataSource.getAnimeUserRates(
                 page = pageNumber,
-                limit = pageSize,
+                limit = USER_RATES_PAGE_SIZE,
                 status = status
             )
         }
@@ -73,14 +75,15 @@ class UserRateRepository @Inject constructor(
 
     fun getPagedMangaUserRates(
         status: UserRateStatus,
-        config: PagingConfig = DefaultUserRatePagingConfig
+        config: PagingConfig = DefaultPagingConfig
     ) = getPagedUserRates(
         config = config,
         pagingSourceFactory = { userRateDao.getPagedMangaUserRates(status) },
-        load = { pageNumber, pageSize ->
+        getLastPage = { userRateDao.getLastMangaUserRatesPage(status) },
+        loadPage = { pageNumber ->
             userRateDataSource.getMangaUserRates(
                 page = pageNumber,
-                limit = pageSize,
+                limit = USER_RATES_PAGE_SIZE,
                 status = status
             )
         }
@@ -144,42 +147,35 @@ class UserRateRepository @Inject constructor(
 
     @OptIn(ExperimentalPagingApi::class)
     private fun getPagedUserRates(
-        pagingSourceFactory: () -> PagingSource<Int, PopulatedUserRateDbo>,
-        load: suspend (pageNumber: Int, pageSize: Int) -> List<UserRateWithEntryDto>,
-        config: PagingConfig = DefaultUserRatePagingConfig
+        pagingSourceFactory: () -> PagingSource<Int, PopulatedPagedUserRate>,
+        getLastPage: suspend () -> Int,
+        loadPage: suspend (pageNumber: Int) -> List<UserRateWithEntryDto>,
+        config: PagingConfig = DefaultPagingConfig
     ): Flow<PagingData<UserRateWithEntry>> = Pager(
         config = config,
-        remoteMediator = object : AbstractShikimoriRemoteMediator<PopulatedUserRateDbo>() {
-            override suspend fun loadPage(
-                pageNumber: Int,
-                pageSize: Int,
+        remoteMediator = object : RemoteMediator<Int, PopulatedPagedUserRate>() {
+            override suspend fun load(
                 loadType: LoadType,
+                state: PagingState<Int, PopulatedPagedUserRate>
             ): MediatorResult {
-                val response = load(pageNumber, pageSize)
 
-                val userRates = mutableListOf<UserRateEntity>()
-                val order = mutableListOf<UserRateOrderDbo>()
-                val animes = mutableListOf<AnimeEntity>()
-                val mangas = mutableListOf<MangaEntity>()
-
-                val start = pageNumber * pageSize
-
-                response.forEachIndexed { index, dto ->
-                    userRates.add(dto.userRateEntityShell())
-                    dto.networkAnime?.let { animes.add(it.asEntity()) }
-                    dto.networkManga?.let { mangas.add(it.asEntity()) }
-                    order.add(UserRateOrderDbo(dto.networkUserRate.id, start + index))
+                val pageToLoad = when (loadType) {
+                    LoadType.REFRESH -> USER_RATES_FIRST_PAGE
+                    LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+                    LoadType.APPEND -> getLastPage() + 1
                 }
 
-                if (loadType == LoadType.REFRESH) {
-                    userRateDao.deleteAllOrderedUserRates()
-                }
-                animeDao.insertOrReplaceAnimes(animes)
-                mangaDao.insertOrReplaceMangas(mangas)
-                userRateDao.insertOrReplaceUserRates(userRates)
-                userRateDao.insertUserRateOrder(order)
+                return try {
+                    val response = loadPage(pageToLoad)
+                    writeUserRatesPage(pageToLoad, response)
 
-                return MediatorResult.Success(endOfPaginationReached = userRates.size < pageSize)
+                    MediatorResult.Success(
+                        endOfPaginationReached = response.size < state.config.pageSize
+                    )
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
+                    MediatorResult.Error(exception)
+                }
             }
         },
         pagingSourceFactory = pagingSourceFactory
@@ -189,10 +185,41 @@ class UserRateRepository @Inject constructor(
             pagingData.map { it.asExternalModel() }
         }
         .flowOn(ioDispatcher)
-}
 
-private val DefaultUserRatePagingConfig = PagingConfig(
-    pageSize = 50,
-    enablePlaceholders = false,
-    initialLoadSize = 50
-)
+    private suspend fun writeUserRatesPage(
+        page: Int,
+        userRates: List<UserRateWithEntryDto>
+    ) {
+        val userRatesEntities = userRates.map(UserRateWithEntryDto::userRateEntityShell)
+        val animeEntities = userRates.mapNotNull(UserRateWithEntryDto::animeEntityOrNullShells)
+        val mangaEntities = userRates.mapNotNull(UserRateWithEntryDto::mangaEntityOrNullShells)
+
+        val order = userRates.mapIndexed { index, networkModel ->
+            PagedUserRateEntity(
+                userRateId = networkModel.networkUserRate.id,
+                page = page,
+                index = index
+            )
+        }
+
+        databaseTransactionRunner {
+            if (page == USER_RATES_FIRST_PAGE) {
+                userRateDao.deleteAllOrderedUserRates()
+            }
+            animeDao.insertOrReplaceAnimes(animeEntities)
+            mangaDao.insertOrReplaceMangas(mangaEntities)
+            userRateDao.insertOrReplaceUserRates(userRatesEntities)
+            userRateDao.insertUserRateOrder(order)
+        }
+    }
+
+    companion object {
+        const val USER_RATES_FIRST_PAGE = 1
+        const val USER_RATES_PAGE_SIZE = 50
+
+        val DefaultPagingConfig = PagingConfig(
+            pageSize = USER_RATES_PAGE_SIZE,
+            initialLoadSize = USER_RATES_PAGE_SIZE
+        )
+    }
+}

@@ -1,5 +1,6 @@
 package ru.vladsaybulin.database.models.userrate
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Relation
 import ru.vladsaybulin.database.models.anime.AnimeEntity
@@ -8,8 +9,16 @@ import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.asExternalModel
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
-data class PopulatedUserRateDbo(
-    @Embedded val userRateEntity: UserRateEntity,
+data class PopulatedPagedUserRate(
+
+    @Embedded
+    val userRateEntity: UserRateEntity,
+
+    @ColumnInfo("page")
+    val page: Int,
+
+    @ColumnInfo("index")
+    val index: Int,
 
     @Relation(
         entity = AnimeEntity::class,
@@ -23,10 +32,10 @@ data class PopulatedUserRateDbo(
         parentColumn = "manga_id",
         entityColumn = "id"
     )
-    val mangaDbo: MangaEntity?,
+    val mangaDbo: MangaEntity?
 )
 
-fun PopulatedUserRateDbo.asExternalModel() = UserRateWithEntry(
+fun PopulatedPagedUserRate.asExternalModel() = UserRateWithEntry(
     anime = animeDbo?.asExternalModel(),
     manga = mangaDbo?.asExternalModel(),
     userRate = userRateEntity.asExternalModel()

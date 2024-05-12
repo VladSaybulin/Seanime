@@ -177,3 +177,9 @@ internal fun UserRateWithEntryDto.userRateEntityShell() = with(networkUserRate) 
         updatedAt = updatedAt,
     )
 }
+
+internal fun UserRateWithEntryDto.animeEntityOrNullShells() =
+    networkAnime?.asEntity()
+
+internal fun UserRateWithEntryDto.mangaEntityOrNullShells() =
+    networkManga?.asEntity()

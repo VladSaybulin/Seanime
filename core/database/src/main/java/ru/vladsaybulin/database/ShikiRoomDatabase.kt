@@ -57,7 +57,7 @@ import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
 import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
-import ru.vladsaybulin.database.models.userrate.UserRateOrderDbo
+import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.utils.AnimeKindTypeConverter
 import ru.vladsaybulin.database.utils.AnimeRatingTypeConverter
 import ru.vladsaybulin.database.utils.EntryStatusTypeConverter
@@ -128,7 +128,7 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         /* Other entities */
         CalendarItemEntity::class,
         OngoingAnimeEntity::class,
-        UserRateOrderDbo::class
+        PagedUserRateEntity::class
     ],
     version = 1,
 )

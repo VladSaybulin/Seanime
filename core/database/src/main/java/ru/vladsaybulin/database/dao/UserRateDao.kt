@@ -6,9 +6,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.database.models.userrate.PopulatedUserRateDbo
+import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
+import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
+import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
-import ru.vladsaybulin.database.models.userrate.UserRateOrderDbo
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Dao
@@ -16,25 +17,43 @@ interface UserRateDao {
 
     @Query(
         value = """
-            SELECT user_rates.* 
+            SELECT user_rates.*, paged_user_rates.page, paged_user_rates.`index`
             FROM paged_user_rates
             INNER JOIN user_rates ON user_rate_id = user_rates.id
             WHERE status = :status AND anime_id IS NOT NULL
-            ORDER BY `order`
+            ORDER BY page ASC, `index` ASC
         """
     )
-    fun getPagedAnimeUserRates(status: UserRateStatus): PagingSource<Int, PopulatedUserRateDbo>
+    fun getPagedAnimeUserRates(status: UserRateStatus): PagingSource<Int, PopulatedPagedUserRate>
 
     @Query(
         value = """
-            SELECT user_rates.* 
+            SELECT user_rates.*, paged_user_rates.page, paged_user_rates.`index`
             FROM paged_user_rates
             INNER JOIN user_rates ON user_rate_id = user_rates.id
             WHERE status = :status AND manga_id IS NOT NULL
-            ORDER BY `order`
+            ORDER BY page ASC, `index` ASC
         """
     )
-    fun getPagedMangaUserRates(status: UserRateStatus): PagingSource<Int, PopulatedUserRateDbo>
+    fun getPagedMangaUserRates(status: UserRateStatus): PagingSource<Int, PopulatedPagedUserRate>
+
+    @Query(
+        value = """
+            SELECT MAX(page) 
+            FROM paged_user_rates INNER JOIN user_rates ON user_rate_id = user_rates.id
+            WHERE status = :status AND anime_id IS NOT NULL 
+        """
+    )
+    suspend fun getLastAnimeUserRatesPage(status: UserRateStatus): Int
+
+    @Query(
+        value = """
+            SELECT MAX(page) 
+            FROM paged_user_rates INNER JOIN user_rates ON user_rate_id = user_rates.id
+            WHERE status = :status AND anime_id IS NOT NULL 
+        """
+    )
+    suspend fun getLastMangaUserRatesPage(status: UserRateStatus): Int
 
     @Query(
         value = """
@@ -44,7 +63,7 @@ interface UserRateDao {
             LIMIT :limit
         """
     )
-    fun getLastInProgressUserRates(limit: Int): Flow<List<PopulatedUserRateDbo>>
+    fun getLastInProgressUserRates(limit: Int): Flow<List<PopulatedUserRate>>
 
     @Query("SELECT * FROM user_rates WHERE anime_id = :animeId AND manga_id IS NULL")
     fun getAnimeUserRate(animeId: Long): Flow<UserRateEntity?>
@@ -59,7 +78,7 @@ interface UserRateDao {
     suspend fun insertOrReplaceUserRate(userRate: UserRateEntity)
 
     @Insert
-    suspend fun insertUserRateOrder(userRateOrder: List<UserRateOrderDbo>)
+    suspend fun insertUserRateOrder(userRateOrder: List<PagedUserRateEntity>)
 
     @Query("DELETE FROM paged_user_rates")
     suspend fun deleteAllOrderedUserRates()
