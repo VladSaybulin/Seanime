@@ -64,7 +64,7 @@ fun AnimeInfoKindAndEpisodesAndDurationText(
         val durationMinutesText = pluralStringResource(
             id = if (isSingleEpisode) {
                 R.plurals.core_ui_anime_info_duration_minutes
-            } else R.plurals.core_ui_anime_info_by_duration_hours,
+            } else R.plurals.core_ui_anime_info_by_duration_minutes,
             count = durationMinutes,
             durationMinutes
         )

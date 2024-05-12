@@ -38,7 +38,7 @@ fun MangaInfoKindAndChaptersAndVolumesText(
 
     val volumesText = if (volumes > 0 ) {
         pluralStringResource(
-            id = R.plurals.core_ui_manga_info_chapters,
+            id = R.plurals.core_ui_manga_info_volumes,
             count = chapters,
             chapters
         )
