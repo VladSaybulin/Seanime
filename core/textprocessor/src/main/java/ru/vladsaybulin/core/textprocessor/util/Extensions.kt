@@ -9,3 +9,6 @@ fun String.toHtmlDocument(): Document =
 
 fun TagNode.htmlClasses() =
     attributes["class"]?.split(' ')
+
+fun TagNode.containsHtmlClass(classValue: String) =
+    htmlClasses()?.contains(classValue) ?: false

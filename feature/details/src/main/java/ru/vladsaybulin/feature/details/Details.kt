@@ -1,6 +1,5 @@
 package ru.vladsaybulin.feature.details
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -30,14 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.vladsaybulin.core.designsystem.components.ShikimoriExpandableText
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.NavigationEvent
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
@@ -46,7 +41,8 @@ import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.toComposeAnnotatedString
+import ru.vladsaybulin.core.ui.annotatedtext.SeanimeExpandableText
+import ru.vladsaybulin.core.ui.annotatedtext.onSeanimeTextLinkClickAdapter
 import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
@@ -69,7 +65,7 @@ import ru.vladsaybulin.feature.details.content.score
 import ru.vladsaybulin.feature.details.content.similarAnimeCarousel
 import ru.vladsaybulin.feature.details.content.userRateStatusDiagram
 import ru.vladsaybulin.feature.details.model.getUserRateWithEntry
-import ru.vladsaybulin.model.annotatedtext.AnnotatedText
+import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.common.EntryStatus.Anons
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -445,55 +441,22 @@ private fun DetailsContent(
 
 @Composable
 private fun EntryDetailsDescription(
-    description: AnnotatedText,
+    description: SeanimeText,
     onNavigationEvent: (NavigationEvent) -> Unit,
 ) {
-    val (expanded, setExpanded) = remember { mutableStateOf(false) }
-    val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
-
-    val annotatedString = description.toComposeAnnotatedString()
-
-    val pressIndicator = Modifier.pointerInput(Unit) {
-        detectTapGestures { pos ->
-            layoutResult.value?.let { layoutResult ->
-                val offset = layoutResult.getOffsetForPosition(pos)
-                annotatedString.getStringAnnotations(offset, offset)
-                    .fastForEach {
-                        handleDescriptionClick(
-                            tag = it.tag,
-                            annotation = it.item,
-                            onNavigationEvent = onNavigationEvent
-                        )
-                    }
-            }
-        }
-    }
-
-    ShikimoriExpandableText(
-        text = annotatedString,
-        expanded = expanded,
-        onExpandedChange = setExpanded,
+    SeanimeExpandableText(
+        text = description,
         style = ShikimoriTheme.typography.bodyMedium,
-        modifier = Modifier.padding(horizontal = 16.dp),
-        textModifier = pressIndicator,
-        onTextLayout = { layoutResult.value = it }
+        modifier = Modifier.padding(HorizontalPadding),
+        onLinkClick = onSeanimeTextLinkClickAdapter(
+            onAnimeClick = { NavigationEvent.EntryDetails(EntryType.Anime, it) },
+            onMangaClick = { NavigationEvent.EntryDetails(EntryType.Manga, it) },
+            onCharacterClick = { NavigationEvent.CharacterDetails(it) },
+            onPersonClick = { null },
+            onUrlClick = { null },
+            onAction = onNavigationEvent
+        )
     )
-}
-
-fun handleDescriptionClick(
-    tag: String,
-    annotation: String,
-    onNavigationEvent: (NavigationEvent) -> Unit
-) {
-    val navEventOrNull = when (tag) {
-        "anime" -> NavigationEvent.EntryDetails(EntryType.Anime, annotation.toLong())
-        "manga", "ranobe" -> NavigationEvent.EntryDetails(EntryType.Manga, annotation.toLong())
-        "character" -> NavigationEvent.CharacterDetails(annotation.toLong())
-        else -> null
-    }
-    if (navEventOrNull != null) {
-        onNavigationEvent(navEventOrNull)
-    }
 }
 
 private val HorizontalPadding = PaddingValues(horizontal = 16.dp)

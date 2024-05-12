@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.vladsaybulin.database.models.common.IncompleteDatePOJO
 import ru.vladsaybulin.database.models.common.ImagePOJO
+import ru.vladsaybulin.database.models.common.IncompleteDatePOJO
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind

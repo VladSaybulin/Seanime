@@ -1,6 +1,7 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.anime.AnimeCharacterEntity
+import ru.vladsaybulin.database.models.anime.AnimeDetailsEntity
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.AnimeGenreCrossRef
 import ru.vladsaybulin.database.models.anime.AnimePersonRolesEntity
@@ -9,6 +10,23 @@ import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
 import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
+
+fun NetworkAnimeDetails.asAnimeDetailsEntity() = AnimeDetailsEntity(
+    id = id,
+    nameEn = nameEn,
+    nameJp = nameJp,
+    altNames = alternativeName,
+    licenseNameRu = licenseNameRu,
+    rating = rating,
+    duration = duration ?: 0,
+    nextEpisodeAt = nextEpisodeAt,
+    description = descriptionHtml?.asSeanimeText()?.asSeanimeTextPOJO(),
+    descriptionSource = descriptionSource,
+    subbers = subbers,
+    dubbers = dubbers,
+    scoreStats = scoreStats?.map { it.asExternalModel() },
+    statusStats = userRateStatusStats?.map { it.asExternalModel() },
+)
 
 fun NetworkAnimeDetails.asAnimeEntity() = AnimeEntity(
     id = id,

@@ -3,6 +3,7 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import ru.vladsaybulin.database.models.text.asExternalModel
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.genre.asExternalModel

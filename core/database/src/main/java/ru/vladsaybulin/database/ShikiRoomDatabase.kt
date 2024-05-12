@@ -65,7 +65,7 @@ import ru.vladsaybulin.database.utils.GenreKindTypeConverter
 import ru.vladsaybulin.database.utils.InstantTypeConverter
 import ru.vladsaybulin.database.utils.IntStatisticsItemsConverter
 import ru.vladsaybulin.database.utils.MangaKindTypeConverter
-import ru.vladsaybulin.database.utils.ProtoTextAnnotationsTypeConverter
+import ru.vladsaybulin.database.utils.TextRangesTypeConverter
 import ru.vladsaybulin.database.utils.StatusStatisticsItemsConverter
 import ru.vladsaybulin.database.utils.StringListTypeConverter
 import ru.vladsaybulin.database.utils.TopicEventTypeConverter
@@ -148,7 +148,7 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         IntStatisticsItemsConverter::class,
         StatusStatisticsItemsConverter::class,
         VideoKindTypeConverter::class,
-        ProtoTextAnnotationsTypeConverter::class
+        TextRangesTypeConverter::class
     ]
 )
 abstract class ShikiRoomDatabase : RoomDatabase() {

@@ -1,7 +1,7 @@
 package ru.vladsaybulin.model.anime
 
 import kotlinx.datetime.Instant
-import ru.vladsaybulin.model.annotatedtext.AnnotatedText
+import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
@@ -31,7 +31,7 @@ data class AnimeDetails(
     val nextEpisodeAt: Instant?,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
-    val description: AnnotatedText?,
+    val description: SeanimeText?,
     val descriptionSource: String?,
     val genres: List<Genre>?,
     val subbers: List<String>?,

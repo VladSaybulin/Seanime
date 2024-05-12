@@ -3,7 +3,6 @@ package ru.vladsaybulin.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import dagger.Lazy
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -12,9 +11,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.model.MangaDetailsEntityMapper
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
+import ru.vladsaybulin.data.model.asMangaDetailsEntity
 import ru.vladsaybulin.data.model.asMangaEntity
 import ru.vladsaybulin.data.model.asUserRate
 import ru.vladsaybulin.data.model.characterEntityShells
@@ -67,7 +66,6 @@ class MangaRepository @Inject constructor(
     private val lastRequestDao: LastRequestDao,
     private val authRepository: AuthRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val mangaDetailsMapper: Lazy<MangaDetailsEntityMapper>,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
@@ -128,7 +126,7 @@ class MangaRepository @Inject constructor(
             }
 
             mangaDao.insertOrReplaceManga(mangaDetails.asMangaEntity())
-            mangaDetailsDao.insertOrReplaceMangaDetails(mangaDetailsMapper.get().invoke(mangaDetails))
+            mangaDetailsDao.insertOrReplaceMangaDetails(mangaDetails.asMangaDetailsEntity())
 
             mangaDetailsDao.deleteMangaPublisherCrossReferences(mangaId)
             mangaDetails.mangaPublisherCrossRefs().let {

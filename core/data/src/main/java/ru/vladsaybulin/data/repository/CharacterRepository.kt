@@ -1,13 +1,9 @@
 package ru.vladsaybulin.data.repository
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock
-import ru.vladsaybulin.common.network.Dispatcher
-import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.textprocessor.html.HtmlToAnnotatedTextTransformer
 import ru.vladsaybulin.data.model.animeCrossRefs
 import ru.vladsaybulin.data.model.animeEntityShells
 import ru.vladsaybulin.data.model.asDetailsEntity
@@ -37,9 +33,7 @@ class CharacterRepository @Inject constructor(
     private val mangaDao: MangaDao,
     private val personDao: PersonDao,
     private val lastRequestDao: LastRequestDao,
-    private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val htmlToAnnotatedTextTransformer: HtmlToAnnotatedTextTransformer,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
+    private val databaseTransactionRunner: DatabaseTransactionRunner
 ) {
     fun getCharacterDetails(characterId: Long): Flow<CharacterDetails> =
         characterDao.getCharacterDetails(characterId)
@@ -50,7 +44,7 @@ class CharacterRepository @Inject constructor(
         val response = characterDataSource.getCharacterDetails(characterId)
 
         val entity = response.asEntity()
-        val detailsEntity = response.asDetailsEntity(htmlToAnnotatedTextTransformer)
+        val detailsEntity = response.asDetailsEntity()
         val animeEntities = response.animeEntityShells()
         val mangaEntities = response.mangaEntityShells()
         val personEntities = response.personEntityShells()

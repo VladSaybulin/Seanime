@@ -122,6 +122,7 @@
     <string name="core_ui_error">Ошибка</string>
     <string name="core_ui_error_retry">Повторить</string>
     <string name="core_ui_cancel">Отменить</string>
+    <string name="core_ui_spoiler">Спойлер</string>
     <plurals name="core_ui_anime_info_duration_hours">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>

@@ -3,23 +3,30 @@ package ru.vladsaybulin.core.textprocessor.html
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import org.primeframework.transformer.domain.TagNode
 import ru.vladsaybulin.core.textprocessor.TagTransformer
+import ru.vladsaybulin.core.textprocessor.TagTransformerResult
+import ru.vladsaybulin.core.textprocessor.TagTransformerScope
 import ru.vladsaybulin.core.textprocessor.util.htmlClasses
 
-object ShikimoriLinkTransformer : TagTransformer<AnnotatedTextBuilder> {
+object ShikimoriLinkTransformer : TagTransformer<SeanimeTextBuilder> {
 
-    override fun transform(chain: TagTransformer.Chain<AnnotatedTextBuilder>) {
-        if (chain.tagNode.htmlClasses()?.contains("b-link") != true) {
-            chain.proceed()
-            return
+    private val json = Json
+
+    override val tagNames: Set<String> = setOf("a")
+
+    override val priority: Int = 1
+
+    override fun TagTransformerScope<SeanimeTextBuilder>.transform(
+        tagNode: TagNode,
+        builder: SeanimeTextBuilder
+    ): TagTransformerResult {
+        if (tagNode.htmlClasses()?.contains("b-link") != true) {
+            return TagTransformerResult.NotTransformed
         }
 
-        val dataAttrsString = chain.tagNode.attributes["data-attrs"]
-
-        if (dataAttrsString == null) {
-            chain.proceed()
-            return
-        }
+        val dataAttrsString = tagNode.attributes["data-attrs"]
+            ?: return TagTransformerResult.NotTransformed
 
         val attrs = json.decodeFromString<JsonObject>(dataAttrsString.replace("&quot;", "\""))
 
@@ -30,13 +37,12 @@ object ShikimoriLinkTransformer : TagTransformer<AnnotatedTextBuilder> {
             else -> id
         }
 
-        chain.builder.withAnnotation(
+        builder.link(
             tag = type,
             annotation = finalId
         ) {
-            chain.transformChildren()
+            transformChildren()
         }
+        return TagTransformerResult.Success
     }
-
-    private val json = Json
 }

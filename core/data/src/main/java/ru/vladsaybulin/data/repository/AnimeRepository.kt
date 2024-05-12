@@ -3,7 +3,6 @@ package ru.vladsaybulin.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import dagger.Lazy
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -12,13 +11,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.model.AnimeDetailsEntityMapper
 import ru.vladsaybulin.data.model.animeAuthorEntities
 import ru.vladsaybulin.data.model.animeCharacterEntities
 import ru.vladsaybulin.data.model.animeRelatedEntities
 import ru.vladsaybulin.data.model.animeScreenshotEntities
 import ru.vladsaybulin.data.model.animeStudioCrossRefs
 import ru.vladsaybulin.data.model.animeVideoEntities
+import ru.vladsaybulin.data.model.asAnimeDetailsEntity
 import ru.vladsaybulin.data.model.asAnimeEntity
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
@@ -78,7 +77,6 @@ class AnimeRepository @Inject constructor(
     private val lastRequestDao: LastRequestDao,
     private val authRepository: AuthRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val animeDetailsMapper: Lazy<AnimeDetailsEntityMapper>,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
@@ -145,7 +143,7 @@ class AnimeRepository @Inject constructor(
             }
 
             animeDao.insertOrReplaceAnime(animeDetails.asAnimeEntity())
-            animeDetailsDao.insertOrReplaceAnimeDetails(animeDetailsMapper.get().invoke(animeDetails))
+            animeDetailsDao.insertOrReplaceAnimeDetails(animeDetails.asAnimeDetailsEntity())
 
             animeDetailsDao.deleteAnimeStudioCrossReferences(animeId)
             animeDetails.animeStudioCrossRefs().let {

@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
-import ru.vladsaybulin.database.models.common.AnnotatedTextPOJO
+import ru.vladsaybulin.database.models.text.SeanimeTextPOJO
 
 @Entity(
     tableName = "character_details",
@@ -31,7 +31,7 @@ data class CharacterDetailsEntity(
     val altNames: String?,
 
     @Embedded("description_")
-    val description: AnnotatedTextPOJO?,
+    val description: SeanimeTextPOJO?,
 
     @ColumnInfo("description_source")
     val descriptionSource: String?,

@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
-import ru.vladsaybulin.database.models.common.AnnotatedTextPOJO
+import ru.vladsaybulin.database.models.text.SeanimeTextPOJO
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -49,7 +49,7 @@ class AnimeDetailsEntity(
     val nextEpisodeAt: Instant?,
 
     @Embedded("description_")
-    val description: AnnotatedTextPOJO?,
+    val description: SeanimeTextPOJO?,
 
     @ColumnInfo("description_source")
     val descriptionSource: String?,

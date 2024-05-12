@@ -1,7 +1,6 @@
 package ru.vladsaybulin.feature.character
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,37 +21,33 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
-import ru.vladsaybulin.core.designsystem.components.ShikimoriExpandableText
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.navigation.NavigationEvent
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
+import ru.vladsaybulin.core.ui.annotatedtext.SeanimeExpandableText
+import ru.vladsaybulin.core.ui.annotatedtext.onSeanimeTextLinkClickAdapter
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.core.ui.manga.MangaCarousel
-import ru.vladsaybulin.core.ui.toComposeAnnotatedString
-import ru.vladsaybulin.model.annotatedtext.AnnotatedText
+import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterDetails
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
@@ -195,55 +190,22 @@ fun CharacterDetailsContent(
 
 @Composable
 fun CharacterDescription(
-    description: AnnotatedText,
+    description: SeanimeText,
     onNavigationEvent: (NavigationEvent) -> Unit
 ) {
-    val (expanded, setExpanded) = remember { mutableStateOf(false) }
-    val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
-
-    val annotatedString = description.toComposeAnnotatedString()
-
-    val pressIndicator = Modifier.pointerInput(Unit) {
-        detectTapGestures { pos ->
-            layoutResult.value?.let { layoutResult ->
-                val offset = layoutResult.getOffsetForPosition(pos)
-                annotatedString.getStringAnnotations(offset, offset)
-                    .fastForEach {
-                        handleDescriptionClick(
-                            tag = it.tag,
-                            annotation = it.item,
-                            onNavigationEvent = onNavigationEvent
-                        )
-                    }
-            }
-        }
-    }
-
-    ShikimoriExpandableText(
-        text = annotatedString,
-        expanded = expanded,
-        onExpandedChange = setExpanded,
+    SeanimeExpandableText(
+        text = description,
         style = ShikimoriTheme.typography.bodyMedium,
-        modifier = Modifier.padding(horizontal = 16.dp),
-        textModifier = pressIndicator,
-        onTextLayout = { layoutResult.value = it }
+        modifier = Modifier.padding(16.dp),
+        onLinkClick = onSeanimeTextLinkClickAdapter(
+            onAnimeClick = { NavigationEvent.EntryDetails(EntryType.Anime, it) },
+            onMangaClick = { NavigationEvent.EntryDetails(EntryType.Manga, it) },
+            onCharacterClick = { NavigationEvent.CharacterDetails(it) },
+            onPersonClick = { null },
+            onUrlClick = { null },
+            onAction = onNavigationEvent
+        )
     )
-}
-
-fun handleDescriptionClick(
-    tag: String,
-    annotation: String,
-    onNavigationEvent: (NavigationEvent) -> Unit
-) {
-    val navEventOrNull = when (tag) {
-        "anime" -> NavigationEvent.EntryDetails(EntryType.Anime, annotation.toLong())
-        "manga", "ranobe" -> NavigationEvent.EntryDetails(EntryType.Manga, annotation.toLong())
-        "character" -> NavigationEvent.CharacterDetails(annotation.toLong())
-        else -> null
-    }
-    if (navEventOrNull != null) {
-        onNavigationEvent(navEventOrNull)
-    }
 }
 
 @Composable
@@ -336,7 +298,7 @@ fun CharacterDetailsContentPreview() {
                         poster = Image("", ""),
                         alternativeName = "Mugiwara, Straw Hat",
                         nameJp = "モンキー・D・ルフィ",
-                        description = AnnotatedText(
+                        description = SeanimeText(
                             text = """
                                 Главный герой манги и аниме «Большой куш», является капитаном «Пиратов Соломенной Шляпы».
 
@@ -359,7 +321,10 @@ fun CharacterDetailsContentPreview() {
                                 Силы и способности
                                 Большинство атак Луффи основаны на силе дьявольского фрукта. Так как в детстве он по неосторожности съел Гому-Гому, то стал «резиновым человеком». Может растягивать любую часть своего тела и отражать пули, ядра и прочие заряды огнестрельного оружия. После встречи с Магелланом в Импел Дауне ему достался иммунитет к ядам. За два года тренировок с Рэйли научился пользоваться всеми видами воли. После возвращения на архипелаг Сабаоди смог одолеть Пацифиста с одного удара.
                             """.trimIndent(),
-                            annotations = emptyList()
+                            styles = persistentListOf(),
+                            inlineSpoilers = persistentListOf(),
+                            spoilerBlocks = persistentListOf(),
+                            links = persistentListOf()
                         ),
                         descriptionSource = null,
                         topicId = 31139,

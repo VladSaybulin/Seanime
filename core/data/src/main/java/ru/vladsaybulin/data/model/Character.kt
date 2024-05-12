@@ -1,6 +1,5 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.core.textprocessor.html.HtmlToAnnotatedTextTransformer
 import ru.vladsaybulin.database.models.character.CharacterAnimeCrossRef
 import ru.vladsaybulin.database.models.character.CharacterDetailsEntity
 import ru.vladsaybulin.database.models.character.CharacterEntity
@@ -38,11 +37,11 @@ fun NetworkCharacterDetails.asEntity() = CharacterEntity(
     image = image?.asPOJO()
 )
 
-fun NetworkCharacterDetails.asDetailsEntity(htmlToAnnotatedTextTransformer: HtmlToAnnotatedTextTransformer) = CharacterDetailsEntity(
+fun NetworkCharacterDetails.asDetailsEntity() = CharacterDetailsEntity(
     id = id,
     nameJp = nameJp,
     altNames = alternativeName,
-    description = descriptionHtml?.toAnnotatedTextPOJO(htmlToAnnotatedTextTransformer),
+    description = descriptionHtml?.asSeanimeText()?.asSeanimeTextPOJO(),
     descriptionSource = descriptionSource,
     topicId = topicId,
     updatedAt = updatedAt
