@@ -13,7 +13,9 @@ object BrTransformer : TagTransformer<SeanimeTextBuilder> {
         tagNode: TagNode,
         builder: SeanimeTextBuilder
     ): TagTransformerResult {
-        builder.append("\n")
+        if (builder.last() != '\n') {
+            builder.append("\n")
+        }
         return TagTransformerResult.Success
     }
 }
