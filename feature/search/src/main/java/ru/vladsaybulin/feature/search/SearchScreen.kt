@@ -49,8 +49,9 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
-import ru.vladsaybulin.core.navigation.args.asEntryDetailsArgs
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
+import ru.vladsaybulin.core.navigation.animeDetails
+import ru.vladsaybulin.core.navigation.mangaDetails
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateGrid
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
@@ -72,7 +73,7 @@ import ru.vladsaybulin.model.search.SearchType
 
 @Composable
 fun SearchRoute(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
+    navigator: SeanimeNavigator,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
 
@@ -91,7 +92,8 @@ fun SearchRoute(
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onSearchTriggered = viewModel::onSearchTriggered,
         onDeleteRecentSearchQuery = viewModel::onDeleteRecentSearchQuery,
-        onEntryClick = onEntryClick
+        onAnimeClick = navigator::animeDetails,
+        onMangaClick = navigator::mangaDetails
     )
 }
 
@@ -107,7 +109,8 @@ private fun SearchScreen(
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: (String) -> Unit,
     onDeleteRecentSearchQuery: (String) -> Unit,
-    onEntryClick: (EntryDetailsArgs) -> Unit
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -153,7 +156,8 @@ private fun SearchScreen(
                         SearchQuickResult(
                             searchType = uiState.currentSearchType,
                             pagingFlows = searchResultFlows,
-                            onEntryClick = onEntryClick
+                            onAnimeClick = onAnimeClick,
+                            onMangaClick = onMangaClick
                         )
                     }
                 }
@@ -182,7 +186,8 @@ private fun SearchScreen(
             SearchResult(
                 searchType = uiState.currentSearchType,
                 pagingFlows = searchResultFlows,
-                onEntryClick = onEntryClick
+                onAnimeClick = onAnimeClick,
+                onMangaClick = onMangaClick
             )
         }
 
@@ -406,17 +411,18 @@ private fun SearchLoading() {
 private fun SearchResult(
     searchType: SearchType,
     pagingFlows: SearchResultFlows,
-    onEntryClick: (EntryDetailsArgs) -> Unit
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit
 ) {
     when (searchType) {
         SearchType.Anime -> SearchAnimeResult(
             searchAnimeResult = pagingFlows.searchAnimeResult,
-            onAnimeClick = { onEntryClick(it.asEntryDetailsArgs()) }
+            onAnimeClick = onAnimeClick
         )
 
         SearchType.Manga, SearchType.Ranobe -> SearchMangaResult(
             searchMangaResult = pagingFlows.searchMangaResult,
-            onMangaClick = { onEntryClick(it.asEntryDetailsArgs()) }
+            onMangaClick = onMangaClick
         )
     }
 }
@@ -453,17 +459,18 @@ private fun SearchMangaResult(
 private fun SearchQuickResult(
     searchType: SearchType,
     pagingFlows: SearchResultFlows,
-    onEntryClick: (EntryDetailsArgs) -> Unit
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit
 ) {
     when (searchType) {
         SearchType.Anime -> SearchAnimeQuickResult(
             searchAnimeResult = pagingFlows.searchAnimeResult,
-            onAnimeClick = { onEntryClick(it.asEntryDetailsArgs()) }
+            onAnimeClick = onAnimeClick
         )
 
         SearchType.Manga, SearchType.Ranobe -> SearchMangaQuickResult(
             searchMangaResult = pagingFlows.searchMangaResult,
-            onMangaClick = { onEntryClick(it.asEntryDetailsArgs()) }
+            onMangaClick = onMangaClick
         )
     }
 }

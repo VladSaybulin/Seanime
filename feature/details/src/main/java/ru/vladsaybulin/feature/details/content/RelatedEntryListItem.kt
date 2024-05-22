@@ -19,7 +19,6 @@ import ru.vladsaybulin.core.ui.entry.EntryListItem
 import ru.vladsaybulin.core.ui.manga.MangaInfoKindAndYearText
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.related.RelatedEntry
 import ru.vladsaybulin.model.related.RelationType
@@ -27,7 +26,8 @@ import ru.vladsaybulin.model.related.RelationType
 @Composable
 fun RelatedEntryListItem(
     relatedEntry: RelatedEntry,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (relatedEntry.anime != null) {
@@ -35,7 +35,7 @@ fun RelatedEntryListItem(
         RelatedAnimeListItem(
             anime = anime,
             relationType = relatedEntry.relationType,
-            onClick = { onEntryClick(EntryType.Anime, anime.id) },
+            onClick = { onAnimeClick(anime) },
             modifier = modifier
         )
     } else {
@@ -43,7 +43,7 @@ fun RelatedEntryListItem(
         RelatedMangaListItem(
             manga = manga,
             relationType = relatedEntry.relationType,
-            onClick = { onEntryClick(EntryType.Manga, manga.id) },
+            onClick = { onMangaClick(manga) },
             modifier = modifier
         )
     }

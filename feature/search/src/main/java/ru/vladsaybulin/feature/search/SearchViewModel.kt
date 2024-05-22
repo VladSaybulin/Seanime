@@ -26,17 +26,16 @@ import ru.vladsaybulin.core.domain.GetSearchFiltersUseCase
 import ru.vladsaybulin.core.domain.SearchAnimeUseCase
 import ru.vladsaybulin.core.domain.SearchMangaUseCase
 import ru.vladsaybulin.core.domain.SearchRanobeUseCase
-import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.AppliedOptionValues
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.data.repository.FilterGenreRepository
 import ru.vladsaybulin.data.repository.FilterPublisherRepository
-import ru.vladsaybulin.data.repository.RecentSearchQueryRepository
 import ru.vladsaybulin.data.repository.FilterStudioRepository
-import ru.vladsaybulin.data.util.flowOf
+import ru.vladsaybulin.data.repository.RecentSearchQueryRepository
 import ru.vladsaybulin.feature.search.navigation.SearchArgs
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.search.FilterType
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
@@ -62,17 +61,17 @@ class SearchViewModel @Inject constructor(
 
     private val constAppliedFilters = buildMap {
         putAsSelectedIfNotNull(FilterType.Status, args.entryStatus?.serializedName)
-        putAsSelectedIfNotNull(FilterType.Genre, args.genreId?.toString())
-        putAsSelectedIfNotNull(FilterType.Demographic, args.demographicId?.toString())
-        putAsSelectedIfNotNull(FilterType.Theme, args.themeId?.toString())
-        putAsSelectedIfNotNull(FilterType.Studio, args.studioId?.toString())
-        putAsSelectedIfNotNull(FilterType.Publisher, args.publisherId?.toString())
+        putAsSelectedIfNotNull(FilterType.Genre, args.genreIdOrNull(GenreKind.Genre))
+        putAsSelectedIfNotNull(FilterType.Demographic, args.genreIdOrNull(GenreKind.Demographic))
+        putAsSelectedIfNotNull(FilterType.Theme, args.genreIdOrNull(GenreKind.Theme))
+        putAsSelectedIfNotNull(FilterType.Studio, args.studioIdOrNull())
+        putAsSelectedIfNotNull(FilterType.Publisher, args.publisherIdOrNull())
     }
 
     private var debouncedSearchJob: Job? = null
 
     private val availableSearchTypes = if (args.searchType != null) {
-        persistentListOf(args.searchType!!)
+        persistentListOf(args.searchType)
     } else SearchType.entries.toImmutableList()
 
     private val availableOrders = Order.entries.toImmutableList()
@@ -88,11 +87,11 @@ class SearchViewModel @Inject constructor(
                 getSearchFiltersUseCase(
                     searchType = searchType,
                     statusEnabled = args.entryStatus == null,
-                    studioEnabled = args.studioId == null,
-                    publisherEnabled = args.publisherId == null,
-                    genreEnabled = args.genreId == null,
-                    demographicEnabled = args.demographicId == null,
-                    themesEnabled = args.themeId == null
+                    studioEnabled = args.studioOrPublisherId != null || searchType != SearchType.Anime,
+                    publisherEnabled = args.studioOrPublisherId != null || searchType == SearchType.Anime,
+                    genreEnabled = args.genreKind != GenreKind.Genre,
+                    demographicEnabled = args.genreKind != GenreKind.Demographic,
+                    themesEnabled = args.genreKind != GenreKind.Theme
                 )
             )
         }
@@ -115,16 +114,17 @@ class SearchViewModel @Inject constructor(
         currentOrder,
         filtersLoadingState,
         appliedFilters,
-        flowOf { args.getTitle() },
         ::createSearchUiState
     ).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        createSearchUiState(
+        SearchUiState(
             currentSearchType = currentSearchType.value,
             currentOrder = currentOrder.value,
             filtersLoadingState = FiltersLoadingState.Loading,
             appliedFilters = appliedFilters.value,
+            availableSearchTypes = availableSearchTypes,
+            availableOrders = availableOrders,
             title = SearchTitle.Search
         )
     )
@@ -208,12 +208,11 @@ class SearchViewModel @Inject constructor(
             put(QueryMapKey.Order, order.serializedValue)
         }
 
-    private fun createSearchUiState(
+    private suspend fun createSearchUiState(
         currentSearchType: SearchType,
         currentOrder: Order,
         filtersLoadingState: FiltersLoadingState,
-        appliedFilters: AppliedFilters,
-        title: SearchTitle
+        appliedFilters: AppliedFilters
     ) = SearchUiState(
         currentSearchType = currentSearchType,
         currentOrder = currentOrder,
@@ -221,33 +220,60 @@ class SearchViewModel @Inject constructor(
         appliedFilters = appliedFilters,
         availableSearchTypes = availableSearchTypes,
         availableOrders = availableOrders,
-        title = title
+        title = getTitle()
     )
 
-    private suspend fun SearchArgs.getTitle() = when {
-        publisherId != null -> filterPublisherRepositoryProvider.get()
-            .getFilterPublisherById(publisherId!!)
-            ?.let { SearchTitle.Publisher(it.name) }
+    private suspend fun getTitle(): SearchTitle = when {
+        args.searchType == null -> SearchTitle.Search
 
-        studioId != null -> filterStudioRepositoryProvider.get()
-            .getFilterStudioById(studioId!!)
+        args.studioOrPublisherId != null -> getStudioOrPublisherTitle(
+            args.searchType,
+            args.studioOrPublisherId.toLong()
+        )
+
+        args.genreId != null -> getGenreTitle(
+            args.searchType,
+            args.genreKind!!,
+            args.genreId.toLong()
+        )
+
+        args.entryStatus != null -> SearchTitle.Status(args.entryStatus)
+
+        else -> SearchTitle.Search
+    }
+
+    private suspend fun getStudioOrPublisherTitle(
+        searchType: SearchType,
+        studioOrPublisherId: Long
+    ): SearchTitle = when (searchType) {
+        SearchType.Anime -> filterStudioRepositoryProvider.get()
+            .getFilterStudioById(studioOrPublisherId)
             ?.let { SearchTitle.Studio(it.name) }
+            ?: SearchTitle.Search
 
-        genreId != null -> filterGenreRepositoryProvider.get()
-            .getGenreById(searchType!!.toEntryType, genreId!!)
-            ?.let { SearchTitle.Genre(it.russianName ?: it.englishName) }
+        SearchType.Manga, SearchType.Ranobe -> filterStudioRepositoryProvider.get()
+            .getFilterStudioById(studioOrPublisherId)
+            ?.let { SearchTitle.Studio(it.name) }
+            ?: SearchTitle.Search
 
-        demographicId != null -> filterGenreRepositoryProvider.get()
-            .getGenreById(searchType!!.toEntryType, demographicId!!)
-            ?.let { SearchTitle.Demographic(it.russianName ?: it.englishName) }
+        else -> throw IllegalStateException("Search type must be Anime, Manga or Ranobe when studioOrPublisher is not null")
+    }
 
-        themeId != null -> filterGenreRepositoryProvider.get()
-            .getGenreById(searchType!!.toEntryType, themeId!!)
-            ?.let { SearchTitle.Theme(it.russianName ?: it.englishName) }
+    private suspend fun getGenreTitle(
+        searchType: SearchType,
+        genreKind: GenreKind,
+        genreId: Long
+    ): SearchTitle {
+        val genreName = filterGenreRepositoryProvider.get().getGenreById(searchType.entryType, genreId)
+            ?.run { russianName ?: englishName }
+            ?: return SearchTitle.Search
 
-        entryStatus != null -> SearchTitle.Status(entryStatus!!)
-        else -> null
-    } ?: SearchTitle.Search
+        return when (genreKind) {
+            GenreKind.Genre -> SearchTitle.Genre(genreName)
+            GenreKind.Theme -> SearchTitle.Theme(genreName)
+            GenreKind.Demographic -> SearchTitle.Demographic(genreName)
+        }
+    }
 }
 
 private data class SearchParams(
@@ -287,11 +313,21 @@ fun MutableMap<FilterType, AppliedOptionValues>.putAsSelectedIfNotNull(
     this[filterType] = mapOf(optionValue to OptionValue.Selected)
 }
 
-val SearchType.toEntryType: EntryType
+val SearchType.entryType: EntryType
     get() = when (this) {
         SearchType.Anime -> EntryType.Anime
         SearchType.Manga, SearchType.Ranobe -> EntryType.Manga
+        else -> throw IllegalStateException("Can't give EntryType for SearchType.${this.name}")
     }
+
+private fun SearchArgs.genreIdOrNull(kind: GenreKind) =
+    if (this.genreKind == kind) genreId else null
+
+private fun SearchArgs.studioIdOrNull() =
+    if (searchType == SearchType.Anime) studioOrPublisherId else null
+
+private fun SearchArgs.publisherIdOrNull() =
+    if (searchType != SearchType.Anime) studioOrPublisherId else null
 
 private const val DebounceSearchQueryMs = 500L
 private val DefaultOrder = Order.Popularity

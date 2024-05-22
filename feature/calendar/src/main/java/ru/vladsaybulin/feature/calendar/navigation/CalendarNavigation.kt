@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.feature.calendar.CalendarRoute
 
 const val CALENDAR_GRAPH_ROUTE = "calendar_graph"
@@ -16,7 +16,7 @@ fun NavController.navigateToCalendarGraph(navOptions: NavOptions?) {
 }
 
 fun NavGraphBuilder.calendarGraph(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
+    navigator: SeanimeNavigator,
     nested: NavGraphBuilder.() -> Unit
 ) {
     navigation(
@@ -24,9 +24,7 @@ fun NavGraphBuilder.calendarGraph(
         route = CALENDAR_GRAPH_ROUTE
     ) {
         composable(route = CALENDAR_SCREEN_ROUTE) {
-            CalendarRoute(
-                onEntryClick = onEntryClick
-            )
+            CalendarRoute(navigator = navigator)
         }
         nested()
     }

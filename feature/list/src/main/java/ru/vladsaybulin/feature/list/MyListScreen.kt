@@ -26,7 +26,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
+import ru.vladsaybulin.core.navigation.animeDetails
+import ru.vladsaybulin.core.navigation.mangaDetails
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LazyPagingColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
@@ -35,14 +37,15 @@ import ru.vladsaybulin.core.ui.strings.asTargetStringEntry
 import ru.vladsaybulin.core.ui.strings.entryTypeString
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
+import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun MyListRoute(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onSignIn: () -> Unit,
+    navigator: SeanimeNavigator,
     viewModel: MyListViewModel = hiltViewModel()
 ) {
 
@@ -52,8 +55,7 @@ fun MyListRoute(
         screenState = screenState,
         onEntryTypeChange = viewModel::onEntryTypeChanged,
         onUserRateStatusChange = viewModel::onUserRateStatusChanged,
-        onEntryClick = onEntryClick,
-        onSignIn = onSignIn
+        navigator = navigator
     )
 }
 
@@ -62,8 +64,7 @@ internal fun MyListScreen(
     screenState: ListScreenState,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onSignIn: () -> Unit
+    navigator: SeanimeNavigator,
 ) {
     Box(
         modifier = Modifier
@@ -78,13 +79,13 @@ internal fun MyListScreen(
                 }
 
             ListScreenState.LoggedOut ->
-                Authorization(onSignIn = onSignIn)
+                Authorization(onSignIn = navigator::auth)
 
             is ListScreenState.Success -> ListContent(
                 state = screenState,
                 onEntryTypeChange = onEntryTypeChange,
                 onUserRateStatusChange = onUserRateStatusChange,
-                onEntryClick = onEntryClick
+                navigator = navigator
             )
         }
     }
@@ -95,7 +96,7 @@ private fun ListContent(
     state: ListScreenState.Success,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
-    onEntryClick: (EntryDetailsArgs) -> Unit,
+    navigator: SeanimeNavigator,
 ) {
     CompositionLocalProvider(value = LocalTargetStringsEntry provides state.controlPanelState.entryType.asTargetStringEntry()) {
         Column {
@@ -109,7 +110,8 @@ private fun ListContent(
             val userRates = state.data.collectAsLazyPagingItems()
             UserRatesPaging(
                 userRates = userRates,
-                onEntryClick = onEntryClick
+                onAnimeClick = navigator::animeDetails,
+                onMangaClick = navigator::mangaDetails
             )
         }
     }
@@ -173,7 +175,8 @@ private fun ControlPanel(
 @Composable
 private fun UserRatesPaging(
     userRates: LazyPagingItems<UserRateWithEntry>,
-    onEntryClick: (EntryDetailsArgs) -> Unit
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit
 ) {
     LazyPagingColumn(
         lazyPagingItems = userRates,
@@ -183,7 +186,8 @@ private fun UserRatesPaging(
     ) {
         UserRateEntryCard(
             userRateWithEntry = it,
-            onClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
+            onAnimeClick = onAnimeClick,
+            onMangaClick = onMangaClick,
             showUserRateBadge = false
         )
     }

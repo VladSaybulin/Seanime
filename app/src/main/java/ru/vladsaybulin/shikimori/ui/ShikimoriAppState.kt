@@ -17,6 +17,7 @@ import ru.vladsaybulin.feature.home.navigation.navigateToHomeGraph
 import ru.vladsaybulin.feature.imageview.navigation.IMAGE_VIEW_ROUTE
 import ru.vladsaybulin.feature.list.navigation.navigateToMyListGraph
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchGraph
+import ru.vladsaybulin.shikimori.navigation.SeanimeNavigatorImpl
 import ru.vladsaybulin.shikimori.navigation.TopLevelDestination
 import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.CALENDAR
 import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.HOME
@@ -26,14 +27,20 @@ import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.SEARCH
 @Composable
 fun rememberShikimoriAppState(
     windowSizeClass: WindowSizeClass,
+    onAuth: () -> Unit,
+    onExternalLink: (String) -> Unit,
     navController: NavHostController = rememberNavController()
 ) = remember(
     windowSizeClass,
+    onAuth,
+    onExternalLink,
     navController
 ) {
     ShikimoriAppState(
         navController = navController,
-        windowSizeClass = windowSizeClass
+        windowSizeClass = windowSizeClass,
+        onAuth = onAuth,
+        onExternalLink = onExternalLink
     )
 }
 
@@ -41,6 +48,8 @@ fun rememberShikimoriAppState(
 class ShikimoriAppState(
     val navController: NavHostController,
     val windowSizeClass: WindowSizeClass,
+    onAuth: () -> Unit,
+    onExternalLink: (String) -> Unit,
 ) {
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
 
@@ -56,6 +65,13 @@ class ShikimoriAppState(
 
     val isNavigationVisible: Boolean
         @Composable get() = currentDestination.isNavigationVisible()
+
+    val navigator = SeanimeNavigatorImpl(
+        navController = navController,
+        onImageView = { _, _ ->},
+        onExternalClick = onExternalLink,
+        onAuth = onAuth
+    )
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         val topLevelNavOptions = navOptions {

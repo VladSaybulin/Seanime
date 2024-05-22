@@ -44,26 +44,25 @@ import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.domain.CalendarDay
-import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
-import ru.vladsaybulin.model.common.EntryType
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
 fun CalendarRoute(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
+    navigator: SeanimeNavigator,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     CalendarScreen(
         uiState = uiState,
-        onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it)) },
+        onAnimeClick = navigator::animeDetails,
         onRefresh = viewModel::forceRefresh
     )
 }
@@ -113,7 +112,10 @@ fun CalendarContent(
             .fillMaxSize()
             .nestedScroll(pullToRefreshState.nestedScrollConnection),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(top = 16.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(), bottom = 16.dp)
+        contentPadding = PaddingValues(
+            top = 16.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
+            bottom = 16.dp
+        )
     ) {
         items(calendarDays) { calendarDay ->
             CalendarSection(

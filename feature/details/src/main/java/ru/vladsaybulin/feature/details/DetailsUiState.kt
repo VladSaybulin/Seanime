@@ -23,6 +23,7 @@ import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
+import ru.vladsaybulin.model.manga.ranobeKind
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedEntry
 import ru.vladsaybulin.model.search.SearchType
@@ -193,4 +194,11 @@ internal fun DetailsUiState.Success.screenshotViewParams(initialIndex: Int): Ima
         isSingle = false
     )
 }
+
+
+internal fun DetailsUiState.Success.searchType() = when (entryType) {
+    EntryType.Anime -> SearchType.Anime
+    EntryType.Manga -> if (mangaKind!! !in ranobeKind) SearchType.Manga else SearchType.Ranobe
+}
+
 

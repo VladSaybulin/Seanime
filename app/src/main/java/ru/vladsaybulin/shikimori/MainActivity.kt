@@ -33,9 +33,10 @@ class MainActivity : ComponentActivity() {
 
             ShikimoriApp(
                 appState = rememberShikimoriAppState(
-                    windowSizeClass = calculateWindowSizeClass(this)
-                ),
-                signIn = { loginAction() }
+                    windowSizeClass = calculateWindowSizeClass(this),
+                    onAuth = loginAction::invoke,
+                    onExternalLink = {}
+                )
             )
         }
     }

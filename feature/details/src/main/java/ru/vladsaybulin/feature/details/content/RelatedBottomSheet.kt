@@ -12,14 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.related.RelatedEntry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RelatedBottomSheet(
     related: List<RelatedEntry>,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -29,7 +31,8 @@ internal fun RelatedBottomSheet(
     ) {
         RelatedBottomSheetContent(
             related = related,
-            onEntryClick = onEntryClick
+            onAnimeClick = onAnimeClick,
+            onMangaClick = onMangaClick
         )
     }
 }
@@ -37,7 +40,8 @@ internal fun RelatedBottomSheet(
 @Composable
 private fun RelatedBottomSheetContent(
     related: List<RelatedEntry>,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -48,7 +52,8 @@ private fun RelatedBottomSheetContent(
         items(items = related) {
             RelatedEntryListItem(
                 relatedEntry = it,
-                onEntryClick = onEntryClick
+                onAnimeClick = onAnimeClick,
+                onMangaClick = onMangaClick
             )
         }
     }

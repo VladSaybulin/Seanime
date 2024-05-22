@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import ru.vladsaybulin.core.navigation.NavigationEvent
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.util.withParentGraphRoute
 import ru.vladsaybulin.feature.character.CharacterDetailsRoute
 
@@ -19,7 +20,7 @@ fun NavController.navigateToCharacter(characterId: Long, navOptions: NavOptions?
 }
 
 fun NavGraphBuilder.characterDetailsScreen(
-    onNavigationEvent: (NavigationEvent) -> Unit,
+    navigator: SeanimeNavigator
 ) {
     composable(
         route = withParentGraphRoute("$CHARACTER_DETAILS_ROUTE/{$CHARACTER_ID_ARG}"),
@@ -27,6 +28,6 @@ fun NavGraphBuilder.characterDetailsScreen(
             navArgument(CHARACTER_ID_ARG) { type = NavType.LongType }
         )
     ) {
-        CharacterDetailsRoute(onNavigationEvent = onNavigationEvent)
+        CharacterDetailsRoute(navigator = navigator)
     }
 }

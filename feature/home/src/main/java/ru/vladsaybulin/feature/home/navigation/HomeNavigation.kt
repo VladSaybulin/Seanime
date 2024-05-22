@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
 import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.feature.home.HomeRoute
@@ -17,34 +18,20 @@ fun NavController.navigateToHomeGraph(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.homeGraph(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onSearchClick: (SearchArgs) -> Unit,
-    onAllNewsTopicsClick: () -> Unit,
+    navigator: SeanimeNavigator,
     nested: NavGraphBuilder.() -> Unit
 ) {
     navigation(
         startDestination = "$HOME_GRAPH_ROUTE/$HOME_SCREEN_ROUTE",
         route = HOME_GRAPH_ROUTE
     ) {
-        homeScreen(
-            onEntryClick = onEntryClick,
-            onSearchClick = onSearchClick,
-            onAllNewsTopicsClick = onAllNewsTopicsClick
-        )
+        homeScreen(navigator = navigator)
         nested()
     }
 }
 
-private fun NavGraphBuilder.homeScreen(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onSearchClick: (SearchArgs) -> Unit,
-    onAllNewsTopicsClick: () -> Unit
-) {
+private fun NavGraphBuilder.homeScreen(navigator: SeanimeNavigator) {
     composable(route = "$route/$HOME_SCREEN_ROUTE") {
-        HomeRoute(
-            onEntryClick = onEntryClick,
-            onSearchClick = onSearchClick,
-            onAllNewsTopicsClick = onAllNewsTopicsClick
-        )
+        HomeRoute(navigator = navigator)
     }
 }

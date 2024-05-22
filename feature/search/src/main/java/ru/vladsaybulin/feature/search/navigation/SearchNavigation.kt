@@ -1,18 +1,20 @@
 package ru.vladsaybulin.feature.search.navigation
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
-import ru.vladsaybulin.core.navigation.args.SearchArgs
-import ru.vladsaybulin.core.navigation.util.appendArg
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.util.nullableNavArgument
 import ru.vladsaybulin.core.navigation.util.withParentGraphRoute
 import ru.vladsaybulin.feature.search.SearchRoute
+import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.asEntryStatus
+import ru.vladsaybulin.model.genre.GenreKind
+import ru.vladsaybulin.model.genre.asGenreKind
 import ru.vladsaybulin.model.search.SearchType
 
 const val SEARCH_GRAPH_ROUTE = "search_graph"
@@ -20,90 +22,112 @@ private const val SEARCH_SCREEN_ROUTE = "search_route"
 
 private const val SEARCH_TYPE_ARG = "type"
 private const val ENTRY_STATUS_ARG = "status"
-private const val GENRE_ID_ARG = "genre"
-private const val DEMOGRAPHIC_ID_ARG = "demographic"
-private const val THEME_ID_ARG = "theme"
-private const val STUDIO_ID_ARG = "studio"
-private const val PUBLISHER_ID_ARG = "publisher"
+private const val GENRE_KIND_ARG = "genre_kind"
+private const val GENRE_ID_ARG = "genre_id"
+private const val STUDIO_OR_PUBLISHER_ID_ARG = "studio"
 
 private const val RouteArguments = "$SEARCH_TYPE_ARG={$SEARCH_TYPE_ARG}&" +
         "$ENTRY_STATUS_ARG={$ENTRY_STATUS_ARG}&" +
+        "$GENRE_KIND_ARG={$GENRE_ID_ARG}&" +
         "$GENRE_ID_ARG={$GENRE_ID_ARG}&" +
-        "$DEMOGRAPHIC_ID_ARG={$DEMOGRAPHIC_ID_ARG}&" +
-        "$THEME_ID_ARG={$THEME_ID_ARG}&" +
-        "$STUDIO_ID_ARG={$STUDIO_ID_ARG}&" +
-        "$PUBLISHER_ID_ARG={$PUBLISHER_ID_ARG}"
+        "$STUDIO_OR_PUBLISHER_ID_ARG={$STUDIO_OR_PUBLISHER_ID_ARG}"
 
 fun NavController.navigateToSearchGraph(navOptions: NavOptions? = null) {
     navigate(SEARCH_GRAPH_ROUTE, navOptions)
 }
 
-fun NavController.navigateToSearch(
-    args: SearchArgs = SearchArgs(),
-    navOptions: NavOptions? = null
+fun NavController.navigateToSearchByGenre(
+    searchType: SearchType,
+    genreKind: GenreKind,
+    genreId: Long
 ) {
-    navigate(
-        route = "${withParentGraphRoute(SEARCH_SCREEN_ROUTE)}?${args.encode()}",
-        navOptions = navOptions
+    navigateToSearch {
+        appendQueryParameter(SEARCH_TYPE_ARG, searchType.asString())
+        appendQueryParameter(GENRE_KIND_ARG, genreKind.serializedName)
+        appendQueryParameter(GENRE_ID_ARG, genreId.toString())
+    }
+}
+
+fun NavController.navigateToSearchByStudioOrPublisher(
+    searchType: SearchType,
+    studioOrPublisherId: Long
+) {
+    navigateToSearch {
+        appendQueryParameter(SEARCH_TYPE_ARG, searchType.asString())
+        appendQueryParameter(STUDIO_OR_PUBLISHER_ID_ARG, studioOrPublisherId.toString())
+    }
+}
+
+fun NavController.navigateToSearchOngoingAnimes() {
+    navigateToSearch {
+        appendQueryParameter(SEARCH_TYPE_ARG, SearchType.Anime.asString())
+        appendQueryParameter(ENTRY_STATUS_ARG, EntryStatus.Ongoing.serializedName)
+    }
+}
+
+private fun NavController.navigateToSearch(builder: Uri.Builder.() -> Unit) =
+    navigate(Uri.Builder().apply(builder).build().toString())
+
+internal data class SearchArgs(
+    val searchType: SearchType?,
+    val entryStatus: EntryStatus?,
+    val genreKind: GenreKind?,
+    val genreId: String?,
+    val studioOrPublisherId: String?
+) {
+    constructor(savedStateHandle: SavedStateHandle) : this(
+        savedStateHandle.get<String>(SEARCH_TYPE_ARG)?.asSearchType(),
+        savedStateHandle.get<String>(ENTRY_STATUS_ARG)?.asEntryStatus(),
+        savedStateHandle.get<String>(GENRE_KIND_ARG)?.asGenreKind(),
+        savedStateHandle.get<String>(GENRE_ID_ARG),
+        savedStateHandle.get<String>(STUDIO_OR_PUBLISHER_ID_ARG)
     )
+
+    init {
+        validate()
+    }
+
+    private fun validate() {
+        if (entryStatus == null && genreId == null && studioOrPublisherId == null) {
+            return
+        }
+
+        check(searchType in listOf(SearchType.Anime, SearchType.Manga, SearchType.Ranobe)) {
+            "SearchType must be Anime, Manga or Ranobe for filtered search"
+        }
+
+        check(genreId == null || genreKind != null) {
+            "GenreKind must be specified for search by genre"
+        }
+    }
 }
 
 fun NavGraphBuilder.searchGraph(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
+    navigator: SeanimeNavigator,
     nested: NavGraphBuilder.() -> Unit,
 ) {
     navigation(
         startDestination = "$SEARCH_GRAPH_ROUTE/$SEARCH_SCREEN_ROUTE?$RouteArguments",
         route = SEARCH_GRAPH_ROUTE
     ) {
-        searchScreen(onEntryClick)
+        searchScreen(navigator)
         nested()
     }
 }
 
-fun NavGraphBuilder.searchScreen(
-    onEntryClick: (EntryDetailsArgs) -> Unit
-) {
+fun NavGraphBuilder.searchScreen(navigator: SeanimeNavigator) {
     composable(
         route = "${withParentGraphRoute(SEARCH_SCREEN_ROUTE)}?$RouteArguments",
         arguments = listOf(
             nullableNavArgument(SEARCH_TYPE_ARG),
             nullableNavArgument(ENTRY_STATUS_ARG),
+            nullableNavArgument(GENRE_KIND_ARG),
             nullableNavArgument(GENRE_ID_ARG),
-            nullableNavArgument(DEMOGRAPHIC_ID_ARG),
-            nullableNavArgument(THEME_ID_ARG),
-            nullableNavArgument(STUDIO_ID_ARG),
-            nullableNavArgument(PUBLISHER_ID_ARG)
+            nullableNavArgument(STUDIO_OR_PUBLISHER_ID_ARG)
         )
     ) {
-        SearchRoute(onEntryClick = onEntryClick)
+        SearchRoute(navigator = navigator)
     }
-}
-
-internal fun SearchArgs(savedStateHandle: SavedStateHandle) = SearchArgs(
-    searchType = savedStateHandle.get<String>(SEARCH_TYPE_ARG)?.asSearchType(),
-    entryStatus = savedStateHandle.get<String>(ENTRY_STATUS_ARG)?.asEntryStatus(),
-    genreId = savedStateHandle.get<String>(GENRE_ID_ARG)?.toLong(),
-    demographicId = savedStateHandle.get<String>(DEMOGRAPHIC_ID_ARG)?.toLong(),
-    themeId = savedStateHandle.get<String>(THEME_ID_ARG)?.toLong(),
-    studioId = savedStateHandle.get<String>(STUDIO_ID_ARG)?.toLong(),
-    publisherId = savedStateHandle.get<String>(PUBLISHER_ID_ARG)?.toLong()
-).apply {
-    check(entryStatus == null || searchType != null)
-    check(genreId == null || searchType != null)
-    check(demographicId == null || searchType != null)
-    check(demographicId == null || searchType != null)
-    check(studioId == null || searchType == SearchType.Anime)
-    check(publisherId == null || searchType == SearchType.Manga)
-}
-
-private fun SearchArgs.encode() = buildString {
-    searchType?.let { appendArg(SEARCH_TYPE_ARG, it.asString()) }
-    entryStatus?.let { appendArg(ENTRY_STATUS_ARG, it.serializedName) }
-    genreId?.let { appendArg(GENRE_ID_ARG, it.toString()) }
-    themeId?.let { appendArg(THEME_ID_ARG, it.toString()) }
-    demographicId?.let { appendArg(DEMOGRAPHIC_ID_ARG, it.toString()) }
-    studioId?.let { appendArg(STUDIO_ID_ARG, it.toString()) }
 }
 
 private fun String.asSearchType(): SearchType =

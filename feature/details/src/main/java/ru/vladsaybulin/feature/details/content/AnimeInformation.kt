@@ -13,12 +13,9 @@ import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.LocalTimeZone
 import ru.vladsaybulin.core.ui.anime.AnimeInfoKindAndEpisodesAndDurationText
 import ru.vladsaybulin.feature.details.DetailsUiState
-import ru.vladsaybulin.feature.details.genreSearchParams
-import ru.vladsaybulin.feature.details.studioSearchParams
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.common.EntryStatus
@@ -28,13 +25,14 @@ import java.util.Locale
 
 internal fun LazyListScope.animeInformation(
     state: DetailsUiState.Success,
-    onSearchClick: (SearchArgs) -> Unit,
+    onSearchByGenre: (genre: Genre) -> Unit,
+    onSearchByStudio: (studio: Studio) -> Unit
 ) {
     item(key = "anime_info") {
         AnimeInformation(
             state = state,
-            onStudioClick = { onSearchClick(state.studioSearchParams(it)) },
-            onGenreClick = { onSearchClick(state.genreSearchParams(it)) }
+            onStudioClick = onSearchByStudio,
+            onGenreClick = onSearchByGenre
         )
     }
 }
@@ -42,7 +40,7 @@ internal fun LazyListScope.animeInformation(
 @Composable
 private fun AnimeInformation(
     state: DetailsUiState.Success,
-    onStudioClick: (Long) -> Unit,
+    onStudioClick: (studio: Studio) -> Unit,
     onGenreClick: (Genre) -> Unit
 ) {
     AnimeKindAndEpisodeInfoLine(
@@ -81,14 +79,14 @@ private fun AnimeInformation(
 @Composable
 private fun StudiosLineInfo(
     studios: ImmutableList<Studio>,
-    onStudioClick: (Long) -> Unit
+    onStudioClick: (Studio) -> Unit
 ) {
     ListedInformation(
         items = studios,
         labelSingleStringRes = ru.vladsaybulin.feature.details.R.string.studios,
         labelSeveralStringRes = ru.vladsaybulin.feature.details.R.string.single_studio,
         name = { it.name },
-        onItemClick = { onStudioClick(it.id) }
+        onItemClick = { onStudioClick(it) }
     )
 }
 

@@ -7,13 +7,15 @@ import androidx.compose.ui.res.stringResource
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.ui.Header
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.related.RelatedEntry
 import kotlin.math.min
 
 fun LazyListScope.relatedItems(
     relatedEntries: ImmutableList<RelatedEntry>,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit,
     onShowAllClick: () -> Unit,
     itemModifier: Modifier = Modifier,
     headerKey: String = "related_header",
@@ -48,7 +50,8 @@ fun LazyListScope.relatedItems(
         val relatedEntry = relatedEntries[it]
         RelatedEntryListItem(
             relatedEntry = relatedEntry,
-            onEntryClick = onEntryClick,
+            onAnimeClick = onAnimeClick,
+            onMangaClick = onMangaClick,
             modifier = itemModifier
         )
     }

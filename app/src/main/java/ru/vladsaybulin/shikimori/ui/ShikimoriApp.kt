@@ -34,17 +34,13 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.feature.imageview.ImageViewViewModel
-import ru.vladsaybulin.feature.imageview.navigation.navigateToImageView
 import ru.vladsaybulin.feature.userrate.UserRateBottomSheet
 import ru.vladsaybulin.feature.userrate.UserRateViewModel
 import ru.vladsaybulin.shikimori.navigation.ShikimoriNavHost
 import ru.vladsaybulin.shikimori.navigation.TopLevelDestination
 
 @Composable
-fun ShikimoriApp(
-    appState: ShikimoriAppState,
-    signIn: () -> Unit,
-) {
+fun ShikimoriApp(appState: ShikimoriAppState) {
     val imageViewViewModel = hiltViewModel<ImageViewViewModel>()
     val userRateViewModel = hiltViewModel<UserRateViewModel>()
 
@@ -61,20 +57,7 @@ fun ShikimoriApp(
                     start = if (appState.shouldShowNavRail) 80.dp else 0.dp
                 )
                 CompositionLocalProvider(value = LocalScreenContentPadding provides screenPadding) {
-                    ShikimoriNavHost(
-                        shikimoriAppState = appState,
-                        imageViewViewModel = imageViewViewModel,
-                        onShowRequireAuthDialog = { showRequireAuthDialog = true },
-                        onShowUserRate = {
-                            userRateViewModel.setUserRate(it)
-                            showUserRateBottomSheet = true
-                        },
-                        onShowImage = {
-                            imageViewViewModel.setImages(it)
-                            appState.navController.navigateToImageView()
-                        },
-                        onSignIn = signIn
-                    )
+                    ShikimoriNavHost(shikimoriAppState = appState)
                 }
 
                 if (appState.shouldShowNavRail) {
@@ -117,7 +100,7 @@ fun ShikimoriApp(
 
         if (showRequireAuthDialog) {
             RequireAuthDialog(
-                onSignIn = signIn,
+                onSignIn = appState.navigator::auth,
                 onDismissRequest = { showRequireAuthDialog = false }
             )
         }

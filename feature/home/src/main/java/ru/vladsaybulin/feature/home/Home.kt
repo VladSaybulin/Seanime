@@ -35,8 +35,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
+import ru.vladsaybulin.core.navigation.animeDetails
 import ru.vladsaybulin.core.navigation.args.SearchArgs
+import ru.vladsaybulin.core.navigation.mangaDetails
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
@@ -44,33 +46,27 @@ import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun HomeRoute(
+    navigator: SeanimeNavigator,
     viewModel: HomeViewModel = hiltViewModel(),
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onSearchClick: (SearchArgs) -> Unit,
-    onAllNewsTopicsClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         uiState = uiState,
-        onEntryClick = onEntryClick,
-        onMoreAnimeOngoingClick = { onSearchClick(AnimeOngoingSearchArgs) },
-        onAllNewsTopicsClick = onAllNewsTopicsClick
+        navigator = navigator
     )
 }
 
 @Composable
 private fun HomeScreen(
     uiState: HomeUiState,
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onMoreAnimeOngoingClick: () -> Unit,
-    onAllNewsTopicsClick: () -> Unit
+    navigator: SeanimeNavigator,
 ) {
     Box(
         modifier = Modifier
@@ -81,9 +77,7 @@ private fun HomeScreen(
         when (uiState) {
             is HomeUiState.Success -> HomeContent(
                 uiState = uiState,
-                onEntryClick = onEntryClick,
-                onMoreAnimeOngoingClick = onMoreAnimeOngoingClick,
-                onAllNewsTopicsClick = onAllNewsTopicsClick
+                navigator = navigator
             )
 
             is HomeUiState.Error -> FullScreenErrorMessage(throwable = uiState.throwable)
@@ -104,9 +98,7 @@ fun HomeLoading() {
 @Composable
 private fun HomeContent(
     uiState: HomeUiState.Success,
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onMoreAnimeOngoingClick: () -> Unit,
-    onAllNewsTopicsClick: () -> Unit
+    navigator: SeanimeNavigator,
 ) {
     val topBarScrollBehaviour = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -127,15 +119,16 @@ private fun HomeContent(
             if (uiState.inProgressUserRates.isNotEmpty()) {
                 inProgressUserRatesPager(
                     userRates = uiState.inProgressUserRates,
-                    onEntryClick = { type, id -> onEntryClick(EntryDetailsArgs(type, id)) },
+                    onAnimeClick = navigator::animeDetails,
+                    onMangaClick = navigator::mangaDetails
                 )
                 sectionSpace()
             }
 
-            animeOngoingHeader(onMoreClick = onMoreAnimeOngoingClick)
+            animeOngoingHeader(onMoreClick = navigator::searchOngoingAnimes)
             animeOngoingCarousel(
                 ongoingAnime = uiState.ongoings,
-                onAnimeClick = { onEntryClick(EntryDetailsArgs(EntryType.Anime, it.id)) }
+                onAnimeClick = navigator::animeDetails
             )
 
             sectionSpace()
@@ -146,7 +139,7 @@ private fun HomeContent(
                 onTopicClick = {},
                 onUserClick = {}
             )
-            allNewsTopicsButton(onAllNewsTopicsClick = onAllNewsTopicsClick)
+            allNewsTopicsButton(onAllNewsTopicsClick = navigator::news)
 
             bottomSpace()
         }
@@ -226,7 +219,8 @@ private fun LazyListScope.animeOngoingCarousel(
 
 private fun LazyListScope.inProgressUserRatesPager(
     userRates: ImmutableList<UserRateWithEntry>,
-    onEntryClick: (EntryType, Long) -> Unit,
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     item @OptIn(ExperimentalFoundationApi::class) {
@@ -241,7 +235,9 @@ private fun LazyListScope.inProgressUserRatesPager(
         ) {
             UserRateEntryCard(
                 userRateWithEntry = userRates[it],
-                onClick = { type, id -> onEntryClick(type, id) }
+                onAnimeClick = onAnimeClick,
+                onMangaClick = onMangaClick,
+                showUserRateBadge = true
             )
         }
     }

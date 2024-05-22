@@ -15,15 +15,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.score.ScoreStars
-import ru.vladsaybulin.core.ui.score.SmallStarSize
 import ru.vladsaybulin.core.ui.entry.EntryInfoKindAndYear
 import ru.vladsaybulin.core.ui.entry.EntryListItem
+import ru.vladsaybulin.core.ui.score.ScoreStars
+import ru.vladsaybulin.core.ui.score.SmallStarSize
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.mangaKindString
+import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus.Ongoing
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
+import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateProgressLimit
 import ru.vladsaybulin.model.userrate.UserRateProgressLimit.Companion.Unlimited
 import ru.vladsaybulin.model.userrate.UserRateStatus.None
@@ -35,7 +36,8 @@ import ru.vladsaybulin.model.userrate.toLimit
 @Composable
 fun UserRateEntryCard(
     userRateWithEntry: UserRateWithEntry,
-    onClick: (EntryType, Long) -> Unit,
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit,
     modifier: Modifier = Modifier,
     showUserRateBadge: Boolean = true
 ) {
@@ -49,15 +51,10 @@ fun UserRateEntryCard(
     val kindString: String?
     val airedInYear: Int?
 
-    val entryType: EntryType
-    val entryId: Long
-
     val inProgress = userRate.status == Watching || userRate.status == Rewatching
 
     if (userRateWithEntry.anime != null) {
         val anime = userRateWithEntry.anime!!
-        entryType = EntryType.Anime
-        entryId = anime.id
 
         name = anime.russianName ?: anime.name
         poster = anime.poster
@@ -73,8 +70,6 @@ fun UserRateEntryCard(
         airedInYear = anime.airedOn?.year
     } else if (userRateWithEntry.manga != null) {
         val manga = userRateWithEntry.manga!!
-        entryType = EntryType.Manga
-        entryId = manga.id
 
         name = manga.russianName ?: manga.name
         poster = manga.poster
@@ -92,7 +87,11 @@ fun UserRateEntryCard(
     EntryListItem(
         name = name,
         imageUrl = poster?.previewUrl,
-        onClick = { onClick(entryType, entryId) },
+        onClick = {
+            if (userRateWithEntry.anime != null) {
+                onAnimeClick(userRateWithEntry.anime!!)
+            } else onMangaClick(userRateWithEntry.manga!!)
+        },
         userRateStatus = if (showUserRateBadge) userRate.status else None,
         border = BorderStroke(1.dp, ShikimoriTheme.colorScheme.outlineVariant),
         imageIgnoresPadding = true,

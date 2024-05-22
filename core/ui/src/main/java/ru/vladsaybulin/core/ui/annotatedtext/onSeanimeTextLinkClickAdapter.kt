@@ -18,3 +18,19 @@ fun <Action> onSeanimeTextLinkClickAdapter(
     }
     action?.let(onAction)
 }
+
+fun onSeanimeTextLinkClickAdapter(
+    onAnimeClick: (Long) -> Unit?,
+    onMangaClick: (Long) -> Unit?,
+    onCharacterClick: (Long) -> Unit?,
+    onPersonClick: (Long) -> Unit?,
+    onUrlClick: (String) -> Unit?,
+): (String, String) -> Unit = { tag, annotation ->
+    when (tag) {
+        "anime" -> onAnimeClick(annotation.toLong())
+        "manga", "ranobe" -> onMangaClick(annotation.toLong())
+        "character" -> onCharacterClick(annotation.toLong())
+        "person" -> onPersonClick(annotation.toLong())
+        "url" -> onUrlClick(annotation)
+    }
+}

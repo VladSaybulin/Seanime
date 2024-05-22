@@ -6,34 +6,32 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.core.ui.entry.EntryInfoStatusAndDatesText
 import ru.vladsaybulin.core.ui.manga.MangaInfoKindAndChaptersAndVolumesText
 import ru.vladsaybulin.feature.details.DetailsUiState
 import ru.vladsaybulin.feature.details.R
-import ru.vladsaybulin.feature.details.genreSearchParams
-import ru.vladsaybulin.feature.details.publisherSearchParams
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
 
 internal fun LazyListScope.mangaInformation(
     state: DetailsUiState.Success,
-    onSearchClick: (SearchArgs) -> Unit
+    onSearchByGenre: (genre: Genre) -> Unit,
+    onSearchByPublisher: (publisher: Publisher) -> Unit
 ) {
     item(key = "manga_info") {
         MangaInformation(
             state = state,
-            onPublisherClick = { onSearchClick(state.publisherSearchParams(it)) },
-            onGenreClick = { onSearchClick(state.genreSearchParams(it)) }
+            onPublisherClick = { onSearchByPublisher(it) },
+            onGenreClick = { onSearchByGenre(it) }
         )
     }
 }
 
 @Composable
-fun MangaInformation(
+internal fun MangaInformation(
     state: DetailsUiState.Success,
-    onPublisherClick: (Long) -> Unit,
+    onPublisherClick: (Publisher) -> Unit,
     onGenreClick: (Genre) -> Unit,
 ) {
     Column {
@@ -76,7 +74,7 @@ fun MangaInformation(
 @Composable
 private fun PublishersInfoLine(
     publishers: ImmutableList<Publisher>,
-    onPublisherClick: (Long) -> Unit
+    onPublisherClick: (Publisher) -> Unit
 ) {
     if (publishers.isNotEmpty()) {
         ListedInformation(
@@ -84,7 +82,7 @@ private fun PublishersInfoLine(
             labelSingleStringRes = R.string.publisher,
             labelSeveralStringRes = R.string.publishers,
             name = Publisher::name,
-            onItemClick = { onPublisherClick(it.id) }
+            onItemClick = { onPublisherClick(it) }
         )
     }
 }

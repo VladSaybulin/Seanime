@@ -8,7 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import ru.vladsaybulin.core.navigation.args.EntryDetailsArgs
+import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.args.ListArgs
 import ru.vladsaybulin.core.navigation.util.appendArg
 import ru.vladsaybulin.core.navigation.util.withParentGraphRoute
@@ -40,23 +40,19 @@ fun NavController.navigateToList(
 }
 
 fun NavGraphBuilder.listGraph(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onSignIn: () -> Unit,
+    navigator: SeanimeNavigator,
     nested: NavGraphBuilder.() -> Unit
 ) {
     navigation(
         startDestination = "$MY_LIST_GRAPH_ROUTE/$LIST_SCREEN_ROUTE?$RouteArguments",
         route = MY_LIST_GRAPH_ROUTE
     ) {
-        listScreen(onEntryClick, onSignIn)
+        listScreen(navigator)
         nested()
     }
 }
 
-fun NavGraphBuilder.listScreen(
-    onEntryClick: (EntryDetailsArgs) -> Unit,
-    onSignIn: () -> Unit,
-) {
+fun NavGraphBuilder.listScreen(navigator: SeanimeNavigator) {
     composable(
         route = "${withParentGraphRoute(LIST_SCREEN_ROUTE)}?$RouteArguments",
         arguments = listOf(
@@ -72,10 +68,7 @@ fun NavGraphBuilder.listScreen(
             }
         )
     ) {
-        MyListRoute(
-            onEntryClick = onEntryClick,
-            onSignIn = onSignIn
-        )
+        MyListRoute(navigator = navigator)
     }
 }
 
