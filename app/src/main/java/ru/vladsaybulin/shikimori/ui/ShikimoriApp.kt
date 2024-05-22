@@ -93,7 +93,7 @@ fun ShikimoriApp(
                 }
                 if (appState.shouldShowBottomBar) {
                     androidx.compose.animation.AnimatedVisibility(
-                        visible = appState.shouldShowBottomBar,
+                        visible = appState.isNavigationVisible,
                         enter = slideInVertically { it } + fadeIn(),
                         exit = slideOutVertically { it } + fadeOut(),
                         modifier = Modifier.align(Alignment.BottomCenter)
