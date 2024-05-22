@@ -40,6 +40,8 @@ object SpoilerBlockTransformer : TagTransformer<SeanimeTextBuilder> {
             append(bodyBuilder)
         }
 
+        builder.append('\n')
+
         return TagTransformerResult.Success
     }
 }
