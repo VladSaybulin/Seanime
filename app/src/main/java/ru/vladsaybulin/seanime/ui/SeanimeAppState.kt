@@ -1,4 +1,4 @@
-package ru.vladsaybulin.shikimori.ui
+package ru.vladsaybulin.seanime.ui
 
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -17,15 +17,15 @@ import ru.vladsaybulin.feature.home.navigation.navigateToHomeGraph
 import ru.vladsaybulin.feature.imageview.navigation.IMAGE_VIEW_ROUTE
 import ru.vladsaybulin.feature.list.navigation.navigateToMyListGraph
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchGraph
-import ru.vladsaybulin.shikimori.navigation.SeanimeNavigatorImpl
-import ru.vladsaybulin.shikimori.navigation.TopLevelDestination
-import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.CALENDAR
-import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.HOME
-import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.LIST
-import ru.vladsaybulin.shikimori.navigation.TopLevelDestination.SEARCH
+import ru.vladsaybulin.seanime.navigation.SeanimeNavigatorImpl
+import ru.vladsaybulin.seanime.navigation.TopLevelDestination
+import ru.vladsaybulin.seanime.navigation.TopLevelDestination.CALENDAR
+import ru.vladsaybulin.seanime.navigation.TopLevelDestination.HOME
+import ru.vladsaybulin.seanime.navigation.TopLevelDestination.LIST
+import ru.vladsaybulin.seanime.navigation.TopLevelDestination.SEARCH
 
 @Composable
-fun rememberShikimoriAppState(
+fun rememberSeanimeAppState(
     windowSizeClass: WindowSizeClass,
     onAuth: () -> Unit,
     onExternalLink: (String) -> Unit,
@@ -36,7 +36,7 @@ fun rememberShikimoriAppState(
     onExternalLink,
     navController
 ) {
-    ShikimoriAppState(
+    SeanimeAppState(
         navController = navController,
         windowSizeClass = windowSizeClass,
         onAuth = onAuth,
@@ -45,7 +45,7 @@ fun rememberShikimoriAppState(
 }
 
 @Stable
-class ShikimoriAppState(
+class SeanimeAppState(
     val navController: NavHostController,
     val windowSizeClass: WindowSizeClass,
     onAuth: () -> Unit,

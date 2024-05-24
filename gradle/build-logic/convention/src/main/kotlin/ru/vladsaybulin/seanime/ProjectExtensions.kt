@@ -1,4 +1,4 @@
-package ru.vladsaybulin.shikimori
+package ru.vladsaybulin.seanime
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog

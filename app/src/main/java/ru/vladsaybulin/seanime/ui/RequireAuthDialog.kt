@@ -1,4 +1,4 @@
-package ru.vladsaybulin.shikimori.ui
+package ru.vladsaybulin.seanime.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
-import ru.vladsaybulin.shikimori.R
+import ru.vladsaybulin.seanime.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

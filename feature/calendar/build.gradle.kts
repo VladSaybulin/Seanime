@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.shikimori.android.feature)
-    alias(libs.plugins.shikimori.android.library.compose)
+    alias(libs.plugins.seanime.android.feature)
+    alias(libs.plugins.seanime.android.library.compose)
 }
 
 android {

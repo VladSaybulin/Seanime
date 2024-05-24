@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.shikimori.android.library)
+    alias(libs.plugins.seanime.android.library)
 }
 
 android {

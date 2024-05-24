@@ -1,4 +1,4 @@
-package ru.vladsaybulin.shikimori.navigation
+package ru.vladsaybulin.seanime.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
@@ -12,43 +12,43 @@ import ru.vladsaybulin.feature.list.navigation.listGraph
 import ru.vladsaybulin.feature.list.navigation.listScreen
 import ru.vladsaybulin.feature.search.navigation.searchGraph
 import ru.vladsaybulin.feature.search.navigation.searchScreen
-import ru.vladsaybulin.shikimori.ui.ShikimoriAppState
+import ru.vladsaybulin.seanime.ui.SeanimeAppState
 
 @Composable
 fun ShikimoriNavHost(
-    shikimoriAppState: ShikimoriAppState,
+    seanimeAppState: SeanimeAppState,
     startDestination: String = TopLevelDestination.HOME.graphRoute
 ) {
-    val navController = shikimoriAppState.navController
+    val navController = seanimeAppState.navController
 
     val nested: NavGraphBuilder.(TopLevelDestination) -> Unit = {
         nestedScreens(
             topLevelDestination = it,
-            navigator = shikimoriAppState.navigator
+            navigator = seanimeAppState.navigator
         )
     }
 
     NavHost(
-        navController = shikimoriAppState.navController,
+        navController = seanimeAppState.navController,
         startDestination = startDestination,
     ) {
         homeGraph(
-            navigator = shikimoriAppState.navigator,
+            navigator = seanimeAppState.navigator,
             nested = { nested(TopLevelDestination.HOME) }
         )
 
         searchGraph(
-            navigator = shikimoriAppState.navigator,
+            navigator = seanimeAppState.navigator,
             nested = { nested(TopLevelDestination.SEARCH) }
         )
 
         calendarGraph(
-            navigator = shikimoriAppState.navigator,
+            navigator = seanimeAppState.navigator,
             nested = { nested(TopLevelDestination.CALENDAR) }
         )
 
         listGraph(
-            navigator = shikimoriAppState.navigator,
+            navigator = seanimeAppState.navigator,
             nested = { nested(TopLevelDestination.LIST) },
         )
     }

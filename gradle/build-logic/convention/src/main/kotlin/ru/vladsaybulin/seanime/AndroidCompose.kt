@@ -1,4 +1,4 @@
-package ru.vladsaybulin.shikimori
+package ru.vladsaybulin.seanime
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project

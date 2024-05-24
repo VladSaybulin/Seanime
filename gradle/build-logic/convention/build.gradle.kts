@@ -4,7 +4,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "ru.vladsaybulin.shikimori.buildlogic"
+group = "ru.vladsaybulin.seanime.buildlogic"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -25,27 +25,27 @@ dependencies {
 gradlePlugin {
     plugins {
         register("androidApplicationCompose") {
-            id = "shikimori.android.application.compose"
+            id = "seanime.android.application.compose"
             implementationClass = "AndroidApplicationComposeConventionPlugin"
         }
         register("androidApplication") {
-            id = "shikimori.android.application"
+            id = "seanime.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
         register("androidLibraryCompose") {
-            id = "shikimori.android.library.compose"
+            id = "seanime.android.library.compose"
             implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
         register("androidLibrary") {
-            id = "shikimori.android.library"
+            id = "seanime.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
         register("androidFeature") {
-            id = "shikimori.android.feature"
+            id = "seanime.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
         register("androidHilt") {
-            id = "shikimori.android.hilt"
+            id = "seanime.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
         }
     }

@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.shikimori.android.library)
-    alias(libs.plugins.shikimori.android.hilt)
+    alias(libs.plugins.seanime.android.library)
+    alias(libs.plugins.seanime.android.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.kotlinx.serialization)

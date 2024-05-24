@@ -1,15 +1,15 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
-import ru.vladsaybulin.shikimori.libs
+import ru.vladsaybulin.seanime.libs
 
 class AndroidFeatureConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply {
-                apply("shikimori.android.library")
-                apply("shikimori.android.hilt")
+                apply("seanime.android.library")
+                apply("seanime.android.hilt")
             }
 
             dependencies {

@@ -133,10 +133,10 @@ protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 apollo-graphql = { id = "com.apollographql.apollo3", version.ref = "apolloGraphql" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 
-shikimori-android-application-compose = { id = "shikimori.android.application.compose", version = "unspecified" }
-shikimori-android-application = { id = "shikimori.android.application", version = "unspecified" }
-shikimori-android-library-compose = { id = "shikimori.android.library.compose", version = "unspecified" }
-shikimori-android-library = { id = "shikimori.android.library", version = "unspecified" }
-shikimori-android-feature = { id = "shikimori.android.feature", version = "unspecified" }
-shikimori-android-hilt = { id = "shikimori.android.hilt", version = "unspecified" }
+seanime-android-application-compose = { id = "seanime.android.application.compose", version = "unspecified" }
+seanime-android-application = { id = "seanime.android.application", version = "unspecified" }
+seanime-android-library-compose = { id = "seanime.android.library.compose", version = "unspecified" }
+seanime-android-library = { id = "seanime.android.library", version = "unspecified" }
+seanime-android-feature = { id = "seanime.android.feature", version = "unspecified" }
+seanime-android-hilt = { id = "seanime.android.hilt", version = "unspecified" }
 

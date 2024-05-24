@@ -1,4 +1,4 @@
-package ru.vladsaybulin.shikimori.navigation
+package ru.vladsaybulin.seanime.navigation
 
 import androidx.navigation.NavController
 import ru.vladsaybulin.core.navigation.SeanimeNavigator

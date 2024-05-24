@@ -1,4 +1,4 @@
-package ru.vladsaybulin.shikimori.navigation
+package ru.vladsaybulin.seanime.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons

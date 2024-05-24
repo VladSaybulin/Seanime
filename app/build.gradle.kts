@@ -1,20 +1,20 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.shikimori.android.application)
-    alias(libs.plugins.shikimori.android.application.compose)
-    alias(libs.plugins.shikimori.android.hilt)
+    alias(libs.plugins.seanime.android.application)
+    alias(libs.plugins.seanime.android.application.compose)
+    alias(libs.plugins.seanime.android.hilt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
-    namespace = "ru.vladsaybulin.shikimori"
+    namespace = "ru.vladsaybulin.seanime"
 
     defaultConfig {
-        applicationId = "ru.vladsaybulin.shikimori"
-        versionCode = 3
-        versionName = "0.1.0-preview1"
+        applicationId = "ru.vladsaybulin.seanime"
+        versionCode = 1
+        versionName = "0.0.1"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -32,11 +32,11 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
 
-            resValue("string", "app_name", "Shikimori [DEBUG]")
-            manifestPlaceholders["crashlyticsCollectionEnabled"] = true
+            resValue("string", "app_name", "Seanime [dev]")
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = false
         }
 
         release {

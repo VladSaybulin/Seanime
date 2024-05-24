@@ -1,4 +1,4 @@
-package ru.vladsaybulin.shikimori.ui
+package ru.vladsaybulin.seanime.ui
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -36,11 +36,11 @@ import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.feature.imageview.ImageViewViewModel
 import ru.vladsaybulin.feature.userrate.UserRateBottomSheet
 import ru.vladsaybulin.feature.userrate.UserRateViewModel
-import ru.vladsaybulin.shikimori.navigation.ShikimoriNavHost
-import ru.vladsaybulin.shikimori.navigation.TopLevelDestination
+import ru.vladsaybulin.seanime.navigation.ShikimoriNavHost
+import ru.vladsaybulin.seanime.navigation.TopLevelDestination
 
 @Composable
-fun ShikimoriApp(appState: ShikimoriAppState) {
+fun ShikimoriApp(appState: SeanimeAppState) {
     val imageViewViewModel = hiltViewModel<ImageViewViewModel>()
     val userRateViewModel = hiltViewModel<UserRateViewModel>()
 
@@ -57,7 +57,7 @@ fun ShikimoriApp(appState: ShikimoriAppState) {
                     start = if (appState.shouldShowNavRail) 80.dp else 0.dp
                 )
                 CompositionLocalProvider(value = LocalScreenContentPadding provides screenPadding) {
-                    ShikimoriNavHost(shikimoriAppState = appState)
+                    ShikimoriNavHost(seanimeAppState = appState)
                 }
 
                 if (appState.shouldShowNavRail) {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Shikimori</string>
+    <string name="app_name">Seanime</string>
     <string name="require_auth_label">Авторизация</string>
     <string name="require_auth_description">Требуется войти в учётную запись Shikimori.</string>
     <string name="require_auth_sign_in">Войти</string>

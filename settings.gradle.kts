@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Shikimori"
+rootProject.name = "Seanime"
 include(":app")
 include(":core:model")
 include(":core:network")
