@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.datetime.Clock
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.animeAuthorEntities
@@ -47,7 +48,8 @@ import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
-import ru.vladsaybulin.database.models.lastrequest.LastAnimeDetailsRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastRequestType
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
@@ -173,21 +175,22 @@ class AnimeRepository @Inject constructor(
             animeDetails.animeVideoEntities()?.let {
                 animeDetailsDao.insertAnimeVideos(it)
             }
+
+            lastRequestDao.insertOrReplaceLastRequestDate(
+                LastRequestEntity(
+                    requestType = LastRequestType.ANIME,
+                    targetId = animeId,
+                    requestDate = Clock.System.now()
+                )
+            )
         }
     }
 
-    private suspend fun syncAnimeDetails(animeId: Long) {
-        sync(
-            ttl = 1.days,
-            readLastUpdateDate = { lastRequestDao.getLastAnimeDetailsRequestDate(animeId) },
-            updateLastRequest = {
-                lastRequestDao.insertOrReplaceLastAnimeDetailsRequest(
-                    LastAnimeDetailsRequestEntity(animeId, it)
-                )
-            },
-            refresh = { refreshAnimeDetails(animeId) }
-        )
-    }
+    private suspend fun syncAnimeDetails(animeId: Long) = sync(
+        ttl = DefaultAnimeTTL,
+        readLastUpdateDate = { lastRequestDao.getLastRequestDate(LastRequestType.ANIME, animeId) },
+        refresh = { refreshAnimeDetails(animeId) }
+    )
 
     private suspend fun loadOngoingAnime(
         pageNumber: Int,
@@ -257,5 +260,7 @@ class AnimeRepository @Inject constructor(
             }
         }
 }
+
+private val DefaultAnimeTTL = 1.days
 
 private const val INITIAL_PAGE = 1

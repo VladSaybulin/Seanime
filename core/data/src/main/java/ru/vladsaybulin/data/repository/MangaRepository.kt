@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.datetime.Clock
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.asEntity
@@ -41,7 +42,8 @@ import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.UserRateDao
-import ru.vladsaybulin.database.models.lastrequest.LastMangaDetailsRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastRequestType
 import ru.vladsaybulin.database.models.manga.asExternalModel
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.manga.Manga
@@ -51,7 +53,7 @@ import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.MangaDataSource
 import ru.vladsaybulin.network.datasource.UserRateDataSource
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.days
 
 class MangaRepository @Inject constructor(
     private val mangaDataSource: MangaDataSource,
@@ -72,7 +74,7 @@ class MangaRepository @Inject constructor(
     fun getPagedManga(
         queryMap: Map<QueryMapKey, String>,
         pagingConfig: PagingConfig = DefaultSearchPagingConfig
-    ) : Flow<PagingData<MangaWithUserRate>> = Pager(
+    ): Flow<PagingData<MangaWithUserRate>> = Pager(
         config = pagingConfig,
         pagingSourceFactory = { getPagedMangaPagingSource(queryMap) }
     )
@@ -148,21 +150,22 @@ class MangaRepository @Inject constructor(
             mangaDetails.mangaRelatedEntities()?.let {
                 mangaDetailsDao.insertMangaRelated(it)
             }
+
+            lastRequestDao.insertOrReplaceLastRequestDate(
+                LastRequestEntity(
+                    LastRequestType.MANGA,
+                    targetId = mangaId,
+                    requestDate = Clock.System.now()
+                )
+            )
         }
     }
 
-    private suspend fun syncMangaDetails(mangaId: Long) {
-        sync(
-            ttl = 1.hours,
-            readLastUpdateDate = { lastRequestDao.getLastMangaDetailsRequestDate(mangaId) },
-            updateLastRequest = {
-                lastRequestDao.insertOrReplaceLastMangaDetailsRequest(
-                    LastMangaDetailsRequestEntity(mangaId, it)
-                )
-            },
-            refresh = { refreshMangaDetails(mangaId) }
-        )
-    }
+    private suspend fun syncMangaDetails(mangaId: Long) = sync(
+        ttl = DefaultMangaTTL,
+        readLastUpdateDate = { lastRequestDao.getLastRequestDate(LastRequestType.MANGA, mangaId) },
+        refresh = { refreshMangaDetails(mangaId) }
+    )
 
     private fun getPagedMangaPagingSource(queryMap: Map<QueryMapKey, String>) =
         object : AbstractShikimoriPagingSource<MangaWithUserRate>() {
@@ -203,3 +206,5 @@ class MangaRepository @Inject constructor(
             }
         }
 }
+
+private val DefaultMangaTTL = 1.days

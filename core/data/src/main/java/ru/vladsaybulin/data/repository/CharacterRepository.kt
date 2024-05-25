@@ -20,11 +20,12 @@ import ru.vladsaybulin.database.dao.LastRequestDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.models.character.asExternalModel
-import ru.vladsaybulin.database.models.lastrequest.LastCharacterDetailsRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastRequestType
 import ru.vladsaybulin.model.character.CharacterDetails
 import ru.vladsaybulin.network.datasource.CharacterDataSource
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.days
 
 class CharacterRepository @Inject constructor(
     private val characterDataSource: CharacterDataSource,
@@ -69,21 +70,26 @@ class CharacterRepository @Inject constructor(
             characterDao.insertCharacterMangaCrossReferences(mangaCrossRefs)
             characterDao.insertCharacterSeyuCrossReferences(seyuCrossRef)
 
-            lastRequestDao.insertOrReplaceLastCharacterDetailsRequest(
-                LastCharacterDetailsRequestEntity(
-                    characterId = characterId,
-                    lastRequestDate = Clock.System.now()
+            lastRequestDao.insertOrReplaceLastRequestDate(
+                LastRequestEntity(
+                    LastRequestType.CHARACTER,
+                    targetId = characterId,
+                    requestDate = Clock.System.now()
                 )
             )
         }
     }
 
-    private suspend fun syncCharacterDetails(characterId: Long) {
-        sync(
-            param = characterId,
-            ttl = 1.minutes,
-            readLastUpdateDate = lastRequestDao::getLastCharacterDetailsRequestDate,
-            refresh = ::refreshCharacterDetails
-        )
-    }
+    private suspend fun syncCharacterDetails(characterId: Long) = sync(
+        ttl = DefaultCharacterTTL,
+        readLastUpdateDate = {
+            lastRequestDao.getLastRequestDate(
+                LastRequestType.CHARACTER,
+                characterId
+            )
+        },
+        refresh = { refreshCharacterDetails(characterId) }
+    )
 }
+
+private val DefaultCharacterTTL = 7.days

@@ -41,9 +41,7 @@ import ru.vladsaybulin.database.models.filters.FilterGenreEntity
 import ru.vladsaybulin.database.models.filters.FilterPublisherEntity
 import ru.vladsaybulin.database.models.filters.FilterStudioEntity
 import ru.vladsaybulin.database.models.genre.GenreEntity
-import ru.vladsaybulin.database.models.lastrequest.LastAnimeDetailsRequestEntity
-import ru.vladsaybulin.database.models.lastrequest.LastCharacterDetailsRequestEntity
-import ru.vladsaybulin.database.models.lastrequest.LastMangaDetailsRequestEntity
+import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
 import ru.vladsaybulin.database.models.manga.MangaCharacterEntity
 import ru.vladsaybulin.database.models.manga.MangaDetailsEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
@@ -56,18 +54,19 @@ import ru.vladsaybulin.database.models.person.PersonEntity
 import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
 import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.database.models.user.UserEntity
-import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
+import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.utils.AnimeKindTypeConverter
 import ru.vladsaybulin.database.utils.AnimeRatingTypeConverter
 import ru.vladsaybulin.database.utils.EntryStatusTypeConverter
 import ru.vladsaybulin.database.utils.GenreKindTypeConverter
 import ru.vladsaybulin.database.utils.InstantTypeConverter
 import ru.vladsaybulin.database.utils.IntStatisticsItemsConverter
+import ru.vladsaybulin.database.utils.LastRequestTypeTypeConverter
 import ru.vladsaybulin.database.utils.MangaKindTypeConverter
-import ru.vladsaybulin.database.utils.TextRangesTypeConverter
 import ru.vladsaybulin.database.utils.StatusStatisticsItemsConverter
 import ru.vladsaybulin.database.utils.StringListTypeConverter
+import ru.vladsaybulin.database.utils.TextRangesTypeConverter
 import ru.vladsaybulin.database.utils.TopicEventTypeConverter
 import ru.vladsaybulin.database.utils.TopicLinkedTypeTypeConverter
 import ru.vladsaybulin.database.utils.TopicTypeTypeConverter
@@ -120,10 +119,7 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         CharacterAnimeCrossRef::class,
         CharacterMangaCrossRef::class,
 
-        /* Last requests */
-        LastAnimeDetailsRequestEntity::class,
-        LastMangaDetailsRequestEntity::class,
-        LastCharacterDetailsRequestEntity::class,
+        LastRequestEntity::class,
 
         /* Other entities */
         CalendarItemEntity::class,
@@ -148,7 +144,8 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         IntStatisticsItemsConverter::class,
         StatusStatisticsItemsConverter::class,
         VideoKindTypeConverter::class,
-        TextRangesTypeConverter::class
+        TextRangesTypeConverter::class,
+        LastRequestTypeTypeConverter::class
     ]
 )
 abstract class ShikiRoomDatabase : RoomDatabase() {
