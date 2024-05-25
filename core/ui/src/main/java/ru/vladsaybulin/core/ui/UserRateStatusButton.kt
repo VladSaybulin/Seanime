@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
@@ -72,7 +72,7 @@ fun UserRateStatusButton(
         Spacer(modifier = Modifier.width(IconSpacing))
         Text(
             text = userRateText,
-            style = ShikimoriTheme.typography.labelLarge,
+            style = SeanimeTheme.typography.labelLarge,
             color = animatedContentColor
         )
     }
@@ -82,9 +82,9 @@ object UserRateStatusButtonDefaults {
 
     @Composable
     fun userRateStatusButtonColors(
-        containerColor: Color = ShikimoriTheme.colorScheme
+        containerColor: Color = SeanimeTheme.colorScheme
             .surfaceColorAtElevation(LocalAbsoluteTonalElevation.current),
-        contentColor: Color = ShikimoriTheme.colorScheme.onSurface
+        contentColor: Color = SeanimeTheme.colorScheme.onSurface
     ) = UserRateStatusButtonColors(
         containerColor = containerColor,
         contentColor = contentColor
@@ -106,7 +106,7 @@ data class UserRateStatusButtonColors(
 @Composable
 @Preview
 fun UserRateStatusButtonPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         UserRateStatusButton(
             userRateStatus = UserRateStatus.Watching,
             onClick = { },

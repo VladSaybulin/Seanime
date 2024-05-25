@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusColor
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -48,7 +48,7 @@ fun UserRateStatusBadge(
 object UserRateStatusBadgeDefaults {
 
     @Composable
-    fun topEndShape(from: CornerBasedShape = ShikimoriTheme.shapes.medium) = from.copy(
+    fun topEndShape(from: CornerBasedShape = SeanimeTheme.shapes.medium) = from.copy(
         bottomEnd = ZeroCornerSize,
         topStart = ZeroCornerSize
     )

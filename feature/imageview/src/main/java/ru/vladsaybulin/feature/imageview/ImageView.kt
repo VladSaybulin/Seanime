@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
@@ -41,39 +40,33 @@ import ru.vladsaybulin.core.designsystem.components.drawBackgroundGradientScrim
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.model.common.Image
 
-@Composable
-fun ImageViewRoute(
-    viewModel: ImageViewViewModel,
-    onBackClick: () -> Unit,
-) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+sealed class ImageSet {
+    data object NoSet : ImageSet()
 
-    ImageViewScreen(
-        state = state,
-        onBackClick = onBackClick
-    )
+    data class Set(val images: List<Image>, val initialImageIndex: Int) : ImageSet()
 }
 
 @Composable
-private fun ImageViewScreen(
-    state: ImageViewState,
+fun ImageView(
+    set: ImageSet,
     onBackClick: () -> Unit
 ) {
-    when (state) {
-        ImageViewState.NoSet -> Unit
-        is ImageViewState.Set -> ImageContent(state = state, onBackClick = onBackClick)
+    when (set) {
+        ImageSet.NoSet -> Unit
+        is ImageSet.Set -> ImageContent(state = set, onBackClick = onBackClick)
     }
 }
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ImageContent(
-    state: ImageViewState.Set,
+    state: ImageSet.Set,
     onBackClick: () -> Unit
 ) {
 
     val pagerState = rememberPagerState(
-        initialPage = state.initialIndex,
+        initialPage = state.initialImageIndex,
         pageCount = state.images::size
     )
 
@@ -105,7 +98,7 @@ private fun ImageContent(
             ImageViewTopBar(
                 currentPage = pagerState.currentPage,
                 pageCount = pagerState.pageCount,
-                isSingle = state.isSingle,
+                isSingle = state.images.size == 1,
                 onBackClick = onBackClick
             )
         }

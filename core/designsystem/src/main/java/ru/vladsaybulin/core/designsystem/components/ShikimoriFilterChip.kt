@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import androidx.compose.ui.util.fastFirst
 import androidx.compose.ui.util.fastFirstOrNull
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -86,7 +86,7 @@ fun ShikimoriFilterChip(
     ) {
         ChipContent(
             label = label,
-            labelTextStyle = ShikimoriTheme.typography.labelLarge,
+            labelTextStyle = SeanimeTheme.typography.labelLarge,
             labelColor = colors.labelColor(enabled, selected),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
@@ -267,27 +267,27 @@ data class ShikimoriSelectableChipColors(
 object ShikimoriFilterChipDefaults {
 
     val shape
-        @Composable get() = ShikimoriTheme.shapes.small
+        @Composable get() = SeanimeTheme.shapes.small
 
     @Composable
     fun filterChipColors(
         containerColor: Color = Color.Transparent,
-        labelColor: Color = ShikimoriTheme.colorScheme.onSurfaceVariant,
-        leadingIconColor: Color = ShikimoriTheme.colorScheme.primary,
-        trailingIconColor: Color = ShikimoriTheme.colorScheme.onSurfaceVariant,
+        labelColor: Color = SeanimeTheme.colorScheme.onSurfaceVariant,
+        leadingIconColor: Color = SeanimeTheme.colorScheme.primary,
+        trailingIconColor: Color = SeanimeTheme.colorScheme.onSurfaceVariant,
         disabledContainerColor: Color = Color.Transparent,
-        disabledLabelColor: Color = ShikimoriTheme.colorScheme.onSurface
+        disabledLabelColor: Color = SeanimeTheme.colorScheme.onSurface
             .copy(alpha = DisabledOpacity),
-        disabledLeadingIconColor: Color = ShikimoriTheme.colorScheme.onSurface
+        disabledLeadingIconColor: Color = SeanimeTheme.colorScheme.onSurface
             .copy(alpha = DisabledOpacity),
-        disabledTrailingIconColor: Color = ShikimoriTheme.colorScheme.onSurface
+        disabledTrailingIconColor: Color = SeanimeTheme.colorScheme.onSurface
             .copy(alpha = DisabledOpacity),
-        selectedContainerColor: Color = ShikimoriTheme.colorScheme.secondaryContainer,
-        disabledSelectedContainerColor: Color = ShikimoriTheme.colorScheme.onSurface
+        selectedContainerColor: Color = SeanimeTheme.colorScheme.secondaryContainer,
+        disabledSelectedContainerColor: Color = SeanimeTheme.colorScheme.onSurface
             .copy(alpha = FlatDisabledSelectedContainerColor),
-        selectedLabelColor: Color = ShikimoriTheme.colorScheme.onSecondaryContainer,
-        selectedLeadingIconColor: Color = ShikimoriTheme.colorScheme.onSecondaryContainer,
-        selectedTrailingIconColor: Color = ShikimoriTheme.colorScheme.onSecondaryContainer
+        selectedLabelColor: Color = SeanimeTheme.colorScheme.onSecondaryContainer,
+        selectedLeadingIconColor: Color = SeanimeTheme.colorScheme.onSecondaryContainer,
+        selectedTrailingIconColor: Color = SeanimeTheme.colorScheme.onSecondaryContainer
     ) = ShikimoriSelectableChipColors(
         containerColor = containerColor,
         labelColor = labelColor,

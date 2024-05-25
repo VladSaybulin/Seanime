@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @Composable
 fun ErrorMessageColumn(
@@ -30,15 +30,15 @@ fun ErrorMessageColumn(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        val primaryColor = ShikimoriTheme.colorScheme.primary
-        val headerTextStyle = ShikimoriTheme.typography.headlineMedium
+        val primaryColor = SeanimeTheme.colorScheme.primary
+        val headerTextStyle = SeanimeTheme.typography.headlineMedium
 
         ProvideTextStyle(value = headerTextStyle.copy(color = primaryColor)) {
             header()
         }
 
         if (description != null) {
-            ProvideTextStyle(value = ShikimoriTheme.typography.bodyMedium) {
+            ProvideTextStyle(value = SeanimeTheme.typography.bodyMedium) {
                 description()
             }
         }
@@ -63,14 +63,14 @@ fun ErrorMessageRow(
         modifier = modifier
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            val primaryColor = ShikimoriTheme.colorScheme.primary
-            val headerTextStyle = ShikimoriTheme.typography.headlineMedium
+            val primaryColor = SeanimeTheme.colorScheme.primary
+            val headerTextStyle = SeanimeTheme.typography.headlineMedium
 
             ProvideTextStyle(value = headerTextStyle.copy(color = primaryColor)) {
                 header()
             }
 
-            ProvideTextStyle(value = ShikimoriTheme.typography.bodyMedium) {
+            ProvideTextStyle(value = SeanimeTheme.typography.bodyMedium) {
                 description()
             }
         }
@@ -100,17 +100,17 @@ fun ErrorMessage(
     ) {
         Text(
             text = stringResource(id = R.string.core_ui_error_message_title),
-            style = ShikimoriTheme.typography.titleLarge,
+            style = SeanimeTheme.typography.titleLarge,
         )
         Text(
             text = stringResource(id = R.string.core_ui_error_message),
-            style = ShikimoriTheme.typography.bodyMedium
+            style = SeanimeTheme.typography.bodyMedium
         )
         throwable.message?.let {
             Text(
                 text = it,
                 color = LocalContentColor.current.copy(alpha = 0.5f),
-                style = ShikimoriTheme.typography.bodySmall
+                style = SeanimeTheme.typography.bodySmall
             )
         }
     }

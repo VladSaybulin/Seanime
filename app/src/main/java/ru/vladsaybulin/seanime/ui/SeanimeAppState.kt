@@ -4,8 +4,8 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.util.fastAny
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import ru.vladsaybulin.feature.calendar.navigation.navigateToCalendarGraph
 import ru.vladsaybulin.feature.home.navigation.navigateToHomeGraph
-import ru.vladsaybulin.feature.imageview.navigation.IMAGE_VIEW_ROUTE
+import ru.vladsaybulin.feature.imageview.ImageSet
 import ru.vladsaybulin.feature.list.navigation.navigateToMyListGraph
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchGraph
 import ru.vladsaybulin.seanime.navigation.SeanimeNavigatorImpl
@@ -63,15 +63,21 @@ class SeanimeAppState(
     val shouldShowNavRail: Boolean
         @Composable get() = !shouldShowBottomBar
 
-    val isNavigationVisible: Boolean
-        @Composable get() = currentDestination.isNavigationVisible()
+    private val _imageViewSet = mutableStateOf<ImageSet>(ImageSet.NoSet)
+    val imageViewSet get() = _imageViewSet.value
 
     val navigator = SeanimeNavigatorImpl(
         navController = navController,
-        onImageView = { _, _ ->},
+        onImageView = { images, initialImage ->
+            _imageViewSet.value = ImageSet.Set(images, initialImage)
+        },
         onExternalClick = onExternalLink,
         onAuth = onAuth
     )
+
+    fun hideImageView() {
+        _imageViewSet.value = ImageSet.NoSet
+    }
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         val topLevelNavOptions = navOptions {
@@ -96,10 +102,3 @@ class SeanimeAppState(
         }
     }
 }
-
-private fun NavDestination?.isNavigationVisible() =
-    this?.route?.let { r ->
-        !HideNavigationOnDestinations.fastAny { r == it }
-    } ?: true
-
-private val HideNavigationOnDestinations = listOf(IMAGE_VIEW_ROUTE)

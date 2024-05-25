@@ -10,7 +10,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import dagger.hilt.android.AndroidEntryPoint
 import ru.vladsaybulin.core.auth.ShikimoriLoginAction
-import ru.vladsaybulin.seanime.ui.ShikimoriApp
+import ru.vladsaybulin.seanime.ui.SeanimeApp
 import ru.vladsaybulin.seanime.ui.rememberSeanimeAppState
 import javax.inject.Inject
 
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
             WindowInsets.captionBar
 
-            ShikimoriApp(
+            SeanimeApp(
                 appState = rememberSeanimeAppState(
                     windowSizeClass = calculateWindowSizeClass(this),
                     onAuth = loginAction::invoke,

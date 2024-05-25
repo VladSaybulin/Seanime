@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.seanime.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,9 +26,9 @@ fun RequireAuthDialog(
 ) {
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
-            shape = ShikimoriTheme.shapes.extraLarge,
-            color = ShikimoriTheme.colorScheme.surfaceContainer,
-            contentColor = ShikimoriTheme.colorScheme.onSurface,
+            shape = SeanimeTheme.shapes.extraLarge,
+            color = SeanimeTheme.colorScheme.surfaceContainer,
+            contentColor = SeanimeTheme.colorScheme.onSurface,
             tonalElevation = 6.dp
         ) {
             Column(
@@ -36,13 +36,13 @@ fun RequireAuthDialog(
             ) {
                 Text(
                     text = stringResource(id = R.string.require_auth_label),
-                    style = ShikimoriTheme.typography.titleLarge,
-                    color = ShikimoriTheme.colorScheme.primary
+                    style = SeanimeTheme.typography.titleLarge,
+                    color = SeanimeTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(id = R.string.require_auth_description),
-                    style = ShikimoriTheme.typography.bodyMedium
+                    style = SeanimeTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
@@ -62,7 +62,7 @@ fun RequireAuthDialog(
 @Composable
 @Preview
 fun RequireAuthDialogPreview() {
-    ShikimoriTheme(darkTheme = true) {
+    SeanimeTheme(darkTheme = true) {
         RequireAuthDialog(
             onSignIn = { },
             onDismissRequest = { }

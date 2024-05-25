@@ -23,7 +23,7 @@ import coil.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.common.Image
@@ -53,7 +53,7 @@ fun ScreenshotsCarousel(
         ShikimoriCarousel(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .clip(ShikimoriTheme.shapes.large),
+                .clip(SeanimeTheme.shapes.large),
             contentPadding = ShikimoriCarouselDefaults.contentPadding(horizontal = 0.dp)
         ) {
             items(count = shownScreenshotsSize) { index ->
@@ -82,14 +82,14 @@ private fun ShowMoreCard(
     modifier: Modifier = Modifier,
 ) {
 
-    ShikimoriTheme(darkTheme = true) {
-        val scrimColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0.5f)
+    SeanimeTheme(darkTheme = true) {
+        val scrimColor = SeanimeTheme.colorScheme.surface.copy(alpha = 0.5f)
 
         Box(
             modifier = modifier
                 .width(ScreenshotCardWidth)
                 .height((ScreenshotCardWidth / ScreenshotCardAspectRatio))
-                .clip(ShikimoriTheme.shapes.large)
+                .clip(SeanimeTheme.shapes.large)
                 .clickable(onClick = onClick)
         ) {
             ScreenshotImage(
@@ -106,7 +106,7 @@ private fun ShowMoreCard(
             Text(
                 text = stringResource(id = R.string.more),
                 color = MaterialTheme.colorScheme.onSurface,
-                style = ShikimoriTheme.typography.labelLarge,
+                style = SeanimeTheme.typography.labelLarge,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
@@ -123,7 +123,7 @@ private fun ScreenshotCard(
         modifier = modifier
             .width(ScreenshotCardWidth)
             .aspectRatio(ScreenshotCardAspectRatio)
-            .clip(ShikimoriTheme.shapes.large)
+            .clip(SeanimeTheme.shapes.large)
             .clickable(onClick = onClick),
     ) {
         ScreenshotImage(url = screenshot.previewUrl)

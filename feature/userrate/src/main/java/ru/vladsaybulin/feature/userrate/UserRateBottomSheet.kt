@@ -44,7 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.UserRateStatusButton
 import ru.vladsaybulin.core.ui.UserRateStatusButtonDefaults
 import ru.vladsaybulin.core.ui.score.ScoreInput
@@ -188,7 +188,7 @@ fun UserRateContent(
         ) {
             Text(
                 text = stringResource(id = R.string.delete),
-                color = ShikimoriTheme.colorScheme.error
+                color = SeanimeTheme.colorScheme.error
             )
         }
 
@@ -206,18 +206,18 @@ private fun UserRateTextField(
     BasicTextField(
         value = text,
         onValueChange = onTextChange,
-        textStyle = ShikimoriTheme.typography.bodyLarge.copy(
-            color = ShikimoriTheme.colorScheme.onSurface
+        textStyle = SeanimeTheme.typography.bodyLarge.copy(
+            color = SeanimeTheme.colorScheme.onSurface
         ),
         minLines = TextMinLines,
-        cursorBrush = SolidColor(ShikimoriTheme.colorScheme.primary),
+        cursorBrush = SolidColor(SeanimeTheme.colorScheme.primary),
         modifier = modifier,
     ) { innerTextField ->
         if (text.isEmpty()) {
             Text(
                 text = stringResource(id = R.string.text_placeholder),
-                style = ShikimoriTheme.typography.bodyLarge.copy(
-                    color = ShikimoriTheme.colorScheme.onSurfaceVariant
+                style = SeanimeTheme.typography.bodyLarge.copy(
+                    color = SeanimeTheme.colorScheme.onSurfaceVariant
                 )
             )
         }
@@ -371,7 +371,7 @@ fun UserRateContentPreview() {
         autoCorrectUserRate = true
     )
 
-    ShikimoriTheme(darkTheme = true) {
+    SeanimeTheme(darkTheme = true) {
         UserRateContent(
             state = state,
             onSave = { },

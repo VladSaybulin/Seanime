@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.model.common.Image
@@ -66,8 +66,8 @@ private fun EntryDetailsPoster(
                 .matchParentSize()
                 //.blur(16.dp)
                 .drawForegroundGradientScrim(
-                    topColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0.8f),
-                    bottomColor = ShikimoriTheme.colorScheme.surface
+                    topColor = SeanimeTheme.colorScheme.surface.copy(alpha = 0.8f),
+                    bottomColor = SeanimeTheme.colorScheme.surface
                 )
         )
 
@@ -80,7 +80,7 @@ private fun EntryDetailsPoster(
                 .fillMaxWidth(0.7f)
                 .aspectRatio(3 / 4f)
                 .align(Alignment.TopCenter)
-                .shadow(4.dp, shape = ShikimoriTheme.shapes.large, clip = true)
+                .shadow(4.dp, shape = SeanimeTheme.shapes.large, clip = true)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -95,7 +95,7 @@ private fun EntryDetailsPoster(
 @Composable
 @Preview
 fun PosterPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryDetailsPoster(
             poster = Image("", ""),
             topSpaceDp = 48.dp,

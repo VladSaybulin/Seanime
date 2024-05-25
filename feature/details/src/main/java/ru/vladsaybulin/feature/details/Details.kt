@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.navigation.NavigationEvent
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.animeDetails
@@ -418,7 +418,7 @@ private fun EntryDetailsDescription(
 ) {
     SeanimeExpandableText(
         text = description,
-        style = ShikimoriTheme.typography.bodyMedium,
+        style = SeanimeTheme.typography.bodyMedium,
         modifier = Modifier.padding(HorizontalPadding),
         onLinkClick = onSeanimeTextLinkClickAdapter(
             onAnimeClick = { NavigationEvent.EntryDetails(EntryType.Anime, it) },

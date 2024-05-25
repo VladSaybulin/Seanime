@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import java.text.DecimalFormat
 
 enum class ScoreNumberFormatStyle {
@@ -25,10 +25,10 @@ fun Score(
     modifier: Modifier = Modifier,
     numberFormatStyle: ScoreNumberFormatStyle = ScoreNumberFormatStyle.Float,
     showLabel: Boolean = true,
-    numberStyle: TextStyle = ShikimoriTheme.typography.headlineSmall,
-    labelStyle: TextStyle = ShikimoriTheme.typography.labelSmall,
+    numberStyle: TextStyle = SeanimeTheme.typography.headlineSmall,
+    labelStyle: TextStyle = SeanimeTheme.typography.labelSmall,
     starSize: DpSize = DefaultStarSize,
-    color: Color = ShikimoriTheme.colorScheme.primary,
+    color: Color = SeanimeTheme.colorScheme.primary,
 ) {
     Row(
         modifier = modifier,
@@ -57,10 +57,10 @@ fun ScoreInput(
     onScoreChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
     showLabel: Boolean = true,
-    numberStyle: TextStyle = ShikimoriTheme.typography.headlineSmall,
-    labelStyle: TextStyle = ShikimoriTheme.typography.labelSmall,
+    numberStyle: TextStyle = SeanimeTheme.typography.headlineSmall,
+    labelStyle: TextStyle = SeanimeTheme.typography.labelSmall,
     starSize: DpSize = DefaultStarSize,
-    color: Color = ShikimoriTheme.colorScheme.primary
+    color: Color = SeanimeTheme.colorScheme.primary
 ) {
     Row(
         modifier = modifier,

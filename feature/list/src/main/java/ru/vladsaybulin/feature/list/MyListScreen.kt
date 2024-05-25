@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.animeDetails
 import ru.vladsaybulin.core.navigation.mangaDetails
@@ -196,7 +196,7 @@ private fun UserRatesPaging(
 @Composable
 @Preview
 fun AuthorizationErrorPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             AuthorizationError(onSignIn = { })
         }
@@ -206,7 +206,7 @@ fun AuthorizationErrorPreview() {
 @Composable
 @Preview
 fun AuthorizationScreenPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Authorization(onSignIn = { })
         }

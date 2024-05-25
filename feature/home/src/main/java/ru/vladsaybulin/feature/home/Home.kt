@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.animeDetails
 import ru.vladsaybulin.core.navigation.args.SearchArgs
@@ -178,7 +178,7 @@ private fun LazyListScope.animeOngoingHeader(
         ) {
             Text(
                 text = stringResource(id = R.string.feature_home_on_air_now),
-                style = ShikimoriTheme.typography.titleMedium
+                style = SeanimeTheme.typography.titleMedium
             )
             TextButton(onClick = onMoreClick) {
                 Text(text = stringResource(id = R.string.feature_home_more))
@@ -192,7 +192,7 @@ private fun LazyListScope.newsTopicsHeader() {
         Column {
             Text(
                 text = stringResource(R.string.feature_home_news_topics),
-                style = ShikimoriTheme.typography.titleMedium,
+                style = SeanimeTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }

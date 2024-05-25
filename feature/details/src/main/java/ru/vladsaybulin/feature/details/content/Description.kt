@@ -29,7 +29,7 @@ import org.primeframework.transformer.domain.TagNode
 import org.primeframework.transformer.domain.TextNode
 import org.primeframework.transformer.service.HTMLParser
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.core.ui.strings.AnnotatedStringBuilderContext
 import ru.vladsaybulin.core.ui.strings.annotatedStringBuilderContext
@@ -91,7 +91,7 @@ fun NonExpandableText(
 ) {
     ClickableText(
         text = text,
-        style = ShikimoriTheme.typography.bodyMedium.copy(LocalContentColor.current),
+        style = SeanimeTheme.typography.bodyMedium.copy(LocalContentColor.current),
         onClick = onTextClick,
         onTextLayout = onTextLayout,
         modifier = modifier
@@ -108,8 +108,8 @@ fun ExpandableText(
 ) {
     val scrimColor by animateColorAsState(
         targetValue = when {
-            expanded -> ShikimoriTheme.colorScheme.surface.copy(alpha = 0f)
-            else -> ShikimoriTheme.colorScheme.surface
+            expanded -> SeanimeTheme.colorScheme.surface.copy(alpha = 0f)
+            else -> SeanimeTheme.colorScheme.surface
         },
         label = "ForegroundGradientScrim"
     )
@@ -124,13 +124,13 @@ fun ExpandableText(
     ) {
         ClickableText(
             text = text,
-            style = ShikimoriTheme.typography.bodyMedium.copy(LocalContentColor.current),
+            style = SeanimeTheme.typography.bodyMedium.copy(LocalContentColor.current),
             maxLines = if (expanded) Int.MAX_VALUE else COLLAPSED_MAX_LINES,
             onClick = onTextClick,
             modifier = Modifier
                 .padding(bottom = 40.dp)
                 .drawForegroundGradientScrim(
-                    topColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0f),
+                    topColor = SeanimeTheme.colorScheme.surface.copy(alpha = 0f),
                     bottomColor = scrimColor,
                     decay = 2f
                 ),
@@ -150,7 +150,7 @@ fun ExpandableText(
 @Composable
 fun buildDescriptionString(html: String): AnnotatedString {
     val context = annotatedStringBuilderContext(
-        defaultTextStyle = ShikimoriTheme.typography.bodyMedium.copy(LocalContentColor.current)
+        defaultTextStyle = SeanimeTheme.typography.bodyMedium.copy(LocalContentColor.current)
     )
     val builder = AnnotatedString.Builder()
 

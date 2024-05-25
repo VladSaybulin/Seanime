@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.UserRateStatusBadge
 import ru.vladsaybulin.core.ui.UserRateStatusBadgeDefaults
@@ -57,7 +57,7 @@ fun EntryGridItem(
     shape: CornerBasedShape = EntryGridItemDefaults.shape,
     metadata: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
-    ShikimoriTheme(darkTheme = true) {
+    SeanimeTheme(darkTheme = true) {
         Surface(
             onClick = onClick,
             shape = shape,
@@ -121,7 +121,7 @@ private fun EntryGridItemImage(imageUrl: String?) {
         modifier = Modifier
             .fillMaxSize()
             .drawForegroundGradientScrim(
-                bottomColor = ShikimoriTheme.colorScheme.surface.copy(alpha = GradientScrimAlpha),
+                bottomColor = SeanimeTheme.colorScheme.surface.copy(alpha = GradientScrimAlpha),
                 decay = 2f
             )
             .layoutId(EntryGridItemLayoutId.Image)
@@ -140,10 +140,10 @@ object EntryGridItemDefaults {
         get() = RoundedCornerShape(16.dp)
 
     val nameTextStyle
-        @Composable get() = ShikimoriTheme.typography.labelLarge
+        @Composable get() = SeanimeTheme.typography.labelLarge
 
     val bodyTextStyle
-        @Composable get() = ShikimoriTheme.typography.labelSmall
+        @Composable get() = SeanimeTheme.typography.labelSmall
 
 }
 
@@ -201,7 +201,7 @@ data class EntryGridItemMeasurePolicy(private val contentPadding: PaddingValues)
 @Composable
 @Preview
 fun EntryGridItemPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryGridItem(
             name = "Entry name",
             imageUrl = "",
@@ -214,7 +214,7 @@ fun EntryGridItemPreview() {
 @Composable
 @Preview
 fun EntryGridItemWithLongNamePreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryGridItem(
             name = "This is a long entry name that does not fit into 2 lines",
             imageUrl = "",
@@ -227,7 +227,7 @@ fun EntryGridItemWithLongNamePreview() {
 @Composable
 @Preview
 fun EntryGridItemWithDetailsPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryGridItem(
             name = "This is a long entry name that does not fit into 2 lines",
             imageUrl = "",
@@ -243,7 +243,7 @@ fun EntryGridItemWithDetailsPreview() {
 @Composable
 @Preview
 fun EntryGridItemWithUserRateStatusPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryGridItem(
             name = "Entry name",
             imageUrl = "",

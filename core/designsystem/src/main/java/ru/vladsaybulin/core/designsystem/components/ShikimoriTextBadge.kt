@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @Composable
 fun ShikimoriTextBadge(
@@ -52,7 +52,7 @@ object TextBadgeDefaults {
 @Composable
 @Preview
 fun ShikimoriTextBadgePreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             ShikimoriTextBadge(modifier = Modifier.padding(8.dp)) {
                 Text(text = "Badge")

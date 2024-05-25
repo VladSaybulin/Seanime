@@ -34,7 +34,7 @@ import coil.compose.AsyncImage
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.feature.details.R
@@ -63,7 +63,7 @@ fun VideosCarousel(
         modifier = modifier,
         enabled = showShowAll
     ) {
-        ShikimoriTheme(darkTheme = true) {
+        SeanimeTheme(darkTheme = true) {
             val listState = rememberLazyListState()
 
             ShikimoriCarousel(
@@ -111,7 +111,7 @@ private fun VideoCard(video: Video, onClick: () -> Unit, modifier: Modifier = Mo
                 url = video.previewImageUrl,
                 modifier = Modifier
                     .layoutId("preview")
-                    .drawForegroundGradientScrim(ShikimoriTheme.colorScheme.surface)
+                    .drawForegroundGradientScrim(SeanimeTheme.colorScheme.surface)
             )
             VideoPlayIcon(modifier = Modifier.layoutId("icon"))
         },
@@ -119,7 +119,7 @@ private fun VideoCard(video: Video, onClick: () -> Unit, modifier: Modifier = Mo
             .width(VideoCardWidth)
             .aspectRatio(VideoCardAspectRatio)
             .clickable(onClick = onClick)
-            .clip(ShikimoriTheme.shapes.large),
+            .clip(SeanimeTheme.shapes.large),
         measurePolicy = { measurables, constraints ->
             val constraintsForMeasurables = constraints.copy(minWidth = 0, minHeight = 0)
 
@@ -150,13 +150,13 @@ private fun ShowMoreVideosCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrimColor = ShikimoriTheme.colorScheme.surface.copy(alpha = 0.2f)
+    val scrimColor = SeanimeTheme.colorScheme.surface.copy(alpha = 0.2f)
 
     Box(
         modifier = modifier
             .width(VideoCardWidth)
             .height((VideoCardWidth / VideoCardAspectRatio))
-            .clip(ShikimoriTheme.shapes.large)
+            .clip(SeanimeTheme.shapes.large)
             .clickable(onClick = onClick)
     ) {
         VideoPreviewImage(
@@ -171,8 +171,8 @@ private fun ShowMoreVideosCard(
         )
         Text(
             text = stringResource(id = R.string.more),
-            color = ShikimoriTheme.colorScheme.onSurface,
-            style = ShikimoriTheme.typography.labelLarge,
+            color = SeanimeTheme.colorScheme.onSurface,
+            style = SeanimeTheme.typography.labelLarge,
             modifier = Modifier.align(Alignment.Center)
         )
     }
@@ -182,8 +182,8 @@ private fun ShowMoreVideosCard(
 private fun VideoName(name: String, modifier: Modifier = Modifier) {
     Text(
         text = name,
-        style = ShikimoriTheme.typography.labelSmall,
-        color = ShikimoriTheme.colorScheme.onSurface,
+        style = SeanimeTheme.typography.labelSmall,
+        color = SeanimeTheme.colorScheme.onSurface,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier.padding(4.dp)
@@ -209,13 +209,13 @@ private fun VideoPlayIcon(modifier: Modifier = Modifier) {
         modifier = modifier
             .size(PlayIconBoxSize)
             .clip(CircleShape)
-            .background(ShikimoriTheme.colorScheme.surface.copy(alpha = .5f)),
+            .background(SeanimeTheme.colorScheme.surface.copy(alpha = .5f)),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             imageVector = ShikimoriIcons.PlayArrow,
             contentDescription = null,
-            tint = ShikimoriTheme.colorScheme.onSurface
+            tint = SeanimeTheme.colorScheme.onSurface
         )
     }
 }

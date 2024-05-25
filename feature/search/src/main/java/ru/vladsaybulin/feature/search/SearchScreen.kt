@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.drop
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.animeDetails
 import ru.vladsaybulin.core.navigation.mangaDetails
@@ -392,7 +392,7 @@ private fun RecentSearchQuery(
         Text(
             text = recentSearchQuery.query,
             modifier = Modifier.padding(start = 8.dp),
-            style = ShikimoriTheme.typography.bodyLarge
+            style = SeanimeTheme.typography.bodyLarge
         )
     }
 }

@@ -39,7 +39,7 @@ import coil.compose.rememberAsyncImagePainter
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.navigation.IdleSeanimeNavigator
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
@@ -128,7 +128,7 @@ fun CharacterDetailsContent(
                 Column {
                     Text(
                         text = stringResource(id = R.string.feature_character_seyu),
-                        style = ShikimoriTheme.typography.titleMedium,
+                        style = SeanimeTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     ShikimoriCarousel(items = details.seyu) {
@@ -148,7 +148,7 @@ fun CharacterDetailsContent(
                 Column {
                     Text(
                         text = stringResource(id = R.string.feature_character_animes),
-                        style = ShikimoriTheme.typography.titleMedium,
+                        style = SeanimeTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     AnimeCarousel(
@@ -166,7 +166,7 @@ fun CharacterDetailsContent(
                 Column {
                     Text(
                         text = stringResource(id = R.string.feature_character_mangas),
-                        style = ShikimoriTheme.typography.titleMedium,
+                        style = SeanimeTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     MangaCarousel(
@@ -188,7 +188,7 @@ fun CharacterDescription(
 ) {
     SeanimeExpandableText(
         text = description,
-        style = ShikimoriTheme.typography.bodyMedium,
+        style = SeanimeTheme.typography.bodyMedium,
         modifier = Modifier.padding(16.dp),
         onLinkClick = onSeanimeTextLinkClickAdapter(
             onAnimeClick = { navigator.animeDetails(it) },
@@ -210,14 +210,14 @@ fun CharacterDetailsNames(
     Column(modifier = Modifier.padding(start = 16.dp)) {
         Text(
             text = nameRu ?: name,
-            style = ShikimoriTheme.typography.titleLarge,
+            style = SeanimeTheme.typography.titleLarge,
             maxLines = 2
         )
 
         if (nameRu != null) {
             Text(
                 text = name,
-                style = ShikimoriTheme.typography.bodyMedium,
+                style = SeanimeTheme.typography.bodyMedium,
                 maxLines = 2
             )
         }
@@ -268,7 +268,7 @@ fun CharacterDetailsPoster(poster: Image?) {
         modifier = Modifier
             .width(PosterWidth)
             .aspectRatio(3 / 4f)
-            .clip(ShikimoriTheme.shapes.medium)
+            .clip(SeanimeTheme.shapes.medium)
     )
 }
 
@@ -279,7 +279,7 @@ private enum class CharacterLazyListItemKey {
 @Composable
 @Preview
 fun CharacterDetailsContentPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             CharacterDetailsContent(
                 uiState = CharacterDetailsUiState.Success(

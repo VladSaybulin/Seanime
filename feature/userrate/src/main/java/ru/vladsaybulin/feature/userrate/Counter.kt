@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @JvmInline
 value class CounterLimit(val value: Int) {
@@ -125,7 +125,7 @@ fun Counter(
         modifier = modifier,
         content = {
             val contentColor = when {
-                state.isError -> ShikimoriTheme.colorScheme.error
+                state.isError -> SeanimeTheme.colorScheme.error
                 else -> LocalContentColor.current
             }
             CompositionLocalProvider(value = LocalContentColor provides contentColor) {
@@ -141,7 +141,7 @@ fun Counter(
                 )
                 Box(modifier = Modifier.layoutId(CounterLayoutId.Label)) {
                     ProvideTextStyle(
-                        value = ShikimoriTheme.typography.labelMedium,
+                        value = SeanimeTheme.typography.labelMedium,
                         content = label
                     )
                 }
@@ -157,7 +157,7 @@ fun Counter(
                             id = R.string.feature_user_rate_out_of_limit,
                             state.limit.value
                         ),
-                        style = ShikimoriTheme.typography.labelSmall,
+                        style = SeanimeTheme.typography.labelSmall,
                         modifier = Modifier
                             .alpha(0.5f)
                             .layoutId(CounterLayoutId.Limit)
@@ -186,11 +186,11 @@ private fun CounterTextField(
         singleLine = true,
         maxLines = 1,
         enabled = enabled,
-        textStyle = ShikimoriTheme.typography.headlineSmall.copy(
+        textStyle = SeanimeTheme.typography.headlineSmall.copy(
             textAlign = TextAlign.Center,
             color = LocalContentColor.current
         ),
-        cursorBrush = SolidColor(ShikimoriTheme.colorScheme.primary),
+        cursorBrush = SolidColor(SeanimeTheme.colorScheme.primary),
         modifier = modifier
     )
 }
@@ -315,7 +315,7 @@ object CounterMeasurePolicy : MeasurePolicy {
 @Composable
 @Preview
 fun CounterPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             val state = remember {
                 CounterState(initialCount = 0, limit = CounterLimit(15))
@@ -333,7 +333,7 @@ fun CounterPreview() {
 @Composable
 @Preview
 fun UnlimitedCounterPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             val state = remember {
                 CounterState(initialCount = 0, limit = CounterLimit.Unlimited)
@@ -351,7 +351,7 @@ fun UnlimitedCounterPreview() {
 @Composable
 @Preview
 fun IsErrorCounterPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             val state = remember {
                 CounterState(initialCount = 0, limit = CounterLimit(15))
@@ -373,7 +373,7 @@ fun IsErrorCounterPreview() {
 @Composable
 @Preview
 fun DisabledCounterPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             val state = remember {
                 CounterState(initialCount = 0, limit = CounterLimit.Unlimited)

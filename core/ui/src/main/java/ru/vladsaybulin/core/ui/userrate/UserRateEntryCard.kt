@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.entry.EntryInfoKindAndYear
 import ru.vladsaybulin.core.ui.entry.EntryListItem
@@ -93,11 +93,11 @@ fun UserRateEntryCard(
             } else onMangaClick(userRateWithEntry.manga!!)
         },
         userRateStatus = if (showUserRateBadge) userRate.status else None,
-        border = BorderStroke(1.dp, ShikimoriTheme.colorScheme.outlineVariant),
+        border = BorderStroke(1.dp, SeanimeTheme.colorScheme.outlineVariant),
         imageIgnoresPadding = true,
-        containerShape = ShikimoriTheme.shapes.large,
-        imageShape = ShikimoriTheme.shapes.large,
-        containerColor = ShikimoriTheme.colorScheme.surfaceColorAtElevation(1.dp),
+        containerShape = SeanimeTheme.shapes.large,
+        imageShape = SeanimeTheme.shapes.large,
+        containerColor = SeanimeTheme.colorScheme.surfaceColorAtElevation(1.dp),
         modifier = modifier
     ) {
         Spacer(modifier = Modifier.height(4.dp))
@@ -157,7 +157,7 @@ private fun ProgressIndicator(
             } else {
                 stringResource(id = limitedProgressStringRes, progress, limit.limit)
             },
-            style = ShikimoriTheme.typography.bodySmall
+            style = SeanimeTheme.typography.bodySmall
         )
     }
 }

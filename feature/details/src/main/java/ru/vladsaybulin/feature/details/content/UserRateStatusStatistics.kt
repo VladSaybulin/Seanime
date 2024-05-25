@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithHeader
 import ru.vladsaybulin.core.ui.Header
 import ru.vladsaybulin.core.ui.colors.userRateStatusColor
@@ -83,7 +83,7 @@ fun UserRateStatusLegend(
         )
         Text(
             text = userRateStatusString(userRateStatus = statisticItem.values),
-            style = ShikimoriTheme.typography.labelLarge,
+            style = SeanimeTheme.typography.labelLarge,
             modifier = Modifier
                 .padding(start = 4.dp, end = 4.dp)
                 .alpha(0.5f)
@@ -91,7 +91,7 @@ fun UserRateStatusLegend(
 
         Text(
             text = statisticItem.count.toString(),
-            style = ShikimoriTheme.typography.labelLarge
+            style = SeanimeTheme.typography.labelLarge
         )
     }
 }
@@ -125,7 +125,7 @@ fun UserRateStatusStatisticsDiagram(
 @Composable
 @Preview
 fun UserRateStatusStatisticsPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             UserRateStatusStatisticsContent(
                 listOf(

@@ -17,7 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,9 +75,9 @@ private fun BackIconButton(
 ) {
     val containerColor by animateColorAsState(
         targetValue = if (showScrim) {
-            ShikimoriTheme.colorScheme.surface.copy(alpha = NavigationButtonContainerAlpha)
+            SeanimeTheme.colorScheme.surface.copy(alpha = NavigationButtonContainerAlpha)
         } else {
-            ShikimoriTheme.colorScheme.surface.copy(alpha = 0f)
+            SeanimeTheme.colorScheme.surface.copy(alpha = 0f)
         },
         label = "BackIconButtonScrim"
     )
@@ -97,9 +97,9 @@ private fun BackIconButton(
 @Composable
 @Preview
 fun DetailsTopBarPreview() {
-    ShikimoriTheme {
-        Surface(color = ShikimoriTheme.colorScheme.primary) {
-            CompositionLocalProvider(value = LocalContentColor provides ShikimoriTheme.colorScheme.onSurface) {
+    SeanimeTheme {
+        Surface(color = SeanimeTheme.colorScheme.primary) {
+            CompositionLocalProvider(value = LocalContentColor provides SeanimeTheme.colorScheme.onSurface) {
                 DetailsTopBar(
                     visibleTopBar = true,
                     title = "Entry details top bar",

@@ -15,7 +15,7 @@ import ru.vladsaybulin.feature.search.navigation.searchScreen
 import ru.vladsaybulin.seanime.ui.SeanimeAppState
 
 @Composable
-fun ShikimoriNavHost(
+fun SeanimeNavHost(
     seanimeAppState: SeanimeAppState,
     startDestination: String = TopLevelDestination.HOME.graphRoute
 ) {

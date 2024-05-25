@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import java.util.Random
 import kotlin.math.roundToInt
 
@@ -39,7 +39,7 @@ fun AnimatedScoreStars(
     score: Float,
     modifier: Modifier = Modifier,
     starSize: DpSize = DefaultStarSize,
-    color: Color = ShikimoriTheme.colorScheme.primary,
+    color: Color = SeanimeTheme.colorScheme.primary,
 ) {
     val animatedScore by animateFloatAsState(
         targetValue = score,
@@ -60,12 +60,12 @@ fun ScoreStars(
     score: Float,
     modifier: Modifier = Modifier,
     starSize: DpSize = DefaultStarSize,
-    color: Color = ShikimoriTheme.colorScheme.primary,
+    color: Color = SeanimeTheme.colorScheme.primary,
 ) {
     val filledStar = rememberVectorPainter(image = ShikimoriIcons.Star)
     val outlinedStar = rememberVectorPainter(image = ShikimoriIcons.StarOutline)
 
-    val outlinedColor = ShikimoriTheme.colorScheme.outlineVariant
+    val outlinedColor = SeanimeTheme.colorScheme.outlineVariant
 
     Canvas(
         modifier = modifier.size(
@@ -175,7 +175,7 @@ class InputScoreNode(
 @Preview
 @Composable
 fun ScoreStarsPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             Column {
                 val score = remember { mutableIntStateOf(7) }

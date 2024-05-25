@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.score.ScoreInput
 import ru.vladsaybulin.core.ui.strings.animeKindString
@@ -239,7 +239,7 @@ fun FiltersContent(
         ) {
             Text(
                 text = stringResource(id = R.string.core_ui_reset),
-                color = ShikimoriTheme.colorScheme.error
+                color = SeanimeTheme.colorScheme.error
             )
         }
     }
@@ -286,7 +286,7 @@ fun LazyListScope.seasonFilter(
             }
             Text(
                 text = stringResource(id = R.string.core_ui_filter_custom_season_options),
-                style = ShikimoriTheme.typography.labelMedium,
+                style = SeanimeTheme.typography.labelMedium,
                 color = LocalContentColor.current.copy(alpha = 0.7f),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
@@ -359,7 +359,7 @@ fun LazyListScope.filterHeader(headerTextId: Int) {
     item {
         Text(
             text = stringResource(id = headerTextId),
-            style = ShikimoriTheme.typography.titleMedium,
+            style = SeanimeTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
     }
@@ -390,7 +390,7 @@ fun ExcludedIcon() {
 @Composable
 @Preview
 fun FiltersContentPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             FiltersContent(
                 filtersState = rememberFiltersState(

@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @Composable
 fun ContentWithHeader(
@@ -29,7 +29,7 @@ fun ContentWithClickableHeader(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    headerStyle: TextStyle = ShikimoriTheme.typography.labelLarge,
+    headerStyle: TextStyle = SeanimeTheme.typography.labelLarge,
     content: @Composable () -> Unit
 ) {
     ContentWithHeader(
@@ -53,7 +53,7 @@ fun ContentWithClickableHeader(
 @Composable
 fun Header(
     modifier: Modifier = Modifier,
-    headerStyle: TextStyle = ShikimoriTheme.typography.titleMedium,
+    headerStyle: TextStyle = SeanimeTheme.typography.titleMedium,
     text: @Composable () -> Unit,
 ) {
     Box(modifier = modifier) {

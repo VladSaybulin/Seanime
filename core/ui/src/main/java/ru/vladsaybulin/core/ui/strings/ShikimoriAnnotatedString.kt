@@ -8,12 +8,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @Composable
 @ReadOnlyComposable
 fun annotatedStringBuilderContext(
-    colorScheme: ColorScheme = ShikimoriTheme.colorScheme,
+    colorScheme: ColorScheme = SeanimeTheme.colorScheme,
     defaultTextStyle: TextStyle = LocalTextStyle.current
 ) = AnnotatedStringBuilderContext(
     colorScheme = colorScheme,

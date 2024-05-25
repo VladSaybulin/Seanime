@@ -54,7 +54,7 @@ import androidx.compose.ui.util.fastForEach
 import kotlinx.collections.immutable.toImmutableList
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 
@@ -109,7 +109,7 @@ fun SeanimeExpandableText(
         }
         Box(
             modifier = Modifier.drawForegroundGradientScrim(
-                bottomColor = ShikimoriTheme.colorScheme.surface.copy(animatedOpacity)
+                bottomColor = SeanimeTheme.colorScheme.surface.copy(animatedOpacity)
             )
         )
     }
@@ -171,7 +171,7 @@ private fun TextContent(
     style: TextStyle,
     onLinkClick: (tag: String, annotation: String) -> Unit,
 ) {
-    val annotatedString = text.toComposeAnnotatedString(ShikimoriTheme.colorScheme.primary)
+    val annotatedString = text.toComposeAnnotatedString(SeanimeTheme.colorScheme.primary)
 
     var textLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
 
@@ -190,7 +190,7 @@ private fun TextContent(
                     .inlineSpoilers(
                         textLayout = textLayout!!,
                         inlineSpoilers = text.inlineSpoilers,
-                        inlineSpoilerColor = ShikimoriTheme.colorScheme.secondaryContainer
+                        inlineSpoilerColor = SeanimeTheme.colorScheme.secondaryContainer
                     )
                     .clickableLinks(
                         textLayout = textLayout!!,
@@ -215,7 +215,7 @@ private fun SpoilerBlockContent(
     Box(
         modifier = Modifier
             .border(
-                border = BorderStroke(width = 1.dp, color = ShikimoriTheme.colorScheme.outline),
+                border = BorderStroke(width = 1.dp, color = SeanimeTheme.colorScheme.outline),
                 shape = SpoilerShape
             )
             .clickable(
@@ -230,7 +230,7 @@ private fun SpoilerBlockContent(
                 .padding(SpoilerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            val titleStyle = style.copy(color = ShikimoriTheme.colorScheme.primary)
+            val titleStyle = style.copy(color = SeanimeTheme.colorScheme.primary)
             if (title != null) {
                 TextContent(
                     text = title,
@@ -454,7 +454,7 @@ fun SeanimeExpandableTextPreview() {
         )
     )
 
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             Box(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 SeanimeExpandableText(

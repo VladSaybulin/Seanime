@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.user.BriefUser
 
@@ -73,13 +73,13 @@ fun UserAvatar(
 fun UserNickname(
     userNickname: String
 ) {
-    Text(userNickname, style = ShikimoriTheme.typography.titleMedium)
+    Text(userNickname, style = SeanimeTheme.typography.titleMedium)
 }
 
 @Preview
 @Composable
 fun UserCardPreview(@PreviewParameter(UserPreviewParameterProvider::class) user: BriefUser) {
-    ShikimoriTheme {
+    SeanimeTheme {
         UserCard(user = user, onClick = { /*TODO*/ })
     }
 }

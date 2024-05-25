@@ -30,7 +30,7 @@ import kotlinx.datetime.toJavaZoneId
 import org.primeframework.transformer.domain.Node
 import org.primeframework.transformer.domain.TagNode
 import org.primeframework.transformer.service.HTMLParser
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalTimeZone
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.topic.Topic
@@ -99,7 +99,7 @@ fun NewsResourceHeaderImage(headerImage: NewsTopicHeaderImage) {
 fun NewsResourceTitle(
     topicTitle: String
 ) {
-    Text(topicTitle, style = ShikimoriTheme.typography.titleLarge)
+    Text(topicTitle, style = SeanimeTheme.typography.titleLarge)
 }
 
 @Composable
@@ -126,7 +126,7 @@ fun NewsResourceMetaData(
         Text(text = " • ")
         Text(
             text = dateFormatted(publishDate = createdAt),
-            style = ShikimoriTheme.typography.labelSmall,
+            style = SeanimeTheme.typography.labelSmall,
         )
     }
 }
@@ -178,7 +178,7 @@ fun NewsResourceAuthorAvatar(
 fun NewsResourceAuthorNickname(
     userNickname: String
 ) {
-    Text(userNickname, style = ShikimoriTheme.typography.bodyMedium)
+    Text(userNickname, style = SeanimeTheme.typography.bodyMedium)
 }
 
 fun getHeaderImage(topic: Topic): NewsTopicHeaderImage? {

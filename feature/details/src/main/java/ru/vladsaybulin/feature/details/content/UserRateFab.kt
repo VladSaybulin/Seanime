@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
@@ -32,13 +32,13 @@ internal fun UserRateFab(
 
     val animatedContainerColor by transition.animateColor(label = "ContainerColor") { status ->
         if (status == null || status == UserRateStatus.None) {
-            ShikimoriTheme.colorScheme.primaryContainer
+            SeanimeTheme.colorScheme.primaryContainer
         } else userRateStatusContainerColor(userRateStatus = status)
     }
 
     val animatedContentColor by transition.animateColor(label = "ContentColor") { status ->
         if (status == null || status == UserRateStatus.None) {
-            ShikimoriTheme.colorScheme.onPrimaryContainer
+            SeanimeTheme.colorScheme.onPrimaryContainer
         } else onUserRateStatusContainerColor(userRateStatus = status)
     }
 

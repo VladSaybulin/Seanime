@@ -35,7 +35,7 @@ import coil.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.common.Image
@@ -85,7 +85,7 @@ fun AuthorCard(
     onClick: () -> Unit
 ) {
     Surface(
-        shape = ShikimoriTheme.shapes.large,
+        shape = SeanimeTheme.shapes.large,
         shadowElevation = 2.dp,
         tonalElevation = 1.dp,
         onClick = onClick
@@ -109,14 +109,14 @@ fun AuthorCard(
                     text = personWithRoles.person.run { russianName ?: originalName },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = ShikimoriTheme.typography.labelLarge,
+                    style = SeanimeTheme.typography.labelLarge,
                     modifier = Modifier.width(IntrinsicSize.Max)
                 )
                 Text(
                     text = personWithRoles.russianRoles.joinToString(separator = ", "),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = ShikimoriTheme.typography.labelSmall,
+                    style = SeanimeTheme.typography.labelSmall,
                     modifier = Modifier
                         .fillMaxWidth()
                         .alpha(0.6f)
@@ -135,7 +135,7 @@ private fun AuthorPoster(poster: Image?) {
             .run {
                 if (poster == null) {
                     this then Modifier.background(
-                        color = ShikimoriTheme.colorScheme.surfaceColorAtElevation(8.dp)
+                        color = SeanimeTheme.colorScheme.surfaceColorAtElevation(8.dp)
                     )
                 } else this
             }
@@ -144,7 +144,7 @@ private fun AuthorPoster(poster: Image?) {
             Icon(
                 imageVector = ShikimoriIcons.Person,
                 contentDescription = null,
-                tint = ShikimoriTheme.colorScheme.onSurface,
+                tint = SeanimeTheme.colorScheme.onSurface,
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {
@@ -164,7 +164,7 @@ private fun AuthorPoster(poster: Image?) {
 @Preview
 @Composable
 fun AuthorCardPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         AuthorCard(
             PersonWithRoles(
                 person = Person(
@@ -184,7 +184,7 @@ fun AuthorCardPreview() {
 @Preview
 @Composable
 fun AuthorCardWithoutPosterPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         AuthorCard(
             PersonWithRoles(
                 person = Person(
@@ -204,7 +204,7 @@ fun AuthorCardWithoutPosterPreview() {
 @Preview
 @Composable
 fun AuthorCardManyRolesPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         AuthorCard(
             PersonWithRoles(
                 person = Person(
@@ -224,7 +224,7 @@ fun AuthorCardManyRolesPreview() {
 @Preview
 @Composable
 fun AuthorCardShortNamePreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         AuthorCard(
             PersonWithRoles(
                 person = Person(

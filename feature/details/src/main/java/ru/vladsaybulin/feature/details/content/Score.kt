@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithHeader
 import ru.vladsaybulin.core.ui.Header
 import ru.vladsaybulin.feature.details.R
@@ -87,12 +87,12 @@ fun ScoreValue(score: Float) {
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = scoreFormatter.format(score),
-                style = ShikimoriTheme.typography.headlineMedium
+                style = SeanimeTheme.typography.headlineMedium
             )
         }
         Text(
             text = "Отлично",
-            style = ShikimoriTheme.typography.labelSmall,
+            style = SeanimeTheme.typography.labelSmall,
             textAlign = TextAlign.End,
             modifier = Modifier.fillMaxWidth(),
             color = LocalContentColor.current.copy(alpha = 0.5f)
@@ -104,8 +104,8 @@ fun ScoreValue(score: Float) {
 fun ScoreHistogram(
     statistics: List<StatisticsItem<Int>>
 ) {
-    val color = ShikimoriTheme.colorScheme.primary
-    val outlineColor = ShikimoriTheme.colorScheme.outlineVariant
+    val color = SeanimeTheme.colorScheme.primary
+    val outlineColor = SeanimeTheme.colorScheme.outlineVariant
 
     val maxCount = statistics.maxOfOrNull { it.count } ?: 0
 
@@ -153,9 +153,9 @@ fun ScoreHistogram(
                 Text(
                     text = i.toString(),
                     modifier = Modifier.weight(1f),
-                    style = ShikimoriTheme.typography.labelSmall,
+                    style = SeanimeTheme.typography.labelSmall,
                     textAlign = TextAlign.Center,
-                    color = ShikimoriTheme.colorScheme.outline
+                    color = SeanimeTheme.colorScheme.outline
                 )
             }
         }
@@ -165,7 +165,7 @@ fun ScoreHistogram(
 @Preview
 @Composable
 fun ScoreContentPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             val statistics = listOf(
                 StatisticsItem(1, 34),

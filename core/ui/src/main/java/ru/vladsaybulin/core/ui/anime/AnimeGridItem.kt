@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
@@ -61,7 +61,7 @@ fun AnimeGridMetadata(anime: Anime) {
 @Preview
 @Composable
 fun AnimeGridItemPreview(@PreviewParameter(AnimePreviewProvider::class) anime: Anime) {
-    ShikimoriTheme {
+    SeanimeTheme {
         AnimeGridItem(
             anime = anime,
             onClick = { },

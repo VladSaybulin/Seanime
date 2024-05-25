@@ -2,7 +2,7 @@ package ru.vladsaybulin.feature.details.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.model.character.Character
 
@@ -17,6 +17,6 @@ fun CharacterCard(
         imageUrl = character.poster?.previewUrl,
         onClick = onClick,
         modifier = modifier,
-        nameTextStyle = ShikimoriTheme.typography.labelSmall
+        nameTextStyle = SeanimeTheme.typography.labelSmall
     )
 }

@@ -136,7 +136,7 @@ val DarkEntryStatusColor = EntryStatusColors(
 )
 
 @Composable
-fun ShikimoriTheme(
+fun SeanimeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
@@ -166,7 +166,7 @@ fun ShikimoriTheme(
     }
 }
 
-object ShikimoriTheme {
+object SeanimeTheme {
     val colorScheme: ColorScheme
         @Composable
         @ReadOnlyComposable

@@ -42,7 +42,7 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.domain.CalendarDay
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
@@ -179,7 +179,7 @@ private fun CalendarSectionHeader(date: LocalDate?) {
     }
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Text(text = headerText, style = ShikimoriTheme.typography.titleMedium)
+        Text(text = headerText, style = SeanimeTheme.typography.titleMedium)
     }
 }
 
@@ -229,7 +229,7 @@ class CalendarPreviewProvider : PreviewParameterProvider<CalendarItem> {
 @Preview
 @Composable
 fun CalendarSectionPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             CalendarSection(
                 modifier = Modifier.width(400.dp),
@@ -248,7 +248,7 @@ fun CalendarSectionPreview() {
 @Preview
 @Composable
 fun CalendarLoadingPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             CalendarLoading(modifier = Modifier.fillMaxSize())
         }

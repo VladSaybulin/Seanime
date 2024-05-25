@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import ru.vladsaybulin.core.designsystem.R
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -177,7 +177,7 @@ private fun ExpandableTextLayout(
     val scrimOpacity by transition.animateFloat(label = "Scrim") { if (it) 0f else 1f }
     val arrowAnimationProgress by transition.animateFloat(label = "Arrow") { if (it) 1f else 0f }
 
-    val scrimColor = ShikimoriTheme.colorScheme.surface.copy(alpha = scrimOpacity)
+    val scrimColor = SeanimeTheme.colorScheme.surface.copy(alpha = scrimOpacity)
     
     Layout(
         modifier = modifier,
@@ -253,7 +253,7 @@ enum class ExpandableTextLayoutId {
 @Composable
 @Preview
 fun ShikimoriExpandableTextPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         Surface {
             var expanded by remember { mutableStateOf(false) }
 

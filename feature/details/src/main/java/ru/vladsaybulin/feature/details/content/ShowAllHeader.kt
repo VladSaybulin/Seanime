@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.feature.details.R
 
 @Composable
@@ -25,7 +25,7 @@ fun ShowAllHeaderText(
     ) {
         Text(headerText)
         if (shouldShownShowAll) {
-            Text(showAllText, color = ShikimoriTheme.colorScheme.primary)
+            Text(showAllText, color = SeanimeTheme.colorScheme.primary)
         }
 
     }

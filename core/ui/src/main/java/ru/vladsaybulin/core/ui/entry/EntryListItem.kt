@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import ru.vladsaybulin.core.designsystem.theme.ShikimoriTheme
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.UserRateStatusBadge
 import ru.vladsaybulin.core.ui.UserRateStatusBadgeDefaults
@@ -57,13 +57,13 @@ fun EntryListItem(
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
     contentPadding: PaddingValues = EntryListDefaults.ContentPadding,
-    containerColor: Color = ShikimoriTheme.colorScheme.surface,
-    contentColor: Color = ShikimoriTheme.colorScheme.onSurface,
+    containerColor: Color = SeanimeTheme.colorScheme.surface,
+    contentColor: Color = SeanimeTheme.colorScheme.onSurface,
     border: BorderStroke? = null,
-    containerShape: Shape = ShikimoriTheme.shapes.large,
+    containerShape: Shape = SeanimeTheme.shapes.large,
     imageIgnoresPadding: Boolean = false,
     imageWidth: Dp = EntryListDefaults.ImageWidth,
-    imageShape: CornerBasedShape = ShikimoriTheme.shapes.medium,
+    imageShape: CornerBasedShape = SeanimeTheme.shapes.medium,
     metadata: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     Surface(
@@ -95,7 +95,7 @@ fun EntryListItem(
                         .layoutId(EntryListItemLayoutId.UserRateStatus)
                 )
                 if (metadata != null) {
-                    ProvideTextStyle(value = ShikimoriTheme.typography.bodySmall) {
+                    ProvideTextStyle(value = SeanimeTheme.typography.bodySmall) {
                         Column(
                             modifier = Modifier.layoutId(EntryListItemLayoutId.Metadata),
                             content = metadata
@@ -111,7 +111,7 @@ fun EntryListItem(
 private fun EntryListItemName(name: String) {
     Text(
         text = name,
-        style = ShikimoriTheme.typography.titleMedium,
+        style = SeanimeTheme.typography.titleMedium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = Modifier.layoutId(EntryListItemLayoutId.Name)
@@ -229,7 +229,7 @@ private val SpaceBetweenNameAndDetailsContent = 2.dp
 @Composable
 @Preview
 fun EntryListItemPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryListItem(
             name = "Name",
             imageUrl = null,
@@ -241,7 +241,7 @@ fun EntryListItemPreview() {
 @Composable
 @Preview
 fun EntryListitemWithUserRateStatusPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryListItem(
             name = "Name",
             imageUrl = null,
@@ -254,7 +254,7 @@ fun EntryListitemWithUserRateStatusPreview() {
 @Composable
 @Preview
 fun EntryListItemWithDetailsContentPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryListItem(
             name = "Name",
             imageUrl = null,
@@ -273,15 +273,15 @@ fun EntryListItemWithDetailsContentPreview() {
 @Composable
 @Preview
 fun EntryListItemWithBorderAndImageIgnoresPaddingPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryListItem(
             name = "Name",
             imageUrl = null,
             onClick = {},
             contentPadding = PaddingValues(8.dp),
-            border = BorderStroke(1.dp, ShikimoriTheme.colorScheme.outlineVariant),
-            containerShape = ShikimoriTheme.shapes.large,
-            imageShape = ShikimoriTheme.shapes.large,
+            border = BorderStroke(1.dp, SeanimeTheme.colorScheme.outlineVariant),
+            containerShape = SeanimeTheme.shapes.large,
+            imageShape = SeanimeTheme.shapes.large,
             imageIgnoresPadding = true
         )
     }
@@ -290,15 +290,15 @@ fun EntryListItemWithBorderAndImageIgnoresPaddingPreview() {
 @Composable
 @Preview
 fun EntryListItemWithBorderAndImageIgnoresPaddingAndDetailsContentPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryListItem(
             name = "Name",
             imageUrl = null,
             onClick = {},
             contentPadding = PaddingValues(8.dp),
-            border = BorderStroke(1.dp, ShikimoriTheme.colorScheme.outlineVariant),
-            containerShape = ShikimoriTheme.shapes.large,
-            imageShape = ShikimoriTheme.shapes.large,
+            border = BorderStroke(1.dp, SeanimeTheme.colorScheme.outlineVariant),
+            containerShape = SeanimeTheme.shapes.large,
+            imageShape = SeanimeTheme.shapes.large,
             imageIgnoresPadding = true,
             metadata = {
                 Box(
@@ -314,15 +314,15 @@ fun EntryListItemWithBorderAndImageIgnoresPaddingAndDetailsContentPreview() {
 @Composable
 @Preview
 fun EntryListItemWithLongNamePaddingPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryListItem(
             name = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
             imageUrl = null,
             onClick = {},
             contentPadding = PaddingValues(8.dp),
-            border = BorderStroke(1.dp, ShikimoriTheme.colorScheme.outlineVariant),
-            containerShape = ShikimoriTheme.shapes.large,
-            imageShape = ShikimoriTheme.shapes.large,
+            border = BorderStroke(1.dp, SeanimeTheme.colorScheme.outlineVariant),
+            containerShape = SeanimeTheme.shapes.large,
+            imageShape = SeanimeTheme.shapes.large,
             imageIgnoresPadding = false
         )
     }
@@ -331,15 +331,15 @@ fun EntryListItemWithLongNamePaddingPreview() {
 @Composable
 @Preview
 fun EntryListItemWithLongNamePaddingAndDetailsContentPreview() {
-    ShikimoriTheme {
+    SeanimeTheme {
         EntryListItem(
             name = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
             imageUrl = null,
             onClick = {},
             contentPadding = PaddingValues(8.dp),
-            border = BorderStroke(1.dp, ShikimoriTheme.colorScheme.outlineVariant),
-            containerShape = ShikimoriTheme.shapes.large,
-            imageShape = ShikimoriTheme.shapes.large,
+            border = BorderStroke(1.dp, SeanimeTheme.colorScheme.outlineVariant),
+            containerShape = SeanimeTheme.shapes.large,
+            imageShape = SeanimeTheme.shapes.large,
             imageIgnoresPadding = false,
             metadata = {
                 Box(
