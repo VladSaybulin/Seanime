@@ -80,7 +80,6 @@ private fun ImageContent(
         HorizontalPager(
             state = pagerState,
             pageSpacing = 4.dp,
-            beyondBoundsPageCount = 0,
             modifier = Modifier.fillMaxSize()
         ) { index ->
             ZoomableImage(

@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -33,15 +34,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
+import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
-import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.anime.Video
 import kotlin.math.min
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VideosCarousel(
     videos: List<Video>,
@@ -75,7 +75,7 @@ fun VideosCarousel(
                 flingBehavior = rememberSnapFlingBehavior(
                     SnapLayoutInfoProvider(
                         lazyListState = listState,
-                        positionInLayout = { _, _, _, _, _ -> 0 },
+                        snapPosition = SnapPosition.Start,
                     )
                 ),
             ) {
