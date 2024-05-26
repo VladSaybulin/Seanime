@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
+import ru.vladsaybulin.feature.authors.navigation.authorsScreen
 import ru.vladsaybulin.feature.calendar.navigation.calendarGraph
 import ru.vladsaybulin.feature.character.navigation.characterDetailsScreen
 import ru.vladsaybulin.feature.details.navigation.detailsScreen
@@ -19,8 +20,6 @@ fun SeanimeNavHost(
     seanimeAppState: SeanimeAppState,
     startDestination: String = TopLevelDestination.HOME.graphRoute
 ) {
-    val navController = seanimeAppState.navController
-
     val nested: NavGraphBuilder.(TopLevelDestination) -> Unit = {
         nestedScreens(
             topLevelDestination = it,
@@ -69,4 +68,6 @@ private fun NavGraphBuilder.nestedScreens(
     if (topLevelDestination != TopLevelDestination.LIST) {
         listScreen(navigator = navigator)
     }
+
+    authorsScreen(navigator = navigator)
 }

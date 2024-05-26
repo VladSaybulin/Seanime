@@ -44,11 +44,13 @@ import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
 import ru.vladsaybulin.database.models.lastrequest.LastRequestType
+import ru.vladsaybulin.database.models.manga.PopulatedMangaAuthor
 import ru.vladsaybulin.database.models.manga.asExternalModel
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.manga.MangaWithUserRate
+import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.MangaDataSource
 import ru.vladsaybulin.network.datasource.UserRateDataSource
@@ -106,6 +108,10 @@ class MangaRepository @Inject constructor(
         flowOf {
             mangaDataSource.getSimilarManga(mangaId).map { it.asExternalModel() }
         }.flowOn(ioDispatcher)
+
+    fun getAllMangaAuthors(mangaId: Long): Flow<List<PersonWithRoles>> =
+        mangaDetailsDao.getAllMangaAuthors(mangaId)
+            .map { it.map(PopulatedMangaAuthor::asExternalModel) }
 
     suspend fun refreshMangaDetails(mangaId: Long) {
         val mangaDetails = mangaDataSource.getMangaDetails(mangaId)

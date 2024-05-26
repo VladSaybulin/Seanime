@@ -2,12 +2,14 @@ package ru.vladsaybulin.seanime.navigation
 
 import androidx.navigation.NavController
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
+import ru.vladsaybulin.feature.authors.navigation.navigateToAuthors
 import ru.vladsaybulin.feature.character.navigation.navigateToCharacter
 import ru.vladsaybulin.feature.details.navigation.navigateToAnimeDetails
 import ru.vladsaybulin.feature.details.navigation.navigateToMangaDetails
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchByGenre
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchByStudioOrPublisher
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchOngoingAnimes
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.search.SearchType
@@ -75,4 +77,9 @@ class SeanimeNavigatorImpl(
     override fun auth() {
         onAuth()
     }
+
+    override fun authors(entryType: EntryType, entryId: Long) {
+        navController.navigateToAuthors(entryType, entryId)
+    }
+
 }

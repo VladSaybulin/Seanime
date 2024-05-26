@@ -40,6 +40,8 @@ interface SeanimeNavigator {
     fun news()
 
     fun auth()
+
+    fun authors(entryType: EntryType, entryId: Long)
 }
 
 fun SeanimeNavigator.animeDetails(anime: Anime) {

@@ -46,7 +46,6 @@ import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.annotatedtext.SeanimeExpandableText
 import ru.vladsaybulin.core.ui.annotatedtext.onSeanimeTextLinkClickAdapter
-import ru.vladsaybulin.feature.details.content.AuthorsBottomSheet
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
 import ru.vladsaybulin.feature.details.content.CharactersCarousel
@@ -160,7 +159,6 @@ private fun DetailsContent(
     var showAllCharacters by rememberSaveable { mutableStateOf(false) }
     var showAllRelatedEntries by rememberSaveable { mutableStateOf(false) }
     var showAllSimilarEntries by rememberSaveable { mutableStateOf(false) }
-    var showAllAuthors by rememberSaveable { mutableStateOf(false) }
     var showAllScreenshots by rememberSaveable { mutableStateOf(false) }
 
     var showUserRateStatusSelection by remember { mutableStateOf(false) }
@@ -261,7 +259,7 @@ private fun DetailsContent(
                     AuthorsCarousel(
                         authors = state.authors,
                         onAuthorClick = { navigator.personDetails(it) },
-                        onShowAllClick = { showAllAuthors = true }
+                        onShowAllClick = { navigator.authors(state.entryType, state.entryId) }
                     )
                 }
             }
@@ -344,14 +342,6 @@ private fun DetailsContent(
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
             PullToRefreshContainer(state = pullToRefreshState)
         }
-    }
-
-    if (state.authors != null && showAllAuthors) {
-        AuthorsBottomSheet(
-            authors = state.authors,
-            onAuthorClick = navigator::personDetails,
-            onDismissRequest = { showAllAuthors = false }
-        )
     }
 
     if (state.characters != null && showAllCharacters) {

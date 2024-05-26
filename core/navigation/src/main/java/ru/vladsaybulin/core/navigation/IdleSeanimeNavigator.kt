@@ -1,5 +1,6 @@
 package ru.vladsaybulin.core.navigation
 
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.search.SearchType
@@ -50,5 +51,8 @@ object IdleSeanimeNavigator : SeanimeNavigator {
     }
 
     override fun auth() {
+    }
+
+    override fun authors(entryType: EntryType, entryId: Long) {
     }
 }

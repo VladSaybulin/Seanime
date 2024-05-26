@@ -38,6 +38,7 @@
             <option value="$PROJECT_DIR$/core/textprocessor" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/authors" />
             <option value="$PROJECT_DIR$/feature/calendar" />
             <option value="$PROJECT_DIR$/feature/character" />
             <option value="$PROJECT_DIR$/feature/details" />

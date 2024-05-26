@@ -47,6 +47,7 @@ import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
+import ru.vladsaybulin.database.models.anime.PopulatedAnimeAuthor
 import ru.vladsaybulin.database.models.anime.asExternalModel
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
 import ru.vladsaybulin.database.models.lastrequest.LastRequestType
@@ -55,6 +56,7 @@ import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.AnimeDataSource
@@ -123,6 +125,11 @@ class AnimeRepository @Inject constructor(
         flowOf {
             animeDataSource.getSimilarAnimes(animeId).map { it.asExternalModel() }
         }.flowOn(ioDispatcher)
+
+    fun getAllAnimeAuthors(animeId: Long): Flow<List<PersonWithRoles>> =
+        animeDetailsDao.getAllAnimeAuthors(animeId)
+            .map { it.map(PopulatedAnimeAuthor::asExternalModel) }
+
 
     suspend fun refreshAnimeDetails(animeId: Long) {
         val animeDetails = animeDataSource.getAnimeDetails(animeId)
