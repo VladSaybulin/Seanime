@@ -50,6 +50,8 @@ fun SeanimeNavHost(
             navigator = seanimeAppState.navigator,
             nested = { nested(TopLevelDestination.LIST) },
         )
+
+        detailsScreen(navigator = seanimeAppState.navigator)
     }
 }
 
@@ -57,8 +59,6 @@ private fun NavGraphBuilder.nestedScreens(
     topLevelDestination: TopLevelDestination,
     navigator: SeanimeNavigator
 ) {
-    detailsScreen(navigator = navigator)
-
     characterDetailsScreen(navigator = navigator)
 
     if (topLevelDestination != TopLevelDestination.SEARCH) {
