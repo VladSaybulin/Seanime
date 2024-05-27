@@ -44,10 +44,10 @@ import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.domain.CalendarDay
-import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
+import ru.vladsaybulin.feature.calendar.navigation.CalendarNavEvents
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
 import java.time.format.DateTimeFormatter
@@ -55,14 +55,14 @@ import java.time.format.FormatStyle
 
 @Composable
 fun CalendarRoute(
-    navigator: SeanimeNavigator,
+    navEvents: CalendarNavEvents,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     CalendarScreen(
         uiState = uiState,
-        onAnimeClick = navigator::animeDetails,
+        onAnimeClick = navEvents.navigateToAnimeDetails,
         onRefresh = viewModel::forceRefresh
     )
 }

@@ -24,13 +24,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
-import ru.vladsaybulin.core.navigation.SeanimeNavigator
+import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.feature.authors.navigation.TitleAuthorsNavEvents
 import ru.vladsaybulin.model.person.PersonWithRoles
 
 @Composable
-fun AuthorsRoute(
-    navigator: SeanimeNavigator,
+fun AuthorsScreen(
+    navEvents: TitleAuthorsNavEvents,
     viewModel: AuthorsViewModel = hiltViewModel()
 ) {
 
@@ -38,8 +38,8 @@ fun AuthorsRoute(
 
     AuthorsScreen(
         uiState = uiState,
-        onAuthorClick = { navigator.personDetails(it.person.id) },
-        onBack = { navigator.back() }
+        onAuthorClick = { navEvents.navigateToPerson(it.person.id) },
+        onBack = navEvents.navigateUp
     )
 }
 
@@ -92,7 +92,7 @@ private fun AuthorsTopBar(
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
-                    imageVector = SeanimeIcons.ArrowBack,
+                    imageVector = ShikimoriIcons.ArrowBack,
                     contentDescription = stringResource(id = R.string.feature_authors_back_icon)
                 )
             }

@@ -40,22 +40,21 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.navigation.IdleSeanimeNavigator
-import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.core.ui.text.SeanimeExpandableText
 import ru.vladsaybulin.core.ui.text.onSeanimeTextLinkClickAdapter
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.core.ui.manga.MangaCarousel
+import ru.vladsaybulin.feature.character.navigation.CharacterDetailsNavEvents
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterDetails
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.core.ui.R as coreUiR
 
 @Composable
-fun CharacterDetailsRoute(
-    navigator: SeanimeNavigator,
+fun CharacterDetailsScreen(
+    navEvents: CharacterDetailsNavEvents,
     viewModel: CharacterDetailsViewModel = hiltViewModel()
 ) {
 
@@ -63,7 +62,12 @@ fun CharacterDetailsRoute(
 
     CharacterDetailsScreen(
         uiState = uiState,
-        navigator = navigator
+        onAnimeClick = navEvents.navigateToAnimeDetails,
+        onMangaClick = navEvents.navigateToMangaDetails,
+        onCharacterClick = navEvents.navigateToCharacterDetails,
+        onPersonClick = navEvents.navigateToPersonDetails,
+        onUrlClick = navEvents.navigateToUrl,
+        onBack = navEvents.navigateUp
     )
 
 }
@@ -71,7 +75,12 @@ fun CharacterDetailsRoute(
 @Composable
 fun CharacterDetailsScreen(
     uiState: CharacterDetailsUiState,
-    navigator: SeanimeNavigator,
+    onAnimeClick: (id: Long) -> Unit,
+    onMangaClick: (id: Long) -> Unit,
+    onCharacterClick: (id: Long) -> Unit,
+    onPersonClick: (id: Long) -> Unit,
+    onUrlClick: (String) -> Unit,
+    onBack: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -84,7 +93,12 @@ fun CharacterDetailsScreen(
             CharacterDetailsUiState.Loading -> Unit
             is CharacterDetailsUiState.Success -> CharacterDetailsContent(
                 uiState = uiState,
-                navigator = navigator
+                onAnimeClick = onAnimeClick,
+                onMangaClick = onMangaClick,
+                onCharacterClick = onCharacterClick,
+                onPersonClick = onPersonClick,
+                onUrlClick = onUrlClick,
+                onBack = onBack
             )
         }
     }
@@ -93,7 +107,12 @@ fun CharacterDetailsScreen(
 @Composable
 fun CharacterDetailsContent(
     uiState: CharacterDetailsUiState.Success,
-    navigator: SeanimeNavigator,
+    onAnimeClick: (id: Long) -> Unit,
+    onMangaClick: (id: Long) -> Unit,
+    onCharacterClick: (id: Long) -> Unit,
+    onPersonClick: (id: Long) -> Unit,
+    onUrlClick: (String) -> Unit,
+    onBack: () -> Unit
 ) {
     val details = uiState.characterDetails
     LazyColumn(
@@ -118,7 +137,11 @@ fun CharacterDetailsContent(
             item(key = CharacterLazyListItemKey.Description) {
                 CharacterDescription(
                     description = details.description!!,
-                    navigator = navigator
+                    onAnimeClick = onAnimeClick,
+                    onMangaClick = onMangaClick,
+                    onCharacterClick = onCharacterClick,
+                    onPersonClick = onPersonClick,
+                    onUrlClick = onUrlClick
                 )
             }
         }
@@ -153,9 +176,7 @@ fun CharacterDetailsContent(
                     )
                     AnimeCarousel(
                         anime = details.animes,
-                        onClick = {
-                            navigator.animeDetails(it.id)
-                        }
+                        onClick = { onAnimeClick(it.id) }
                     )
                 }
             }
@@ -171,9 +192,7 @@ fun CharacterDetailsContent(
                     )
                     MangaCarousel(
                         manga = details.mangas,
-                        onClick = {
-                            navigator.mangaDetails(it.id)
-                        }
+                        onClick = { onMangaClick(it.id) }
                     )
                 }
             }
@@ -184,18 +203,22 @@ fun CharacterDetailsContent(
 @Composable
 fun CharacterDescription(
     description: SeanimeText,
-    navigator: SeanimeNavigator,
+    onAnimeClick: (id: Long) -> Unit,
+    onMangaClick: (id: Long) -> Unit,
+    onCharacterClick: (id: Long) -> Unit,
+    onPersonClick: (id: Long) -> Unit,
+    onUrlClick: (String) -> Unit,
 ) {
     SeanimeExpandableText(
         text = description,
         style = SeanimeTheme.typography.bodyMedium,
         modifier = Modifier.padding(16.dp),
         onLinkClick = onSeanimeTextLinkClickAdapter(
-            onAnimeClick = { navigator.animeDetails(it) },
-            onMangaClick = { navigator.mangaDetails(it) },
-            onCharacterClick = { navigator.characterDetails(it) },
-            onPersonClick = { navigator.personDetails(it) },
-            onUrlClick = { navigator.externalLink(it) }
+            onAnimeClick = onAnimeClick,
+            onMangaClick = onMangaClick,
+            onCharacterClick = onCharacterClick,
+            onPersonClick = onPersonClick,
+            onUrlClick = onUrlClick
         )
     )
 }
@@ -326,7 +349,12 @@ fun CharacterDetailsContentPreview() {
                         mangas = emptyList()
                     )
                 ),
-                navigator = IdleSeanimeNavigator
+                onAnimeClick = { },
+                onMangaClick = { },
+                onCharacterClick = { },
+                onPersonClick = { },
+                onUrlClick = { },
+                onBack = { }
             )
         }
     }

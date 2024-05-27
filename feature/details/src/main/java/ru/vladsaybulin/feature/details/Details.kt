@@ -34,13 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.navigation.NavigationEvent
-import ru.vladsaybulin.core.navigation.SeanimeNavigator
-import ru.vladsaybulin.core.navigation.animeDetails
-import ru.vladsaybulin.core.navigation.mangaDetails
-import ru.vladsaybulin.core.navigation.searchByGenre
-import ru.vladsaybulin.core.navigation.searchByPublisher
-import ru.vladsaybulin.core.navigation.searchByStudio
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.R
@@ -66,15 +59,16 @@ import ru.vladsaybulin.feature.details.content.relatedItems
 import ru.vladsaybulin.feature.details.content.score
 import ru.vladsaybulin.feature.details.content.similarAnimeCarousel
 import ru.vladsaybulin.feature.details.content.userRateStatusDiagram
-import ru.vladsaybulin.feature.details.model.getUserRateWithEntry
+import ru.vladsaybulin.feature.details.navigation.TitleDetailsNavEvents
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.common.EntryStatus.Anons
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.manga.ranobeKind
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
-fun DetailsRoute(
-    navigator: SeanimeNavigator,
+fun TitleDetailsScreen(
+    navEvents: TitleDetailsNavEvents,
     viewModel: DetailsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -92,7 +86,7 @@ fun DetailsRoute(
         onRetry = viewModel::onRetry,
         refresh = viewModel::refresh,
         onCreateUserRate = viewModel::createUserRate,
-        navigator = navigator
+        navEvents = navEvents
     )
 }
 
@@ -104,7 +98,7 @@ fun DetailsScreen(
     onRetry: () -> Unit,
     refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
-    navigator: SeanimeNavigator,
+    navEvents: TitleDetailsNavEvents,
 ) {
     Box(
         modifier = Modifier
@@ -133,7 +127,7 @@ fun DetailsScreen(
                 isAuthorized = isAuthorized,
                 refresh = refresh,
                 onCreateUserRate = onCreateUserRate,
-                navigator = navigator
+                navEvents = navEvents
             )
         }
     }
@@ -154,7 +148,7 @@ private fun DetailsContent(
     isAuthorized: Boolean,
     refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
-    navigator: SeanimeNavigator,
+    navEvents: TitleDetailsNavEvents
 ) {
     var showAllCharacters by rememberSaveable { mutableStateOf(false) }
     var showAllRelatedEntries by rememberSaveable { mutableStateOf(false) }
@@ -183,7 +177,7 @@ private fun DetailsContent(
             DetailsTopBar(
                 visibleTopBar = visibleTopBar,
                 title = state.run { russianName ?: name },
-                onBackClick = { navigator.back() },
+                onBackClick = navEvents.navigateUp,
                 scrollBehavior = topAppBarScrollBehavior
             )
         },
@@ -194,13 +188,10 @@ private fun DetailsContent(
                 expanded = expandedFab,
                 onClick = {
                     when {
-                        !isAuthorized -> navigator.requireAuthDialog()
-
-                        state.userRate != null -> navigator.userRate(state.getUserRateWithEntry())
-
-                        enabledAutocorrect && state.status == Anons -> onCreateUserRate(
-                            UserRateStatus.Planned
-                        )
+                        !isAuthorized -> navEvents.navigateToAuthorization()
+                        state.userRate != null -> navEvents.showUserRateEditor()
+                        enabledAutocorrect && state.status == Anons ->
+                            onCreateUserRate(UserRateStatus.Planned)
 
                         else -> showUserRateStatusSelection = true
                     }
@@ -218,7 +209,7 @@ private fun DetailsContent(
                 poster = state.poster,
                 topSpace = scaffoldPadding.calculateTopPadding(),
                 onPosterClick = {
-                    state.poster?.let { navigator.imageView(listOf(it), 0) }
+                    state.poster?.let { navEvents.showFullScreenImage(listOf(it), 0) }
                 }
             )
 
@@ -230,16 +221,33 @@ private fun DetailsContent(
             if (state.entryType == EntryType.Manga) {
                 mangaInformation(
                     state = state,
-                    onSearchByGenre = { navigator.searchByGenre(state.searchType(), it) },
-                    onSearchByPublisher = { navigator.searchByPublisher(state.searchType(), it) }
+                    onSearchByGenre = {
+                        navEvents.navigateToSearchByGenre(
+                            state.searchType(),
+                            it.kind,
+                            it.id
+                        )
+                    },
+                    onSearchByPublisher = {
+                        navEvents.navigateToSearchMangaOrRanobeByPublisher(
+                            state.mangaKind !in ranobeKind,
+                            it.id
+                        )
+                    }
                 )
             }
 
             if (state.entryType == EntryType.Anime) {
                 animeInformation(
                     state = state,
-                    onSearchByGenre = { navigator.searchByGenre(state.searchType(), it) },
-                    onSearchByStudio = { navigator.searchByStudio(it) }
+                    onSearchByGenre = {
+                        navEvents.navigateToSearchByGenre(
+                            state.searchType(),
+                            it.kind,
+                            it.id
+                        )
+                    },
+                    onSearchByStudio = { navEvents.navigateToSearchAnimeByStudio(it.id) }
                 )
             }
 
@@ -249,7 +257,11 @@ private fun DetailsContent(
                 item(key = "description") {
                     EntryDetailsDescription(
                         description = state.description,
-                        onNavigationEvent = { }
+                        onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it) },
+                        onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it) },
+                        onCharacterClick = { navEvents.navigateToCharacterDetails(it) },
+                        onPersonClick = { navEvents.navigateToPersonDetails(it) },
+                        onUrlClick = { navEvents.navigateToUrl(it) }
                     )
                 }
             }
@@ -258,8 +270,13 @@ private fun DetailsContent(
                 item(key = "authors") {
                     AuthorsCarousel(
                         authors = state.authors,
-                        onAuthorClick = { navigator.personDetails(it) },
-                        onShowAllClick = { navigator.authors(state.entryType, state.entryId) }
+                        onAuthorClick = navEvents.navigateToPersonDetails,
+                        onShowAllClick = {
+                            navEvents.navigateToTitleAuthors(
+                                state.entryType,
+                                state.entryId
+                            )
+                        }
                     )
                 }
             }
@@ -275,8 +292,8 @@ private fun DetailsContent(
             if (!state.related.isNullOrEmpty()) {
                 relatedItems(
                     relatedEntries = state.related,
-                    onAnimeClick = navigator::animeDetails,
-                    onMangaClick = navigator::mangaDetails,
+                    onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
+                    onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
                     onShowAllClick = { showAllRelatedEntries = true }
                 )
             }
@@ -288,7 +305,7 @@ private fun DetailsContent(
                         onShowAllClick = {
                             showAllCharacters = true
                         },
-                        onCharacterClick = navigator::characterDetails
+                        onCharacterClick = navEvents.navigateToCharacterDetails
                     )
                 }
             }
@@ -298,7 +315,10 @@ private fun DetailsContent(
                     ScreenshotsCarousel(
                         screenshots = state.screenshots,
                         onScreenshotClick = {
-                            navigator.imageView(state.screenshots, it)
+                            navEvents.showFullScreenImage(
+                                state.screenshots,
+                                it
+                            )
                         },
                         onShowAllClick = { showAllScreenshots = true }
                     )
@@ -319,7 +339,7 @@ private fun DetailsContent(
                 similarAnimeCarousel(
                     animes = state.similarAnime,
                     onShowAllClick = { showAllSimilarEntries = true },
-                    onAnimeClick = navigator::animeDetails
+                    onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) }
                 )
             }
 
@@ -327,7 +347,7 @@ private fun DetailsContent(
                 mangaSimilarCarousel(
                     mangas = state.similarManga,
                     onShowAllClick = { showAllSimilarEntries = true },
-                    onMangaClick = navigator::mangaDetails
+                    onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) }
                 )
             }
         }
@@ -347,7 +367,7 @@ private fun DetailsContent(
     if (state.characters != null && showAllCharacters) {
         CharactersBottomSheet(
             allCharacters = state.characters,
-            onCharacterClick = navigator::characterDetails,
+            onCharacterClick = navEvents.navigateToCharacterDetails,
             onDismissRequest = { showAllCharacters = false }
         )
     }
@@ -355,8 +375,8 @@ private fun DetailsContent(
     if (state.related != null && showAllRelatedEntries) {
         RelatedBottomSheet(
             related = state.related,
-            onAnimeClick = navigator::animeDetails,
-            onMangaClick = navigator::mangaDetails,
+            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
+            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
             onDismissRequest = { showAllRelatedEntries = false }
         )
     }
@@ -364,7 +384,12 @@ private fun DetailsContent(
     if (state.screenshots != null && showAllScreenshots) {
         ScreenshotsBottomSheet(
             screenshots = state.screenshots,
-            onScreenshotClick = { navigator.imageView(state.screenshots, it) },
+            onScreenshotClick = {
+                navEvents.showFullScreenImage(
+                    state.screenshots,
+                    it
+                )
+            },
             onDismissRequest = { showAllScreenshots = false }
         )
     }
@@ -373,13 +398,13 @@ private fun DetailsContent(
         when {
             !state.similarAnime.isNullOrEmpty() -> SimilarAnimeBottomSheet(
                 animes = state.similarAnime,
-                onAnimeClick = navigator::animeDetails,
+                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
                 onDismissRequest = { showAllSimilarEntries = false }
             )
 
             !state.similarManga.isNullOrEmpty() -> SimilarMangaBottomSheet(
                 mangas = state.similarManga,
-                onMangaClick = navigator::mangaDetails,
+                onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
                 onDismissRequest = { showAllSimilarEntries = false }
             )
         }
@@ -404,19 +429,22 @@ private fun DetailsContent(
 @Composable
 private fun EntryDetailsDescription(
     description: SeanimeText,
-    onNavigationEvent: (NavigationEvent) -> Unit,
+    onAnimeClick: (Long) -> Unit?,
+    onMangaClick: (Long) -> Unit?,
+    onCharacterClick: (Long) -> Unit?,
+    onPersonClick: (Long) -> Unit?,
+    onUrlClick: (String) -> Unit?,
 ) {
     SeanimeExpandableText(
         text = description,
         style = SeanimeTheme.typography.bodyMedium,
         modifier = Modifier.padding(HorizontalPadding),
         onLinkClick = onSeanimeTextLinkClickAdapter(
-            onAnimeClick = { NavigationEvent.EntryDetails(EntryType.Anime, it) },
-            onMangaClick = { NavigationEvent.EntryDetails(EntryType.Manga, it) },
-            onCharacterClick = { NavigationEvent.CharacterDetails(it) },
-            onPersonClick = { null },
-            onUrlClick = { null },
-            onAction = onNavigationEvent
+            onAnimeClick = onAnimeClick,
+            onMangaClick = onMangaClick,
+            onCharacterClick = onCharacterClick,
+            onPersonClick = onPersonClick,
+            onUrlClick = onUrlClick,
         )
     )
 }

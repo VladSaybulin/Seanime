@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.seanime.android.hilt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -72,9 +73,9 @@ dependencies {
     implementation(project(":feature:details"))
     implementation(project(":feature:home"))
     implementation(project(":feature:list"))
-    implementation(project(":feature:imageview"))
+    //implementation(project(":feature:imageview"))
     implementation(project(":feature:search"))
-    implementation(project(":feature:userrate"))
+    //implementation(project(":feature:userrate"))
     implementation(project(":feature:character"))
 
     implementation(libs.androidx.activity.compose)
@@ -90,5 +91,7 @@ dependencies {
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.analytics)
     implementation(libs.google.firebase.crashlytics)
+
+    implementation(libs.kotlinx.serialization.json)
 
 }

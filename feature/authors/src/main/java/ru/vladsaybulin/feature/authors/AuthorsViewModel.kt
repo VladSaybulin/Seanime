@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.core.domain.GetAuthorsUseCase
-import ru.vladsaybulin.feature.authors.navigation.AuthorsArgs
+import ru.vladsaybulin.feature.authors.navigation.toTitleAuthorsArgs
 import ru.vladsaybulin.model.person.PersonWithRoles
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class AuthorsViewModel @Inject constructor(
     getAuthorsUseCase: GetAuthorsUseCase
 ) : ViewModel() {
 
-    private val args = AuthorsArgs(savedStateHandle)
+    private val args = savedStateHandle.toTitleAuthorsArgs()
 
     val uiState = getAuthorsUseCase(args.entryType, args.entryId)
         .map { AuthorsUiState.Success(it) }

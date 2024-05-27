@@ -10,14 +10,12 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.core.domain.GetAnimeDetailsUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
-import ru.vladsaybulin.core.domain.GetMangaDetailsUseCase
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.data.repository.UserRateRepository
-import ru.vladsaybulin.feature.details.navigation.EntryDetailsArgs
+import ru.vladsaybulin.feature.details.navigation.toTitleDetailsScreenArgs
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
@@ -32,16 +30,14 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    getAnimeDetailsUseCase: Lazy<GetAnimeDetailsUseCase>,
     private val animeRepository: Lazy<AnimeRepository>,
-    getMangaDetailsUseCase: Lazy<GetMangaDetailsUseCase>,
     private val mangaRepository: Lazy<MangaRepository>,
     private val userRateRepository: Lazy<UserRateRepository>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val args = EntryDetailsArgs(savedStateHandle)
+    private val args = savedStateHandle.toTitleDetailsScreenArgs()
 
     val enabledAutocorrectStatus = getEnableAutocorrectUserRateUseCase()
         .stateIn(
@@ -50,24 +46,24 @@ class DetailsViewModel @Inject constructor(
             initialValue = false
         )
 
-    val uiState = when (args.entryType) {
-        EntryType.Anime -> combine<AnimeDetails, List<Anime>, UserRate?, DetailsUiState>(
-            getAnimeDetailsUseCase.get().invoke(args.entryId),
-            animeRepository.get().getSimilarAnimes(args.entryId),
-            userRateRepository.get().getAnimeUserRate(args.entryId),
+    val uiState = when (args.titleType) {
+        EntryType.Anime ->  combine<AnimeDetails, List<Anime>, UserRate?, DetailsUiState>(
+            animeRepository.get().getAnimeDetails(args.titleId),
+            animeRepository.get().getSimilarAnimes(args.titleId),
+            animeRepository.get().getAnimeDetailsUserRate(args.titleId),
             ::successAnime
         )
-        EntryType.Manga -> combine<MangaDetails, List<Manga>, UserRate?, DetailsUiState>(
-            getMangaDetailsUseCase.get().invoke(args.entryId),
-            mangaRepository.get().getSimilarMangas(args.entryId),
-            userRateRepository.get().getMangaUserRate(args.entryId),
+        EntryType.Manga ->  combine<MangaDetails, List<Manga>, UserRate?, DetailsUiState>(
+            mangaRepository.get().getMangaDetails(args.titleId),
+            mangaRepository.get().getSimilarMangas(args.titleId),
+            mangaRepository.get().getMangaDetailsUserRate(args.titleId),
             ::successManga
         )
     }
         .catch { emit(DetailsUiState.Error(it)); it.printStackTrace() }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(),
             initialValue = DetailsUiState.Loading
         )
 
@@ -82,8 +78,8 @@ class DetailsViewModel @Inject constructor(
     fun createUserRate(status: UserRateStatus) {
         viewModelScope.launch {
             userRateRepository.get().createUserRate(
-                entryType = args.entryType,
-                entryId = args.entryId,
+                entryType = args.titleType,
+                entryId = args.titleId,
                 userRateValues = UserRateValues(status = status)
             )
         }
@@ -92,9 +88,9 @@ class DetailsViewModel @Inject constructor(
     fun isAuthorized() = authRepository.authState.value == ShikimoriAuthState.LOGGED_IN
 
     private suspend fun internalRefresh() {
-        when (args.entryType) {
-            EntryType.Anime -> animeRepository.get().refreshAnimeDetails(args.entryId)
-            EntryType.Manga -> mangaRepository.get().refreshMangaDetails(args.entryId)
+        when (args.titleType) {
+            EntryType.Anime -> animeRepository.get().refreshAnimeDetails(args.titleId)
+            EntryType.Manga -> mangaRepository.get().refreshMangaDetails(args.titleId)
         }
     }
 

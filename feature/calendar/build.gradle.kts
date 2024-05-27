@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.seanime.android.feature)
     alias(libs.plugins.seanime.android.library.compose)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -13,4 +14,5 @@ dependencies {
     implementation(project(":core:navigation"))
 
     implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.serialization.json)
 }

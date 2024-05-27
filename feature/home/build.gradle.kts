@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.seanime.android.feature)
     alias(libs.plugins.seanime.android.library.compose)
     alias(libs.plugins.seanime.android.hilt)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -16,4 +17,6 @@ dependencies {
 
     implementation(libs.coil.kt.compose)
     implementation(libs.primeTransformer)
+
+    implementation(libs.kotlinx.serialization.json)
 }

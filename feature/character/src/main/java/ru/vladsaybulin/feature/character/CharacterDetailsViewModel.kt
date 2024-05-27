@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.data.repository.CharacterRepository
+import ru.vladsaybulin.feature.character.navigation.toCharacterDetailsArgs
 import ru.vladsaybulin.model.character.CharacterDetails
 import javax.inject.Inject
 
@@ -18,9 +19,9 @@ class CharacterDetailsViewModel @Inject constructor(
     characterRepository: CharacterRepository,
 ): ViewModel() {
 
-    private val characterId: Long = checkNotNull(savedStateHandle["character_id"])
+    private val args = savedStateHandle.toCharacterDetailsArgs()
 
-    val uiState = characterRepository.getCharacterDetails(characterId)
+    val uiState = characterRepository.getCharacterDetails(args.characterId)
         .map<CharacterDetails, CharacterDetailsUiState> { CharacterDetailsUiState.Success(it) }
         .catch {
             emit(CharacterDetailsUiState.Error(it))

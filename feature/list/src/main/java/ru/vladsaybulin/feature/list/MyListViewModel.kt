@@ -14,11 +14,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import ru.vladsaybulin.core.domain.GetPagedUserRatesUseCase
 import ru.vladsaybulin.data.repository.AuthRepository
-import ru.vladsaybulin.feature.list.navigation.ListArgs
+import ru.vladsaybulin.feature.list.navigation.toListArgs
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.list.UserRateOrder
-import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
 
@@ -29,16 +27,14 @@ class MyListViewModel @Inject constructor(
     authRepository: AuthRepository,
 ) : ViewModel() {
 
-    private val args = ListArgs(savedStateHandle)
+    private val args = savedStateHandle.toListArgs()
 
     private val authState = authRepository.authState
 
     private val controlPanel = MutableStateFlow(
         ListControlPanelState(
-            entryType = args.entryType ?: EntryType.Anime,
-            userRateStatus = args.userRateStatus ?: UserRateStatus.Watching,
-            orderField = UserRateOrderField.CreatedAt,
-            order = UserRateOrder.Asc
+            entryType = args.titleType,
+            userRateStatus = args.status
         )
     )
 
@@ -46,13 +42,8 @@ class MyListViewModel @Inject constructor(
         if (currentAuthState == ShikimoriAuthState.LOGGED_OUT) {
             flowOf<ListScreenState>(ListScreenState.LoggedOut)
         } else {
-            val data = controlPanel.flatMapLatest { (type, status, orderField, order) ->
-                getPagedUserRatesUseCase(
-                    entryType = type,
-                    userRateStatus = status,
-                    orderField = orderField,
-                    order = order
-                ).cachedIn(viewModelScope)
+            val data = controlPanel.flatMapLatest { (type, status) ->
+                getPagedUserRatesUseCase(type, status).cachedIn(viewModelScope)
             }
             controlPanel.map { controlPanelState ->
                 ListScreenState.Success(
@@ -74,13 +65,5 @@ class MyListViewModel @Inject constructor(
 
     fun onUserRateStatusChanged(userRateStatus: UserRateStatus) {
         controlPanel.update { it.copy(userRateStatus = userRateStatus) }
-    }
-
-    fun onOrderFieldChange(orderField: UserRateOrderField) {
-        controlPanel.update { it.copy(orderField = orderField) }
-    }
-
-    fun onOrderChange(order: UserRateOrder) {
-        controlPanel.update { it.copy(order = order) }
     }
 }

@@ -49,9 +49,6 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.navigation.SeanimeNavigator
-import ru.vladsaybulin.core.navigation.animeDetails
-import ru.vladsaybulin.core.navigation.mangaDetails
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateGrid
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
@@ -63,6 +60,7 @@ import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.TargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.orderString
 import ru.vladsaybulin.data.model.RecentSearchQuery
+import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
 import ru.vladsaybulin.model.common.EntryStatus
@@ -72,8 +70,8 @@ import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
 
 @Composable
-fun SearchRoute(
-    navigator: SeanimeNavigator,
+fun SearchScreen(
+    navEvents: SearchNavEvents,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
 
@@ -92,8 +90,8 @@ fun SearchRoute(
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onSearchTriggered = viewModel::onSearchTriggered,
         onDeleteRecentSearchQuery = viewModel::onDeleteRecentSearchQuery,
-        onAnimeClick = navigator::animeDetails,
-        onMangaClick = navigator::mangaDetails
+        onAnimeClick = { navEvents.navigateToAnime(it.id) },
+        onMangaClick = { navEvents.navigateToManga(it.id) }
     )
 }
 

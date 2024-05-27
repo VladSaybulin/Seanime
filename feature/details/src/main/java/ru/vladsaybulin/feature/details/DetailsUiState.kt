@@ -3,8 +3,6 @@ package ru.vladsaybulin.feature.details
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.Instant
-import ru.vladsaybulin.core.navigation.args.ImageViewArgs
-import ru.vladsaybulin.core.navigation.args.SearchArgs
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.AnimeKind
@@ -18,7 +16,6 @@ import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.genre.Genre
-import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.manga.MangaKind
@@ -156,45 +153,6 @@ fun successManga(
         similarAnime = null
     )
 }
-
-internal fun DetailsUiState.Success.publisherSearchParams(publisherId: Long) =
-    SearchArgs(
-        searchType = if (entryType == EntryType.Anime) SearchType.Anime else SearchType.Manga,
-        publisherId = publisherId
-    )
-
-internal fun DetailsUiState.Success.studioSearchParams(studioId: Long) =
-    SearchArgs(
-        searchType = if (entryType == EntryType.Anime) SearchType.Anime else SearchType.Manga,
-        studioId = studioId
-    )
-
-internal fun DetailsUiState.Success.genreSearchParams(genre: Genre) =
-    SearchArgs(
-        searchType = if (entryType == EntryType.Anime) SearchType.Anime else SearchType.Manga,
-        genreId = if (genre.kind == GenreKind.Genre) genre.id else null,
-        demographicId = if (genre.kind == GenreKind.Demographic) genre.id else null,
-        themeId = if (genre.kind == GenreKind.Theme) genre.id else null,
-    )
-
-internal fun DetailsUiState.Success.posterViewParams(): ImageViewArgs {
-    require(poster != null)
-    return ImageViewArgs(
-        images = listOf(poster),
-        initialIndex = 0,
-        isSingle = true
-    )
-}
-
-internal fun DetailsUiState.Success.screenshotViewParams(initialIndex: Int): ImageViewArgs {
-    require(!screenshots.isNullOrEmpty())
-    return ImageViewArgs(
-        images = screenshots,
-        initialIndex = initialIndex,
-        isSingle = false
-    )
-}
-
 
 internal fun DetailsUiState.Success.searchType() = when (entryType) {
     EntryType.Anime -> SearchType.Anime
