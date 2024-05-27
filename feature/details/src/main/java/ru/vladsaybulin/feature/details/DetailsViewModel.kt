@@ -15,7 +15,7 @@ import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.data.repository.UserRateRepository
-import ru.vladsaybulin.feature.details.navigation.toDetailsScreenRoute
+import ru.vladsaybulin.feature.details.navigation.EntryDetailsArgs
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
@@ -37,7 +37,7 @@ class DetailsViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val args = savedStateHandle.toDetailsScreenRoute()
+    private val args = EntryDetailsArgs(savedStateHandle)
 
     val enabledAutocorrectStatus = getEnableAutocorrectUserRateUseCase()
         .stateIn(
