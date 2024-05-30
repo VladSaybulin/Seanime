@@ -32,4 +32,18 @@
     <string name="genres">Жанры</string>
     <string name="feature_details_score">Оценка</string>
     <string name="feature_details_user_statuses">В списках у людей</string>
+
+    <string name="feature_title_details_relation_type_adaptation">Адаптация</string>
+    <string name="feature_title_details_relation_type_alt_setting">Альтернативный сеттинг</string>
+    <string name="feature_title_details_relation_type_alt_history">Альтернативная история</string>
+    <string name="feature_title_details_relation_type_side_story">Другая история</string>
+    <string name="feature_title_details_relation_type_full_story">Полная история</string>
+    <string name="feature_title_details_relation_type_parent_history">Parent history</string>
+    <string name="feature_title_details_relation_type_spin_off">Ответвление от оригинала</string>
+    <string name="feature_title_details_relation_type_sequel">Продолжение</string>
+    <string name="feature_title_details_relation_type_prequel">Предыстория</string>
+    <string name="feature_title_details_relation_type_summary">Обобщение</string>
+    <string name="feature_title_details_relation_type_character">Общий персонаж</string>
+    <string name="feature_title_details_relation_type_other">Другое</string>
+
 </resources>

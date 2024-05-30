@@ -12,11 +12,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
 import ru.vladsaybulin.core.ui.EntryStatusBadge
-import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.anime.AnimeInfoKindAndYearText
 import ru.vladsaybulin.core.ui.entry.EntryInfoScore
 import ru.vladsaybulin.core.ui.entry.EntryListItem
 import ru.vladsaybulin.core.ui.manga.MangaInfoKindAndYearText
+import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.manga.Manga
@@ -131,13 +131,16 @@ private fun relationTypeString(relationType: RelationType) =
     stringResource(id = relationTypeStringResId(relationType))
 
 private fun relationTypeStringResId(relationType: RelationType) = when (relationType) {
-    RelationType.Adaptation -> R.string.relation_type_adaptation
-    RelationType.AltHistory -> R.string.relation_type_alt_history
-    RelationType.SideStory -> R.string.relation_type_side_story
-    RelationType.SpinOff -> R.string.relation_type_spin_off
-    RelationType.Sequel -> R.string.relation_type_sequel
-    RelationType.Prequel -> R.string.relation_type_prequel
-    RelationType.Summary -> R.string.relation_type_summary
-    RelationType.Character -> R.string.relation_type_character
-    RelationType.Other -> R.string.relation_type_other
+    RelationType.Adaptation -> R.string.feature_title_details_relation_type_adaptation
+    RelationType.AltSetting -> R.string.feature_title_details_relation_type_alt_setting
+    RelationType.AltHistory -> R.string.feature_title_details_relation_type_alt_history
+    RelationType.SideStory -> R.string.feature_title_details_relation_type_side_story
+    RelationType.FullStory -> R.string.feature_title_details_relation_type_full_story
+    RelationType.ParentStory -> R.string.feature_title_details_relation_type_parent_history
+    RelationType.Sequel -> R.string.feature_title_details_relation_type_sequel
+    RelationType.Prequel -> R.string.feature_title_details_relation_type_prequel
+    RelationType.Summary -> R.string.feature_title_details_relation_type_summary
+    RelationType.Character -> R.string.feature_title_details_relation_type_character
+    RelationType.SpinOff -> R.string.feature_title_details_relation_type_spin_off
+    RelationType.Other -> R.string.feature_title_details_relation_type_other
 }
