@@ -8,4 +8,6 @@
     <string name="feature_list_authorization_error_description">При входе в аккаунт произошла ошибка. Попробуй снова</string>
     <string name="feature_list_refresh_error">Ошибка</string>
     <string name="feature_list_refresh_error_description">При загрузке списка произошла ошибка</string>
+    <string name="feature_list_user_rate_order_field_created_at">По дате добавления</string>
+    <string name="feature_list_user_rate_order_field_updated_at">По дате изменения</string>
 </resources>

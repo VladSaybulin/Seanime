@@ -32,6 +32,8 @@ import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.asExternalModel
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.list.UserRateOrder
+import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
@@ -59,6 +61,8 @@ class UserRateRepository @Inject constructor(
 
     fun getPagedAnimeUserRates(
         status: UserRateStatus,
+        orderField: UserRateOrderField,
+        order: UserRateOrder,
         config: PagingConfig = DefaultPagingConfig
     ) = getPagedUserRates(
         config = config,
@@ -75,6 +79,8 @@ class UserRateRepository @Inject constructor(
 
     fun getPagedMangaUserRates(
         status: UserRateStatus,
+        orderField: UserRateOrderField,
+        order: UserRateOrder,
         config: PagingConfig = DefaultPagingConfig
     ) = getPagedUserRates(
         config = config,

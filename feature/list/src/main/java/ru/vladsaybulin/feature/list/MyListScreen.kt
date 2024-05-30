@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
+import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.animeDetails
@@ -39,6 +43,12 @@ import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.list.UserRateOrder
+import ru.vladsaybulin.model.list.UserRateOrder.Asc
+import ru.vladsaybulin.model.list.UserRateOrder.Desc
+import ru.vladsaybulin.model.list.UserRateOrderField
+import ru.vladsaybulin.model.list.UserRateOrderField.CreatedAt
+import ru.vladsaybulin.model.list.UserRateOrderField.UpdatedAt
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
@@ -55,6 +65,8 @@ fun MyListRoute(
         screenState = screenState,
         onEntryTypeChange = viewModel::onEntryTypeChanged,
         onUserRateStatusChange = viewModel::onUserRateStatusChanged,
+        onOrderFieldChange = viewModel::onOrderFieldChange,
+        onOrderChange = viewModel::onOrderChange,
         navigator = navigator
     )
 }
@@ -64,6 +76,8 @@ internal fun MyListScreen(
     screenState: ListScreenState,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
+    onOrderFieldChange: (UserRateOrderField) -> Unit,
+    onOrderChange: (UserRateOrder) -> Unit,
     navigator: SeanimeNavigator,
 ) {
     Box(
@@ -85,6 +99,8 @@ internal fun MyListScreen(
                 state = screenState,
                 onEntryTypeChange = onEntryTypeChange,
                 onUserRateStatusChange = onUserRateStatusChange,
+                onOrderFieldChange = onOrderFieldChange,
+                onOrderChange = onOrderChange,
                 navigator = navigator
             )
         }
@@ -96,6 +112,8 @@ private fun ListContent(
     state: ListScreenState.Success,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
+    onOrderFieldChange: (UserRateOrderField) -> Unit,
+    onOrderChange: (UserRateOrder) -> Unit,
     navigator: SeanimeNavigator,
 ) {
     CompositionLocalProvider(value = LocalTargetStringsEntry provides state.controlPanelState.entryType.asTargetStringEntry()) {
@@ -103,8 +121,12 @@ private fun ListContent(
             ControlPanel(
                 entryType = state.controlPanelState.entryType,
                 userRateStatus = state.controlPanelState.userRateStatus,
+                orderField = state.controlPanelState.orderField,
+                order = state.controlPanelState.order,
                 onEntryTypeChange = onEntryTypeChange,
-                onUserRateStatusChange = onUserRateStatusChange
+                onUserRateStatusChange = onUserRateStatusChange,
+                onOrderChange = onOrderChange,
+                onOrderFieldChange = onOrderFieldChange
             )
 
             val userRates = state.data.collectAsLazyPagingItems()
@@ -147,28 +169,70 @@ private fun Authorization(onSignIn: () -> Unit) {
 private fun ControlPanel(
     entryType: EntryType,
     userRateStatus: UserRateStatus,
+    orderField: UserRateOrderField,
+    order: UserRateOrder,
     onEntryTypeChange: (EntryType) -> Unit,
-    onUserRateStatusChange: (UserRateStatus) -> Unit
+    onUserRateStatusChange: (UserRateStatus) -> Unit,
+    onOrderFieldChange: (UserRateOrderField) -> Unit,
+    onOrderChange: (UserRateOrder) -> Unit
 ) {
-    Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        ShikimoriDropdownChip(
-            items = listOf(EntryType.Anime, EntryType.Manga),
-            onItemClick = onEntryTypeChange,
-            selected = true,
-            selectedLabel = { Text(entryTypeString(entryType = entryType)) },
-            itemLabel = { Text(entryTypeString(entryType = it)) }
-        )
+        item {
+            ShikimoriDropdownChip(
+                items = listOf(EntryType.Anime, EntryType.Manga),
+                onItemClick = onEntryTypeChange,
+                selected = true,
+                selectedLabel = { Text(entryTypeString(entryType = entryType)) },
+                itemLabel = { Text(entryTypeString(entryType = it)) }
+            )
+        }
 
-        ShikimoriDropdownChip(
-            items = UserRateStatus.entries.filter { it != UserRateStatus.None },
-            onItemClick = onUserRateStatusChange,
-            selected = true,
-            selectedLabel = { Text(userRateStatusString(userRateStatus)) },
-            itemLabel = { Text(userRateStatusString(it)) }
-        )
+        item {
+            ShikimoriDropdownChip(
+                items = UserRateStatus.entries.filter { it != UserRateStatus.None },
+                onItemClick = onUserRateStatusChange,
+                selected = true,
+                selectedLabel = { Text(userRateStatusString(userRateStatus)) },
+                itemLabel = { Text(userRateStatusString(it)) }
+            )
+        }
+
+        item {
+            ShikimoriDropdownChip(
+                items = UserRateOrderField.entries,
+                onItemClick = onOrderFieldChange,
+                selected = true,
+                selectedLabel = { Text(userRateOrderFieldString(orderField)) },
+                itemLabel = { Text(userRateOrderFieldString(it)) }
+            )
+        }
+
+        item {
+            InputChip(
+                selected = true,
+                onClick = {
+                    onOrderChange(
+                        when (order) {
+                            Asc -> Desc
+                            Desc -> Asc
+                        }
+                    )
+                },
+                label = {
+                    Icon(
+                        imageVector = when (order) {
+                            Asc -> ShikimoriIcons.ArrowDownward
+                            Desc -> ShikimoriIcons.ArrowUpward
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            )
+        }
     }
 }
 
@@ -192,6 +256,14 @@ private fun UserRatesPaging(
         )
     }
 }
+
+@Composable
+fun userRateOrderFieldString(orderField: UserRateOrderField) = stringResource(
+    id = when (orderField) {
+        CreatedAt -> R.string.feature_list_user_rate_order_field_created_at
+        UpdatedAt -> R.string.feature_list_user_rate_order_field_updated_at
+    }
+)
 
 @Composable
 @Preview
