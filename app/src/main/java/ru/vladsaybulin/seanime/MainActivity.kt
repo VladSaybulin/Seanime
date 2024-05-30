@@ -8,8 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import dagger.hilt.android.AndroidEntryPoint
 import ru.vladsaybulin.core.auth.ShikimoriLoginAction
 import ru.vladsaybulin.seanime.ui.SeanimeApp
@@ -19,7 +17,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject lateinit var loginAction: ShikimoriLoginAction
+    @Inject
+    lateinit var loginAction: ShikimoriLoginAction
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,18 +29,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            CompositionLocalProvider(value = LocalLifecycleOwner provides this) { //TODO FIX. Not provided
-                SeanimeApp(
-                    appState = rememberSeanimeAppState(
-                        windowSizeClass = calculateWindowSizeClass(this),
-                        onAuth = loginAction::invoke,
-                        onExternalLink = { url ->
-                            val intent = CustomTabsIntent.Builder().build()
-                            intent.launchUrl(this@MainActivity, Uri.parse(url))
-                        }
-                    )
+            SeanimeApp(
+                appState = rememberSeanimeAppState(
+                    windowSizeClass = calculateWindowSizeClass(this),
+                    onAuth = loginAction::invoke,
+                    onExternalLink = { url ->
+                        val intent = CustomTabsIntent.Builder().build()
+                        intent.launchUrl(this@MainActivity, Uri.parse(url))
+                    }
                 )
-            }
+            )
         }
     }
 }
