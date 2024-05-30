@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.util.fastForEach
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 
 @Composable
 fun <T> ShikimoriDropdownChip(
@@ -46,7 +46,7 @@ fun <T> ShikimoriDropdownChip(
             leadingIcon = selectedLeadingIcon,
             trailingIcon = {
                 Icon(
-                    imageVector = ShikimoriIcons.ArrowDropDown,
+                    imageVector = SeanimeIcons.ArrowDropDown,
                     contentDescription = null,
                     modifier = Modifier.rotate(arrowRotation)
                 )

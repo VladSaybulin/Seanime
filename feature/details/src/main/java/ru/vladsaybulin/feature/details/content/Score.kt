@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithHeader
 import ru.vladsaybulin.core.ui.Header
@@ -78,7 +78,7 @@ fun ScoreValue(score: Float) {
         ) {
             val scoreFormatter = DecimalFormat("#.00")
             Icon(
-                imageVector = ShikimoriIcons.Star,
+                imageVector = SeanimeIcons.Star,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxHeight()

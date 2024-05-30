@@ -28,7 +28,7 @@ import org.primeframework.transformer.domain.TagAttributes
 import org.primeframework.transformer.domain.TagNode
 import org.primeframework.transformer.domain.TextNode
 import org.primeframework.transformer.service.HTMLParser
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.core.ui.strings.AnnotatedStringBuilderContext
@@ -142,7 +142,7 @@ fun ExpandableText(
                 .align(Alignment.BottomCenter)
                 .rotate(arrowDegrees)
         ) {
-            Icon(imageVector = ShikimoriIcons.KeyboardArrowDown, contentDescription = null)
+            Icon(imageVector = SeanimeIcons.KeyboardArrowDown, contentDescription = null)
         }
     }
 }

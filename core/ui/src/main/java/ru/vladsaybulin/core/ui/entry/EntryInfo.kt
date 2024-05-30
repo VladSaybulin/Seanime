@@ -9,7 +9,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.EntryStatusBadge
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.common.EntryStatus
@@ -49,7 +49,7 @@ fun EntryInfoScore(score: Float) {
 
     Row {
         Icon(
-            imageVector = ShikimoriIcons.Star,
+            imageVector = SeanimeIcons.Star,
             contentDescription = null
         )
 

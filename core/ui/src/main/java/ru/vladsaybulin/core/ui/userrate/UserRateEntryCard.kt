@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.SeanimeUserRateLinearProgressIndicator
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.entry.EntryInfoKindAndYear
@@ -154,7 +154,7 @@ fun UserRateEntryCard(
                 modifier = Modifier.align(Alignment.Bottom)
             ) {
                 Icon(
-                    imageVector = ShikimoriIcons.Edit,
+                    imageVector = SeanimeIcons.Edit,
                     contentDescription = null,
                     tint = SeanimeTheme.colorScheme.primary
                 )

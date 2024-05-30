@@ -16,7 +16,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,7 +87,7 @@ private fun BackIconButton(
         colors = IconButtonDefaults.iconButtonColors(containerColor = containerColor)
     ) {
         Icon(
-            imageVector = ShikimoriIcons.ArrowBack,
+            imageVector = SeanimeIcons.ArrowBack,
             contentDescription = null
         )
     }

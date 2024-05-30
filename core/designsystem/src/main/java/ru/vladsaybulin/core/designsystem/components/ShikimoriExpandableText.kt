@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import ru.vladsaybulin.core.designsystem.R
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import kotlin.math.roundToInt
 
@@ -210,7 +210,7 @@ private fun ExpandableTextLayout(
                     modifier = Modifier.layoutId(ExpandableTextLayoutId.Arrow)
                 ) {
                     Icon(
-                        imageVector = ShikimoriIcons.KeyboardArrowDown,
+                        imageVector = SeanimeIcons.KeyboardArrowDown,
                         contentDescription = if (expanded) {
                             stringResource(id = R.string.core_designsystem_collapse_text)
                         } else {

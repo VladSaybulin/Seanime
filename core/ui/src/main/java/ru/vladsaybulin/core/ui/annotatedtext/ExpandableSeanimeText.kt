@@ -53,7 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import kotlinx.collections.immutable.toImmutableList
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
@@ -121,7 +121,7 @@ fun SeanimeExpandableText(
 
         IconButton(onClick = { expanded.value = !expanded.value }) {
             Icon(
-                imageVector = ShikimoriIcons.KeyboardArrowDown,
+                imageVector = SeanimeIcons.KeyboardArrowDown,
                 contentDescription = null,
                 modifier = Modifier.graphicsLayer { rotationZ = rotation }
             )

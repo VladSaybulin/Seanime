@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
 import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
@@ -84,7 +84,7 @@ private fun UserRateFabIcon(
 ) {
     Icon(
         imageVector = if (status == null || status == UserRateStatus.None) {
-            ShikimoriIcons.Add
+            SeanimeIcons.Add
         } else notNoneUserRateStatusIcon(userRateStatus = status),
         contentDescription = null,
         modifier = modifier

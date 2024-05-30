@@ -28,7 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.animeDetails
@@ -225,8 +225,8 @@ private fun ControlPanel(
                 label = {
                     Icon(
                         imageVector = when (order) {
-                            Asc -> ShikimoriIcons.ArrowDownward
-                            Desc -> ShikimoriIcons.ArrowUpward
+                            Asc -> SeanimeIcons.ArrowDownward
+                            Desc -> SeanimeIcons.ArrowUpward
                         },
                         contentDescription = null,
                         modifier = Modifier.size(16.dp)

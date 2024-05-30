@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.EntryStatusBadge
 import ru.vladsaybulin.feature.details.R
 import ru.vladsaybulin.model.common.EntryStatus
@@ -38,7 +38,7 @@ internal fun StatusAndDatesInfoLine(
 
     if (status != EntryStatus.None || dates != null) {
         InfoLine(
-            icon = { InfoIcon(imageVector = ShikimoriIcons.CalendarToday) }
+            icon = { InfoIcon(imageVector = SeanimeIcons.CalendarToday) }
         ) {
             if (status != EntryStatus.None) {
                 EntryStatusBadge(status = status)

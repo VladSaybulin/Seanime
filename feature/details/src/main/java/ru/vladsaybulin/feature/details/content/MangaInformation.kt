@@ -5,7 +5,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import kotlinx.collections.immutable.ImmutableList
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.entry.EntryInfoStatusAndDatesText
 import ru.vladsaybulin.core.ui.manga.MangaInfoKindAndChaptersAndVolumesText
 import ru.vladsaybulin.feature.details.DetailsUiState
@@ -36,7 +36,7 @@ internal fun MangaInformation(
 ) {
     Column {
         InfoLine(
-            icon = { Icon(imageVector = ShikimoriIcons.Book, contentDescription = null) },
+            icon = { Icon(imageVector = SeanimeIcons.Book, contentDescription = null) },
         ) {
             MangaInfoKindAndChaptersAndVolumesText(
                 kind = state.mangaKind ?: MangaKind.None,
@@ -46,7 +46,7 @@ internal fun MangaInformation(
         }
 
         InfoLine(
-            icon = { Icon(imageVector = ShikimoriIcons.CalendarToday, contentDescription = null) },
+            icon = { Icon(imageVector = SeanimeIcons.CalendarToday, contentDescription = null) },
         ) {
             EntryInfoStatusAndDatesText(
                 entryStatus = state.status,

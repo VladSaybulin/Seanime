@@ -12,7 +12,7 @@ import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalTimeZone
 import ru.vladsaybulin.core.ui.anime.AnimeInfoKindAndEpisodesAndDurationText
 import ru.vladsaybulin.feature.details.DetailsUiState
@@ -93,7 +93,7 @@ private fun StudiosLineInfo(
 @Composable
 private fun NextEpisodeDateInfoLine(nextEpisodeAt: Instant) {
     InfoLine(
-        icon = { InfoIcon(imageVector = ShikimoriIcons.AccessTime) }
+        icon = { InfoIcon(imageVector = SeanimeIcons.AccessTime) }
     ) {
         Text(text = dateFormatted(date = nextEpisodeAt))
     }
@@ -109,7 +109,7 @@ private fun AnimeKindAndEpisodeInfoLine(
     modifier: Modifier = Modifier
 ) {
     InfoLine(
-        icon = { InfoIcon(imageVector = ShikimoriIcons.Tv) },
+        icon = { InfoIcon(imageVector = SeanimeIcons.Tv) },
         modifier = modifier
     ) {
         AnimeInfoKindAndEpisodesAndDurationText(

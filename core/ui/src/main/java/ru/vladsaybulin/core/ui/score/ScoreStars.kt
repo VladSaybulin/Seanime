@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import java.util.Random
 import kotlin.math.roundToInt
@@ -62,8 +62,8 @@ fun ScoreStars(
     starSize: DpSize = DefaultStarSize,
     color: Color = SeanimeTheme.colorScheme.primary,
 ) {
-    val filledStar = rememberVectorPainter(image = ShikimoriIcons.Star)
-    val outlinedStar = rememberVectorPainter(image = ShikimoriIcons.StarOutline)
+    val filledStar = rememberVectorPainter(image = SeanimeIcons.Star)
+    val outlinedStar = rememberVectorPainter(image = SeanimeIcons.StarOutline)
 
     val outlinedColor = SeanimeTheme.colorScheme.outlineVariant
 

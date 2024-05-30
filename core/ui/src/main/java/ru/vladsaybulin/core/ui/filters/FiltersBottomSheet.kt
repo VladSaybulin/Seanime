@@ -31,7 +31,7 @@ import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.score.ScoreInput
@@ -310,7 +310,7 @@ fun LazyListScope.seasonFilter(
                                     onOptionDeleteClick(requireNotNull(optionState.option.value.id))
                                 }
                             ) {
-                                Icon(imageVector = ShikimoriIcons.Clear, contentDescription = null)
+                                Icon(imageVector = SeanimeIcons.Clear, contentDescription = null)
                             }
                         }
                     )
@@ -323,7 +323,7 @@ fun LazyListScope.seasonFilter(
                         Text(text = stringResource(id = R.string.core_ui_filter_add_custom_season))
                     },
                     leadingIcon = {
-                        Icon(imageVector = ShikimoriIcons.Add, contentDescription = null)
+                        Icon(imageVector = SeanimeIcons.Add, contentDescription = null)
                     }
                 )
             }
@@ -379,12 +379,12 @@ fun OptionValue.optionStateValueIcon(): (@Composable () -> Unit)? =
 
 @Composable
 fun SelectedIcon() {
-    Icon(imageVector = ShikimoriIcons.Done, contentDescription = null)
+    Icon(imageVector = SeanimeIcons.Done, contentDescription = null)
 }
 
 @Composable
 fun ExcludedIcon() {
-    Icon(imageVector = ShikimoriIcons.Remove, contentDescription = null)
+    Icon(imageVector = SeanimeIcons.Remove, contentDescription = null)
 }
 
 @Composable

@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.ui.R
@@ -142,7 +142,7 @@ private fun AuthorPoster(poster: Image?) {
     ) {
         if (poster == null) {
             Icon(
-                imageVector = ShikimoriIcons.Person,
+                imageVector = SeanimeIcons.Person,
                 contentDescription = null,
                 tint = SeanimeTheme.colorScheme.onSurface,
                 modifier = Modifier.align(Alignment.Center)

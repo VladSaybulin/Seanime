@@ -47,7 +47,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.navigation.animeDetails
@@ -272,7 +272,7 @@ private fun FiltersButton(
                 } else {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = ShikimoriIcons.Tune,
+                            imageVector = SeanimeIcons.Tune,
                             contentDescription = null,
                             modifier = Modifier.size(20.dp)
                         )
@@ -322,16 +322,16 @@ private fun SearchSearchBar(
             leadingIcon = {
                 when {
                     active -> IconButton(onClick = { onActiveChanged(false) }) {
-                        Icon(imageVector = ShikimoriIcons.ArrowBack, contentDescription = null)
+                        Icon(imageVector = SeanimeIcons.ArrowBack, contentDescription = null)
                     }
 
-                    else -> Icon(imageVector = ShikimoriIcons.Search, contentDescription = null)
+                    else -> Icon(imageVector = SeanimeIcons.Search, contentDescription = null)
                 }
             },
             trailingIcon = if (searchQuery.isNotBlank()) {
                 @Composable {
                     IconButton(onClick = { onSearchQueryChanged("") }) {
-                        Icon(imageVector = ShikimoriIcons.Clear, contentDescription = null)
+                        Icon(imageVector = SeanimeIcons.Clear, contentDescription = null)
                     }
                 }
             } else null,
@@ -388,7 +388,7 @@ private fun RecentSearchQuery(
             )
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Icon(imageVector = ShikimoriIcons.History, contentDescription = null)
+        Icon(imageVector = SeanimeIcons.History, contentDescription = null)
         Text(
             text = recentSearchQuery.query,
             modifier = Modifier.padding(start = 8.dp),

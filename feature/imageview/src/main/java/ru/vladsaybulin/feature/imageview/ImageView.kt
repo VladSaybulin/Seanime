@@ -37,7 +37,7 @@ import coil.compose.AsyncImage
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import ru.vladsaybulin.core.designsystem.components.drawBackgroundGradientScrim
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.model.common.Image
 
 sealed class ImageSet {
@@ -182,7 +182,7 @@ private fun ImageViewTopBar(
         },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
-                Icon(imageVector = ShikimoriIcons.ArrowBack, contentDescription = null)
+                Icon(imageVector = SeanimeIcons.ArrowBack, contentDescription = null)
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

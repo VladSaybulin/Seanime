@@ -1,6 +1,5 @@
 package ru.vladsaybulin.feature.details.content
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
@@ -35,7 +34,7 @@ import coil.compose.AsyncImage
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.feature.details.R
@@ -213,7 +212,7 @@ private fun VideoPlayIcon(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            imageVector = ShikimoriIcons.PlayArrow,
+            imageVector = SeanimeIcons.PlayArrow,
             contentDescription = null,
             tint = SeanimeTheme.colorScheme.onSurface
         )

@@ -33,7 +33,7 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.ui.graphics.vector.ImageVector
 
-object ShikimoriIcons {
+object SeanimeIcons {
     val Edit = Icons.Default.Edit
     val ArrowDownward = Icons.Default.ArrowDownward
     val ArrowUpward = Icons.Default.ArrowUpward

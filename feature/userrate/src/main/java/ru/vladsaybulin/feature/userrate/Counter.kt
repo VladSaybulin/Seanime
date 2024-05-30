@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @JvmInline
@@ -211,7 +211,7 @@ private fun IncrementButton(
         modifier = modifier
     ) {
         Icon(
-            imageVector = ShikimoriIcons.Add,
+            imageVector = SeanimeIcons.Add,
             contentDescription = stringResource(id = R.string.feature_user_rate_incement)
         )
     }
@@ -233,7 +233,7 @@ private fun DecrementButton(
         modifier = modifier
     ) {
         Icon(
-            imageVector = ShikimoriIcons.Remove,
+            imageVector = SeanimeIcons.Remove,
             contentDescription = stringResource(id = R.string.feature_user_rate_decrement)
         )
     }
