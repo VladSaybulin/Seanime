@@ -6,11 +6,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import ru.vladsaybulin.model.topic.Topic
+import ru.vladsaybulin.model.user.BriefUser
 
 fun LazyListScope.newsTopicsFeed(
     newsTopics: List<Topic>,
-    onTopicClick: (Long) -> Unit,
-    onUserClick: (Long) -> Unit
+    onTopicClick: (Topic) -> Unit,
+    onUserClick: (BriefUser) -> Unit
 ) {
     itemsIndexed(
         items = newsTopics,
@@ -18,8 +19,8 @@ fun LazyListScope.newsTopicsFeed(
     ) { index, newsTopic ->
         NewsTopicCard(
             topic = newsTopic,
-            onClick = { onTopicClick(newsTopic.id) },
-            onUserClick = { onUserClick(newsTopic.user.id) }
+            onClick = { onTopicClick(newsTopic) },
+            onUserClick = { onUserClick(newsTopic.user) }
         )
         if (index < newsTopics.size - 1) {
             HorizontalDivider()

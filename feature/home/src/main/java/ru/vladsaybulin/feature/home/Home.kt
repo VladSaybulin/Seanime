@@ -136,8 +136,14 @@ private fun HomeContent(
             newsTopicsHeader()
             newsTopicsFeed(
                 newsTopics = uiState.newsTopics,
-                onTopicClick = {},
-                onUserClick = {}
+                onTopicClick = {
+                    //TODO
+                    navigator.externalLink("https://shikimori.one/forum/news/${it.id}")
+                },
+                onUserClick = {
+                    //TODO
+                    navigator.externalLink(it.url)
+                }
             )
             allNewsTopicsButton(onAllNewsTopicsClick = navigator::news)
 
