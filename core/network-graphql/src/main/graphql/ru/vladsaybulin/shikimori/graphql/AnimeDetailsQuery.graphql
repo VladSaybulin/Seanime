@@ -63,7 +63,6 @@ query AnimeDetailsQuery($id: String!) {
                 }
             }
             rolesEn
-            rolesRu
         }
         characterRoles {
             character {

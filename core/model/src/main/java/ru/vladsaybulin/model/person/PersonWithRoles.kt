@@ -2,10 +2,6 @@ package ru.vladsaybulin.model.person
 
 data class PersonWithRoles(
     val person: Person,
-    val englishRoles: List<String>,
-    val russianRoles: List<String>
+    val roles: List<String>,
+    val isMain: Boolean
 )
-
-fun PersonWithRoles.isMain() = englishRoles.any { mainPersonEnglishRoles.contains(it) }
-
-val mainPersonEnglishRoles = listOf("Director", "Original Creator")

@@ -8,6 +8,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.entry.EntryListItem
+import ru.vladsaybulin.core.ui.strings.personRoleString
 import ru.vladsaybulin.model.person.Person
 import ru.vladsaybulin.model.person.PersonWithRoles
 
@@ -25,7 +26,10 @@ fun AuthorItem(
         modifier = modifier
     ) {
         Text(
-            text = author.russianRoles.joinToString(separator = ", "),
+            text = author.roles
+                // Can't move map in joinToString because no Composable context
+                .map { personRoleString(personRole = it) }
+                .joinToString(separator = ", "),
             modifier = Modifier.alpha(0.5f)
         )
     }
@@ -43,14 +47,11 @@ fun AuthorItemPreview() {
                     russianName = "Такаоми Канасаки",
                     poster = null
                 ),
-                englishRoles = listOf(
+                roles = listOf(
                     "Chief Animation Director",
                     "Animation Director"
                 ),
-                russianRoles = listOf(
-                    "Главный аниматор",
-                    "Режиссёр анимации"
-                )
+                isMain = false
             ),
             onClick = { }
         )

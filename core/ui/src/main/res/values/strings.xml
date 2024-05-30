@@ -114,6 +114,44 @@
     <string name="core_ui_error_retry">Повторить</string>
     <string name="core_ui_cancel">Отменить</string>
     <string name="core_ui_spoiler">Спойлер</string>
+
+    <!-- Person role -->
+    <string name="core_ui_person_role_producer">Продюсер</string>
+    <string name="core_ui_person_role_assistant_producer">Ассистент продюсера</string>
+    <string name="core_ui_person_role_director">Режиссёр</string>
+    <string name="core_ui_person_role_episode_director">Режиссёр эпизодов</string>
+    <string name="core_ui_person_role_storyboard">Раскадровка</string>
+    <string name="core_ui_person_role_assistant_director">Помощник режиссёра</string>
+    <string name="core_ui_person_role_key_animation">Ключевая анимация</string>
+    <string name="core_ui_person_role_animation_director">Режиссёр анимации</string>
+    <string name="core_ui_person_role_setting_manager">Менеджер по настройке</string>
+    <string name="core_ui_person_role_2nd_key_animation">Второстепен. анимация</string>
+    <string name="core_ui_person_role_assistant_animation_director">Помощник режиссёра анимации</string>
+    <string name="core_ui_person_role_script">Сценарий</string>
+    <string name="core_ui_person_role_series_composition">Компоновка серий</string>
+    <string name="core_ui_person_role_adr_director">Режиссёр перевода</string>
+    <string name="core_ui_person_role_screenplay">Сценарий</string>
+    <string name="core_ui_person_role_chief_animation_director">Главный аниматор</string>
+    <string name="core_ui_person_role_theme_song_performance">Исполнение гл. муз. темы</string>
+    <string name="core_ui_person_role_theme_song_arrangement">Аранжировка гл. муз. темы</string>
+    <string name="core_ui_person_role_theme_song_lyrics">Лирика гл. муз. темы</string>
+    <string name="core_ui_person_role_theme_song_composition">Композитор гл. муз. темы</string>
+    <string name="core_ui_person_role_inserted_song_performance">Музыкальное сопровождение</string>
+    <string name="core_ui_person_role_sound_effects">Звуковые эффекты</string>
+    <string name="core_ui_person_role_music">Музыка</string>
+    <string name="core_ui_person_role_executive_producer">Исполнительн. продюсер</string>
+    <string name="core_ui_person_role_editing">Монтаж</string>
+    <string name="core_ui_person_role_recording_engineer">Звукооператор</string>
+    <string name="core_ui_person_role_character_design">Дизайн персонажей</string>
+    <string name="core_ui_person_role_background_art">Фоновая рисовка</string>
+    <string name="core_ui_person_role_layout">Вёрстка</string>
+    <string name="core_ui_person_role_original_creator">Автор оригинала</string>
+    <string name="core_ui_person_role_planning">Планирование</string>
+    <string name="core_ui_person_role_story">Сюжет</string>
+    <string name="core_ui_person_role_art">Иллюстрация</string>
+    <string name="core_ui_person_role_story_and_art">Сижет и иллюстрация</string>
+
+
     <plurals name="core_ui_anime_info_duration_hours">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>

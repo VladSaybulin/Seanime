@@ -30,9 +30,9 @@ data class MangaPersonRolesEntity(
     @ColumnInfo("person_id")
     val personId: Long,
 
-    @ColumnInfo("roles_en")
-    val rolesEn: List<String>,
+    @ColumnInfo("roles")
+    val roles: List<String>,
 
-    @ColumnInfo("roles_ru")
-    val rolesRu: List<String>
+    @ColumnInfo("is_main")
+    val isMain: Boolean
 )

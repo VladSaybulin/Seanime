@@ -19,6 +19,6 @@ data class PopulatedMangaAuthor(
 
 fun PopulatedMangaAuthor.asExternalModel() = PersonWithRoles(
     person = person.asExternalModel(),
-    englishRoles = mangaPersonRolesEntity.rolesEn,
-    russianRoles = mangaPersonRolesEntity.rolesRu
+    roles = mangaPersonRolesEntity.roles,
+    isMain = mangaPersonRolesEntity.isMain
 )

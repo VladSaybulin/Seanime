@@ -46,12 +46,12 @@ fun NetworkAnimeDetails.personEntityShells() =
     authors?.map { it.person.asEntity() }
 
 fun NetworkAnimeDetails.animeAuthorEntities() =
-    authors?.map {
+    authors?.map { personWithRoles ->
         AnimePersonRolesEntity(
             animeId = id,
-            personId = it.person.id,
-            rolesEn = it.roles,
-            rolesRu = it.russianRoles
+            personId = personWithRoles.person.id,
+            roles = personWithRoles.roles,
+            isMain = personWithRoles.roles.isMainPersonRoles()
         )
     }
 

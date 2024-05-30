@@ -83,8 +83,7 @@ private fun MangaDetailsQuery.PersonRole.asNetworkModel() = NetworkPersonWithRol
             NetworkImage(originalUrl = it.originalUrl, previewUrl = it.main2xUrl)
         }
     ),
-    roles = rolesEn,
-    russianRoles = rolesRu
+    roles = rolesEn
 )
 
 private fun MangaDetailsQuery.CharacterRole.asCharacterWithRole() = NetworkCharacterWithRole(

@@ -92,8 +92,7 @@ private fun AnimeDetailsQuery.PersonRole.asNetworkModel() = NetworkPersonWithRol
             )
         }
     ),
-    roles = rolesEn,
-    russianRoles = rolesRu
+    roles = rolesEn
 )
 
 private fun AnimeDetailsQuery.CharacterRole.asNetworkModel() = NetworkCharacterWithRole(

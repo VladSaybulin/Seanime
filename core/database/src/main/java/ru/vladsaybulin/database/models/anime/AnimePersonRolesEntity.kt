@@ -31,8 +31,8 @@ data class AnimePersonRolesEntity(
     val personId: Long,
 
     @ColumnInfo("roles_en")
-    val rolesEn: List<String>,
+    val roles: List<String>,
 
-    @ColumnInfo("roles_ru")
-    val rolesRu: List<String>
+    @ColumnInfo("is_main")
+    val isMain: Boolean
 )

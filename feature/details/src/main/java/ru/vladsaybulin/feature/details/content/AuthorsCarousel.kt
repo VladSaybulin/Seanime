@@ -38,10 +38,10 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ContentWithClickableHeader
 import ru.vladsaybulin.core.ui.R
+import ru.vladsaybulin.core.ui.strings.personRoleString
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.person.Person
 import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.person.isMain
 
 @Composable
 fun AuthorsCarousel(
@@ -51,7 +51,7 @@ fun AuthorsCarousel(
     modifier: Modifier = Modifier
 ) {
 
-    val shownAuthors = authors.filter { it.isMain() }
+    val shownAuthors = authors.filter { it.isMain }
     val showShowAll = shownAuthors.size < authors.size
 
     ContentWithClickableHeader(
@@ -113,7 +113,10 @@ fun AuthorCard(
                     modifier = Modifier.width(IntrinsicSize.Max)
                 )
                 Text(
-                    text = personWithRoles.russianRoles.joinToString(separator = ", "),
+                    text = personWithRoles.roles
+                        // Can't move map in joinToString because no Composable context
+                        .map { personRoleString(personRole = it) }
+                        .joinToString(separator = ", "),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = SeanimeTheme.typography.labelSmall,
@@ -173,8 +176,8 @@ fun AuthorCardPreview() {
                     russianName = "Author russian name",
                     poster = Image("", ""),
                 ),
-                englishRoles = listOf("Director"),
-                russianRoles = listOf("Режиссёр")
+                roles = listOf("Director"),
+                isMain = true
             ),
             onClick = { }
         )
@@ -193,8 +196,8 @@ fun AuthorCardWithoutPosterPreview() {
                     russianName = "Author russian name",
                     poster = null
                 ),
-                englishRoles = listOf("Director"),
-                russianRoles = listOf("Режиссёр")
+                roles = listOf("Director"),
+                isMain = true
             ),
             onClick = { }
         )
@@ -213,8 +216,8 @@ fun AuthorCardManyRolesPreview() {
                     russianName = "Author russian name",
                     poster = Image("", ""),
                 ),
-                englishRoles = listOf("Director"),
-                russianRoles = listOf("Режиссёр", "Раскадровка", "Рисовка")
+                roles = listOf("Director"),
+                isMain = true
             ),
             onClick = { }
         )
@@ -233,8 +236,8 @@ fun AuthorCardShortNamePreview() {
                     russianName = "Author",
                     poster = Image("", ""),
                 ),
-                englishRoles = listOf("Director"),
-                russianRoles = listOf("Режиссёр", "Раскадровка", "Рисовка")
+                roles = listOf("Director", "Original Creator"),
+                isMain = true
             ),
             onClick = { }
         )

@@ -44,8 +44,8 @@ fun NetworkMangaDetails.mangaAuthorEntities() =
         MangaPersonRolesEntity(
             mangaId = id,
             personId = it.person.id,
-            rolesEn = it.roles,
-            rolesRu = it.russianRoles
+            roles = it.roles,
+            isMain = it.roles.isMainPersonRoles()
         )
     }
 

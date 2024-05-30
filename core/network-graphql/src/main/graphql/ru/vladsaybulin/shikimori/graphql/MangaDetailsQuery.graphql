@@ -57,7 +57,6 @@ query MangaDetailsQuery($id: String!) {
                 }
             }
             rolesEn
-            rolesRu
         }
         characterRoles {
             character {
