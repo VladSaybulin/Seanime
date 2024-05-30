@@ -66,7 +66,13 @@ fun NavController.navigateToSearchOngoingAnimes() {
 }
 
 private fun NavController.navigateToSearch(builder: Uri.Builder.() -> Unit) =
-    navigate(Uri.Builder().apply(builder).build().toString())
+    navigate(
+        Uri.Builder()
+            .encodedAuthority(withParentGraphRoute(SEARCH_SCREEN_ROUTE))
+            .apply(builder)
+            .build()
+            .toString()
+    )
 
 internal data class SearchArgs(
     val searchType: SearchType?,
