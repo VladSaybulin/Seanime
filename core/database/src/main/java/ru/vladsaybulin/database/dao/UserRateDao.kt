@@ -10,6 +10,8 @@ import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
+import ru.vladsaybulin.model.list.UserRateOrder
+import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Dao
@@ -20,40 +22,52 @@ interface UserRateDao {
             SELECT user_rates.*, paged_user_rates.page, paged_user_rates.`index`
             FROM paged_user_rates
             INNER JOIN user_rates ON user_rate_id = user_rates.id
-            WHERE status = :status AND anime_id IS NOT NULL
+            WHERE status = :status 
+                AND order_field = :orderField 
+                AND sort_order = :order 
+                AND anime_id IS NOT NULL
             ORDER BY page ASC, `index` ASC
         """
     )
-    fun getPagedAnimeUserRates(status: UserRateStatus): PagingSource<Int, PopulatedPagedUserRate>
+    fun getPagedAnimeUserRates(status: UserRateStatus, orderField: UserRateOrderField, order: UserRateOrder): PagingSource<Int, PopulatedPagedUserRate>
 
     @Query(
         value = """
             SELECT user_rates.*, paged_user_rates.page, paged_user_rates.`index`
             FROM paged_user_rates
             INNER JOIN user_rates ON user_rate_id = user_rates.id
-            WHERE status = :status AND manga_id IS NOT NULL
+            WHERE status = :status 
+                AND order_field = :orderField 
+                AND sort_order = :order 
+                AND manga_id IS NOT NULL
             ORDER BY page ASC, `index` ASC
         """
     )
-    fun getPagedMangaUserRates(status: UserRateStatus): PagingSource<Int, PopulatedPagedUserRate>
+    fun getPagedMangaUserRates(status: UserRateStatus, orderField: UserRateOrderField, order: UserRateOrder): PagingSource<Int, PopulatedPagedUserRate>
 
     @Query(
         value = """
             SELECT MAX(page) 
             FROM paged_user_rates INNER JOIN user_rates ON user_rate_id = user_rates.id
-            WHERE status = :status AND anime_id IS NOT NULL 
+            WHERE status = :status 
+                AND order_field = :orderField 
+                AND sort_order = :order 
+                AND anime_id IS NOT NULL
         """
     )
-    suspend fun getLastAnimeUserRatesPage(status: UserRateStatus): Int
+    suspend fun getLastAnimeUserRatesPage(status: UserRateStatus, orderField: UserRateOrderField, order: UserRateOrder): Int
 
     @Query(
         value = """
             SELECT MAX(page) 
             FROM paged_user_rates INNER JOIN user_rates ON user_rate_id = user_rates.id
-            WHERE status = :status AND anime_id IS NOT NULL 
+            WHERE status = :status 
+                AND order_field = :orderField 
+                AND sort_order = :order 
+                AND manga_id IS NOT NULL
         """
     )
-    suspend fun getLastMangaUserRatesPage(status: UserRateStatus): Int
+    suspend fun getLastMangaUserRatesPage(status: UserRateStatus, orderField: UserRateOrderField, order: UserRateOrder): Int
 
     @Query(
         value = """

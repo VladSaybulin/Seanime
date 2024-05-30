@@ -2,7 +2,8 @@ query AnimeUserRatesQuery(
     $page: Int!
     $limit: Int!
     $status: UserRateStatusEnum!
-    $userId: ID
+    $orderInput: UserRateOrderInputType!
+    $userId: ID,
 ) {
     userRates(
         page: $page
@@ -10,6 +11,7 @@ query AnimeUserRatesQuery(
         status: $status
         targetType: Anime
         userId: $userId
+        order: $orderInput
     ) {
         id
         createdAt

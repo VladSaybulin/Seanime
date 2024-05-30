@@ -65,16 +65,13 @@ class UserRateRepository @Inject constructor(
         order: UserRateOrder,
         config: PagingConfig = DefaultPagingConfig
     ) = getPagedUserRates(
+        status = status,
+        orderField = orderField,
+        sortOrder = order,
         config = config,
-        pagingSourceFactory = { userRateDao.getPagedAnimeUserRates(status) },
-        getLastPage = { userRateDao.getLastAnimeUserRatesPage(status) },
-        loadPage = { pageNumber ->
-            userRateDataSource.getAnimeUserRates(
-                page = pageNumber,
-                limit = USER_RATES_PAGE_SIZE,
-                status = status
-            )
-        }
+        pagingSourceFactory = userRateDao::getPagedAnimeUserRates,
+        getLastPage = userRateDao::getLastAnimeUserRatesPage,
+        loadPage = userRateDataSource::getAnimeUserRates
     )
 
     fun getPagedMangaUserRates(
@@ -83,16 +80,13 @@ class UserRateRepository @Inject constructor(
         order: UserRateOrder,
         config: PagingConfig = DefaultPagingConfig
     ) = getPagedUserRates(
+        status = status,
+        orderField = orderField,
+        sortOrder = order,
         config = config,
-        pagingSourceFactory = { userRateDao.getPagedMangaUserRates(status) },
-        getLastPage = { userRateDao.getLastMangaUserRatesPage(status) },
-        loadPage = { pageNumber ->
-            userRateDataSource.getMangaUserRates(
-                page = pageNumber,
-                limit = USER_RATES_PAGE_SIZE,
-                status = status
-            )
-        }
+        pagingSourceFactory = userRateDao::getPagedMangaUserRates,
+        getLastPage = userRateDao::getLastMangaUserRatesPage,
+        loadPage = userRateDataSource::getMangaUserRates
     )
 
     suspend fun createUserRate(
@@ -153,9 +147,12 @@ class UserRateRepository @Inject constructor(
 
     @OptIn(ExperimentalPagingApi::class)
     private fun getPagedUserRates(
-        pagingSourceFactory: () -> PagingSource<Int, PopulatedPagedUserRate>,
-        getLastPage: suspend () -> Int,
-        loadPage: suspend (pageNumber: Int) -> List<UserRateWithEntryDto>,
+        status: UserRateStatus,
+        orderField: UserRateOrderField,
+        sortOrder: UserRateOrder,
+        pagingSourceFactory: PagingSourceFactory,
+        getLastPage: GetLastPage,
+        loadPage: LoadPage,
         config: PagingConfig = DefaultPagingConfig
     ): Flow<PagingData<UserRateWithEntry>> = Pager(
         config = config,
@@ -168,12 +165,17 @@ class UserRateRepository @Inject constructor(
                 val pageToLoad = when (loadType) {
                     LoadType.REFRESH -> USER_RATES_FIRST_PAGE
                     LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-                    LoadType.APPEND -> getLastPage() + 1
+                    LoadType.APPEND -> getLastPage(status, orderField, sortOrder) + 1
                 }
 
                 return try {
-                    val response = loadPage(pageToLoad)
-                    writeUserRatesPage(pageToLoad, response)
+                    val response = loadPage(pageToLoad, USER_RATES_PAGE_SIZE, status, orderField, sortOrder)
+                    writeUserRatesPage(
+                        orderField = orderField,
+                        sortOrder = sortOrder,
+                        page = pageToLoad,
+                        userRates = response
+                    )
 
                     MediatorResult.Success(
                         endOfPaginationReached = response.size < state.config.pageSize
@@ -184,15 +186,15 @@ class UserRateRepository @Inject constructor(
                 }
             }
         },
-        pagingSourceFactory = pagingSourceFactory
+        pagingSourceFactory = { pagingSourceFactory(status, orderField, sortOrder) }
     )
         .flow
-        .map { pagingData ->
-            pagingData.map { it.asExternalModel() }
-        }
+        .map { pagingData -> pagingData.map(PopulatedPagedUserRate::asExternalModel) }
         .flowOn(ioDispatcher)
 
     private suspend fun writeUserRatesPage(
+        orderField: UserRateOrderField,
+        sortOrder: UserRateOrder,
         page: Int,
         userRates: List<UserRateWithEntryDto>
     ) {
@@ -204,7 +206,9 @@ class UserRateRepository @Inject constructor(
             PagedUserRateEntity(
                 userRateId = networkModel.networkUserRate.id,
                 page = page,
-                index = index
+                index = index,
+                order = sortOrder,
+                orderField = orderField
             )
         }
 
@@ -229,3 +233,23 @@ class UserRateRepository @Inject constructor(
         )
     }
 }
+
+private typealias PagingSourceFactory = (
+    status: UserRateStatus,
+    orderField: UserRateOrderField,
+    sortOrder: UserRateOrder
+) -> PagingSource<Int, PopulatedPagedUserRate>
+
+private typealias LoadPage = suspend (
+    pageNumber: Int,
+    limit: Int,
+    status: UserRateStatus,
+    orderField: UserRateOrderField,
+    sortOrder: UserRateOrder
+) -> List<UserRateWithEntryDto>
+
+private typealias GetLastPage = suspend (
+    status: UserRateStatus,
+    orderField: UserRateOrderField,
+    sortOrder: UserRateOrder
+) -> Int

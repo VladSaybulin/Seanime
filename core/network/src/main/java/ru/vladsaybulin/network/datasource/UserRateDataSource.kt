@@ -18,7 +18,12 @@ import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.core.network.graphql.AnimeUserRatesQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRatesQuery
+import ru.vladsaybulin.core.network.graphql.type.UserRateOrderInputType
+import ru.vladsaybulin.model.list.UserRateOrder
+import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.network.mapper.enums.asSortOrderEnum
+import ru.vladsaybulin.network.mapper.enums.asUserRateOrderFieldEnum
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatusEnum
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.mapper.queries.asNetworkModels
@@ -58,13 +63,19 @@ class UserRateDataSource @Inject constructor(
         page: Int,
         limit: Int,
         status: UserRateStatus,
+        field: UserRateOrderField,
+        sortOrder: UserRateOrder,
         userId: Long? = null
     ): List<UserRateWithEntryDto> {
         val query = AnimeUserRatesQuery(
             page = page,
             limit = limit,
             status = status.asUserRateStatusEnum(),
-            userId = Optional.presentIfNotNull(userId)
+            userId = Optional.presentIfNotNull(userId),
+            orderInput = UserRateOrderInputType(
+                field = field.asUserRateOrderFieldEnum(),
+                order =sortOrder.asSortOrderEnum()
+            )
         )
         val response = apolloClient.query(query).execute().dataAssertNoErrors
         return response.userRates.map { it.asNetworkModel() }
@@ -74,13 +85,19 @@ class UserRateDataSource @Inject constructor(
         page: Int,
         limit: Int,
         status: UserRateStatus,
+        field: UserRateOrderField,
+        sortOrder: UserRateOrder,
         userId: Long? = null
     ) : List<UserRateWithEntryDto> {
         val query = MangaUserRatesQuery(
             page = page,
             limit = limit,
             status = status.asUserRateStatusEnum(),
-            userId = Optional.presentIfNotNull(userId)
+            userId = Optional.presentIfNotNull(userId),
+            orderInput = UserRateOrderInputType(
+                field = field.asUserRateOrderFieldEnum(),
+                order =sortOrder.asSortOrderEnum()
+            )
         )
         val response = apolloClient.query(query).execute().dataAssertNoErrors
         return response.userRates.map { it.asNetworkModels() }
