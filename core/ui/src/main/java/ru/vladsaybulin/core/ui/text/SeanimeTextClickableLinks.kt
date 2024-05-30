@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.annotatedtext
+package ru.vladsaybulin.core.ui.text
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.node.ModifierNodeElement

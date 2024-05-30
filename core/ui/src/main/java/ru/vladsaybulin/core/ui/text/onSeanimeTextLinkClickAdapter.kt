@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.annotatedtext
+package ru.vladsaybulin.core.ui.text
 
 fun <Action> onSeanimeTextLinkClickAdapter(
     onAnimeClick: (Long) -> Action?,

@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.annotatedtext
+package ru.vladsaybulin.core.ui.text
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.util.fastFilter

@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.annotatedtext
+package ru.vladsaybulin.core.ui.text
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloat

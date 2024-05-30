@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.annotatedtext
+package ru.vladsaybulin.core.ui.text
 
 private fun contains(baseStart: Int, baseEnd: Int, targetStart: Int, targetEnd: Int) =
     (baseStart <= targetStart && targetEnd <= baseEnd) &&

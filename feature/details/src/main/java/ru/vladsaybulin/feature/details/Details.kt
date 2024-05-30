@@ -44,8 +44,8 @@ import ru.vladsaybulin.core.navigation.searchByStudio
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.annotatedtext.SeanimeExpandableText
-import ru.vladsaybulin.core.ui.annotatedtext.onSeanimeTextLinkClickAdapter
+import ru.vladsaybulin.core.ui.text.SeanimeExpandableText
+import ru.vladsaybulin.core.ui.text.onSeanimeTextLinkClickAdapter
 import ru.vladsaybulin.feature.details.content.AuthorsCarousel
 import ru.vladsaybulin.feature.details.content.CharactersBottomSheet
 import ru.vladsaybulin.feature.details.content.CharactersCarousel

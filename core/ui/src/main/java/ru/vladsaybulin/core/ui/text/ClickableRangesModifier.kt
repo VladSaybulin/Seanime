@@ -1,13 +1,11 @@
-package ru.vladsaybulin.core.ui.annotatedtext
+package ru.vladsaybulin.core.ui.text
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.PointerInputModifierNode
-import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastFilter

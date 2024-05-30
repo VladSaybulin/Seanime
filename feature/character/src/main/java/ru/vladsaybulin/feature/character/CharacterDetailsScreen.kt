@@ -44,8 +44,8 @@ import ru.vladsaybulin.core.navigation.IdleSeanimeNavigator
 import ru.vladsaybulin.core.navigation.SeanimeNavigator
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
-import ru.vladsaybulin.core.ui.annotatedtext.SeanimeExpandableText
-import ru.vladsaybulin.core.ui.annotatedtext.onSeanimeTextLinkClickAdapter
+import ru.vladsaybulin.core.ui.text.SeanimeExpandableText
+import ru.vladsaybulin.core.ui.text.onSeanimeTextLinkClickAdapter
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.core.ui.manga.MangaCarousel
 import ru.vladsaybulin.model.annotatedtext.SeanimeText

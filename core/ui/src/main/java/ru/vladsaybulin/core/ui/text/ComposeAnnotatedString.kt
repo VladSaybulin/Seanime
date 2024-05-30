@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.annotatedtext
+package ru.vladsaybulin.core.ui.text
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString

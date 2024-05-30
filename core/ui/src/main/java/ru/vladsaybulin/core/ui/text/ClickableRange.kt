@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.annotatedtext
+package ru.vladsaybulin.core.ui.text
 
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 
