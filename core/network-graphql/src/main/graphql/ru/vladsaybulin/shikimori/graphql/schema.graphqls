@@ -325,11 +325,47 @@ enum ExternalLinkKindEnum {
   # subs.com.ru
   subs_com_ru
 
-  # Twitter
+  # Twitter/X
   twitter
 
   # Anime 365
   smotret_anime
+
+  # Crunchyroll
+  crunchyroll
+
+  # Wakanim
+  wakanim
+
+  # Amazon
+  amazon
+
+  # Hidive
+  hidive
+
+  # Hulu
+  hulu
+
+  # Ivi
+  ivi
+
+  # KinoPoisk HD
+  kinopoisk_hd
+
+  # Wink
+  wink
+
+  # Netflix
+  netflix
+
+  # Okko
+  okko
+
+  # more.tv
+  more_tv
+
+  # Youtube
+  youtube
 
   # ReadManga
   readmanga
@@ -744,7 +780,16 @@ type Query {
     userId: ID
     targetType: UserRateTargetTypeEnum!
     status: UserRateStatusEnum
+    order: UserRateOrderInputType
   ): [UserRate!]!
+  users(
+    page: Int = 1
+
+    # Maximum 50
+    limit: Int = 2
+    ids: [ID!]
+    search: String
+  ): [User!]!
 }
 
 # List of values separated by comma.
@@ -771,7 +816,53 @@ type Related {
   id: ID!
   manga: Manga
   relationEn: String!
+  @deprecated(
+    reason: "use relation_kind/relation_text instead. This field will be deleted after 2025-01-01"
+  )
+  relationKind: RelationKindEnum!
   relationRu: String!
+  @deprecated(
+    reason: "use relation_kind/relation_text instead. This field will be deleted after 2025-01-01"
+  )
+  relationText: String!
+}
+
+enum RelationKindEnum {
+  # Adaptation
+  adaptation
+
+  # Alternative Setting
+  alternative_setting
+
+  # Alternative Version
+  alternative_version
+
+  # Character
+  character
+
+  # Full Story
+  full_story
+
+  # Other
+  other
+
+  # Parent Story
+  parent_story
+
+  # Prequel
+  prequel
+
+  # Sequel
+  sequel
+
+  # Side Story
+  side_story
+
+  # Spin-off
+  spin_off
+
+  # Summary
+  summary
 }
 
 type ScoreStat {
@@ -801,6 +892,14 @@ type Screenshot {
 # `199x`
 #
 scalar SeasonString
+
+enum SortOrderEnum {
+  # Sort in ascending order
+  asc
+
+  # Sort in descending order
+  desc
+}
 
 type StatusStat {
   count: Int!
@@ -847,6 +946,19 @@ type UserRate {
   text: String
   updatedAt: ISO8601DateTime!
   volumes: Int!
+}
+
+enum UserRateOrderFieldEnum {
+  # By id
+  id
+
+  # By updated_at
+  updated_at
+}
+
+input UserRateOrderInputType {
+  field: UserRateOrderFieldEnum!
+  order: SortOrderEnum!
 }
 
 enum UserRateStatusEnum {
