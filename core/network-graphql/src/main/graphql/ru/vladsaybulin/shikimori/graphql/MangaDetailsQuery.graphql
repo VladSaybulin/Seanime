@@ -120,8 +120,7 @@ query MangaDetailsQuery($id: String!) {
                     year
                 }
             }
-            relationEn
-            relationRu
+            relationKind
         }
     }
 }

@@ -2,12 +2,12 @@ package ru.vladsaybulin.network.mapper.queries
 
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.related.asRelationType
 import ru.vladsaybulin.network.mapper.enums.asAnimeKind
 import ru.vladsaybulin.network.mapper.enums.asAnimeRating
 import ru.vladsaybulin.network.mapper.enums.asEntryStatus
 import ru.vladsaybulin.network.mapper.enums.asGenreKind
 import ru.vladsaybulin.network.mapper.enums.asMangaKind
+import ru.vladsaybulin.network.mapper.enums.asRelationType
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatus
 import ru.vladsaybulin.network.mapper.enums.asVideoKind
 import ru.vladsaybulin.network.models.NetworkAnime
@@ -149,7 +149,7 @@ private fun AnimeDetailsQuery.Related.asNetworkModel() = if (anime != null || ma
                 releasedOn = releasedOn?.let { NetworkIncompleteDate(it.day, it.month, it.year) },
             )
         },
-        relationType = relationEn.asRelationType()
+        relationType = relationKind.asRelationType()
     )
 } else null
 

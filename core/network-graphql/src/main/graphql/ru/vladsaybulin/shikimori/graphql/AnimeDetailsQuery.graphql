@@ -126,8 +126,7 @@ query AnimeDetailsQuery($id: String!) {
                     year
                 }
             }
-            relationEn
-            relationRu
+            relationKind
         }
         screenshots {
             x332Url
