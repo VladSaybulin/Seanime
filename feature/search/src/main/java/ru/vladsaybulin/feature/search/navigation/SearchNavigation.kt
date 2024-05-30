@@ -107,13 +107,18 @@ fun NavGraphBuilder.searchGraph(
     nested: NavGraphBuilder.() -> Unit,
 ) {
     navigation(
-        startDestination = "$SEARCH_GRAPH_ROUTE/$SEARCH_SCREEN_ROUTE?$RouteArguments",
+        startDestination = "$SEARCH_GRAPH_ROUTE/$SEARCH_SCREEN_ROUTE",
         route = SEARCH_GRAPH_ROUTE
     ) {
-        searchScreen(navigator)
+
+        composable(route = withParentGraphRoute(SEARCH_SCREEN_ROUTE)) {
+            SearchRoute(navigator = navigator)
+        }
+
         nested()
     }
 }
+
 
 fun NavGraphBuilder.searchScreen(navigator: SeanimeNavigator) {
     composable(

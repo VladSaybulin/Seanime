@@ -44,10 +44,14 @@ fun NavGraphBuilder.listGraph(
     nested: NavGraphBuilder.() -> Unit
 ) {
     navigation(
-        startDestination = "$MY_LIST_GRAPH_ROUTE/$LIST_SCREEN_ROUTE?$RouteArguments",
+        startDestination = "$MY_LIST_GRAPH_ROUTE/$LIST_SCREEN_ROUTE",
         route = MY_LIST_GRAPH_ROUTE
     ) {
-        listScreen(navigator)
+
+        composable(route = withParentGraphRoute(LIST_SCREEN_ROUTE)) {
+            MyListRoute(navigator = navigator)
+        }
+
         nested()
     }
 }
