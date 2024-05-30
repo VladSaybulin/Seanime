@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object ShikimoriIcons {
+    val Edit = Icons.Default.Edit
     val ArrowDownward = Icons.Default.ArrowDownward
     val ArrowUpward = Icons.Default.ArrowUpward
     val Tune = Icons.Default.Tune

@@ -133,7 +133,8 @@ private fun ListContent(
             UserRatesPaging(
                 userRates = userRates,
                 onAnimeClick = navigator::animeDetails,
-                onMangaClick = navigator::mangaDetails
+                onMangaClick = navigator::mangaDetails,
+                onEditClick = navigator::userRate
             )
         }
     }
@@ -240,7 +241,8 @@ private fun ControlPanel(
 private fun UserRatesPaging(
     userRates: LazyPagingItems<UserRateWithEntry>,
     onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit
+    onMangaClick: (Manga) -> Unit,
+    onEditClick: (UserRateWithEntry) -> Unit
 ) {
     LazyPagingColumn(
         lazyPagingItems = userRates,
@@ -252,7 +254,8 @@ private fun UserRatesPaging(
             userRateWithEntry = it,
             onAnimeClick = onAnimeClick,
             onMangaClick = onMangaClick,
-            showUserRateBadge = false
+            showUserRateBadge = false,
+            onEditClick = { onEditClick(it) }
         )
     }
 }

@@ -1,18 +1,25 @@
 package ru.vladsaybulin.core.ui.userrate
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.entry.EntryInfoKindAndYear
@@ -38,6 +45,7 @@ fun UserRateEntryCard(
     userRateWithEntry: UserRateWithEntry,
     onAnimeClick: (Anime) -> Unit,
     onMangaClick: (Manga) -> Unit,
+    onEditClick: () -> Unit,
     modifier: Modifier = Modifier,
     showUserRateBadge: Boolean = true
 ) {
@@ -100,38 +108,57 @@ fun UserRateEntryCard(
         containerColor = SeanimeTheme.colorScheme.surfaceColorAtElevation(1.dp),
         modifier = modifier
     ) {
-        Spacer(modifier = Modifier.height(4.dp))
-        EntryInfoKindAndYear(
-            kindText = kindString,
-            year = airedInYear,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        ScoreStars(
-            score = userRate.score.toFloat(),
-            starSize = SmallStarSize
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        when {
-            episodesLimit != null -> ProgressIndicator(
-                progress = userRate.episodes,
-                limit = episodesLimit,
-                unlimitedProgressStringRes = R.string.episodes_progress,
-                limitedProgressStringRes = R.string.episodes_progress_of_limit
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Column(Modifier.weight(1f)) {
+                Spacer(modifier = Modifier.height(4.dp))
+                EntryInfoKindAndYear(
+                    kindText = kindString,
+                    year = airedInYear,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                ScoreStars(
+                    score = userRate.score.toFloat(),
+                    starSize = SmallStarSize
+                )
+                Spacer(modifier = Modifier.height(8.dp))
 
-            volumesLimit != null -> ProgressIndicator(
-                progress = userRate.volumes,
-                limit = volumesLimit,
-                unlimitedProgressStringRes = R.string.volumes_progress,
-                limitedProgressStringRes = R.string.volumes_progress_of_limit
-            )
+                when {
+                    episodesLimit != null -> ProgressIndicator(
+                        progress = userRate.episodes,
+                        limit = episodesLimit,
+                        unlimitedProgressStringRes = R.string.episodes_progress,
+                        limitedProgressStringRes = R.string.episodes_progress_of_limit
+                    )
 
-            chaptersLimit != null -> ProgressIndicator(
-                progress = userRate.chapters,
-                limit = chaptersLimit,
-                unlimitedProgressStringRes = R.string.chapters_progress,
-                limitedProgressStringRes = R.string.chapters_progress_of_limit
-            )
+                    volumesLimit != null -> ProgressIndicator(
+                        progress = userRate.volumes,
+                        limit = volumesLimit,
+                        unlimitedProgressStringRes = R.string.volumes_progress,
+                        limitedProgressStringRes = R.string.volumes_progress_of_limit
+                    )
+
+                    chaptersLimit != null -> ProgressIndicator(
+                        progress = userRate.chapters,
+                        limit = chaptersLimit,
+                        unlimitedProgressStringRes = R.string.chapters_progress,
+                        limitedProgressStringRes = R.string.chapters_progress_of_limit
+                    )
+                }
+            }
+
+            FilledTonalIconButton(
+                onClick = onEditClick,
+                modifier = Modifier.align(Alignment.Bottom)
+            ) {
+                Icon(
+                    imageVector = ShikimoriIcons.Edit,
+                    contentDescription = null,
+                    tint = SeanimeTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

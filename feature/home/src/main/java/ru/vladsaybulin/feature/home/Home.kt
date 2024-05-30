@@ -120,7 +120,8 @@ private fun HomeContent(
                 inProgressUserRatesPager(
                     userRates = uiState.inProgressUserRates,
                     onAnimeClick = navigator::animeDetails,
-                    onMangaClick = navigator::mangaDetails
+                    onMangaClick = navigator::mangaDetails,
+                    onEditClick = navigator::userRate
                 )
                 sectionSpace()
             }
@@ -227,6 +228,7 @@ private fun LazyListScope.inProgressUserRatesPager(
     userRates: ImmutableList<UserRateWithEntry>,
     onAnimeClick: (Anime) -> Unit,
     onMangaClick: (Manga) -> Unit,
+    onEditClick: (UserRateWithEntry) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     item @OptIn(ExperimentalFoundationApi::class) {
@@ -243,6 +245,7 @@ private fun LazyListScope.inProgressUserRatesPager(
                 userRateWithEntry = userRates[it],
                 onAnimeClick = onAnimeClick,
                 onMangaClick = onMangaClick,
+                onEditClick = { onEditClick(userRates[it]) },
                 showUserRateBadge = true
             )
         }
