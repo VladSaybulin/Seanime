@@ -2,14 +2,27 @@ package ru.vladsaybulin.core.ui.text
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.LineHeightStyle.Trim.Companion.LastLineBottom
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.util.fastForEach
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.Bold
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.H1
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.H2
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.H3
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.H4
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.H5
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.H6
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.Italic
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.Strikethrough
+import ru.vladsaybulin.model.annotatedtext.SeanimeText.ReadyStyleValue.Underline
 
 internal fun SeanimeText.toComposeAnnotatedString(linkColor: Color): AnnotatedString {
     return buildAnnotatedString {
@@ -34,25 +47,47 @@ private fun AnnotatedString.Builder.addLinkAnnotation(link: SeanimeText.Range<St
 }
 
 private fun AnnotatedString.Builder.addStyle(styleRange: SeanimeText.Range<SeanimeText.Style>) {
-    addStyle(
-        style = when (val style = styleRange.item) {
-            is SeanimeText.Style.ReadyStyle -> style.value.asSpanStyle()
-            else -> SpanStyle()
-        },
-        start = styleRange.start,
-        end = styleRange.end
-    )
+
+    when (val style = styleRange.item) {
+        is SeanimeText.Style.ReadyStyle -> addReadyStyle(
+            readyStyleValue = style.value,
+            start = styleRange.start,
+            end = styleRange.end
+        )
+        //TODO Other text styles
+    }
+}
+
+private fun AnnotatedString.Builder.addReadyStyle(
+    readyStyleValue: SeanimeText.ReadyStyleValue,
+    start: Int,
+    end: Int
+) {
+    readyStyleValue.asParagraphStyle()?.let {
+        addStyle(it, start, end)
+    }
+    addStyle(readyStyleValue.asSpanStyle(), start, end)
 }
 
 private fun SeanimeText.ReadyStyleValue.asSpanStyle() = when (this) {
-    SeanimeText.ReadyStyleValue.H1 -> SpanStyle(fontSize = 2.em, fontWeight = FontWeight.Bold)
-    SeanimeText.ReadyStyleValue.H2 -> SpanStyle(fontSize = 1.5.em, fontWeight = FontWeight.Bold)
-    SeanimeText.ReadyStyleValue.H3 -> SpanStyle(fontSize = 1.17.em, fontWeight = FontWeight.Bold)
-    SeanimeText.ReadyStyleValue.H4 -> SpanStyle(fontSize = 1.em, fontWeight = FontWeight.Bold)
-    SeanimeText.ReadyStyleValue.H5 -> SpanStyle(fontSize = 0.83.em, fontWeight = FontWeight.Bold)
-    SeanimeText.ReadyStyleValue.H6 -> SpanStyle(fontSize = 0.67.em, fontWeight = FontWeight.Bold)
-    SeanimeText.ReadyStyleValue.Underline -> SpanStyle(textDecoration = TextDecoration.Underline)
-    SeanimeText.ReadyStyleValue.Strikethrough -> SpanStyle(textDecoration = TextDecoration.LineThrough)
-    SeanimeText.ReadyStyleValue.Bold -> SpanStyle(fontWeight = FontWeight.Bold)
-    SeanimeText.ReadyStyleValue.Italic -> SpanStyle(fontStyle = FontStyle.Italic)
+    H1 -> SpanStyle(fontSize = 2.em, fontWeight = FontWeight.Bold)
+    H2 -> SpanStyle(fontSize = 1.5.em, fontWeight = FontWeight.Bold)
+    H3 -> SpanStyle(fontSize = 1.17.em, fontWeight = FontWeight.Bold)
+    H4 -> SpanStyle(fontSize = 1.em, fontWeight = FontWeight.Bold)
+    H5 -> SpanStyle(fontSize = 0.83.em, fontWeight = FontWeight.Bold)
+    H6 -> SpanStyle(fontSize = 0.67.em, fontWeight = FontWeight.Bold)
+    Underline -> SpanStyle(textDecoration = TextDecoration.Underline)
+    Strikethrough -> SpanStyle(textDecoration = TextDecoration.LineThrough)
+    Bold -> SpanStyle(fontWeight = FontWeight.Bold)
+    Italic -> SpanStyle(fontStyle = FontStyle.Italic)
+}
+
+private fun SeanimeText.ReadyStyleValue.asParagraphStyle(): ParagraphStyle? = when (this) {
+    H1, H2, H3, H4, H5, H6 -> ParagraphStyle(
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Bottom,
+            trim = LastLineBottom
+        )
+    )
+    else -> null
 }
