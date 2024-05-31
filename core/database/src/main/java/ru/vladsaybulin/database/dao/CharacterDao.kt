@@ -38,12 +38,4 @@ interface CharacterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceCharacters(characters: List<CharacterEntity>)
 
-    @Query("DELETE FROM character_seyu WHERE character_id = :characterId")
-    suspend fun deleteCharacterSeyuCrossRef(characterId: Long)
-
-    @Query("DELETE FROM character_anime WHERE character_id = :characterId")
-    suspend fun deleteCharacterAnimeCrossRef(characterId: Long)
-
-    @Query("DELETE FROM character_manga WHERE character_id = :characterId")
-    suspend fun deleteCharacterMangaCrossRef(characterId: Long)
 }

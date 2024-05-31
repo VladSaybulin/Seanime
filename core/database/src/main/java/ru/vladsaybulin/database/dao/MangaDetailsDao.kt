@@ -57,19 +57,4 @@ interface MangaDetailsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceMangaDetails(animeDetails: MangaDetailsEntity)
 
-    @Query("DELETE FROM manga_person_roles WHERE manga_id = :mangaId")
-    suspend fun deleteMangaAuthors(mangaId: Long)
-
-    @Query("DELETE FROM manga_characters WHERE manga_id = :mangaId")
-    suspend fun deleteMangaCharacters(mangaId: Long)
-
-    @Query("DELETE FROM manga_genre WHERE manga_id = :mangaId")
-    suspend fun deleteMangaGenreCrossReferences(mangaId: Long)
-
-    @Query("DELETE FROM manga_related WHERE manga_id = :mangaId")
-    suspend fun deleteMangaRelated(mangaId: Long)
-
-    @Query("DELETE FROM manga_publisher WHERE manga_id = :mangaId")
-    suspend fun deleteMangaPublisherCrossReferences(mangaId: Long)
-    
 }

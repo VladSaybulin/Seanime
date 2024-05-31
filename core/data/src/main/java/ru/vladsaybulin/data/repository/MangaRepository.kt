@@ -104,6 +104,12 @@ class MangaRepository @Inject constructor(
         mangaDetailsDao.getAllMangaAuthors(mangaId)
             .map { it.map(PopulatedMangaAuthor::asExternalModel) }
 
+    suspend fun syncMangaDetails(mangaId: Long) = sync(
+        ttl = DefaultMangaTTL,
+        readLastUpdateDate = { lastRequestDao.getLastRequestDate(LastRequestType.MANGA, mangaId) },
+        refresh = { refreshMangaDetails(mangaId) }
+    )
+
     suspend fun refreshMangaDetails(mangaId: Long) {
         val mangaDetails = mangaDataSource.getMangaDetails(mangaId)
         databaseTransactionRunner {
@@ -124,26 +130,21 @@ class MangaRepository @Inject constructor(
                 mangaDao.insertOrReplaceMangas(it)
             }
 
-            mangaDao.insertOrReplaceManga(mangaDetails.asMangaEntity())
+            mangaDao.upsertManga(mangaDetails.asMangaEntity())
             mangaDetailsDao.insertOrReplaceMangaDetails(mangaDetails.asMangaDetailsEntity())
 
-            mangaDetailsDao.deleteMangaPublisherCrossReferences(mangaId)
             mangaDetails.mangaPublisherCrossRefs().let {
                 mangaDetailsDao.insertMangaPublisherCrossReferences(it)
             }
-            mangaDetailsDao.deleteMangaGenreCrossReferences(mangaId)
             mangaDetails.genresCrossReferences()?.let {
                 mangaDetailsDao.insertMangaGenreCrossReferences(it)
             }
-            mangaDetailsDao.deleteMangaCharacters(mangaId)
             mangaDetails.mangaCharacterEntities()?.let {
                 mangaDetailsDao.insertMangaCharacters(it)
             }
-            mangaDetailsDao.deleteMangaAuthors(mangaId)
             mangaDetails.mangaAuthorEntities()?.let {
                 mangaDetailsDao.insertMangaAuthors(it)
             }
-            mangaDetailsDao.deleteMangaRelated(mangaId)
             mangaDetails.mangaRelatedEntities()?.let {
                 mangaDetailsDao.insertMangaRelated(it)
             }
@@ -157,12 +158,6 @@ class MangaRepository @Inject constructor(
             )
         }
     }
-
-    private suspend fun syncMangaDetails(mangaId: Long) = sync(
-        ttl = DefaultMangaTTL,
-        readLastUpdateDate = { lastRequestDao.getLastRequestDate(LastRequestType.MANGA, mangaId) },
-        refresh = { refreshMangaDetails(mangaId) }
-    )
 
     private fun getPagedMangaPagingSource(queryMap: Map<QueryMapKey, String>) =
         object : AbstractShikimoriPagingSource<MangaWithUserRate>() {

@@ -10,9 +10,10 @@ import ru.vladsaybulin.database.models.manga.MangaEntity
     primaryKeys = ["character_id", "manga_id"],
     foreignKeys = [
         ForeignKey(
-            entity = CharacterEntity::class,
+            entity = CharacterDetailsEntity::class,
             parentColumns = ["id"],
-            childColumns = ["character_id"]
+            childColumns = ["character_id"],
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = MangaEntity::class,

@@ -10,9 +10,10 @@ import ru.vladsaybulin.database.models.anime.AnimeEntity
     primaryKeys = ["character_id", "anime_id"],
     foreignKeys = [
         ForeignKey(
-            entity = CharacterEntity::class,
+            entity = CharacterDetailsEntity::class,
             parentColumns = ["id"],
-            childColumns = ["character_id"]
+            childColumns = ["character_id"],
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = AnimeEntity::class,

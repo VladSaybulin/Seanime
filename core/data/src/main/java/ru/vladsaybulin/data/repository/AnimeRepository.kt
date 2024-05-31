@@ -158,34 +158,27 @@ class AnimeRepository @Inject constructor(
                     mangaDao.insertOrReplaceMangas(it)
                 }
 
-                animeDao.insertOrReplaceAnime(animeDetails.asAnimeEntity())
+                animeDao.upsertAnime(animeDetails.asAnimeEntity())
                 animeDetailsDao.insertOrReplaceAnimeDetails(animeDetails.asAnimeDetailsEntity())
 
-                animeDetailsDao.deleteAnimeStudioCrossReferences(animeId)
                 animeDetails.animeStudioCrossRefs().let {
                     animeDetailsDao.insertAnimeStudioCrossReferences(it)
                 }
-                animeDetailsDao.deleteAnimeGenreCrossReferences(animeId)
                 animeDetails.genresCrossReferences()?.let {
                     animeDetailsDao.insertAnimeGenreCrossReferences(it)
                 }
-                animeDetailsDao.deleteAnimeCharacters(animeId)
                 animeDetails.animeCharacterEntities()?.let {
                     animeDetailsDao.insertAnimeCharacters(it)
                 }
-                animeDetailsDao.deleteAnimeAuthors(animeId)
                 animeDetails.animeAuthorEntities()?.let {
                     animeDetailsDao.insertAnimeAuthors(it)
                 }
-                animeDetailsDao.deleteAnimeRelated(animeId)
                 animeDetails.animeRelatedEntities()?.let {
                     animeDetailsDao.insertAnimeRelated(it)
                 }
-                animeDetailsDao.deleteAnimeScreenshots(animeId)
                 animeDetails.animeScreenshotEntities().let {
                     animeDetailsDao.insertAnimeScreenshots(it)
                 }
-                animeDetailsDao.deleteAnimeVideos(animeId)
                 animeDetails.animeVideoEntities()?.let {
                     animeDetailsDao.insertAnimeVideos(it)
                 }

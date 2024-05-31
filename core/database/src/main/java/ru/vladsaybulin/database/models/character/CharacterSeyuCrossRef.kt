@@ -10,9 +10,10 @@ import ru.vladsaybulin.database.models.person.PersonEntity
     primaryKeys = ["character_id", "seyu_id"],
     foreignKeys = [
         ForeignKey(
-            entity = CharacterEntity::class,
+            entity = CharacterDetailsEntity::class,
             parentColumns = ["id"],
-            childColumns = ["character_id"]
+            childColumns = ["character_id"],
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = PersonEntity::class,

@@ -65,25 +65,4 @@ interface AnimeDetailsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceAnimeDetails(animeDetails: AnimeDetailsEntity)
 
-    @Query("DELETE FROM anime_person_roles WHERE anime_id = :animeId")
-    suspend fun deleteAnimeAuthors(animeId: Long)
-
-    @Query("DELETE FROM anime_characters WHERE anime_id = :animeId")
-    suspend fun deleteAnimeCharacters(animeId: Long)
-
-    @Query("DELETE FROM anime_genre WHERE anime_id = :animeId")
-    suspend fun deleteAnimeGenreCrossReferences(animeId: Long)
-
-    @Query("DELETE FROM anime_screenshots WHERE anime_id = :animeId")
-    suspend fun deleteAnimeScreenshots(animeId: Long)
-
-    @Query("DELETE FROM anime_videos WHERE anime_id = :animeId")
-    suspend fun deleteAnimeVideos(animeId: Long)
-
-    @Query("DELETE FROM anime_related WHERE anime_id = :animeId")
-    suspend fun deleteAnimeRelated(animeId: Long)
-
-    @Query("DELETE FROM anime_studio WHERE  anime_id = :animeId")
-    suspend fun deleteAnimeStudioCrossReferences(animeId: Long)
-
 }
