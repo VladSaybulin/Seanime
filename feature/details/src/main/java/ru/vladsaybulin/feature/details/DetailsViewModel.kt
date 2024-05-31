@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.vladsaybulin.core.domain.GetAnimeDetailsUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
+import ru.vladsaybulin.core.domain.GetMangaDetailsUseCase
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.data.repository.MangaRepository
@@ -30,7 +32,9 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    getAnimeDetailsUseCase: Lazy<GetAnimeDetailsUseCase>,
     private val animeRepository: Lazy<AnimeRepository>,
+    getMangaDetailsUseCase: Lazy<GetMangaDetailsUseCase>,
     private val mangaRepository: Lazy<MangaRepository>,
     private val userRateRepository: Lazy<UserRateRepository>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
@@ -47,23 +51,23 @@ class DetailsViewModel @Inject constructor(
         )
 
     val uiState = when (args.entryType) {
-        EntryType.Anime ->  combine<AnimeDetails, List<Anime>, UserRate?, DetailsUiState>(
-            animeRepository.get().getAnimeDetails(args.entryId),
+        EntryType.Anime -> combine<AnimeDetails, List<Anime>, UserRate?, DetailsUiState>(
+            getAnimeDetailsUseCase.get().invoke(args.entryId),
             animeRepository.get().getSimilarAnimes(args.entryId),
-            animeRepository.get().getAnimeDetailsUserRate(args.entryId),
+            userRateRepository.get().getAnimeUserRate(args.entryId),
             ::successAnime
         )
-        EntryType.Manga ->  combine<MangaDetails, List<Manga>, UserRate?, DetailsUiState>(
-            mangaRepository.get().getMangaDetails(args.entryId),
+        EntryType.Manga -> combine<MangaDetails, List<Manga>, UserRate?, DetailsUiState>(
+            getMangaDetailsUseCase.get().invoke(args.entryId),
             mangaRepository.get().getSimilarMangas(args.entryId),
-            mangaRepository.get().getMangaDetailsUserRate(args.entryId),
+            userRateRepository.get().getMangaUserRate(args.entryId),
             ::successManga
         )
     }
         .catch { emit(DetailsUiState.Error(it)); it.printStackTrace() }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5000),
             initialValue = DetailsUiState.Loading
         )
 

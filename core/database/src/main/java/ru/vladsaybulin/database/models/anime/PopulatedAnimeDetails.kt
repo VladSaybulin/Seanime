@@ -3,10 +3,10 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import ru.vladsaybulin.database.models.text.asExternalModel
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.genre.asExternalModel
+import ru.vladsaybulin.database.models.text.asExternalModel
 import ru.vladsaybulin.model.anime.AnimeDetails
 
 data class PopulatedAnimeDetails(
@@ -19,20 +19,6 @@ data class PopulatedAnimeDetails(
         entityColumn = "id"
     )
     val animeEntity: AnimeEntity,
-
-    @Relation(
-        entity = AnimePersonRolesEntity::class,
-        parentColumn = "id",
-        entityColumn = "anime_id"
-    )
-    val authors: List<PopulatedAnimeAuthor>,
-
-    @Relation(
-        entity = AnimeCharacterEntity::class,
-        parentColumn = "id",
-        entityColumn = "anime_id"
-    )
-    val characters: List<PopulatedAnimeCharacter>,
 
     @Relation(
         entity = GenreEntity::class,
@@ -107,8 +93,8 @@ fun PopulatedAnimeDetails.asExternalModel(): AnimeDetails = AnimeDetails(
     scoreStats = animeDetailsEntity.scoreStats,
     userRateStatusStats = animeDetailsEntity.statusStats,
     studios = studios.map { it.asExternalModel() },
-    authors = authors.map { it.asExternalModel() },
-    characters = characters.map { it.asExternalModel() },
+    authors = emptyList(),
+    characters = emptyList(),
     related = related.sortedBy { it.animeRelatedEntity.order }.map { it.asExternalModel() },
     screenshots = screenshots.map { it.asExternalModel() },
     videos = videos.map { it.asExternalModel() }

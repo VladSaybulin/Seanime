@@ -5,10 +5,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -22,7 +22,6 @@ import ru.vladsaybulin.data.model.asAnimeDetailsEntity
 import ru.vladsaybulin.data.model.asAnimeEntity
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
-import ru.vladsaybulin.data.model.asUserRate
 import ru.vladsaybulin.data.model.characterEntityShells
 import ru.vladsaybulin.data.model.genreEntityShells
 import ru.vladsaybulin.data.model.genresCrossReferences
@@ -48,13 +47,14 @@ import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeAuthor
+import ru.vladsaybulin.database.models.anime.PopulatedAnimeCharacter
 import ru.vladsaybulin.database.models.anime.asExternalModel
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
 import ru.vladsaybulin.database.models.lastrequest.LastRequestType
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.search.Order
@@ -100,26 +100,20 @@ class AnimeRepository @Inject constructor(
             .map { it.map(AnimeEntity::asExternalModel) }
             .flowOn(ioDispatcher)
 
-    fun getAnimeDetails(animeId: Long): Flow<AnimeDetails> {
-        val userRateFlow = authRepository.authState.map {
-            if (it == ShikimoriAuthState.LOGGED_IN) {
-                userRateDataSource.getAnimeUserRate(animeId)
-            } else null
-        }
-        return animeDetailsDao.getAnimeDetails(animeId)
-            .onStart { syncAnimeDetails(animeId) }
+    fun getAnimeDetails(animeId: Long): Flow<AnimeDetails> =
+        animeDetailsDao.getAnimeDetails(animeId)
             .map { it.asExternalModel() }
-            .combine(userRateFlow) { details, userRate ->
-                if (userRate != null) {
-                    userRateDao.insertOrReplaceUserRate(userRate.asEntity(details.id))
-                }
-                details
-            }
             .flowOn(ioDispatcher)
-    }
 
-    fun getAnimeDetailsUserRate(animeId: Long) =
-        userRateDao.getAnimeUserRate(animeId).map { it?.asUserRate() }
+    fun getMainAnimeAuthors(animeId: Long): Flow<List<PersonWithRoles>> =
+        animeDetailsDao.getMainAnimeAuthors(animeId)
+            .map { it.map(PopulatedAnimeAuthor::asExternalModel) }
+            .flowOn(ioDispatcher)
+
+    fun getMainAnimeCharacters(animeId: Long): Flow<List<CharacterWithRole>> =
+        animeDetailsDao.getMainAnimeCharacters(animeId)
+            .map { it.map(PopulatedAnimeCharacter::asExternalModel) }
+            .flowOn(ioDispatcher)
 
     fun getSimilarAnimes(animeId: Long): Flow<List<Anime>> =
         flowOf {
@@ -130,74 +124,82 @@ class AnimeRepository @Inject constructor(
         animeDetailsDao.getAllAnimeAuthors(animeId)
             .map { it.map(PopulatedAnimeAuthor::asExternalModel) }
 
-
-    suspend fun refreshAnimeDetails(animeId: Long) {
-        val animeDetails = animeDataSource.getAnimeDetails(animeId)
-        databaseTransactionRunner {
-            animeDetailsDao.insertOrReplaceStudios(animeDetails.studioEntityShells())
-            animeDetails.genreEntityShells()?.let {
-                genreDao.insertOrReplaceGenres(it)
-            }
-            animeDetails.characterEntityShells()?.let {
-                characterDao.insertOrReplaceCharacters(it)
-            }
-            animeDetails.personEntityShells()?.let {
-                personDao.insertOrReplacePersons(it)
-            }
-            animeDetails.relatedAnimeEntityShell()?.let {
-                animeDao.insertOrReplaceAnimes(it)
-            }
-            animeDetails.relatedMangaEntityShell()?.let {
-                mangaDao.insertOrReplaceMangas(it)
-            }
-
-            animeDao.insertOrReplaceAnime(animeDetails.asAnimeEntity())
-            animeDetailsDao.insertOrReplaceAnimeDetails(animeDetails.asAnimeDetailsEntity())
-
-            animeDetailsDao.deleteAnimeStudioCrossReferences(animeId)
-            animeDetails.animeStudioCrossRefs().let {
-                animeDetailsDao.insertAnimeStudioCrossReferences(it)
-            }
-            animeDetailsDao.deleteAnimeGenreCrossReferences(animeId)
-            animeDetails.genresCrossReferences()?.let {
-                animeDetailsDao.insertAnimeGenreCrossReferences(it)
-            }
-            animeDetailsDao.deleteAnimeCharacters(animeId)
-            animeDetails.animeCharacterEntities()?.let {
-                animeDetailsDao.insertAnimeCharacters(it)
-            }
-            animeDetailsDao.deleteAnimeAuthors(animeId)
-            animeDetails.animeAuthorEntities()?.let {
-                animeDetailsDao.insertAnimeAuthors(it)
-            }
-            animeDetailsDao.deleteAnimeRelated(animeId)
-            animeDetails.animeRelatedEntities()?.let {
-                animeDetailsDao.insertAnimeRelated(it)
-            }
-            animeDetailsDao.deleteAnimeScreenshots(animeId)
-            animeDetails.animeScreenshotEntities().let {
-                animeDetailsDao.insertAnimeScreenshots(it)
-            }
-            animeDetailsDao.deleteAnimeVideos(animeId)
-            animeDetails.animeVideoEntities()?.let {
-                animeDetailsDao.insertAnimeVideos(it)
-            }
-
-            lastRequestDao.insertOrReplaceLastRequestDate(
-                LastRequestEntity(
-                    requestType = LastRequestType.ANIME,
-                    targetId = animeId,
-                    requestDate = Clock.System.now()
-                )
+    suspend fun syncAnimeDetails(animeId: Long) {
+        withContext(ioDispatcher) {
+            sync(
+                ttl = DefaultAnimeTTL,
+                readLastUpdateDate = {
+                    lastRequestDao.getLastRequestDate(LastRequestType.ANIME, animeId)
+                },
+                refresh = { refreshAnimeDetails(animeId) }
             )
         }
     }
 
-    private suspend fun syncAnimeDetails(animeId: Long) = sync(
-        ttl = DefaultAnimeTTL,
-        readLastUpdateDate = { lastRequestDao.getLastRequestDate(LastRequestType.ANIME, animeId) },
-        refresh = { refreshAnimeDetails(animeId) }
-    )
+    suspend fun refreshAnimeDetails(animeId: Long) {
+        withContext(ioDispatcher) {
+            val animeDetails = animeDataSource.getAnimeDetails(animeId)
+
+            databaseTransactionRunner {
+                animeDetailsDao.insertOrReplaceStudios(animeDetails.studioEntityShells())
+                animeDetails.genreEntityShells()?.let {
+                    genreDao.insertOrReplaceGenres(it)
+                }
+                animeDetails.characterEntityShells()?.let {
+                    characterDao.insertOrReplaceCharacters(it)
+                }
+                animeDetails.personEntityShells()?.let {
+                    personDao.insertOrReplacePersons(it)
+                }
+                animeDetails.relatedAnimeEntityShell()?.let {
+                    animeDao.insertOrReplaceAnimes(it)
+                }
+                animeDetails.relatedMangaEntityShell()?.let {
+                    mangaDao.insertOrReplaceMangas(it)
+                }
+
+                animeDao.insertOrReplaceAnime(animeDetails.asAnimeEntity())
+                animeDetailsDao.insertOrReplaceAnimeDetails(animeDetails.asAnimeDetailsEntity())
+
+                animeDetailsDao.deleteAnimeStudioCrossReferences(animeId)
+                animeDetails.animeStudioCrossRefs().let {
+                    animeDetailsDao.insertAnimeStudioCrossReferences(it)
+                }
+                animeDetailsDao.deleteAnimeGenreCrossReferences(animeId)
+                animeDetails.genresCrossReferences()?.let {
+                    animeDetailsDao.insertAnimeGenreCrossReferences(it)
+                }
+                animeDetailsDao.deleteAnimeCharacters(animeId)
+                animeDetails.animeCharacterEntities()?.let {
+                    animeDetailsDao.insertAnimeCharacters(it)
+                }
+                animeDetailsDao.deleteAnimeAuthors(animeId)
+                animeDetails.animeAuthorEntities()?.let {
+                    animeDetailsDao.insertAnimeAuthors(it)
+                }
+                animeDetailsDao.deleteAnimeRelated(animeId)
+                animeDetails.animeRelatedEntities()?.let {
+                    animeDetailsDao.insertAnimeRelated(it)
+                }
+                animeDetailsDao.deleteAnimeScreenshots(animeId)
+                animeDetails.animeScreenshotEntities().let {
+                    animeDetailsDao.insertAnimeScreenshots(it)
+                }
+                animeDetailsDao.deleteAnimeVideos(animeId)
+                animeDetails.animeVideoEntities()?.let {
+                    animeDetailsDao.insertAnimeVideos(it)
+                }
+
+                lastRequestDao.insertOrReplaceLastRequestDate(
+                    LastRequestEntity(
+                        requestType = LastRequestType.ANIME,
+                        targetId = animeId,
+                        requestDate = Clock.System.now()
+                    )
+                )
+            }
+        }
+    }
 
     private suspend fun loadOngoingAnime(
         pageNumber: Int,

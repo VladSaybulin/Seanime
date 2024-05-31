@@ -11,6 +11,8 @@ import androidx.paging.RemoteMediator
 import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -31,10 +33,12 @@ import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.asExternalModel
+import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.search.QueryMapKey
+import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
@@ -51,6 +55,7 @@ class UserRateRepository @Inject constructor(
     private val mangaDao: MangaDao,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     fun getLastInProgressUserRates(): Flow<List<UserRateWithEntry>> =
@@ -88,6 +93,36 @@ class UserRateRepository @Inject constructor(
         getLastPage = userRateDao::getLastMangaUserRatesPage,
         loadPage = userRateDataSource::getMangaUserRates
     )
+
+    fun getAnimeUserRate(animeId: Long): Flow<UserRate?> =
+        authRepository.authState.flatMapLatest { authState ->
+
+            if (authState == ShikimoriAuthState.LOGGED_IN) {
+
+                userRateDao.getAnimeUserRate(animeId)
+                    .onStart {
+                        userRateDataSource.getAnimeUserRate(animeId)?.run {
+                            userRateDao.insertOrReplaceUserRate(asEntity(animeId = animeId))
+                        }
+                    }
+                    .map { it?.asExternalModel() }
+            } else flowOf(null)
+        }
+
+    fun getMangaUserRate(mangaId: Long): Flow<UserRate?> =
+        authRepository.authState.flatMapLatest { authState ->
+
+            if (authState == ShikimoriAuthState.LOGGED_IN) {
+
+                userRateDao.getMangaUserRate(mangaId)
+                    .onStart {
+                        userRateDataSource.getMangaUserRate(mangaId)?.run {
+                            userRateDao.insertOrReplaceUserRate(asEntity(mangaId = mangaId))
+                        }
+                    }
+                    .map { it?.asExternalModel() }
+            } else flowOf(null)
+        }
 
     suspend fun createUserRate(
         entryType: EntryType,
@@ -169,7 +204,8 @@ class UserRateRepository @Inject constructor(
                 }
 
                 return try {
-                    val response = loadPage(pageToLoad, USER_RATES_PAGE_SIZE, status, orderField, sortOrder)
+                    val response =
+                        loadPage(pageToLoad, USER_RATES_PAGE_SIZE, status, orderField, sortOrder)
                     writeUserRatesPage(
                         orderField = orderField,
                         sortOrder = sortOrder,

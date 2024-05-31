@@ -5,10 +5,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -16,7 +14,6 @@ import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.data.model.asMangaDetailsEntity
 import ru.vladsaybulin.data.model.asMangaEntity
-import ru.vladsaybulin.data.model.asUserRate
 import ru.vladsaybulin.data.model.characterEntityShells
 import ru.vladsaybulin.data.model.genreEntityShells
 import ru.vladsaybulin.data.model.genresCrossReferences
@@ -45,8 +42,9 @@ import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
 import ru.vladsaybulin.database.models.lastrequest.LastRequestType
 import ru.vladsaybulin.database.models.manga.PopulatedMangaAuthor
+import ru.vladsaybulin.database.models.manga.PopulatedMangaCharacter
 import ru.vladsaybulin.database.models.manga.asExternalModel
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.manga.MangaWithUserRate
@@ -68,7 +66,6 @@ class MangaRepository @Inject constructor(
     private val mangaDao: MangaDao,
     private val genreDao: GenreDao,
     private val lastRequestDao: LastRequestDao,
-    private val authRepository: AuthRepository,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
@@ -83,26 +80,20 @@ class MangaRepository @Inject constructor(
         .flow
         .flowOn(ioDispatcher)
 
-    fun getMangaDetails(mangaId: Long): Flow<MangaDetails> {
-        val userRateFlow = authRepository.authState.map {
-            if (it == ShikimoriAuthState.LOGGED_IN) {
-                userRateDataSource.getMangaUserRate(mangaId)
-            } else null
-        }
-        return mangaDetailsDao.getMangaDetails(mangaId)
-            .onStart { syncMangaDetails(mangaId) }
+    fun getMangaDetails(mangaId: Long): Flow<MangaDetails> =
+        mangaDetailsDao.getMangaDetails(mangaId)
             .map { it.asExternalModel() }
-            .combine(userRateFlow) { details, userRate ->
-                if (userRate != null) {
-                    userRateDao.insertOrReplaceUserRate(userRate.asEntity(mangaId = details.id))
-                }
-                details
-            }
             .flowOn(ioDispatcher)
-    }
 
-    fun getMangaDetailsUserRate(mangaId: Long) =
-        userRateDao.getMangaUserRate(mangaId).map { it?.asUserRate() }
+    fun getMainMangaAuthors(animeId: Long): Flow<List<PersonWithRoles>> =
+        mangaDetailsDao.getMainMangaAuthors(animeId)
+            .map { it.map(PopulatedMangaAuthor::asExternalModel) }
+            .flowOn(ioDispatcher)
+
+    fun getMainMangaCharacters(animeId: Long): Flow<List<CharacterWithRole>> =
+        mangaDetailsDao.getMainMangaCharacters(animeId)
+            .map { it.map(PopulatedMangaCharacter::asExternalModel) }
+            .flowOn(ioDispatcher)
 
     fun getSimilarMangas(mangaId: Long): Flow<List<Manga>> =
         flowOf {

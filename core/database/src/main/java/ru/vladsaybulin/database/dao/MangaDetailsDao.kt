@@ -12,6 +12,7 @@ import ru.vladsaybulin.database.models.manga.MangaPersonRolesEntity
 import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
 import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
 import ru.vladsaybulin.database.models.manga.PopulatedMangaAuthor
+import ru.vladsaybulin.database.models.manga.PopulatedMangaCharacter
 import ru.vladsaybulin.database.models.manga.PopulatedMangaDetails
 import ru.vladsaybulin.database.models.manga.PublisherEntity
 
@@ -20,6 +21,13 @@ interface MangaDetailsDao {
 
     @Query("SELECT * FROM manga_details WHERE id = :mangaId")
     fun getMangaDetails(mangaId: Long): Flow<PopulatedMangaDetails>
+
+    @Query("SELECT * FROM manga_characters WHERE manga_id = :mangaId AND is_main = 1")
+    fun getMainMangaCharacters(mangaId: Long): Flow<List<PopulatedMangaCharacter>>
+
+    @Query("SELECT * FROM manga_person_roles WHERE manga_id = :mangaId AND is_main = 1")
+    fun getMainMangaAuthors(mangaId: Long): Flow<List<PopulatedMangaAuthor>>
+
 
     @Query("SELECT * FROM manga_person_roles WHERE manga_id = :mangaId")
     fun getAllMangaAuthors(mangaId: Long): Flow<List<PopulatedMangaAuthor>>

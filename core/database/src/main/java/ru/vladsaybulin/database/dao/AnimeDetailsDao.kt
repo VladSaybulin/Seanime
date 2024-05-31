@@ -14,6 +14,7 @@ import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
 import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeAuthor
+import ru.vladsaybulin.database.models.anime.PopulatedAnimeCharacter
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeDetails
 import ru.vladsaybulin.database.models.anime.StudioEntity
 
@@ -22,6 +23,12 @@ interface AnimeDetailsDao {
 
     @Query("SELECT * FROM anime_details WHERE id = :animeId")
     fun getAnimeDetails(animeId: Long): Flow<PopulatedAnimeDetails>
+
+    @Query("SELECT * FROM anime_characters WHERE anime_id = :animeId AND is_main = 1")
+    fun getMainAnimeCharacters(animeId: Long): Flow<List<PopulatedAnimeCharacter>>
+
+    @Query("SELECT * FROM anime_person_roles WHERE anime_id = :animeId AND is_main = 1")
+    fun getMainAnimeAuthors(animeId: Long): Flow<List<PopulatedAnimeAuthor>>
 
     @Query("SELECT * FROM anime_person_roles WHERE anime_id = :animeId")
     fun getAllAnimeAuthors(animeId: Long): Flow<List<PopulatedAnimeAuthor>>
