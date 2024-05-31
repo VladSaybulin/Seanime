@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateStatus.Completed
@@ -54,6 +55,40 @@ fun rememberUserRateState(
             enabledAutoCorrect = endAutocorrectUserRate
         )
     }
+}
+
+@Composable
+fun rememberUserRateState(
+    entryType: EntryType,
+    entryStatus: EntryStatus,
+    initialUserRate: UserRateValues,
+    availableUserRateStatuses: List<UserRateStatus>,
+    episodesLimit: Int,
+    chaptersLimit: Int,
+    volumesLimit: Int
+): UserRateState = remember(
+    entryType,
+    initialUserRate,
+    availableUserRateStatuses,
+    episodesLimit,
+    chaptersLimit,
+    volumesLimit
+) {
+    UserRateState(
+        availableStatuses = availableUserRateStatuses.toImmutableList(),
+        initialScore = initialUserRate.score ?: 0,
+        initialStatus = initialUserRate.status,
+        episodesLimit = episodesLimit.takeIf { it > 0 }?.let(::CounterLimit),
+        initialEpisodes = initialUserRate.episodes ?: 0,
+        chaptersLimit = chaptersLimit.takeIf { it > 0 }?.let(::CounterLimit),
+        initialChapters = initialUserRate.chapters ?: 0,
+        volumesLimit = volumesLimit.takeIf { it > 0 }?.let(::CounterLimit),
+        initialVolumes = initialUserRate.volumes ?: 0,
+        initialRewatches = initialUserRate.rewatches ?: 0,
+        initialText = initialUserRate.text ?: "",
+        isOngoing = entryStatus == EntryStatus.Ongoing,
+        enabledAutoCorrect = true
+    )
 }
 
 fun Anime.episodesLimit(autoCorrect: Boolean) = when {
@@ -225,7 +260,7 @@ private fun CounterState.setMax() {
     count = limit.value
 }
 
-val UserRateState.userRateValues: UserRateValues
+val UserRateState.currentUserRateValues: UserRateValues
     get() = UserRateValues(
         status = status,
         score = score,

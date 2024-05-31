@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
+import ru.vladsaybulin.database.models.userrate.PopulatedEditableUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
@@ -78,6 +79,40 @@ interface UserRateDao {
         """
     )
     fun getLastInProgressUserRates(limit: Int): Flow<List<PopulatedUserRate>>
+
+    @Query(
+        value = """
+            SELECT 
+                ur.*,
+                a.status AS entryStatus,
+                CASE
+                    WHEN a.status = 'released' THEN a.episodes
+                    WHEN a.status = 'ongoing' THEN a.episodes_aired
+                    ELSE 0
+                END AS maxEpisodes,
+                0 AS maxChapters,
+                0 AS maxVolumes
+            FROM user_rates ur
+                INNER JOIN animes a ON ur.anime_id = a.id
+            WHERE ur.anime_id = :animeId
+        """
+    )
+    suspend fun getEditingAnimeUserRate(animeId: Long): PopulatedEditableUserRate
+
+    @Query(
+        value = """
+            SELECT 
+                ur.*,
+                m.status AS entryStatus,
+                0 AS maxEpisodes,
+                m.chapters AS maxChapters,
+                m.volumes AS maxVolumes
+            FROM user_rates ur
+                INNER JOIN mangas m ON ur.manga_id = m.id
+            WHERE ur.manga_id = :mangaId
+        """
+    )
+    suspend fun getEditingMangaUserRate(mangaId: Long): PopulatedEditableUserRate
 
     @Query("SELECT * FROM user_rates WHERE anime_id = :animeId AND manga_id IS NULL")
     fun getAnimeUserRate(animeId: Long): Flow<UserRateEntity?>

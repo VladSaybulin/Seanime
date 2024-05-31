@@ -61,17 +61,22 @@ fun UserRateBottomSheet(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit
 ) {
-    val userRateWithEntry by viewModel.userRateWithEntry.collectAsStateWithLifecycle()
-    val autocorrectUserRate by viewModel.autocorrectUserRate.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val state = if (userRateWithEntry != null) {
-        rememberUserRateState(
-            userRateWithEntry = userRateWithEntry!!,
-            autoCorrectUserRate = autocorrectUserRate
+    val userRateState = when (val castedUiState = uiState) {
+        is UserRateUiState.Show -> rememberUserRateState(
+            entryType = castedUiState.entryType,
+            entryStatus = castedUiState.entryStatus,
+            initialUserRate = castedUiState.initialUserRate,
+            availableUserRateStatuses = castedUiState.availableUserRateStatuses,
+            episodesLimit = castedUiState.episodesLimit,
+            chaptersLimit = castedUiState.chaptersLimit,
+            volumesLimit = castedUiState.volumesLimit
         )
-    } else null
+        else -> null
+    }
 
-    if (state != null) {
+    if (userRateState != null) {
 
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         val scope = rememberCoroutineScope()
@@ -88,9 +93,9 @@ fun UserRateBottomSheet(
             modifier = modifier
         ) {
             UserRateContent(
-                state = state,
+                state = userRateState,
                 onSave = {
-                    viewModel.save(state.userRateValues)
+                    viewModel.save(userRateState.currentUserRateValues)
                     closeSheet()
                 },
                 onDelete = {
