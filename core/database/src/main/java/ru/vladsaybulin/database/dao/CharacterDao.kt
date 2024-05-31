@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.database.models.character.CharacterAnimeCrossRef
 import ru.vladsaybulin.database.models.character.CharacterDetailsEntity
@@ -16,6 +17,7 @@ import ru.vladsaybulin.database.models.character.PopulatedCharacterDetails
 interface CharacterDao {
 
     @Query("SELECT * FROM character_details WHERE id = :characterId")
+    @Transaction
     fun getCharacterDetails(characterId: Long): Flow<PopulatedCharacterDetails>
 
     @Insert

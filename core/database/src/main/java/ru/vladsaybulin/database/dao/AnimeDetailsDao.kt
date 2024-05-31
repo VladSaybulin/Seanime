@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.database.models.anime.AnimeCharacterEntity
 import ru.vladsaybulin.database.models.anime.AnimeDetailsEntity
@@ -22,15 +23,19 @@ import ru.vladsaybulin.database.models.anime.StudioEntity
 interface AnimeDetailsDao {
 
     @Query("SELECT * FROM anime_details WHERE id = :animeId")
+    @Transaction
     fun getAnimeDetails(animeId: Long): Flow<PopulatedAnimeDetails>
 
     @Query("SELECT * FROM anime_characters WHERE anime_id = :animeId AND is_main = 1")
+    @Transaction
     fun getMainAnimeCharacters(animeId: Long): Flow<List<PopulatedAnimeCharacter>>
 
     @Query("SELECT * FROM anime_person_roles WHERE anime_id = :animeId AND is_main = 1")
+    @Transaction
     fun getMainAnimeAuthors(animeId: Long): Flow<List<PopulatedAnimeAuthor>>
 
     @Query("SELECT * FROM anime_person_roles WHERE anime_id = :animeId")
+    @Transaction
     fun getAllAnimeAuthors(animeId: Long): Flow<List<PopulatedAnimeAuthor>>
 
     @Insert
