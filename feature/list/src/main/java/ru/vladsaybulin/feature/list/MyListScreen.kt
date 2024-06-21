@@ -191,7 +191,8 @@ private fun UserRatesPaging(
             userRateWithEntry = it,
             onAnimeClick = onAnimeClick,
             onMangaClick = onMangaClick,
-            showUserRateBadge = false
+            showUserRateBadge = false,
+            onEditClick = {}
         )
     }
 }

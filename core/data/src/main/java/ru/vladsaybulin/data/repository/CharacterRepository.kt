@@ -62,10 +62,6 @@ class CharacterRepository @Inject constructor(
             characterDao.insertOrReplaceCharacter(entity)
             characterDao.insertOrReplaceCharacterDetails(detailsEntity)
 
-            characterDao.deleteCharacterAnimeCrossRef(characterId)
-            characterDao.deleteCharacterMangaCrossRef(characterId)
-            characterDao.deleteCharacterSeyuCrossRef(characterId)
-
             characterDao.insertCharacterAnimeCrossReferences(animeCrossRefs)
             characterDao.insertCharacterMangaCrossReferences(mangaCrossRefs)
             characterDao.insertCharacterSeyuCrossReferences(seyuCrossRef)

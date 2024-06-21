@@ -17,6 +17,8 @@ import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.feature.list.navigation.toListArgs
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.list.UserRateOrder
+import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
 
@@ -34,7 +36,9 @@ class MyListViewModel @Inject constructor(
     private val controlPanel = MutableStateFlow(
         ListControlPanelState(
             entryType = args.titleType,
-            userRateStatus = args.status
+            userRateStatus = args.status,
+            orderField = UserRateOrderField.CreatedAt,
+            order = UserRateOrder.Asc
         )
     )
 
@@ -42,8 +46,8 @@ class MyListViewModel @Inject constructor(
         if (currentAuthState == ShikimoriAuthState.LOGGED_OUT) {
             flowOf<ListScreenState>(ListScreenState.LoggedOut)
         } else {
-            val data = controlPanel.flatMapLatest { (type, status) ->
-                getPagedUserRatesUseCase(type, status).cachedIn(viewModelScope)
+            val data = controlPanel.flatMapLatest { (type, status, field, order) ->
+                getPagedUserRatesUseCase(type, status, field, order).cachedIn(viewModelScope)
             }
             controlPanel.map { controlPanelState ->
                 ListScreenState.Success(

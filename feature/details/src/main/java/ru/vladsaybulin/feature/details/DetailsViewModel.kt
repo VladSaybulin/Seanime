@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.vladsaybulin.core.domain.GetAnimeDetailsUseCase
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
+import ru.vladsaybulin.core.domain.GetMangaDetailsUseCase
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.data.repository.MangaRepository
@@ -31,7 +33,9 @@ import javax.inject.Inject
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val animeRepository: Lazy<AnimeRepository>,
+    getAnimeDetailsUseCase: Lazy<GetAnimeDetailsUseCase>,
     private val mangaRepository: Lazy<MangaRepository>,
+    getMangaDetailsUseCase: Lazy<GetMangaDetailsUseCase>,
     private val userRateRepository: Lazy<UserRateRepository>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
     private val authRepository: AuthRepository
@@ -48,15 +52,15 @@ class DetailsViewModel @Inject constructor(
 
     val uiState = when (args.titleType) {
         EntryType.Anime ->  combine<AnimeDetails, List<Anime>, UserRate?, DetailsUiState>(
-            animeRepository.get().getAnimeDetails(args.titleId),
+            getAnimeDetailsUseCase.get().invoke(args.titleId),
             animeRepository.get().getSimilarAnimes(args.titleId),
-            animeRepository.get().getAnimeDetailsUserRate(args.titleId),
+            userRateRepository.get().getAnimeUserRate(args.titleId),
             ::successAnime
         )
         EntryType.Manga ->  combine<MangaDetails, List<Manga>, UserRate?, DetailsUiState>(
-            mangaRepository.get().getMangaDetails(args.titleId),
+            getMangaDetailsUseCase.get().invoke(args.titleId),
             mangaRepository.get().getSimilarMangas(args.titleId),
-            mangaRepository.get().getMangaDetailsUserRate(args.titleId),
+            userRateRepository.get().getMangaUserRate(args.titleId),
             ::successManga
         )
     }

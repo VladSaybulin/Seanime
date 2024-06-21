@@ -1,11 +1,8 @@
 package ru.vladsaybulin.seanime.ui
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -22,18 +19,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.feature.imageview.ImageSet
-import ru.vladsaybulin.feature.imageview.ImageView
+import ru.vladsaybulin.feature.userrate.UserRateBottomSheet
+import ru.vladsaybulin.feature.userrate.UserRateViewModel
 import ru.vladsaybulin.seanime.navigation.SeanimeNavHost
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination
+import ru.vladsaybulin.seanime.navigation.navigator.SeanimeNavEventsFactory
 
 @Composable
 fun SeanimeApp(
     appState: SeanimeAppState,
     openUrl: (String) -> Unit,
-    onAuth: () -> Unit,
-
-    ) {
+    onAuth: () -> Unit
+) {
     SeanimeTheme {
         Scaffold(
             bottomBar = {

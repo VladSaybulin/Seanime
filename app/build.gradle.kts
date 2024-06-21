@@ -73,9 +73,9 @@ dependencies {
     implementation(project(":feature:details"))
     implementation(project(":feature:home"))
     implementation(project(":feature:list"))
-    //implementation(project(":feature:imageview"))
+    implementation(project(":feature:imageview"))
     implementation(project(":feature:search"))
-    //implementation(project(":feature:userrate"))
+    implementation(project(":feature:userrate"))
     implementation(project(":feature:character"))
 
     implementation(libs.androidx.activity.compose)

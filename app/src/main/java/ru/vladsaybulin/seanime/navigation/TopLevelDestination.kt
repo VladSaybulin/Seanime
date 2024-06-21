@@ -1,7 +1,7 @@
 package ru.vladsaybulin.seanime.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.seanime.navigation.routes.CalendarGraph
 import ru.vladsaybulin.seanime.navigation.routes.HomeGraph
 import ru.vladsaybulin.seanime.navigation.routes.MyListGraph
@@ -20,29 +20,29 @@ enum class TopLevelDestination(
 ) {
     HOME(
         graphRoute = HomeGraph,
-        selectedIcon = ShikimoriIcons.Home,
-        unselectedIcon = ShikimoriIcons.OutlinedHome,
+        selectedIcon = SeanimeIcons.Home,
+        unselectedIcon = SeanimeIcons.OutlinedHome,
         iconTextId = homeR.string.feature_home_title,
         titleTextId = homeR.string.feature_home_title
     ),
     SEARCH(
         graphRoute = SearchGraph,
-        selectedIcon = ShikimoriIcons.Search,
-        unselectedIcon = ShikimoriIcons.Search,
+        selectedIcon = SeanimeIcons.Search,
+        unselectedIcon = SeanimeIcons.Search,
         iconTextId = searchR.string.feature_search_title,
         titleTextId = searchR.string.feature_search_title
     ),
     LIST(
         graphRoute = MyListGraph,
-        selectedIcon = ShikimoriIcons.Bookmark,
-        unselectedIcon = ShikimoriIcons.OutlinedBookmark,
+        selectedIcon = SeanimeIcons.Bookmark,
+        unselectedIcon = SeanimeIcons.OutlinedBookmark,
         iconTextId = listR.string.feature_list_title,
         titleTextId = listR.string.feature_list_title,
     ),
     CALENDAR(
         graphRoute = CalendarGraph,
-        selectedIcon = ShikimoriIcons.CalendarToday,
-        unselectedIcon = ShikimoriIcons.CalendarToday,
+        selectedIcon = SeanimeIcons.CalendarToday,
+        unselectedIcon = SeanimeIcons.CalendarToday,
         iconTextId = calendarR.string.feature_calendar_title,
         titleTextId = calendarR.string.feature_calendar_title,
     )

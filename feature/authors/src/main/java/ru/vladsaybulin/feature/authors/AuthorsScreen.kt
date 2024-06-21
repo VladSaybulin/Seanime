@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.vladsaybulin.core.designsystem.icons.ShikimoriIcons
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.feature.authors.navigation.TitleAuthorsNavEvents
 import ru.vladsaybulin.model.person.PersonWithRoles
 
@@ -92,7 +92,7 @@ private fun AuthorsTopBar(
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
-                    imageVector = ShikimoriIcons.ArrowBack,
+                    imageVector = SeanimeIcons.ArrowBack,
                     contentDescription = stringResource(id = R.string.feature_authors_back_icon)
                 )
             }
