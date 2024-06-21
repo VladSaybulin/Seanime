@@ -143,4 +143,4 @@ private fun SeanimeBottomBar(
 }
 
 private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: TopLevelDestination) =
-    this?.hierarchy?.any { it.route == destination.graphRoute } ?: false
+    this?.hierarchy?.any { it.hasRoute(destination.graphRoute::class) } ?: false
