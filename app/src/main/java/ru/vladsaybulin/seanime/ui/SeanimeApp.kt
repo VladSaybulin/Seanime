@@ -12,13 +12,19 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
+import ru.vladsaybulin.feature.imageview.FullScreenImageState
+import ru.vladsaybulin.feature.imageview.FullScreenImageView
 import ru.vladsaybulin.feature.userrate.UserRateBottomSheet
 import ru.vladsaybulin.feature.userrate.UserRateViewModel
 import ru.vladsaybulin.seanime.navigation.SeanimeNavHost
@@ -32,6 +38,10 @@ fun SeanimeApp(
     onAuth: () -> Unit
 ) {
     SeanimeTheme {
+
+        val scope = rememberCoroutineScope()
+        val fullScreenImageState = remember { FullScreenImageState() }
+
         Scaffold(
             bottomBar = {
                 if (appState.shouldShowBottomBar) {
@@ -64,7 +74,9 @@ fun SeanimeApp(
                         openUrl = openUrl,
                         onAuth = onAuth,
                         openUserRateEditor = { },
-                        openFullscreenImage = { _, _ -> }
+                        openFullscreenImage = { images, startIndex ->
+                            scope.launch { fullScreenImageState.show(images, startIndex) }
+                        }
                     )
                 )
             }
@@ -75,6 +87,13 @@ fun SeanimeApp(
             viewModel = userRateViewModel,
             onDismissRequest = { userRateViewModel.hide() }
         )
+
+        if (fullScreenImageState.isVisible) {
+            FullScreenImageView(
+                state = fullScreenImageState,
+                onDismissRequest = { }
+            )
+        }
     }
 }
 
