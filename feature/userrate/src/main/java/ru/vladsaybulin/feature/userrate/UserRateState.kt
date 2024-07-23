@@ -1,19 +1,23 @@
 package ru.vladsaybulin.feature.userrate
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import ru.vladsaybulin.model.anime.Anime
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
+import ru.vladsaybulin.feature.userrate.CounterState.Companion.UNLIMITED_LIMIT
 import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.common.EntryStatus.Anons
+import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateStatus.Completed
 import ru.vladsaybulin.model.userrate.UserRateStatus.Dropped
@@ -22,252 +26,190 @@ import ru.vladsaybulin.model.userrate.UserRateStatus.Planned
 import ru.vladsaybulin.model.userrate.UserRateStatus.Rewatching
 import ru.vladsaybulin.model.userrate.UserRateStatus.Watching
 import ru.vladsaybulin.model.userrate.UserRateValues
-import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
-fun rememberUserRateState(
-    userRateWithEntry: UserRateWithEntry,
-    autoCorrectUserRate: Boolean
-): UserRateState = with(userRateWithEntry.userRate) {
-    val entryStatus = userRateWithEntry.anime?.status ?: userRateWithEntry.manga!!.status
-
-    var endAutocorrectUserRate = autoCorrectUserRate
-    var availableStatuses = getAvailableUserRateStatuses(autoCorrectUserRate, entryStatus)
-    if (autoCorrectUserRate && !availableStatuses.contains(userRateWithEntry.userRate.status)) {
-        availableStatuses = getAvailableUserRateStatuses(false)
-        endAutocorrectUserRate = false
-    }
-
-    return remember(userRateWithEntry, endAutocorrectUserRate) {
+fun EditableUserRate.asState(): UserRateState {
+    val state = remember(this) {
         UserRateState(
-            availableStatuses = availableStatuses,
-            initialScore = score,
-            initialStatus = status,
-            episodesLimit = userRateWithEntry.anime?.episodesLimit(endAutocorrectUserRate),
-            initialEpisodes = episodes,
-            chaptersLimit = userRateWithEntry.manga?.chaptersLimit(),
-            initialChapters = chapters,
-            volumesLimit = userRateWithEntry.manga?.volumesLimit(),
-            initialVolumes = volumes,
-            initialRewatches = rewatches,
-            initialText = text,
-            isOngoing = entryStatus == EntryStatus.Ongoing,
-            enabledAutoCorrect = endAutocorrectUserRate
+            availableStatuses = getAvailableUserRateStatuses(userRate.status, entryStatus),
+            initialUserRateStatus = userRate.status,
+            progressCounterStates = createProgressCounterStates(
+                initialEpisodes = userRate.episodes,
+                maxEpisodes = maxEpisodes,
+                initialChapters = userRate.chapters,
+                maxChapters = maxChapters,
+                initialVolumes = userRate.volumes,
+                maxVolumes = maxVolumes
+            ),
+            rewatchesCounterState = CounterState(userRate.rewatches),
+            initialScore = userRate.score,
+            initialText = userRate.text,
+            isEnded = entryStatus == EntryStatus.Released || entryStatus == EntryStatus.Discontinued
         )
     }
+
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(state, scope) {
+        state.collectProgressCounterStates(scope)
+    }
+
+    return state
 }
 
-@Composable
-fun rememberUserRateState(
-    entryType: EntryType,
-    entryStatus: EntryStatus,
-    initialUserRate: UserRateValues,
-    availableUserRateStatuses: List<UserRateStatus>,
-    episodesLimit: Int,
-    chaptersLimit: Int,
-    volumesLimit: Int
-): UserRateState = remember(
-    entryType,
-    initialUserRate,
-    availableUserRateStatuses,
-    episodesLimit,
-    chaptersLimit,
-    volumesLimit
-) {
-    UserRateState(
-        availableStatuses = availableUserRateStatuses.toImmutableList(),
-        initialScore = initialUserRate.score ?: 0,
-        initialStatus = initialUserRate.status,
-        episodesLimit = episodesLimit.takeIf { it > 0 }?.let(::CounterLimit),
-        initialEpisodes = initialUserRate.episodes ?: 0,
-        chaptersLimit = chaptersLimit.takeIf { it > 0 }?.let(::CounterLimit),
-        initialChapters = initialUserRate.chapters ?: 0,
-        volumesLimit = volumesLimit.takeIf { it > 0 }?.let(::CounterLimit),
-        initialVolumes = initialUserRate.volumes ?: 0,
-        initialRewatches = initialUserRate.rewatches ?: 0,
-        initialText = initialUserRate.text ?: "",
-        isOngoing = entryStatus == EntryStatus.Ongoing,
-        enabledAutoCorrect = true
-    )
+enum class ProgressCounterType {
+    Episodes, Chapters, Volumes
 }
 
-fun Anime.episodesLimit(autoCorrect: Boolean) = when {
-    episodes == 1 -> null
-    autoCorrect && status == EntryStatus.Anons -> null
-    autoCorrect && status == EntryStatus.Ongoing -> CounterLimit(episodesAired)
-    episodes == 0 -> CounterLimit.Unlimited
-    else -> CounterLimit(episodes)
-}
-
-fun Manga.chaptersLimit() = when {
-    chapters == 0 -> CounterLimit.Unlimited
-    chapters == 1 -> null
-    else -> CounterLimit(chapters)
-}
-
-fun Manga.volumesLimit() = when {
-    volumes == 0 -> CounterLimit.Unlimited
-    volumes == 1 -> null
-    else -> CounterLimit(volumes)
-}
-
-@Stable
 class UserRateState(
     val availableStatuses: ImmutableList<UserRateStatus>,
-    initialStatus: UserRateStatus,
+    initialUserRateStatus: UserRateStatus,
+    val progressCounterStates: Map<ProgressCounterType, CounterState>,
+    val rewatchesCounterState: CounterState,
     initialScore: Int,
-    episodesLimit: CounterLimit?,
-    initialEpisodes: Int,
-    chaptersLimit: CounterLimit?,
-    initialChapters: Int,
-    volumesLimit: CounterLimit?,
-    initialVolumes: Int,
-    initialRewatches: Int,
     initialText: String,
-    private val isOngoing: Boolean,
-    private val enabledAutoCorrect: Boolean,
+    private val isEnded: Boolean
 ) {
-    private var _status = mutableStateOf(initialStatus)
-    var status: UserRateStatus
+    private val _status = mutableStateOf(initialUserRateStatus)
+    val status
         get() = _status.value
-        set(value) {
-            _status.value = value
-            onStatusChanged(_status.value, value)
+
+    private val _score = mutableIntStateOf(initialScore)
+    val score
+        get() = _score.intValue
+
+    private val _text = mutableStateOf(initialText)
+    val text
+        get() = _text.value
+
+    val progressCounterEnabled by derivedStateOf { _status.value in InProgressStatuses }
+
+    fun onStatusChanged(newStatus: UserRateStatus) {
+        _status.value = newStatus
+
+        if (newStatus == Completed) {
+            progressCounterStates.forEach { (_, counterState) -> counterState.setMaxCount() }
         }
 
-
-    var score by mutableIntStateOf(initialScore)
-
-    val episodesCounterState = if (episodesLimit != null) {
-        CounterState(
-            initialCount = initialEpisodes,
-            limit = episodesLimit,
-            onChanged = { onProgressCountChanged(it, episodesLimit) }
-        )
-    } else null
-
-    val chaptersCounterState = if (chaptersLimit != null) {
-        CounterState(
-            initialCount = initialChapters,
-            limit = chaptersLimit,
-            onChanged = {
-                onProgressCountChanged(it, chaptersLimit)
-            }
-        )
-    } else null
-
-    val volumesCounterState = if (volumesLimit != null) {
-        CounterState(
-            initialCount = initialVolumes,
-            limit = volumesLimit,
-            onChanged = {
-                onProgressCountChanged(it, volumesLimit)
-            }
-        )
-    } else null
-
-    val rewatchesCounterState = CounterState(
-        initialCount = initialRewatches,
-        limit = CounterLimit.Unlimited,
-        onChanged = ::onRewatchesCountChanged
-    )
-
-    var text by mutableStateOf(initialText)
-
-    val enabledSaveButton by derivedStateOf {
-        !(episodesCounterState?.isError ?: false) &&
-                !(chaptersCounterState?.isError ?: false) &&
-                !(volumesCounterState?.isError ?: false)
-    }
-
-    private val inProgress: Boolean
-        get() = status.let { it == Watching || it == Rewatching }
-
-    val progressEnabled: Boolean
-        get() = !enabledAutoCorrect || inProgress
-
-    private fun onStatusChanged(oldStatus: UserRateStatus, newStatus: UserRateStatus) {
-        if (!enabledAutoCorrect) return
-
-        when (newStatus) {
-            Completed -> {
-                setMaxProgressCounters()
-                if (oldStatus == Rewatching) {
-                    rewatchesCounterState.onIncrement()
-                }
-            }
-
-            Planned, Rewatching -> resetProgressCounters()
-            else -> Unit
+        if (newStatus == Rewatching) {
+            progressCounterStates.forEach { (_, counterState) -> counterState.setZeroCount() }
         }
     }
 
-    private fun onProgressCountChanged(count: Int, limit: CounterLimit) {
-        if (!enabledAutoCorrect || !inProgress) return
-        if (!isOngoing && isLimitReached(count, limit)) {
-            _status.value = Completed
-            setMaxProgressCounters()
-            if (status == Rewatching) {
-                rewatchesCounterState.onIncrement()
-            }
-        }
+    fun onScoreChanged(newScore: Int) {
+        check(newScore in 0..10)
+        _score.intValue = newScore
     }
 
-    private fun onRewatchesCountChanged(rewatches: Int) {
-        if (!enabledAutoCorrect) return
-        setMaxProgressCounters()
+    fun onTextChanger(newText: String) {
+        _text.value = newText
+    }
+
+    private fun onCounterLimitReached(type: ProgressCounterType) {
+        if (!isEnded || _status.value in InProgressStatuses) return
+
+        progressCounterStates.forEach { (counterType, counterState) ->
+            if (counterType == type) return@forEach
+            counterState.setMaxCount()
+        }
+
+        if (_status.value == Rewatching) {
+            rewatchesCounterState.onIncrement()
+        }
         _status.value = Completed
     }
 
-    private fun isLimitReached(count: Int, limit: CounterLimit) =
-        limit != CounterLimit.Unlimited && count == limit.value
-
-    private fun setMaxProgressCounters() {
-        episodesCounterState?.setMax()
-        chaptersCounterState?.setMax()
-        volumesCounterState?.setMax()
-    }
-
-    private fun resetProgressCounters() {
-        episodesCounterState?.setZero()
-        chaptersCounterState?.setZero()
-        volumesCounterState?.setZero()
+    fun collectProgressCounterStates(scope: CoroutineScope) {
+        progressCounterStates.forEach { (type, state) ->
+            if (state.isUnlimitedLimit()) return@forEach
+            val flow = snapshotFlow { state.value }.filter { it == state.value }
+            scope.launch {
+                flow.collect { onCounterLimitReached(type) }
+            }
+        }
     }
 }
 
-fun getAvailableUserRateStatuses(
-    autocorrectUserRate: Boolean,
-    entryStatus: EntryStatus = EntryStatus.None
+fun CounterState.setMaxCount() {
+    if (isUnlimitedLimit()) return
+    value = limit
+}
+
+fun CounterState.setZeroCount() {
+    value = 0
+}
+
+private fun CounterState.isUnlimitedLimit() = limit == UNLIMITED_LIMIT
+
+private fun createProgressCounterStates(
+    initialEpisodes: Int,
+    maxEpisodes: Int,
+    initialChapters: Int,
+    maxChapters: Int,
+    initialVolumes: Int,
+    maxVolumes: Int
+): Map<ProgressCounterType, CounterState> = buildMap {
+    if (maxEpisodes != -1) {
+        put(
+            key = ProgressCounterType.Episodes,
+            value = CounterState(
+                initialCount = initialEpisodes,
+                limit = getLimit(maxEpisodes)
+            )
+        )
+    }
+
+    if (maxChapters != -1) {
+        put(
+            key = ProgressCounterType.Chapters,
+            value = CounterState(
+                initialCount = initialChapters,
+                limit = getLimit(maxChapters)
+            )
+        )
+    }
+
+    if (maxVolumes != -1) {
+        put(
+            key = ProgressCounterType.Volumes,
+            value = CounterState(
+                initialCount = initialVolumes,
+                limit = getLimit(maxVolumes)
+            )
+        )
+    }
+}
+
+private fun getLimit(limit: Int) = if (limit == 0) UNLIMITED_LIMIT else limit
+
+private fun getAvailableUserRateStatuses(
+    initialUserRateStatus: UserRateStatus,
+    entryStatus: EntryStatus
 ) = buildList {
     add(Planned)
-    if (!autocorrectUserRate || entryStatus != EntryStatus.Anons) {
+    if (entryStatus != Anons) {
         add(Watching)
         add(Rewatching)
     }
-    if (!autocorrectUserRate || entryStatus == EntryStatus.Released) {
+    if (entryStatus == EntryStatus.Released) {
         add(Completed)
     }
     add(OnHold)
     add(Dropped)
+}.let {
+    if (initialUserRateStatus in it) it else AllUserRateStatuses
 }.toImmutableList()
 
-private fun CounterState.setZero() {
-    count = 0
-}
+fun UserRateState.toUserRateValues() = UserRateValues(
+    status = status,
+    score = score,
+    episodes = progressCounterStates[ProgressCounterType.Episodes]?.value ?: 0,
+    chapters = progressCounterStates[ProgressCounterType.Chapters]?.value ?: 0,
+    volumes = progressCounterStates[ProgressCounterType.Volumes]?.value ?: 0,
+    rewatches = rewatchesCounterState.value,
+    text = text
+)
 
-private fun CounterState.setMax() {
-    if (limit == CounterLimit.Unlimited) return
-    count = limit.value
-}
+private val AllUserRateStatuses
+    get() = listOf(Planned, Watching, Rewatching, Completed, OnHold, Dropped)
 
-val UserRateState.currentUserRateValues: UserRateValues
-    get() = UserRateValues(
-        status = status,
-        score = score,
-        episodes = episodesCounterState?.count,
-        chapters = chaptersCounterState?.count,
-        volumes = volumesCounterState?.count,
-        rewatches = rewatchesCounterState.count,
-        text = text
-    )
-
+private val InProgressStatuses = listOf(Watching, Rewatching)
