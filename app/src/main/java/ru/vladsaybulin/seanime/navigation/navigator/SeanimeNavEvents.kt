@@ -11,6 +11,7 @@ import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.search.SearchType
+import ru.vladsaybulin.model.userrate.EditableUserRate
 
 interface SeanimeNavEvents {
 
@@ -38,7 +39,7 @@ interface SeanimeNavEvents {
 
     fun navigateToSearchMangaOrRanobeByPublisher(searchType: SearchType, publisherId: Long)
 
-    fun showUserRateEditor()
+    fun showUserRateEditor(editableUserRate: EditableUserRate)
 
     fun showFullscreenImage(images: List<Image>, startImageIndex: Int)
 

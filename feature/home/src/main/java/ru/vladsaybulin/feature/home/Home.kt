@@ -44,6 +44,7 @@ import ru.vladsaybulin.feature.home.navigation.HomeNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
@@ -116,7 +117,8 @@ private fun HomeContent(
                 inProgressUserRatesPager(
                     userRates = uiState.inProgressUserRates,
                     onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-                    onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) }
+                    onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
+                    onEditClick = navEvents.showUserRateEditor
                 )
                 sectionSpace()
             }
@@ -217,6 +219,7 @@ private fun LazyListScope.inProgressUserRatesPager(
     userRates: ImmutableList<UserRateWithEntry>,
     onAnimeClick: (Anime) -> Unit,
     onMangaClick: (Manga) -> Unit,
+    onEditClick: (EditableUserRate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     item @OptIn(ExperimentalFoundationApi::class) {
@@ -234,7 +237,7 @@ private fun LazyListScope.inProgressUserRatesPager(
                 onAnimeClick = onAnimeClick,
                 onMangaClick = onMangaClick,
                 showUserRateBadge = true,
-                onEditClick = {}
+                onEditClick = onEditClick
             )
         }
     }

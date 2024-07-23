@@ -9,12 +9,13 @@ import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.search.SearchType
+import ru.vladsaybulin.model.userrate.EditableUserRate
 
 class SeanimeNavEventsImpl(
     private val navController: NavController,
     private val openUrl: (String) -> Unit,
     private val onAuth: () -> Unit,
-    private val openUserRateEditor: () -> Unit,
+    private val openUserRateEditor: (EditableUserRate) -> Unit,
     private val openFullscreenImage: (images: List<Image>, startImageIndex: Int) -> Unit,
     private val provider: RouteProvider
 ) : SeanimeNavEvents {
@@ -93,8 +94,8 @@ class SeanimeNavEventsImpl(
         )
     }
 
-    override fun showUserRateEditor() {
-        openUserRateEditor()
+    override fun showUserRateEditor(editableUserRate: EditableUserRate) {
+        openUserRateEditor(editableUserRate)
     }
 
     override fun showFullscreenImage(images: List<Image>, startImageIndex: Int) {

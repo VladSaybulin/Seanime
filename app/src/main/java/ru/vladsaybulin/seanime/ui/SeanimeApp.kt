@@ -12,12 +12,14 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -26,7 +28,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.feature.imageview.FullScreenImageState
 import ru.vladsaybulin.feature.imageview.FullScreenImageView
 import ru.vladsaybulin.feature.userrate.UserRateBottomSheet
-import ru.vladsaybulin.feature.userrate.UserRateViewModel
+import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.seanime.navigation.SeanimeNavHost
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination
 import ru.vladsaybulin.seanime.navigation.navigator.SeanimeNavEventsFactory
@@ -41,6 +43,10 @@ fun SeanimeApp(
 
         val scope = rememberCoroutineScope()
         val fullScreenImageState = remember { FullScreenImageState() }
+
+        var editableUserRate by remember {
+            mutableStateOf<EditableUserRate?>(null)
+        }
 
         Scaffold(
             bottomBar = {
@@ -73,7 +79,7 @@ fun SeanimeApp(
                         navController = appState.navController,
                         openUrl = openUrl,
                         onAuth = onAuth,
-                        openUserRateEditor = { },
+                        openUserRateEditor = { editableUserRate = it },
                         openFullscreenImage = { images, startIndex ->
                             scope.launch { fullScreenImageState.show(images, startIndex) }
                         }
@@ -81,12 +87,13 @@ fun SeanimeApp(
                 )
             }
         }
-        val userRateViewModel = hiltViewModel<UserRateViewModel>()
 
-        UserRateBottomSheet(
-            viewModel = userRateViewModel,
-            onDismissRequest = { userRateViewModel.hide() }
-        )
+        if (editableUserRate != null) {
+            UserRateBottomSheet(
+                editableUserRate = checkNotNull(editableUserRate),
+                onDismissRequest = { editableUserRate = null }
+            )
+        }
 
         if (fullScreenImageState.isVisible) {
             FullScreenImageView(
