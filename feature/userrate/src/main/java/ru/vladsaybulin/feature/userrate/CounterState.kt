@@ -8,7 +8,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 
 /**
- * The state that to control [ru.vladsaybulin.feature.userrate.SeanimeCounter]
+ * The state that to control [ru.vladsaybulin.feature.userrate.Counter]
  * @param initialCount the initial count
  * @param limit the max value that count can take. Must be [CounterState.UNLIMITED_LIMIT] if counter is unlimited
  * It is recommended that this limit be less than 99999 for correct display
