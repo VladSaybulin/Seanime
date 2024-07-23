@@ -1,7 +1,6 @@
 package ru.vladsaybulin.feature.userrate
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
@@ -24,13 +23,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
@@ -65,7 +65,6 @@ import androidx.compose.ui.unit.offset
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastFirst
 import androidx.compose.ui.util.fastFirstOrNull
-import ru.vladsaybulin.core.designsystem.R
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import kotlin.math.ceil
@@ -73,6 +72,11 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 class CounterColors(
+    val containerColor: Color,
+    val focusedContainerColor: Color,
+    val disabledContainerColor: Color,
+    val errorContainerColor: Color,
+    val cursorColor: Color,
     val countColor: Color,
     val focusedCountColor: Color,
     val disabledCountColor: Color,
@@ -90,6 +94,13 @@ class CounterColors(
     val buttonContentColor: Color,
     val disabledButtonIconColor: Color
 ) {
+    internal fun containerColor(enabled: Boolean, error: Boolean, isFocused: Boolean) = when {
+        isFocused -> focusedContainerColor
+        !enabled -> disabledContainerColor
+        error -> errorContainerColor
+        else -> containerColor
+    }
+
     internal fun countColor(enabled: Boolean, error: Boolean, isFocused: Boolean) = when {
         isFocused -> focusedCountColor
         !enabled -> disabledCountColor
@@ -123,6 +134,12 @@ object CounterDefaults {
 
     @Composable
     fun colors(
+        containerColor: Color = SeanimeTheme.colorScheme.outline,
+        focusedContainerColor: Color = SeanimeTheme.colorScheme.primary,
+        disabledContainerColor: Color = SeanimeTheme.colorScheme.outline
+            .copy(alpha = DisabledContainerOpacity),
+        errorContainerColor: Color = SeanimeTheme.colorScheme.error,
+        cursorColor: Color = SeanimeTheme.colorScheme.primary,
         countColor: Color = SeanimeTheme.colorScheme.onSurface,
         focusedColor: Color = SeanimeTheme.colorScheme.onSurface,
         disabledCountColor: Color = SeanimeTheme.colorScheme.onSurface
@@ -148,6 +165,11 @@ object CounterDefaults {
         disabledButtonIconColor: Color = SeanimeTheme.colorScheme.onSecondaryContainer
             .copy(alpha = DisabledIconButtonOpacity)
     ) = CounterColors(
+        containerColor = containerColor,
+        focusedContainerColor = focusedContainerColor,
+        disabledContainerColor = disabledContainerColor,
+        errorContainerColor = errorContainerColor,
+        cursorColor = cursorColor,
         countColor = countColor,
         focusedCountColor = focusedColor,
         disabledCountColor = disabledCountColor,
@@ -175,7 +197,7 @@ fun Counter(
     label: (@Composable () -> Unit)? = null,
     limit: (@Composable () -> Unit)? = null,
     colors: CounterColors = CounterDefaults.colors(),
-    interactionSource: InteractionSource = remember { MutableInteractionSource() }
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     val isFocused = interactionSource.collectIsFocusedAsState().value
 
@@ -189,6 +211,7 @@ fun Counter(
         onValueChange = state::onTextFieldValueChanged,
         textStyle = textStyle,
         modifier = modifier.width(IntrinsicSize.Min),
+        cursorBrush = SolidColor(colors.cursorColor),
         decorationBox = {
             CounterDecorationBox(
                 innerTextField = it,
@@ -196,7 +219,7 @@ fun Counter(
                 incrementButton = @Composable {
                     CounterButton(
                         icon = SeanimeIcons.Add,
-                        contentDescription = stringResource(id = R.string.core_designsystem_counter_increment),
+                        contentDescription = stringResource(id = R.string.feature_user_rate_counter_increment),
                         enabled = { enabled && state.incrementEnabled },
                         onClick = state::onIncrement,
                         colors = colors.iconButtonColors()
@@ -205,7 +228,7 @@ fun Counter(
                 decrementButton = @Composable {
                     CounterButton(
                         icon = SeanimeIcons.Remove,
-                        contentDescription = stringResource(id = R.string.core_designsystem_counter_decrement),
+                        contentDescription = stringResource(id = R.string.feature_user_rate_counter_decrement),
                         enabled = { enabled && state.decrementEnabled },
                         onClick = state::onDecrement,
                         colors = colors.iconButtonColors()
@@ -218,7 +241,8 @@ fun Counter(
                 colors = colors,
                 style = textStyle
             )
-        }
+        },
+        interactionSource = interactionSource
     )
 }
 
@@ -265,19 +289,19 @@ private fun CounterDecorationBox(
         decrementButton = decrementButton,
         limitText = decoratedLimit,
         container = {
-            CounterContainer()
+            CounterContainer(color = colors.containerColor(enabled, isError, isFocused))
         }
     )
 }
 
 @Composable
-private fun CounterContainer() {
+private fun CounterContainer(color: Color) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .border(
                 width = 1.dp,
-                color = LocalContentColor.current,
+                color = color,
                 shape = RoundedCornerShape(16.dp)
             )
     )
@@ -343,13 +367,6 @@ private fun CounterLayout(
                 modifier = Modifier
                     .defaultMinSize(48.dp)
                     .layoutId(DecrementButtonId)
-                    .drawBehind {
-                        drawLine(
-                            SolidColor(Color.LightGray),
-                            start = Offset(size.width, size.height * 0.1f),
-                            end = Offset(size.width, size.height * 0.9f)
-                        )
-                    }
             ) {
                 decrementButton()
             }
@@ -358,13 +375,6 @@ private fun CounterLayout(
                 modifier = Modifier
                     .defaultMinSize(48.dp)
                     .layoutId(IncrementButtonId)
-                    .drawBehind {
-                        drawLine(
-                            SolidColor(Color.LightGray),
-                            start = Offset(0f, size.height * 0.1f),
-                            end = Offset(0f, size.height * 0.9f)
-                        )
-                    }
             ) {
                 incrementButton()
             }
@@ -458,21 +468,18 @@ class CounterMeasurePolicy(
             .also { occupiedSpaceHorizontally += it.width }
 
 
-        val middleContentConstraints = looseConstraints
-            .offset(horizontal = -occupiedSpaceHorizontally)
-
         var occupiedSpaceVertically = 0
 
         //Measure label
         val labelPlaceable = measurables.fastFirstOrNull { it.layoutId == LabelId }
-            ?.measure(middleContentConstraints)
+            ?.measure(looseConstraints)
             ?.also { occupiedSpaceVertically += it.height }
         val labelSizeOrZero = labelPlaceable?.let { Size(it.width.toFloat(), it.height.toFloat()) }
             ?: Size.Zero
 
         //Measure limit
         val limitPlaceable = measurables.fastFirstOrNull { it.layoutId == LimitId }
-            ?.measure(middleContentConstraints.offset(vertical = -occupiedSpaceVertically))
+            ?.measure(looseConstraints.offset(vertical = -occupiedSpaceVertically))
             ?.also { occupiedSpaceVertically += it.height }
         val limitSizeOrZero = limitPlaceable?.let { Size(it.width.toFloat(), it.height.toFloat()) }
             ?: Size.Zero
@@ -513,8 +520,10 @@ class CounterMeasurePolicy(
         val containerPlaceable = measurables.fastFirst { it.layoutId == ContainerId }
             .measure(Constraints.fixed(width, height))
 
-        val totalHeight =
-            height + heightOrZero(labelPlaceable) / 2 + heightOrZero(limitPlaceable) / 2
+        val totalHeight = height +
+                heightOrZero(labelPlaceable) / 2 +
+                heightOrZero(limitPlaceable) / 2 +
+                (limitPlaceable?.let { LimitOffsetVertically.roundToPx() } ?: 0)
 
         return layout(width, totalHeight) {
 
@@ -562,10 +571,12 @@ fun calculateWidth(
     textFieldWidth: Int,
     constraints: Constraints
 ): Int {
-    val middleSectionWidth = max(textFieldWidth, max(labelWidth, limitWidth))
     return max(
         constraints.minWidth,
-        incrementButtonWidth + decrementButtonWidth + middleSectionWidth
+        max(
+            max(labelWidth, limitWidth),
+            incrementButtonWidth + decrementButtonWidth + textFieldWidth
+        )
     )
 }
 
@@ -753,6 +764,40 @@ fun SeanimeCounterWithLabelAndLimitPreview() {
     }
 }
 
+@Preview
+@Composable
+fun SeanimeCounterWhenFocusedPreview() {
+    val focusRequester = remember {
+        FocusRequester()
+    }
+
+    LaunchedEffect(key1 = focusRequester) {
+        focusRequester.requestFocus()
+    }
+
+    Surface {
+        FirstBaseline
+        Counter(
+            state = remember { CounterState(1, 48) },
+            enabled = true,
+            modifier = Modifier.focusRequester(focusRequester)
+        )
+    }
+}
+
+
+@Preview
+@Composable
+fun SeanimeCounterWhenIsErrorPreview() {
+    Surface {
+        FirstBaseline
+        Counter(
+            state = remember { CounterState(54, 48) },
+            enabled = true
+        )
+    }
+}
+
 private fun widthOrZero(placeable: Placeable?) = placeable?.width ?: 0
 private fun heightOrZero(placeable: Placeable?) = placeable?.height ?: 0
 
@@ -761,6 +806,9 @@ private const val EmptyTextReplacement = "99999"
 private val LabelPadding = 4.dp
 private val LimitPadding = 2.dp
 
+private val LimitOffsetVertically = (-2).dp
+
+private const val DisabledContainerOpacity = 0.5f
 private const val DisabledCountOpacity = 0.5f
 private const val DisabledLabelColorOpacity = 0.5f
 private const val ErrorLabelColorOpacity = 0.5f
