@@ -2,4 +2,6 @@
 <resources>
     <string name="core_designsystem_expand_text">Раскрыть тескт</string>
     <string name="core_designsystem_collapse_text">Скрыть текст</string>
+    <string name="core_designsystem_search_field_search">Поиск</string>
+    <string name="core_designsystem_search_field_clear">Очистить строку поиска</string>
 </resources>
