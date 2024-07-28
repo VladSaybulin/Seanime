@@ -8,8 +8,8 @@ import ru.vladsaybulin.model.search.SearchType
 
 @Immutable
 data class SearchUiState(
-    val currentSearchType: SearchType,
-    val currentOrder: Order,
+    val selectedSearchType: SearchType,
+    val selectedOrder: Order,
     val filtersLoadingState: FiltersLoadingState,
     val appliedFilters: AppliedFilters,
     val availableSearchTypes: ImmutableList<SearchType>,

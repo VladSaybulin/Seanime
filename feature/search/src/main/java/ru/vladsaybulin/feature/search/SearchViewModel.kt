@@ -122,8 +122,8 @@ class SearchViewModel @Inject constructor(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         SearchUiState(
-            currentSearchType = currentSearchType.value,
-            currentOrder = currentOrder.value,
+            selectedSearchType = currentSearchType.value,
+            selectedOrder = currentOrder.value,
             filtersLoadingState = FiltersLoadingState.Loading,
             appliedFilters = appliedFilters.value,
             availableSearchTypes = availableSearchTypes,
@@ -217,8 +217,8 @@ class SearchViewModel @Inject constructor(
         filtersLoadingState: FiltersLoadingState,
         appliedFilters: AppliedFilters
     ) = SearchUiState(
-        currentSearchType = currentSearchType,
-        currentOrder = currentOrder,
+        selectedSearchType = currentSearchType,
+        selectedOrder = currentOrder,
         filtersLoadingState = filtersLoadingState,
         appliedFilters = appliedFilters,
         availableSearchTypes = availableSearchTypes,
