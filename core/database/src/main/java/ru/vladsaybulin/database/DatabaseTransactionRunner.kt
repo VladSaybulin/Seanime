@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DatabaseTransactionRunner @Inject constructor(
     private val database: ShikiRoomDatabase
 ) {
-    suspend operator fun invoke(block: suspend () -> Unit) {
-        database.withTransaction(block)
+    suspend operator fun <R> invoke(block: suspend () -> R): R {
+        return database.withTransaction(block)
     }
 }
