@@ -2,6 +2,7 @@ package ru.vladsaybulin.model.manga
 
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterWithRole
+import ru.vladsaybulin.model.common.DataSlice
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
@@ -33,7 +34,8 @@ data class MangaDetails(
     val scoreStats: List<StatisticsItem<Int>>?,
     val userRateStatusStats: List<StatisticsItem<UserRateStatus>>?,
     val publishers: List<Publisher>,
-    val authors: List<PersonWithRoles>?,
-    val characters: List<CharacterWithRole>?,
-    val related: List<RelatedEntry>?
+    val authorsSlice: DataSlice<PersonWithRoles>,
+    val charactersSlice: DataSlice<CharacterWithRole>,
+    val relatedSlice: DataSlice<RelatedEntry>,
+    val similarSlice: DataSlice<Manga>
 )
