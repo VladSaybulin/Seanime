@@ -46,30 +46,6 @@ query MangaDetailsQuery($id: String!) {
             id
             name
         }
-        personRoles {
-            person {
-                id
-                name
-                russian
-                poster {
-                    main2xUrl
-                    originalUrl
-                }
-            }
-            rolesEn
-        }
-        characterRoles {
-            character {
-                id
-                name
-                russian
-                poster {
-                    main2xUrl
-                    originalUrl
-                }
-            }
-            rolesEn
-        }
         related {
             anime {
                 id

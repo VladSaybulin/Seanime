@@ -32,11 +32,11 @@ interface SeanimeNavEvents {
 
     fun navigateToSearchByGenre(searchType: SearchType, genreKind: GenreKind, genreId: Long)
 
-    fun navigateToSearchAnimeByStudio(studioId: Long)
+    fun navigateToSearchByStudio(searchType: SearchType, studioId: Long)
 
     fun navigateToSearchAnimeOngoing()
 
-    fun navigateToSearchMangaOrRanobeByPublisher(isManga: Boolean, publisherId: Long)
+    fun navigateToSearchMangaOrRanobeByPublisher(searchType: SearchType, publisherId: Long)
 
     fun showUserRateEditor()
 
@@ -100,9 +100,14 @@ fun SeanimeNavEvents.toTitleDetailsNavEvents() = TitleDetailsNavEvents(
     navigateToTitleAuthors = this::navigateToTitleAuthors,
     navigateToAuthorization = this::showRequestAuthorization,
     navigateToSearchByGenre = this::navigateToSearchByGenre,
-    navigateToSearchAnimeByStudio = this::navigateToSearchAnimeByStudio,
-    navigateToSearchMangaOrRanobeByPublisher = this::navigateToSearchMangaOrRanobeByPublisher,
+    navigateToSearchByStudio = this::navigateToSearchByStudio,
+    navigateToSearchByPublisher = this::navigateToSearchMangaOrRanobeByPublisher,
     navigateUp = this::navigateUp,
     showUserRateEditor = this::showUserRateEditor,
-    showFullScreenImage = this::showFullscreenImage
+    showFullScreenImage = this::showFullscreenImage,
+    navigateToTitleRelated = {_, _, -> },
+    navigateToTitleVideos = {_, _ -> },
+    navigateToTitleSimilar = {_, _ -> },
+    navigateToTitleCharacters = {_, _ -> },
+    navigateToTitleScreenshots = {_, _ -> }
 )

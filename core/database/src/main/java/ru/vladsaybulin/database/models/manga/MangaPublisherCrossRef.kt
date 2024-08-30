@@ -9,7 +9,7 @@ import androidx.room.ForeignKey
     primaryKeys = ["manga_id", "publisher_id"],
     foreignKeys = [
         ForeignKey(
-            entity = MangaDetailsEntity::class,
+            entity = MangaEntity::class,
             parentColumns = ["id"],
             childColumns = ["manga_id"],
             onDelete = ForeignKey.CASCADE

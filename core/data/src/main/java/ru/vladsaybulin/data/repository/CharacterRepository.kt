@@ -21,7 +21,7 @@ import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.models.character.asExternalModel
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
-import ru.vladsaybulin.database.models.lastrequest.LastRequestType
+import ru.vladsaybulin.model.request.Request
 import ru.vladsaybulin.model.character.CharacterDetails
 import ru.vladsaybulin.network.datasource.CharacterDataSource
 import javax.inject.Inject
@@ -55,7 +55,7 @@ class CharacterRepository @Inject constructor(
         val seyuCrossRef = response.seyuCrossRefs()
 
         databaseTransactionRunner {
-            animeDao.insertOrReplaceAnimes(animeEntities)
+            animeDao.upsertAnimes(animeEntities)
             mangaDao.insertOrReplaceMangas(mangaEntities)
             personDao.insertOrReplacePersons(personEntities)
 
@@ -68,7 +68,7 @@ class CharacterRepository @Inject constructor(
 
             lastRequestDao.insertOrReplaceLastRequestDate(
                 LastRequestEntity(
-                    LastRequestType.CHARACTER,
+                    Request.CHARACTER,
                     targetId = characterId,
                     requestDate = Clock.System.now()
                 )
@@ -80,7 +80,7 @@ class CharacterRepository @Inject constructor(
         ttl = DefaultCharacterTTL,
         readLastUpdateDate = {
             lastRequestDao.getLastRequestDate(
-                LastRequestType.CHARACTER,
+                Request.CHARACTER,
                 characterId
             )
         },

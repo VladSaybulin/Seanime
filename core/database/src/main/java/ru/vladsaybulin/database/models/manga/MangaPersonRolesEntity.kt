@@ -10,7 +10,7 @@ import ru.vladsaybulin.database.models.person.PersonEntity
     primaryKeys = ["manga_id", "person_id"],
     foreignKeys = [
         ForeignKey(
-            entity = MangaDetailsEntity::class,
+            entity = MangaEntity::class,
             parentColumns = ["id"],
             childColumns = ["manga_id"],
             onDelete = ForeignKey.CASCADE

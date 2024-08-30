@@ -2,10 +2,12 @@ package ru.vladsaybulin.core.designsystem.icons
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CalendarToday
@@ -64,4 +66,5 @@ object SeanimeIcons {
     val Book = Icons.Default.MenuBook
     val Tv = Icons.Default.Tv
     val Schedule = Icons.Default.Schedule
+    val ArrowForwardIos = Icons.AutoMirrored.Filled.ArrowForwardIos
 }

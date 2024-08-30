@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
+import ru.vladsaybulin.core.designsystem.theme.UserRateColors
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
@@ -17,6 +18,26 @@ fun entryStatusColor(entryStatus: EntryStatus): Color = when (entryStatus) {
     EntryStatus.None -> Color.Unspecified
 }
 
+fun UserRateColors.getColor(userRateStatus: UserRateStatus): Color = when (userRateStatus) {
+    UserRateStatus.Planned -> planned
+    UserRateStatus.Watching, UserRateStatus.Rewatching -> watching
+    UserRateStatus.Completed -> completed
+    UserRateStatus.Dropped -> dropped
+    UserRateStatus.OnHold -> onHold
+    else -> Color.Unspecified
+}
+
+@Deprecated(
+    message = "Use UserRateColors.getColor",
+    replaceWith = ReplaceWith(
+        expression = "LocalUserRateColors.current.getColor(userRateStatus)",
+        imports = [
+            "ru.vladsaybulin.core.designsystem.theme.LocalUserRateColors",
+            "ru.vladsaybulin.core.ui.colors.getColor"
+        ]
+    ),
+    level = DeprecationLevel.WARNING
+)
 @Composable
 fun userRateStatusColor(userRateStatus: UserRateStatus) =
     when (userRateStatus) {

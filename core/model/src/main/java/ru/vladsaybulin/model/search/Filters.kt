@@ -13,7 +13,7 @@ data class Filters(
     val animeKindOptions: List<FilterOption<AnimeKind>>? = null,
     val mangaKindOptions: List<FilterOption<MangaKind>>? = null,
     val statusOptions: List<FilterOption<EntryStatus>>? = null,
-    val seasonFilterOptions: List<FilterOption<SeasonFilter>>? = null,
+    val timePeriodAiringFilterOptions: List<FilterOption<TimePeriodAiring>>? = null,
     val myListStatus: List<FilterOption<UserRateStatus>>? = null,
     val duration: List<FilterOption<Duration>>? = null,
     val ratingOptions: List<FilterOption<AnimeRating>>? = null,

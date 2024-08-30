@@ -97,7 +97,15 @@ class UserRateRepository @Inject constructor(
         loadPage = userRateDataSource::getMangaUserRates
     )
 
-    fun getAnimeUserRate(animeId: Long): Flow<UserRate?> =
+    fun refreshAnimeUserRate(animeId: Long) {
+        TODO()
+    }
+
+    fun refreshMangaUserRate(mangaId: Long) {
+        TODO()
+    }
+
+    fun getAnimeUserRateStream(animeId: Long): Flow<UserRate?> =
         authRepository.authState.flatMapLatest { authState ->
 
             if (authState == ShikimoriAuthState.LOGGED_IN) {
@@ -112,7 +120,7 @@ class UserRateRepository @Inject constructor(
             } else flowOf(null)
         }
 
-    fun getMangaUserRate(mangaId: Long): Flow<UserRate?> =
+    fun getMangaUserRateStream(mangaId: Long): Flow<UserRate?> =
         authRepository.authState.flatMapLatest { authState ->
 
             if (authState == ShikimoriAuthState.LOGGED_IN) {
@@ -186,7 +194,7 @@ class UserRateRepository @Inject constructor(
             limit = limit,
             queryMap = mapOf(QueryMapKey.MyList to UserRateStatus.Watching.serializedName)
         )
-        animeDao.insertOrReplaceAnimes(animeUserRates.map { it.asEntity() })
+        animeDao.upsertAnimes(animeUserRates.map { it.asEntity() })
         userRateDao.insertOrReplaceUserRates(animeUserRates.mapNotNull { it.userRateEntityShell() })
     }
 
@@ -262,7 +270,7 @@ class UserRateRepository @Inject constructor(
             if (page == USER_RATES_FIRST_PAGE) {
                 userRateDao.deleteAllOrderedUserRates()
             }
-            animeDao.insertOrReplaceAnimes(animeEntities)
+            animeDao.upsertAnimes(animeEntities)
             mangaDao.insertOrReplaceMangas(mangaEntities)
             userRateDao.insertOrReplaceUserRates(userRatesEntities)
             userRateDao.insertUserRateOrder(order)

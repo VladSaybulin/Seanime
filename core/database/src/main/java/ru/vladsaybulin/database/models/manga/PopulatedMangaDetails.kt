@@ -3,10 +3,11 @@ package ru.vladsaybulin.database.models.manga
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import ru.vladsaybulin.database.models.text.asExternalModel
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.genre.asExternalModel
+import ru.vladsaybulin.database.models.text.asExternalModel
+import ru.vladsaybulin.model.common.DataSlice
 import ru.vladsaybulin.model.manga.MangaDetails
 
 data class PopulatedMangaDetails(
@@ -20,20 +21,6 @@ data class PopulatedMangaDetails(
     val mangaEntity: MangaEntity,
 
     @Relation(
-        entity = MangaPersonRolesEntity::class,
-        parentColumn = "id",
-        entityColumn = "manga_id"
-    )
-    val authors: List<PopulatedMangaAuthor>,
-
-    @Relation(
-        entity = MangaCharacterEntity::class,
-        parentColumn = "id",
-        entityColumn = "manga_id"
-    )
-    val characters: List<PopulatedMangaCharacter>,
-
-    @Relation(
         entity = GenreEntity::class,
         parentColumn = "id",
         entityColumn = "id",
@@ -44,13 +31,6 @@ data class PopulatedMangaDetails(
         )
     )
     val genres: List<GenreEntity>,
-
-    @Relation(
-        entity = MangaRelatedEntity::class,
-        parentColumn = "id",
-        entityColumn = "manga_id"
-    )
-    val related: List<PopulatedMangaRelated>,
 
     @Relation(
         entity = PublisherEntity::class,
@@ -81,13 +61,11 @@ fun PopulatedMangaDetails.asExternalModel(): MangaDetails = MangaDetails(
     volumes = mangaEntity.volumes,
     airedOn = mangaEntity.airedOn?.asExternalModel(),
     releasedOn = mangaEntity.releasedOn?.asExternalModel(),
+    season = mangaDetailsEntity.season?.asExternalModel(),
     description = mangaDetailsEntity.description?.asExternalModel(),
     descriptionSource = mangaDetailsEntity.descriptionSource,
     genres = genres.map { it.asExternalModel() },
     scoreStats = mangaDetailsEntity.scoreStats,
     userRateStatusStats = mangaDetailsEntity.statusStats,
-    publishers = publishers.map { it.asExternalModel() },
-    authors = authors.map { it.asExternalModel() },
-    characters = characters.map { it.asExternalModel() },
-    related = related.sortedBy { it.mangaRelatedEntity.order }.map { it.asExternalModel() }
+    publishers = publishers.map { it.asExternalModel() }
 )

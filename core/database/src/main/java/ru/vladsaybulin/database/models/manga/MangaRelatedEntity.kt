@@ -11,7 +11,7 @@ import ru.vladsaybulin.model.related.RelationType
     tableName = "manga_related",
     foreignKeys = [
         ForeignKey(
-            entity = MangaDetailsEntity::class,
+            entity = MangaEntity::class,
             parentColumns = ["id"],
             childColumns = ["manga_id"],
             onDelete = ForeignKey.CASCADE

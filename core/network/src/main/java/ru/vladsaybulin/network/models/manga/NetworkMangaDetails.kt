@@ -34,7 +34,5 @@ data class NetworkMangaDetails(
     val scoreStats: List<NetworkStatisticsItem<Int>>?,
     val userRateStatusStats: List<NetworkStatisticsItem<UserRateStatus>>?,
     val publishers: List<NetworkPublisher>,
-    val authors: List<NetworkPersonWithRoles>?,
-    val characters: List<NetworkCharacterWithRole>?,
     val related: List<NetworkRelated>?
 )

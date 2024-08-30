@@ -37,7 +37,7 @@ class CalendarRepository @Inject constructor(
     suspend fun refreshCalendarItems() {
         val response = calendarDataSource.getAllCalendarItems()
         calendarDao.deleteAllItems()
-        animeDao.insertOrReplaceAnimes(response.map(CalendarItemDto::animeShell))
+        animeDao.upsertAnimes(response.map(CalendarItemDto::animeShell))
         calendarDao.insertCalendarItems(response.map(CalendarItemDto::asPOJO))
     }
 

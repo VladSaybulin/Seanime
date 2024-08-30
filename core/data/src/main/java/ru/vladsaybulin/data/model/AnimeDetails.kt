@@ -1,10 +1,8 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.database.models.anime.AnimeCharacterEntity
 import ru.vladsaybulin.database.models.anime.AnimeDetailsEntity
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.AnimeGenreCrossRef
-import ru.vladsaybulin.database.models.anime.AnimePersonRolesEntity
 import ru.vladsaybulin.database.models.anime.AnimeRelatedEntity
 import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
 import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
@@ -26,6 +24,7 @@ fun NetworkAnimeDetails.asAnimeDetailsEntity() = AnimeDetailsEntity(
     dubbers = dubbers,
     scoreStats = scoreStats?.map { it.asExternalModel() },
     statusStats = userRateStatusStats?.map { it.asExternalModel() },
+    season = null //TODO season
 )
 
 fun NetworkAnimeDetails.asAnimeEntity() = AnimeEntity(
@@ -42,38 +41,13 @@ fun NetworkAnimeDetails.asAnimeEntity() = AnimeEntity(
     releasedOn = releasedOn?.asPOJO()
 )
 
-fun NetworkAnimeDetails.personEntityShells() =
-    authors?.map { it.person.asEntity() }
-
-fun NetworkAnimeDetails.animeAuthorEntities() =
-    authors?.map { personWithRoles ->
-        AnimePersonRolesEntity(
-            animeId = id,
-            personId = personWithRoles.person.id,
-            roles = personWithRoles.roles,
-            isMain = personWithRoles.roles.isMainPersonRoles()
-        )
-    }
-
-fun NetworkAnimeDetails.characterEntityShells() =
-    characters?.map { it.character.asEntity() }
-
-fun NetworkAnimeDetails.animeCharacterEntities() =
-    characters?.map {
-        AnimeCharacterEntity(
-            animeId = id,
-            characterId = it.character.id,
-            isMain = it.isMain
-        )
-    }
-
 fun NetworkAnimeDetails.genreEntityShells() =
     genres?.map { it.asEntity() }
 
-fun NetworkAnimeDetails.genresCrossReferences() =
+fun NetworkAnimeDetails.animeGenresCrossReferences() =
     genres?.map { AnimeGenreCrossRef(animeId = id, genreId = it.id) }
 
-fun NetworkAnimeDetails.animeScreenshotEntities() =
+fun NetworkAnimeDetails.animeScreenshotEntityShells() =
     screenshots.mapIndexed { index, image ->
         AnimeScreenshotEntity(
             animeId = id,
@@ -83,7 +57,7 @@ fun NetworkAnimeDetails.animeScreenshotEntities() =
         )
     }
 
-fun NetworkAnimeDetails.animeVideoEntities() =
+fun NetworkAnimeDetails.animeVideoEntityShells() =
     videos?.mapIndexed { index, video ->
         AnimeVideoEntity(
             animeId = id,
@@ -96,10 +70,10 @@ fun NetworkAnimeDetails.animeVideoEntities() =
         )
     }
 
-fun NetworkAnimeDetails.relatedAnimeEntityShell() =
+fun NetworkAnimeDetails.relatedAnimeEntityShells() =
     related?.mapNotNull { it.anime?.asEntity() }
 
-fun NetworkAnimeDetails.relatedMangaEntityShell() =
+fun NetworkAnimeDetails.relatedMangaEntityShells() =
     related?.mapNotNull { it.manga?.asEntity() }
 
 fun NetworkAnimeDetails.animeRelatedEntities() =

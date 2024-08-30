@@ -10,7 +10,7 @@ import ru.vladsaybulin.database.models.genre.GenreEntity
     primaryKeys = ["anime_id", "genre_id"],
     foreignKeys = [
         ForeignKey(
-            entity = AnimeDetailsEntity::class,
+            entity = AnimeEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE

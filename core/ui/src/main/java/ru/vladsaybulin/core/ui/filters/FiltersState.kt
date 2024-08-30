@@ -18,7 +18,7 @@ import ru.vladsaybulin.model.search.Duration
 import ru.vladsaybulin.model.search.FilterOption
 import ru.vladsaybulin.model.search.FilterType
 import ru.vladsaybulin.model.search.Filters
-import ru.vladsaybulin.model.search.SeasonFilter
+import ru.vladsaybulin.model.search.TimePeriodAiring
 
 typealias FilterOptionStates <T> = List<FilterOptionState<T>>
 typealias AppliedFiltersMap = Map<FilterType, Map<String, OptionValue>>
@@ -35,7 +35,7 @@ fun rememberFiltersState(
             statusOptions = filters.statusOptions?.mapToStates(),
             myListStatusOptions = filters.myListStatus?.mapToStates(),
             durationOptions = filters.duration?.mapToStates(),
-            seasonOptions = filters.seasonFilterOptions?.mapToStates(),
+            timePeriodAiringOptions = filters.timePeriodAiringFilterOptions?.mapToStates(),
             ratingOptions = filters.ratingOptions?.mapToStates(),
             studioOptions = filters.studiosOptions?.mapToStates(),
             publisherOptions = filters.publishersOptions?.mapToStates(),
@@ -55,7 +55,7 @@ class FiltersState(
     val statusOptions: FilterOptionStates<EntryStatus>?,
     val myListStatusOptions: FilterOptionStates<UserRateStatus>?,
     val durationOptions: FilterOptionStates<Duration>?,
-    val seasonOptions: FilterOptionStates<SeasonFilter>?,
+    val timePeriodAiringOptions: FilterOptionStates<TimePeriodAiring>?,
     val ratingOptions: FilterOptionStates<AnimeRating>?,
     val genresOptions: FilterOptionStates<Genre>?,
     val themeOptions: FilterOptionStates<Genre>?,
@@ -69,8 +69,8 @@ class FiltersState(
     private var _selectedMinScoreState = mutableIntStateOf(initialScore)
     val selectedMinScoreState = _selectedMinScoreState.asIntState()
 
-    val customSeasonOptions =
-        mutableStateListOf<FilterOptionState<SeasonFilter>>()
+    val customTimePeriodAiringOptions =
+        mutableStateListOf<FilterOptionState<TimePeriodAiring>>()
 
     fun changeMinScore(newMinScore: Int) {
         _selectedMinScoreState.intValue = newMinScore
@@ -113,10 +113,10 @@ class FiltersState(
             put(FilterType.Kind, getAppliedFor(publisherOptions))
         }
 
-        if (!seasonOptions.isNullOrEmpty()) {
+        if (!timePeriodAiringOptions.isNullOrEmpty()) {
             val appliedSeason = mutableMapOf<String, OptionValue>()
-            appliedSeason.putAll(getAppliedFor(seasonOptions))
-            appliedSeason.putAll(getAppliedFor(customSeasonOptions))
+            appliedSeason.putAll(getAppliedFor(timePeriodAiringOptions))
+            appliedSeason.putAll(getAppliedFor(customTimePeriodAiringOptions))
             put(FilterType.Season, appliedSeason)
         }
 
@@ -193,10 +193,10 @@ class FiltersState(
             updateFor(publisherOptions, appliedFilters.publishers())
         }
 
-        if (!seasonOptions.isNullOrEmpty()) {
+        if (!timePeriodAiringOptions.isNullOrEmpty()) {
             val appliedSeason = appliedFilters.season()
-            updateFor(seasonOptions, appliedSeason)
-            updateFor(customSeasonOptions, appliedSeason)
+            updateFor(timePeriodAiringOptions, appliedSeason)
+            updateFor(customTimePeriodAiringOptions, appliedSeason)
         }
 
         val appliedGenres = appliedFilters.genres()

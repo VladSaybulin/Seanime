@@ -76,7 +76,7 @@ class SeanimeNavEventsImpl(
         )
     }
 
-    override fun navigateToSearchAnimeByStudio(studioId: Long) {
+    override fun navigateToSearchByStudio(searchType: SearchType, studioId: Long) {
         provider.searchScreenRoute(SearchArgs.searchAnimeByStudio(studioId))
     }
 
@@ -84,10 +84,10 @@ class SeanimeNavEventsImpl(
         provider.searchScreenRoute(SearchArgs.searchAnimeOngoing())
     }
 
-    override fun navigateToSearchMangaOrRanobeByPublisher(isManga: Boolean, publisherId: Long) {
+    override fun navigateToSearchMangaOrRanobeByPublisher(searchType: SearchType, publisherId: Long) {
         provider.searchScreenRoute(
             SearchArgs.searchMangaOrRanobeByPublisher(
-                isManga = isManga,
+                isManga = searchType == SearchType.Manga,
                 publisherId = publisherId
             )
         )

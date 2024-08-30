@@ -52,8 +52,6 @@ internal fun AnimeDetailsQuery.Anime.asNetworkModel() = NetworkAnimeDetails(
     scoreStats = scoresStats?.map(AnimeDetailsQuery.ScoresStat::asNetworkModel),
     userRateStatusStats = statusesStats?.map(AnimeDetailsQuery.StatusesStat::asNetworkModel),
     studios = studios.map(AnimeDetailsQuery.Studio::asNetworkModel),
-    authors = personRoles?.map(AnimeDetailsQuery.PersonRole::asNetworkModel),
-    characters = characterRoles?.map(AnimeDetailsQuery.CharacterRole::asNetworkModel),
     related = related?.mapNotNull(AnimeDetailsQuery.Related::asNetworkModel),
     screenshots = screenshots.map(AnimeDetailsQuery.Screenshot::asNetworkModel),
     videos = videos.map(AnimeDetailsQuery.Video::asNetworkModel)
@@ -78,31 +76,6 @@ private fun AnimeDetailsQuery.Studio.asNetworkModel() = NetworkStudio(
     id = id,
     name = name,
     image = imageUrl
-)
-
-private fun AnimeDetailsQuery.PersonRole.asNetworkModel() = NetworkPersonWithRoles(
-    person = NetworkPerson(
-        id = person.id,
-        name = person.name,
-        nameRu = person.russian,
-        image = person.poster?.let {
-            NetworkImage(
-                originalUrl = it.originalUrl,
-                previewUrl = it.main2xUrl
-            )
-        }
-    ),
-    roles = rolesEn
-)
-
-private fun AnimeDetailsQuery.CharacterRole.asNetworkModel() = NetworkCharacterWithRole(
-    character = NetworkCharacter(
-        id = character.id,
-        name = character.name,
-        nameRu = character.russian,
-        image = character.poster?.let { NetworkImage(it.originalUrl, it.main2xUrl) }
-    ),
-    isMain = rolesEn.contains("Main")
 )
 
 private fun AnimeDetailsQuery.Related.asNetworkModel() = if (anime != null || manga != null) {

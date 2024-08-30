@@ -44,8 +44,6 @@ internal fun MangaDetailsQuery.Manga.asNetworkModel() = NetworkMangaDetails(
     scoreStats = scoresStats?.map(MangaDetailsQuery.ScoresStat::asNetworkModel),
     userRateStatusStats = statusesStats?.map(MangaDetailsQuery.StatusesStat::asNetworkModel),
     publishers = publishers.map(MangaDetailsQuery.Publisher::asNetworkModel),
-    authors = personRoles?.map(MangaDetailsQuery.PersonRole::asNetworkModel),
-    characters = characterRoles?.map(MangaDetailsQuery.CharacterRole::asCharacterWithRole),
     related = related?.mapNotNull(MangaDetailsQuery.Related::asNetworkModel),
 )
 
@@ -72,30 +70,6 @@ private fun MangaDetailsQuery.StatusesStat.asNetworkModel() =
 private fun MangaDetailsQuery.Publisher.asNetworkModel() = NetworkPublisher(
     id = id,
     name = name
-)
-
-private fun MangaDetailsQuery.PersonRole.asNetworkModel() = NetworkPersonWithRoles(
-    person = NetworkPerson(
-        id = person.id,
-        name = person.name,
-        nameRu = person.russian,
-        image = person.poster?.let {
-            NetworkImage(originalUrl = it.originalUrl, previewUrl = it.main2xUrl)
-        }
-    ),
-    roles = rolesEn
-)
-
-private fun MangaDetailsQuery.CharacterRole.asCharacterWithRole() = NetworkCharacterWithRole(
-    character = NetworkCharacter(
-        id = character.id,
-        name = character.name,
-        nameRu = character.russian,
-        image = character.poster?.let {
-            NetworkImage(originalUrl = it.originalUrl, previewUrl = it.main2xUrl)
-        }
-    ),
-    isMain = rolesEn.contains("Main")
 )
 
 fun MangaDetailsQuery.Related.asNetworkModel() = if (anime != null || manga != null) {

@@ -11,7 +11,7 @@ import ru.vladsaybulin.model.common.Image
     primaryKeys = ["anime_id", "order"],
     foreignKeys = [
         ForeignKey(
-            entity = AnimeDetailsEntity::class,
+            entity = AnimeEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE

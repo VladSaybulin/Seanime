@@ -53,10 +53,10 @@ class TopicsRepository @Inject constructor(
 
         databaseTransactionRunner {
             if (anime.isNotEmpty()) {
-                animeDao.insertOrReplaceAnimes(anime)
+                animeDao.upsertAnimes(anime)
             }
             if (manga.isNotEmpty()) {
-                mangaDao.insertOrReplaceMangas(manga)
+                mangaDao.upsertMangas(manga)
             }
             if (users.isNotEmpty()) {
                 userDao.insertOrReplaceUserEntities(users)

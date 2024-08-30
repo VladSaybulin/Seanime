@@ -33,27 +33,6 @@ data class PopulatedAnimeDetails(
     val genres: List<GenreEntity>,
 
     @Relation(
-        entity = AnimeScreenshotEntity::class,
-        parentColumn = "id",
-        entityColumn = "anime_id"
-    )
-    val screenshots: List<AnimeScreenshotEntity>,
-
-    @Relation(
-        entity = AnimeVideoEntity::class,
-        parentColumn = "id",
-        entityColumn = "anime_id"
-    )
-    val videos: List<AnimeVideoEntity>,
-
-    @Relation(
-        entity = AnimeRelatedEntity::class,
-        parentColumn = "id",
-        entityColumn = "anime_id"
-    )
-    val related: List<PopulatedAnimeRelated>,
-
-    @Relation(
         entity = StudioEntity::class,
         parentColumn = "id",
         entityColumn = "id",
@@ -93,9 +72,5 @@ fun PopulatedAnimeDetails.asExternalModel(): AnimeDetails = AnimeDetails(
     scoreStats = animeDetailsEntity.scoreStats,
     userRateStatusStats = animeDetailsEntity.statusStats,
     studios = studios.map { it.asExternalModel() },
-    authors = emptyList(),
-    characters = emptyList(),
-    related = related.sortedBy { it.animeRelatedEntity.order }.map { it.asExternalModel() },
-    screenshots = screenshots.map { it.asExternalModel() },
-    videos = videos.map { it.asExternalModel() }
+    season = animeDetailsEntity.season?.asExternalModel()
 )

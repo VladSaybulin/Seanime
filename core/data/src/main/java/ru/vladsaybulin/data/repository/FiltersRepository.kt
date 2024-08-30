@@ -14,8 +14,8 @@ import ru.vladsaybulin.model.manga.ranobeKind
 import ru.vladsaybulin.model.search.Duration
 import ru.vladsaybulin.model.search.FilterOption
 import ru.vladsaybulin.model.search.Filters
-import ru.vladsaybulin.model.search.Season
-import ru.vladsaybulin.model.search.SeasonFilter
+import ru.vladsaybulin.model.search.SeasonOfYear
+import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,7 +38,7 @@ class FiltersRepository @Inject constructor(
             animeKindOptions = animeKindOptions(),
             statusOptions = animeStatusOptions(),
             myListStatus = myListStatusOptions(),
-            seasonFilterOptions = seasonOptions(),
+            timePeriodAiringFilterOptions = seasonOptions(),
             duration = durationOptions(),
             ratingOptions = ratingOptions(),
             genresOption = animeGenresOptions(),
@@ -96,18 +96,18 @@ class FiltersRepository @Inject constructor(
         .map(UserRateStatus::toOption)
 
     private fun seasonOptions() = buildList {
-        add(SeasonFilter.SeasonYear(Season.Summer, 2024).toOption())
-        add(SeasonFilter.SeasonYear(Season.Spring, 2024).toOption())
-        add(SeasonFilter.SeasonYear(Season.Winter, 2024).toOption())
-        add(SeasonFilter.SeasonYear(Season.Fall, 2023).toOption())
-        add(SeasonFilter.Year(2024).toOption())
-        add(SeasonFilter.Year(2023).toOption())
-        add(SeasonFilter.YearRange(2022, 2020).toOption())
-        add(SeasonFilter.YearRange(2016, 2020).toOption())
-        add(SeasonFilter.YearRange(2011, 2015).toOption())
-        add(SeasonFilter.YearRange(2000, 2010).toOption())
-        add(SeasonFilter.Decade(199).toOption())
-        add(SeasonFilter.Decade(198).toOption())
+        add(TimePeriodAiring.Season(SeasonOfYear.Summer, 2024).toOption())
+        add(TimePeriodAiring.Season(SeasonOfYear.Spring, 2024).toOption())
+        add(TimePeriodAiring.Season(SeasonOfYear.Winter, 2024).toOption())
+        add(TimePeriodAiring.Season(SeasonOfYear.Fall, 2023).toOption())
+        add(TimePeriodAiring.Year(2024).toOption())
+        add(TimePeriodAiring.Year(2023).toOption())
+        add(TimePeriodAiring.YearRange(2022, 2020).toOption())
+        add(TimePeriodAiring.YearRange(2016, 2020).toOption())
+        add(TimePeriodAiring.YearRange(2011, 2015).toOption())
+        add(TimePeriodAiring.YearRange(2000, 2010).toOption())
+        add(TimePeriodAiring.Decade(199).toOption())
+        add(TimePeriodAiring.Decade(198).toOption())
     }
 
     private fun durationOptions() = Duration.entries.map(Duration::toOption)
@@ -167,7 +167,7 @@ private fun UserRateStatus.toOption() = FilterOption(
     serializedValue = serializedName
 )
 
-fun SeasonFilter.toOption() = FilterOption(
+fun TimePeriodAiring.toOption() = FilterOption(
     value = this,
     serializedValue = serializedValue
 )

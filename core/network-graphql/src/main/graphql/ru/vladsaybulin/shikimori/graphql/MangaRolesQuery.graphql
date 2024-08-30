@@ -1,0 +1,28 @@
+query MangaRolesQuery($id: String!) {
+    mangas(ids: $id) {
+        personRoles {
+            person {
+                id
+                name
+                russian
+                poster {
+                    main2xUrl
+                    originalUrl
+                }
+            }
+            rolesEn
+        }
+        characterRoles {
+            character {
+                id
+                name
+                russian
+                poster {
+                    main2xUrl
+                    originalUrl
+                }
+            }
+            rolesEn
+        }
+    }
+}

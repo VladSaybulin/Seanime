@@ -10,6 +10,7 @@ import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 data class MangaDetails(
@@ -28,14 +29,11 @@ data class MangaDetails(
     val volumes: Int,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
+    val season: TimePeriodAiring.Season?,
     val description: SeanimeText?,
     val descriptionSource: String?,
-    val genres: List<Genre>?,
+    val genres: List<Genre>,
     val scoreStats: List<StatisticsItem<Int>>?,
     val userRateStatusStats: List<StatisticsItem<UserRateStatus>>?,
-    val publishers: List<Publisher>,
-    val authorsSlice: DataSlice<PersonWithRoles>,
-    val charactersSlice: DataSlice<CharacterWithRole>,
-    val relatedSlice: DataSlice<RelatedEntry>,
-    val similarSlice: DataSlice<Manga>
+    val publishers: List<Publisher>
 )

@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
+import ru.vladsaybulin.database.models.common.SeasonPOJO
 import ru.vladsaybulin.database.models.text.SeanimeTextPOJO
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.common.StatisticsItem
@@ -38,6 +39,9 @@ class AnimeDetailsEntity(
 
     @ColumnInfo("license_name")
     val licenseNameRu: String?,
+
+    @Embedded
+    val season: SeasonPOJO?,
 
     @ColumnInfo("rating")
     val rating: AnimeRating, //TODO TypeConverter

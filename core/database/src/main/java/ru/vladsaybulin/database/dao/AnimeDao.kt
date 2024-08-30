@@ -16,9 +16,6 @@ interface AnimeDao {
     @Upsert
     suspend fun upsertAnime(anime: AnimeEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceAnimes(anime: List<AnimeEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceAnimeEntity(anime: AnimeEntity)
+    @Upsert
+    suspend fun upsertAnimes(animes: List<AnimeEntity>)
 }

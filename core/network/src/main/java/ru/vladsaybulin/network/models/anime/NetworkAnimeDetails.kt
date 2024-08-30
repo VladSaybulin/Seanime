@@ -41,8 +41,6 @@ data class NetworkAnimeDetails(
     val scoreStats: List<NetworkStatisticsItem<Int>>?,
     val userRateStatusStats: List<NetworkStatisticsItem<UserRateStatus>>?,
     val studios: List<NetworkStudio>,
-    val authors: List<NetworkPersonWithRoles>?,
-    val characters: List<NetworkCharacterWithRole>?,
     val related: List<NetworkRelated>?,
     val screenshots: List<NetworkImage>,
     val videos: List<NetworkVideo>?

@@ -16,6 +16,9 @@ interface MangaDao {
     @Upsert
     suspend fun upsertManga(manga: MangaEntity)
 
+    @Upsert
+    suspend fun upsertMangas(mangas: List<MangaEntity>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceMangas(mangas: List<MangaEntity>)
 }

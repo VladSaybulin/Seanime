@@ -1,6 +1,7 @@
 package ru.vladsaybulin.core.ui.entry
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
@@ -33,7 +36,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.offset
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
@@ -57,15 +62,17 @@ fun EntryGridItem(
     shape: CornerBasedShape = EntryGridItemDefaults.shape,
     metadata: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
+    val measurePolicy = remember(contentPadding) { EntryGridItemMeasurePolicy(contentPadding) }
+
     SeanimeTheme(darkTheme = true) {
         Surface(
             onClick = onClick,
             shape = shape,
-            shadowElevation = 2.dp
+            shadowElevation = 2.dp,
+            modifier = modifier
         ) {
             Layout(
-                measurePolicy = EntryGridItemMeasurePolicy(contentPadding),
-                modifier = modifier,
+                measurePolicy = measurePolicy,
                 content = {
                     EntryGridItemName(name = name, style = nameTextStyle)
                     EntryGridItemImage(imageUrl)
@@ -140,7 +147,7 @@ object EntryGridItemDefaults {
         get() = RoundedCornerShape(16.dp)
 
     val nameTextStyle
-        @Composable get() = SeanimeTheme.typography.labelLarge
+        @Composable get() = SeanimeTheme.typography.labelLarge.copy(color = Color.Unspecified)
 
     val bodyTextStyle
         @Composable get() = SeanimeTheme.typography.labelSmall
@@ -151,7 +158,7 @@ private enum class EntryGridItemLayoutId {
     Image, Name, Metadata, UserRateStatus
 }
 
-data class EntryGridItemMeasurePolicy(private val contentPadding: PaddingValues) : MeasurePolicy {
+private class EntryGridItemMeasurePolicy(private val contentPadding: PaddingValues) : MeasurePolicy {
     override fun MeasureScope.measure(
         measurables: List<Measurable>,
         constraints: Constraints
@@ -162,13 +169,22 @@ data class EntryGridItemMeasurePolicy(private val contentPadding: PaddingValues)
         val endPadding = contentPadding.calculateEndPadding(layoutDirection).roundToPx()
         val bottomPadding = contentPadding.calculateBottomPadding().roundToPx()
 
-        val verticalPadding = topPadding + bottomPadding
-        val horizontalPadding = startPadding + endPadding
+        val size: IntSize = when {
+            constraints.hasBoundedWidth -> IntSize(
+                width = constraints.maxWidth,
+                height = (constraints.maxWidth * 4 / 3f).roundToInt()
+            )
 
-        val imageWidth = constraints.minWidth
-        val imageHeight = (imageWidth * 4 / 3f).roundToInt()
+            constraints.hasBoundedHeight -> IntSize(
+                width = (constraints.maxHeight * 3f / 4).roundToInt(),
+                height = constraints.maxHeight
+            )
+
+            else -> error("EntryGrid size must be constrained to either width or height")
+        }
+
         val imagePlaceable = measurables.first { it.layoutId == EntryGridItemLayoutId.Image }
-            .measure(Constraints.fixed(imageWidth, imageHeight))
+            .measure(Constraints.fixed(size.width, size.height))
 
         val userRateStatusSizePx = UserRateStatusBadgeSize.roundToPx()
         val userRateStatusPlaceable = measurables.firstOrNull {
@@ -176,24 +192,29 @@ data class EntryGridItemMeasurePolicy(private val contentPadding: PaddingValues)
         }?.measure(Constraints.fixed(userRateStatusSizePx, userRateStatusSizePx))
 
         val textConstraints = Constraints(
-            maxWidth = imageWidth - horizontalPadding,
+            minWidth = 0,
+            minHeight = 0,
+            maxWidth = size.width - startPadding - endPadding,
+            maxHeight = size.height - topPadding + bottomPadding
         )
 
-        val metadataPlaceable = measurables.firstOrNull { it.layoutId == EntryGridItemLayoutId.Metadata }
-            ?.measure(textConstraints)
-
         val namePlaceable = measurables.first { it.layoutId == EntryGridItemLayoutId.Name }
-                .measure(textConstraints)
+            .measure(textConstraints)
 
-        val metadataY = (imageHeight - (metadataPlaceable?.height ?: 0) - bottomPadding)
-            .coerceAtLeast(topPadding)
-        val nameY = (metadataY - namePlaceable.height).coerceAtLeast(topPadding)
+        val metadataPlaceable = measurables.firstOrNull { it.layoutId == EntryGridItemLayoutId.Metadata }
+            ?.measure(textConstraints.offset(vertical = -namePlaceable.height))
 
-        return layout(imageWidth, imageHeight) {
+        return layout(size.width, size.height) {
             imagePlaceable.place(0, 0)
-            userRateStatusPlaceable?.placeRelative(imageWidth - userRateStatusPlaceable.width, 0)
-            namePlaceable.placeRelative(startPadding, nameY)
-            metadataPlaceable?.placeRelative(startPadding, metadataY)
+            userRateStatusPlaceable?.placeRelative(size.width - userRateStatusPlaceable.width, 0)
+
+            var y = size.height - bottomPadding
+            metadataPlaceable?.let {
+                y -= it.height
+                it.placeRelative(startPadding, y)
+            }
+
+            namePlaceable.placeRelative(startPadding, y - namePlaceable.height)
         }
     }
 }

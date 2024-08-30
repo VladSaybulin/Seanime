@@ -47,7 +47,7 @@ import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.search.FilterOption
 import ru.vladsaybulin.model.search.FilterType
 import ru.vladsaybulin.model.search.Filters
-import ru.vladsaybulin.model.search.SeasonFilter
+import ru.vladsaybulin.model.search.TimePeriodAiring
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,12 +160,12 @@ fun FiltersContent(
                 )
             }
 
-            if (!filtersState.seasonOptions.isNullOrEmpty()) {
+            if (!filtersState.timePeriodAiringOptions.isNullOrEmpty()) {
                 mayBeDivider()
                 filterHeader(headerTextId = R.string.core_ui_filter_header_season)
                 seasonFilter(
-                    options = filtersState.seasonOptions,
-                    customOptions = filtersState.customSeasonOptions,
+                    options = filtersState.timePeriodAiringOptions,
+                    customOptions = filtersState.customTimePeriodAiringOptions,
                     onNewOptionClick = { },
                     onOptionDeleteClick = { },
                 )
@@ -258,8 +258,8 @@ fun LazyListScope.scoreFilter(selected: IntState, onScoreChange: (Int) -> Unit) 
 
 @OptIn(ExperimentalLayoutApi::class)
 fun LazyListScope.seasonFilter(
-    options: FilterOptionStates<SeasonFilter>,
-    customOptions: SnapshotStateList<FilterOptionState<SeasonFilter>>,
+    options: FilterOptionStates<TimePeriodAiring>,
+    customOptions: SnapshotStateList<FilterOptionState<TimePeriodAiring>>,
     onNewOptionClick: () -> Unit,
     onOptionDeleteClick: (Int) -> Unit
 ) {
@@ -278,7 +278,7 @@ fun LazyListScope.seasonFilter(
                         onClick = optionState::onClick,
                         onLongClick = optionState::onLongClick,
                         label = {
-                            Text(text = seasonFilterString(seasonFilter = optionState.option.value))
+                            Text(text = seasonFilterString(timePeriodAiringFilter = optionState.option.value))
                         },
                         leadingIcon = optionState.value.optionStateValueIcon()
                     )
@@ -301,7 +301,7 @@ fun LazyListScope.seasonFilter(
                         onClick = optionState::onClick,
                         onLongClick = optionState::onLongClick,
                         label = {
-                            Text(text = seasonFilterString(seasonFilter = optionState.option.value))
+                            Text(text = seasonFilterString(timePeriodAiringFilter = optionState.option.value))
                         },
                         leadingIcon = optionState.value.optionStateValueIcon(),
                         trailingIcon = {

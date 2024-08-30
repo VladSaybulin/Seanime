@@ -9,7 +9,7 @@ import androidx.room.ForeignKey
     primaryKeys = ["anime_id", "studio_id"],
     foreignKeys = [
         ForeignKey(
-            entity = AnimeDetailsEntity::class,
+            entity = AnimeEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE

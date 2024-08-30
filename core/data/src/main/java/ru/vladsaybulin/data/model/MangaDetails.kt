@@ -1,10 +1,8 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.database.models.manga.MangaCharacterEntity
 import ru.vladsaybulin.database.models.manga.MangaDetailsEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.MangaGenreCrossRef
-import ru.vladsaybulin.database.models.manga.MangaPersonRolesEntity
 import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
 import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
 import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
@@ -20,6 +18,7 @@ fun NetworkMangaDetails.asMangaDetailsEntity() =
         descriptionSource = descriptionSource,
         scoreStats = scoreStats?.map { it.asExternalModel() },
         statusStats = userRateStatusStats?.map { it.asExternalModel() },
+        season = null //TODO season
     )
 
 fun NetworkMangaDetails.asMangaEntity() = MangaEntity(
@@ -36,41 +35,16 @@ fun NetworkMangaDetails.asMangaEntity() = MangaEntity(
     releasedOn = releasedOn?.asPOJO()
 )
 
-fun NetworkMangaDetails.personEntityShells() =
-    authors?.map { it.person.asEntity() }
-
-fun NetworkMangaDetails.mangaAuthorEntities() =
-    authors?.map {
-        MangaPersonRolesEntity(
-            mangaId = id,
-            personId = it.person.id,
-            roles = it.roles,
-            isMain = it.roles.isMainPersonRoles()
-        )
-    }
-
-fun NetworkMangaDetails.characterEntityShells() =
-    characters?.map { it.character.asEntity() }
-
-fun NetworkMangaDetails.mangaCharacterEntities() =
-    characters?.map {
-        MangaCharacterEntity(
-            mangaId = id,
-            characterId = it.character.id,
-            isMain = it.isMain
-        )
-    }
-
 fun NetworkMangaDetails.genreEntityShells() =
     genres?.map { it.asEntity() }
 
-fun NetworkMangaDetails.genresCrossReferences() =
+fun NetworkMangaDetails.mangaGenreCrossReferences() =
     genres?.map { MangaGenreCrossRef(mangaId = id, genreId = it.id) }
 
-fun NetworkMangaDetails.relatedAnimeEntityShell() =
+fun NetworkMangaDetails.relatedAnimeEntityShells() =
     related?.mapNotNull { it.anime?.asEntity() }
 
-fun NetworkMangaDetails.relatedMangaEntityShell() =
+fun NetworkMangaDetails.relatedMangaEntityShells() =
     related?.mapNotNull { it.manga?.asEntity() }
 
 fun NetworkMangaDetails.mangaRelatedEntities() =

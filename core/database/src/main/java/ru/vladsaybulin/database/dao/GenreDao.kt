@@ -11,4 +11,7 @@ interface GenreDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceGenres(genres: List<GenreEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertOrIgnoreGenres(genres: List<GenreEntity>)
+
 }

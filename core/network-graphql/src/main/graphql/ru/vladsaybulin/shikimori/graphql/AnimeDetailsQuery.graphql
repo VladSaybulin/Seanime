@@ -52,30 +52,6 @@ query AnimeDetailsQuery($id: String!) {
             name
             imageUrl
         }
-        personRoles {
-            person {
-                id
-                name
-                russian
-                poster {
-                    main2xUrl
-                    originalUrl
-                }
-            }
-            rolesEn
-        }
-        characterRoles {
-            character {
-                id
-                name
-                russian
-                poster {
-                    main2xUrl
-                    originalUrl
-                }
-            }
-            rolesEn
-        }
         related {
             anime {
                 id

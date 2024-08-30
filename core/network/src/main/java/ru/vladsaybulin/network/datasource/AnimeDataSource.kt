@@ -10,6 +10,7 @@ import retrofit2.http.Path
 import ru.vladsaybulin.common.network.ShikimoriException
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.core.network.graphql.AnimeQuery
+import ru.vladsaybulin.core.network.graphql.AnimeRolesQuery
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.mapper.enums.asOrderEnum
@@ -17,6 +18,7 @@ import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.mapper.queries.asNetworkModels
 import ru.vladsaybulin.network.models.NetworkAnime
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
+import ru.vladsaybulin.network.models.common.NetworkTitleRoles
 import ru.vladsaybulin.network.util.getOrderEnum
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -109,6 +111,13 @@ class AnimeDataSource @Inject constructor(
         val response = apolloClient.query(AnimeDetailsQuery(id = animeId.toString())).execute()
         return response.dataAssertNoErrors.animes.firstOrNull()?.asNetworkModel()
             ?: throw ShikimoriException("Not found anime where id = $animeId")
+    }
+
+    suspend fun getAnimeRoles(animeId: Long): NetworkTitleRoles {
+        val response = apolloClient.query(AnimeRolesQuery(id = animeId.toString())).execute()
+        return checkNotNull(response.dataAssertNoErrors.animes.singleOrNull()) {
+            "Not found anime with id = $animeId"
+        }.asNetworkModel()
     }
 
     suspend fun getSimilarAnimes(animeId: Long) = api.getSimilarAnime(animeId)

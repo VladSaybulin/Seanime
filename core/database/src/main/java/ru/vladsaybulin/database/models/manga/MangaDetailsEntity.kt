@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.vladsaybulin.database.models.common.SeasonPOJO
 import ru.vladsaybulin.database.models.text.SeanimeTextPOJO
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -26,6 +27,9 @@ data class MangaDetailsEntity(
 
     @ColumnInfo("license_name")
     val licenseNameRu: String?,
+
+    @Embedded
+    val season: SeasonPOJO?,
 
     @Embedded("description_")
     val description: SeanimeTextPOJO?,

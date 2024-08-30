@@ -46,4 +46,86 @@
     <string name="feature_title_details_relation_type_character">Общий персонаж</string>
     <string name="feature_title_details_relation_type_other">Другое</string>
 
+    <string name="feature_details_info_label_kind">Тип</string>
+    <string name="feature_details_info_label_status">Статус</string>
+    <string name="feature_details_info_label_episodes">Эпизоды</string>
+    <string name="feature_details_info_label_episode_duration">Длительность</string>
+    <string name="feature_details_info_label_chapters">Главы</string>
+    <string name="feature_details_info_label_volumes">Тома</string>
+    <string name="feature_details_info_label_air_date">Дата выхода</string>
+    <string name="feature_details_info_label_season">Сезон</string>
+    <string name="feature_details_info_label_next_episode">След. эпизод</string>
+    <string name="feature_details_info_label_publishers">Издатель</string>
+    <string name="feature_details_info_label_genres">Жанры</string>
+    <string name="feature_details_info_label_rating">Рейтинг</string>
+    <string name="feature_details_info_label_studios">Студия</string>
+    <string name="feature_details_info_label_air_year">Год выхода</string>
+
+    <string name="feature_details_info_episodes_aired_of_unknown">%d/-</string>
+    <string name="feature_details_info_episodes_aired_of_episodes">%d/%d</string>
+
+    <string name="feature_details_info_duration_when_is_single_episode_in_hours">%s %s</string>
+    <string name="feature_details_info_duration_when_is_not_single_episode_in_hours">по %s %s</string>
+    <string name="feature_details_info_duration_when_is_single_episode_in_minutes">%s</string>
+    <string name="feature_details_info_duration_when_is_not_single_episode_in_minutes">по %s</string>
+    <string name="feature_details_info_duration_minutes">%d мин.</string>
+
+    <string name="feature_details_info_next_episode_date_time_pattern">dd MMM, hh:mm</string>
+    <string name="feature_details_info_air_year">%d г.</string>
+    <string name="feature_details_info_incomplete_date_day_month_year">dd MMM yyyy г.</string>
+    <string name="feature_details_info_incomplete_date_month_year">MMM yyyy г.</string>
+    <string name="feature_details_info_incomplete_date_year">yyyy г.</string>
+    <string name="feature_details_info_date_range">с %s по %s</string>
+    <string name="feature_details_info_date_aired_on">с %s</string>
+    <string name="feature_title_details_title_score">Оценка</string>
+
+    <string-array name="feature_details_info_seasons">
+        <item>Зима</item>
+        <item>Весна</item>
+        <item>Лето</item>
+        <item>Зима</item>
+    </string-array>
+
+    <string-array name="feature_title_details_month_names_in_nominative_case">
+        <item>январь</item>
+        <item>февраль</item>
+        <item>март</item>
+        <item>апрель</item>
+        <item>май</item>
+        <item>июнь</item>
+        <item>июль</item>
+        <item>август</item>
+        <item>сентябрь</item>
+        <item>октябрь</item>
+        <item>ноябрь</item>
+        <item>декабрь</item>
+    </string-array>
+
+    <string-array name="feature_title_details_month_names_in_genitive_case">
+        <item>января</item>
+        <item>февраля</item>
+        <item>марта</item>
+        <item>апреля</item>
+        <item>мая</item>
+        <item>июня</item>
+        <item>июля</item>
+        <item>августа</item>
+        <item>сентября</item>
+        <item>октября</item>
+        <item>ноября</item>
+        <item>декабря</item>
+    </string-array>
+
+    <plurals name="feature_details_info_duration_hours_in_normative_case">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+        <item quantity="other">%d часа</item>
+    </plurals>
+    <plurals name="feature_details_info_duration_by_hours_in_genitive_case">
+        <item quantity="one">%d часу</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+        <item quantity="other">%d ч.</item>
+    </plurals>
 </resources>

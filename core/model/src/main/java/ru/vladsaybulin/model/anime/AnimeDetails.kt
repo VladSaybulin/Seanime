@@ -2,15 +2,12 @@ package ru.vladsaybulin.model.anime
 
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
-import ru.vladsaybulin.model.character.CharacterWithRole
-import ru.vladsaybulin.model.common.DataSlice
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.genre.Genre
-import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 data class AnimeDetails(
@@ -28,22 +25,17 @@ data class AnimeDetails(
     val rating: AnimeRating,
     val episodes: Int,
     val episodesAired: Int,
-    val duration: Int?,
+    val duration: Int,
     val nextEpisodeAt: Instant?,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
+    val season: TimePeriodAiring.Season?,
     val description: SeanimeText?,
     val descriptionSource: String?,
-    val genres: List<Genre>?,
+    val genres: List<Genre>,
+    val studios: List<Studio>,
     val subbers: List<String>?,
     val dubbers: List<String>?,
     val scoreStats: List<StatisticsItem<Int>>?,
-    val userRateStatusStats: List<StatisticsItem<UserRateStatus>>?,
-    val studios: List<Studio>?,
-    val authorsSlice: DataSlice<PersonWithRoles>,
-    val charactersSlice: DataSlice<CharacterWithRole>,
-    val relatedSlice: DataSlice<RelatedEntry>,
-    val screenshots: List<Image>,
-    val videosSlice: DataSlice<Video>,
-    val similarSlice: DataSlice<Anime>
+    val userRateStatusStats: List<StatisticsItem<UserRateStatus>>?
 )

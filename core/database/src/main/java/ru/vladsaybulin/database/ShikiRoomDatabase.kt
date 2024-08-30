@@ -27,6 +27,7 @@ import ru.vladsaybulin.database.models.anime.AnimeGenreCrossRef
 import ru.vladsaybulin.database.models.anime.AnimePersonRolesEntity
 import ru.vladsaybulin.database.models.anime.AnimeRelatedEntity
 import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
+import ru.vladsaybulin.database.models.anime.AnimeSimilarAnimeCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
@@ -49,6 +50,7 @@ import ru.vladsaybulin.database.models.manga.MangaGenreCrossRef
 import ru.vladsaybulin.database.models.manga.MangaPersonRolesEntity
 import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
 import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
+import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
 import ru.vladsaybulin.database.models.manga.PublisherEntity
 import ru.vladsaybulin.database.models.person.PersonEntity
 import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
@@ -106,6 +108,7 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         AnimeStudioCrossRef::class,
         AnimeScreenshotEntity::class,
         AnimeVideoEntity::class,
+        AnimeSimilarAnimeCrossRef::class,
 
         /* Manga details entities */
         MangaDetailsEntity::class,
@@ -114,6 +117,7 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         MangaCharacterEntity::class,
         MangaRelatedEntity::class,
         MangaPublisherCrossRef::class,
+        MangaSimilarMangaCrossRef::class,
 
         /* Character details */
         CharacterDetailsEntity::class,
