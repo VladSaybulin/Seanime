@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,11 +25,14 @@ import ru.vladsaybulin.core.ui.entry.EntryInfoKindAndYear
 import ru.vladsaybulin.core.ui.entry.EntryListItem
 import ru.vladsaybulin.core.ui.score.ScoreStars
 import ru.vladsaybulin.core.ui.score.SmallStarSize
-import ru.vladsaybulin.core.ui.strings.animeKindString
-import ru.vladsaybulin.core.ui.strings.mangaKindString
+import ru.vladsaybulin.core.ui.strings.animeKindStringResId
+import ru.vladsaybulin.core.ui.strings.mangaKindStringResId
 import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus.None
 import ru.vladsaybulin.model.userrate.UserRateStatus.Rewatching
 import ru.vladsaybulin.model.userrate.UserRateStatus.Watching
@@ -39,63 +43,17 @@ fun UserRateEntryCard(
     userRateWithEntry: UserRateWithEntry,
     onAnimeClick: (Anime) -> Unit,
     onMangaClick: (Manga) -> Unit,
-    onEditClick: () -> Unit,
+    onEditClick: (EditableUserRate) -> Unit,
     modifier: Modifier = Modifier,
     showUserRateBadge: Boolean = true
 ) {
     val userRate = userRateWithEntry.userRate
 
-    val name: String
-    val poster: Image?
-    val episodesState: UserRateProgressState?
-    val chaptersState: UserRateProgressState?
-    val volumesState: UserRateProgressState?
-    val kindString: String?
-    val airedInYear: Int?
-
-    val inProgress = userRate.status == Watching || userRate.status == Rewatching
-
-    if (userRateWithEntry.anime != null) {
-        val anime = userRateWithEntry.anime!!
-
-        name = anime.russianName ?: anime.name
-        poster = anime.poster
-        episodesState = UserRateProgressState(
-            progress = userRate.episodes,
-            available = anime.episodesAired,
-            max = anime.episodes
-        )
-        volumesState = null
-        chaptersState = null
-        kindString = animeKindString(anime.kind)
-        airedInYear = anime.airedOn?.year
-    } else if (userRateWithEntry.manga != null) {
-        val manga = userRateWithEntry.manga!!
-
-        name = manga.russianName ?: manga.name
-        poster = manga.poster
-        episodesState = null
-        volumesState = if (inProgress && manga.chapters == 0 && manga.volumes > 0) {
-            UserRateProgressState(
-                progress = userRate.volumes,
-                available = manga.volumes,
-                max = manga.volumes
-            )
-        } else null
-        chaptersState = if (volumesState == null) {
-            UserRateProgressState(
-                progress = userRate.chapters,
-                available = manga.chapters,
-                max = manga.chapters
-            )
-        } else null
-        kindString = mangaKindString(manga.kind)
-        airedInYear = manga.airedOn?.year
-    } else throw IllegalArgumentException()
+    val state = rememberUserrateEntryCardState(userRateWithEntry)
 
     EntryListItem(
-        name = name,
-        imageUrl = poster?.previewUrl,
+        name = state.name,
+        imageUrl = state.poster?.previewUrl,
         onClick = {
             if (userRateWithEntry.anime != null) {
                 onAnimeClick(userRateWithEntry.anime!!)
@@ -118,8 +76,8 @@ fun UserRateEntryCard(
             Column(Modifier.weight(1f)) {
                 Spacer(modifier = Modifier.height(4.dp))
                 EntryInfoKindAndYear(
-                    kindText = kindString,
-                    year = airedInYear,
+                    kindText = state.kindStringId?.let { stringResource(it) },
+                    year = state.airedInYear,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 ScoreStars(
@@ -129,20 +87,20 @@ fun UserRateEntryCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 when {
-                    episodesState != null -> ProgressIndicator(
-                        state = episodesState,
+                    state.episodesState != null -> ProgressIndicator(
+                        state = state.episodesState,
                         unlimitedProgressStringRes = R.string.episodes_progress,
                         limitedProgressStringRes = R.string.episodes_progress_of_limit
                     )
 
-                    volumesState != null -> ProgressIndicator(
-                        state = volumesState,
+                    state.volumesState != null -> ProgressIndicator(
+                        state = state.volumesState,
                         unlimitedProgressStringRes = R.string.volumes_progress,
                         limitedProgressStringRes = R.string.volumes_progress_of_limit
                     )
 
-                    chaptersState != null -> ProgressIndicator(
-                        state = chaptersState,
+                    state.chaptersState != null -> ProgressIndicator(
+                        state = state.chaptersState,
                         unlimitedProgressStringRes = R.string.chapters_progress,
                         limitedProgressStringRes = R.string.chapters_progress_of_limit
                     )
@@ -150,7 +108,7 @@ fun UserRateEntryCard(
             }
 
             FilledTonalIconButton(
-                onClick = onEditClick,
+                onClick = { onEditClick(userRateWithEntry.asEditableUserRate()) },
                 modifier = Modifier.align(Alignment.Bottom)
             ) {
                 Icon(
@@ -193,10 +151,10 @@ private fun ProgressIndicator(
 private class UserRateProgressState(
     val progress: Int,
     val available: Int,
-    max: Int
+    val total: Int
 ) {
     val max = when {
-        max != 0 -> max
+        total != 0 -> total
         available != 0 -> available
         progress != 0 -> progress
         else -> 0
@@ -216,3 +174,92 @@ private class UserRateProgressState(
 
     fun isProgressIndicatorVisible() = max != 0
 }
+
+@Composable
+private fun rememberUserrateEntryCardState(
+    userRateWithEntry: UserRateWithEntry
+): UserRateEntryCardState = remember(userRateWithEntry) {
+    when {
+        userRateWithEntry.anime != null -> createAnimeUserRateEntryCardState(userRateWithEntry)
+        userRateWithEntry.manga != null -> createMangaUserRateEntryCardState(userRateWithEntry)
+        else -> throw IllegalArgumentException()
+    }
+}
+
+private fun createAnimeUserRateEntryCardState(
+    userRateWithEntry: UserRateWithEntry
+): UserRateEntryCardState {
+    val anime = userRateWithEntry.anime!!
+    val inProgress = userRateWithEntry.userRate.status in listOf(Watching, Rewatching)
+
+    return UserRateEntryCardState(
+        name = anime.russianName ?: anime.name,
+        poster = anime.poster,
+        episodesState = if (inProgress) {
+            UserRateProgressState(
+                progress = userRateWithEntry.userRate.episodes,
+                available = anime.episodesAired,
+                total = anime.episodes
+            )
+        } else null,
+        volumesState = null,
+        chaptersState = null,
+        kindStringId = animeKindStringResId(anime.kind),
+        airedInYear = anime.airedOn?.year
+    )
+}
+
+private fun createMangaUserRateEntryCardState(
+    userRateWithEntry: UserRateWithEntry
+): UserRateEntryCardState {
+    val manga = userRateWithEntry.manga!!
+    val inProgress = userRateWithEntry.userRate.status in listOf(Watching, Rewatching)
+
+    val volumesState = if (inProgress && manga.chapters == 0 && manga.volumes > 0) {
+        UserRateProgressState(
+            progress = userRateWithEntry.userRate.volumes,
+            available = manga.volumes,
+            total = manga.volumes
+        )
+    } else null
+
+    return UserRateEntryCardState(
+        name = manga.russianName ?: manga.name,
+        poster = manga.poster,
+        episodesState = null,
+        volumesState = volumesState,
+        chaptersState = if (volumesState == null) {
+            UserRateProgressState(
+                progress = userRateWithEntry.userRate.chapters,
+                available = manga.chapters,
+                total = manga.chapters
+            )
+        } else null,
+        kindStringId = mangaKindStringResId(manga.kind),
+        airedInYear = manga.airedOn?.year
+    )
+}
+
+private data class UserRateEntryCardState(
+    val name: String,
+    val poster: Image?,
+    val episodesState: UserRateProgressState?,
+    val chaptersState: UserRateProgressState?,
+    val volumesState: UserRateProgressState?,
+    val kindStringId: Int?,
+    val airedInYear: Int?
+)
+
+private fun UserRateWithEntry.asEditableUserRate() = EditableUserRate(
+    userRate = userRate,
+    titleType = if (anime != null) EntryType.Anime else EntryType.Manga,
+    entryStatus = anime?.status ?: manga?.status ?: EntryStatus.None,
+    maxEpisodes = anime?.let {
+        when (it.status) {
+            EntryStatus.Ongoing -> it.episodesAired
+            else -> it.episodes
+        }
+    } ?: -1,
+    maxChapters = manga?.chapters ?: -1,
+    maxVolumes = manga?.volumes ?: -1,
+)

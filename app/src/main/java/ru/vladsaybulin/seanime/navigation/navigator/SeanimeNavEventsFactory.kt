@@ -2,12 +2,13 @@ package ru.vladsaybulin.seanime.navigation.navigator
 
 import androidx.navigation.NavController
 import ru.vladsaybulin.model.common.Image
+import ru.vladsaybulin.model.userrate.EditableUserRate
 
 class SeanimeNavEventsFactory(
     private val navController: NavController,
     private val openUrl: (String) -> Unit,
     private val onAuth: () -> Unit,
-    private val openUserRateEditor: () -> Unit,
+    private val openUserRateEditor: (EditableUserRate) -> Unit,
     private val openFullscreenImage: (images: List<Image>, startImageIndex: Int) -> Unit
 ) {
     fun create(routeProvider: RouteProvider) = SeanimeNavEventsImpl(

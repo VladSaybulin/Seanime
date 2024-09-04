@@ -92,6 +92,7 @@ import ru.vladsaybulin.model.related.RelatedEntry
 import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.search.SeasonOfYear
 import ru.vladsaybulin.model.search.TimePeriodAiring
+import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
@@ -212,7 +213,16 @@ private fun DetailsContent(
                 onClick = {
                     when {
                         !isAuthorized -> navEvents.navigateToAuthorization()
-                        userRate != null -> navEvents.showUserRateEditor()
+                        userRate != null -> navEvents.showUserRateEditor(
+                            EditableUserRate(
+                                userRate,
+                                titleType = detailsState.entryType,
+                                entryStatus = detailsState.status,
+                                maxEpisodes = detailsState.episodes,
+                                maxChapters = detailsState.chapters,
+                                maxVolumes = detailsState.volumes
+                            )
+                        )
                         enabledAutocorrect && detailsState.status == Anons ->
                             onCreateUserRate(UserRateStatus.Planned)
 

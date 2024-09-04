@@ -38,6 +38,7 @@ import ru.vladsaybulin.feature.list.navigation.ListNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
@@ -55,7 +56,8 @@ fun ListScreen(
         onUserRateStatusChange = viewModel::onUserRateStatusChanged,
         onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
         onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
-        onAuthorization = navEvents.startAuthorization
+        onAuthorization = navEvents.startAuthorization,
+        onEditClick = navEvents.showUserRateEditor
     )
 }
 
@@ -66,7 +68,8 @@ internal fun MyListScreen(
     onUserRateStatusChange: (UserRateStatus) -> Unit,
     onAuthorization: () -> Unit,
     onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit
+    onMangaClick: (Manga) -> Unit,
+    onEditClick: (EditableUserRate) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -87,7 +90,8 @@ internal fun MyListScreen(
                 onEntryTypeChange = onEntryTypeChange,
                 onUserRateStatusChange = onUserRateStatusChange,
                 onAnimeClick = onAnimeClick,
-                onMangaClick = onMangaClick
+                onMangaClick = onMangaClick,
+                onEditClick = onEditClick
             )
         }
     }
@@ -99,7 +103,8 @@ private fun ListContent(
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
     onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit
+    onMangaClick: (Manga) -> Unit,
+    onEditClick: (EditableUserRate) -> Unit
 ) {
     CompositionLocalProvider(value = LocalTargetStringsEntry provides state.controlPanelState.entryType.asTargetStringEntry()) {
         Column {
@@ -114,7 +119,8 @@ private fun ListContent(
             UserRatesPaging(
                 userRates = userRates,
                 onAnimeClick = onAnimeClick,
-                onMangaClick = onMangaClick
+                onMangaClick = onMangaClick,
+                onEditClick = onEditClick
             )
         }
     }
@@ -179,7 +185,8 @@ private fun ControlPanel(
 private fun UserRatesPaging(
     userRates: LazyPagingItems<UserRateWithEntry>,
     onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit
+    onMangaClick: (Manga) -> Unit,
+    onEditClick: (EditableUserRate) -> Unit
 ) {
     LazyPagingColumn(
         lazyPagingItems = userRates,
@@ -192,7 +199,7 @@ private fun UserRatesPaging(
             onAnimeClick = onAnimeClick,
             onMangaClick = onMangaClick,
             showUserRateBadge = false,
-            onEditClick = {}
+            onEditClick = onEditClick
         )
     }
 }
