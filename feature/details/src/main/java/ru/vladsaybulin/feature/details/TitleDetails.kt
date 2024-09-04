@@ -365,7 +365,7 @@ private fun DetailsContent(
                     gutterSpacer()
                     titleSimilarMangas(
                         similarMangas = similarState.mangas,
-                        onMangaClick = { navEvents.navigateToTitleSimilar(EntryType.Manga, it.id) }
+                        onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) }
                     )
                 }
             }

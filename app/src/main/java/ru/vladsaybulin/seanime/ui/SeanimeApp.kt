@@ -29,9 +29,9 @@ import ru.vladsaybulin.feature.imageview.FullScreenImageState
 import ru.vladsaybulin.feature.imageview.FullScreenImageView
 import ru.vladsaybulin.feature.userrate.UserRateBottomSheet
 import ru.vladsaybulin.model.userrate.EditableUserRate
+import ru.vladsaybulin.seanime.navigation.SeanimeNavEventsFactory
 import ru.vladsaybulin.seanime.navigation.SeanimeNavHost
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination
-import ru.vladsaybulin.seanime.navigation.navigator.SeanimeNavEventsFactory
 
 @Composable
 fun SeanimeApp(
@@ -77,11 +77,14 @@ fun SeanimeApp(
                     navController = appState.navController,
                     navEventsFactory = SeanimeNavEventsFactory(
                         navController = appState.navController,
-                        openUrl = openUrl,
-                        onAuth = onAuth,
-                        openUserRateEditor = { editableUserRate = it },
-                        openFullscreenImage = { images, startIndex ->
+                        navigateToUrl = openUrl,
+                        runAuthorization = onAuth,
+                        showUserRateEditor = { editableUserRate = it },
+                        showFullscreenImage = { images, startIndex ->
                             scope.launch { fullScreenImageState.show(images, startIndex) }
+                        },
+                        showRequestAuthorization = {
+                            
                         }
                     )
                 )

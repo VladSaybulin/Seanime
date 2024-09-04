@@ -3,6 +3,7 @@ package ru.vladsaybulin.feature.list
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import ru.vladsaybulin.core.domain.GetPagedUserRatesUseCase
 import ru.vladsaybulin.data.repository.AuthRepository
-import ru.vladsaybulin.feature.list.navigation.toListArgs
+import ru.vladsaybulin.feature.list.navigation.ListScreenRoute
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.list.UserRateOrder
@@ -29,7 +30,7 @@ class MyListViewModel @Inject constructor(
     authRepository: AuthRepository,
 ) : ViewModel() {
 
-    private val args = savedStateHandle.toListArgs()
+    private val args = savedStateHandle.toRoute<ListScreenRoute>()
 
     private val authState = authRepository.authState
 

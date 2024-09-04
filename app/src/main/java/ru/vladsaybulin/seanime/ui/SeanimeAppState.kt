@@ -11,15 +11,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import ru.vladsaybulin.feature.calendar.navigation.navigateToCalendarGraph
+import ru.vladsaybulin.feature.home.navigation.HomeGraphRoute
+import ru.vladsaybulin.feature.home.navigation.navigateToHomeGraph
+import ru.vladsaybulin.feature.list.navigation.navigateToListGraph
+import ru.vladsaybulin.feature.list.navigation.navigateToListScreen
+import ru.vladsaybulin.feature.search.navigation.navigateToSearchGraph
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination.CALENDAR
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination.HOME
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination.LIST
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination.SEARCH
-import ru.vladsaybulin.seanime.navigation.routes.CalendarGraph
-import ru.vladsaybulin.seanime.navigation.routes.HomeGraph
-import ru.vladsaybulin.seanime.navigation.routes.MyListGraph
-import ru.vladsaybulin.seanime.navigation.routes.SearchGraph
 
 @Composable
 fun rememberSeanimeAppState(
@@ -68,10 +70,10 @@ class SeanimeAppState(
         }
 
         when (topLevelDestination) {
-            HOME -> navController.navigate(HomeGraph, navOptions = topLevelNavOptions)
-            SEARCH -> navController.navigate(SearchGraph, navOptions = topLevelNavOptions)
-            CALENDAR -> navController.navigate(CalendarGraph, navOptions = topLevelNavOptions)
-            LIST -> navController.navigate(MyListGraph, navOptions = topLevelNavOptions)
+            HOME -> navController.navigateToHomeGraph(navOptions = topLevelNavOptions)
+            SEARCH -> navController.navigateToSearchGraph(navOptions = topLevelNavOptions)
+            CALENDAR -> navController.navigateToCalendarGraph(navOptions = topLevelNavOptions)
+            LIST -> navController.navigateToListGraph(navOptions = topLevelNavOptions)
         }
     }
 }
