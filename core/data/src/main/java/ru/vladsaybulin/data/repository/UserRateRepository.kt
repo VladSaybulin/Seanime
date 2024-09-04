@@ -97,14 +97,6 @@ class UserRateRepository @Inject constructor(
         loadPage = userRateDataSource::getMangaUserRates
     )
 
-    fun refreshAnimeUserRate(animeId: Long) {
-        TODO()
-    }
-
-    fun refreshMangaUserRate(mangaId: Long) {
-        TODO()
-    }
-
     fun getAnimeUserRateStream(animeId: Long): Flow<UserRate?> =
         authRepository.authState.flatMapLatest { authState ->
 
