@@ -61,7 +61,6 @@ fun PopulatedMangaDetails.asExternalModel(): MangaDetails = MangaDetails(
     volumes = mangaEntity.volumes,
     airedOn = mangaEntity.airedOn?.asExternalModel(),
     releasedOn = mangaEntity.releasedOn?.asExternalModel(),
-    season = mangaDetailsEntity.season?.asExternalModel(),
     description = mangaDetailsEntity.description?.asExternalModel(),
     descriptionSource = mangaDetailsEntity.descriptionSource,
     genres = genres.map { it.asExternalModel() },

@@ -9,11 +9,8 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.network.models.NetworkGenre
 import ru.vladsaybulin.network.models.NetworkIncompleteDate
 import ru.vladsaybulin.network.models.NetworkStudio
-import ru.vladsaybulin.network.models.character.NetworkCharacterWithRole
 import ru.vladsaybulin.network.models.common.NetworkImage
-import ru.vladsaybulin.network.models.common.NetworkSeason
 import ru.vladsaybulin.network.models.common.NetworkStatisticsItem
-import ru.vladsaybulin.network.models.person.NetworkPersonWithRoles
 import ru.vladsaybulin.network.models.related.NetworkRelated
 
 data class NetworkAnimeDetails(
