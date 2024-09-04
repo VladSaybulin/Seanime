@@ -2,6 +2,8 @@ package ru.vladsaybulin.network.mapper.queries
 
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.search.SeasonOfYear
+import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.network.mapper.enums.asAnimeKind
 import ru.vladsaybulin.network.mapper.enums.asAnimeRating
 import ru.vladsaybulin.network.mapper.enums.asEntryStatus
@@ -44,6 +46,7 @@ internal fun AnimeDetailsQuery.Anime.asNetworkModel() = NetworkAnimeDetails(
     duration = duration,
     airedOn = airedOn?.run { NetworkIncompleteDate(day, month, year) },
     releasedOn = releasedOn?.run { NetworkIncompleteDate(day, month, year) },
+    season = season?.parseSeasonOrNull(),
     descriptionHtml = descriptionHtml?.takeIf { it.isNotBlank() },
     descriptionSource = descriptionSource?.takeIf { it.isNotBlank() },
     genres = genres?.map(AnimeDetailsQuery.Genre::asNetworkModel),
@@ -137,3 +140,18 @@ private fun AnimeDetailsQuery.Video.asNetworkModel() = NetworkVideo(
     playerUrl = "https:$imageUrl",
     kind = kind.asVideoKind()
 )
+
+private fun String.parseSeasonOrNull(): TimePeriodAiring.Season? {
+    val (seasonOfYearStr, yearStr) = split('_')
+
+    val seasonOfYear = when (seasonOfYearStr) {
+        "winter" -> SeasonOfYear.Winter
+        "spring" -> SeasonOfYear.Spring
+        "summer" -> SeasonOfYear.Summer
+        "fall" -> SeasonOfYear.Fall
+        else -> return null
+    }
+    val year = yearStr.toIntOrNull() ?: return null
+
+    return TimePeriodAiring.Season(seasonOfYear, year)
+}

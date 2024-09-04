@@ -183,7 +183,7 @@ class AnimeRepository @Inject constructor(
                 animeDetailsDao.deleteAnimeCharacters(animeId)
 
                 personEntities?.let { personDao.insertOrReplacePersons(it) }
-                authorRolesEntities?.let { animeDetailsDao.insertAnimeAuthors(it) } //TODO fix me
+                authorRolesEntities?.let { animeDetailsDao.insertAnimeAuthors(it) }
                 characterEntities?.let { characterDao.insertOrReplaceCharacters(it) }
                 animeCharacterEntities?.let { animeDetailsDao.insertAnimeCharacters(it) }
             }

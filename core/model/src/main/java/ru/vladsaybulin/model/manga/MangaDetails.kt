@@ -29,7 +29,6 @@ data class MangaDetails(
     val volumes: Int,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
-    val season: TimePeriodAiring.Season?,
     val description: SeanimeText?,
     val descriptionSource: String?,
     val genres: List<Genre>,

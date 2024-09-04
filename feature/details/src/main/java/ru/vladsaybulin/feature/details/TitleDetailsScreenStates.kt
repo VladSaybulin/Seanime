@@ -156,7 +156,6 @@ fun successTitleDetails(
         volumes = volumes,
         airedOn = airedOn,
         releasedOn = releasedOn,
-        season = season,
         publishers = publishers,
         genres = genres,
         description = description,
@@ -175,7 +174,8 @@ fun successTitleDetails(
         allScreenshots = emptyList(),
         screenshotsSlice = null,
         videosSlice = null,
-        rating = AnimeRating.None
+        rating = AnimeRating.None,
+        season = null
     )
 }
 

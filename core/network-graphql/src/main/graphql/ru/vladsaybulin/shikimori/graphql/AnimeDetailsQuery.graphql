@@ -28,6 +28,7 @@ query AnimeDetailsQuery($id: String!) {
             month
             year
         }
+        season
         descriptionHtml
         descriptionSource
         genres {

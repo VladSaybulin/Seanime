@@ -149,7 +149,7 @@ class MangaRepository @Inject constructor(
                 mangaDetailsDao.deleteMangaCharacters(mangaId)
 
                 personEntities?.let { personDao.insertOrReplacePersons(it) }
-                authorRolesEntities?.let { mangaDetailsDao.insertMangaAuthors(it) } //TODO fix me
+                authorRolesEntities?.let { mangaDetailsDao.insertMangaAuthors(it) }
                 characterEntities?.let { characterDao.insertOrReplaceCharacters(it) }
                 animeCharacterEntities?.let { mangaDetailsDao.insertMangaCharacters(it) }
             }

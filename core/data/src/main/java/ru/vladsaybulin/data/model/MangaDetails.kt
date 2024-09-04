@@ -17,8 +17,7 @@ fun NetworkMangaDetails.asMangaDetailsEntity() =
         description = descriptionHtml?.asSeanimeText()?.asSeanimeTextPOJO(),
         descriptionSource = descriptionSource,
         scoreStats = scoreStats?.map { it.asExternalModel() },
-        statusStats = userRateStatusStats?.map { it.asExternalModel() },
-        season = null //TODO season
+        statusStats = userRateStatusStats?.map { it.asExternalModel() }
     )
 
 fun NetworkMangaDetails.asMangaEntity() = MangaEntity(

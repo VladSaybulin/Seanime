@@ -28,9 +28,6 @@ data class MangaDetailsEntity(
     @ColumnInfo("license_name")
     val licenseNameRu: String?,
 
-    @Embedded
-    val season: SeasonPOJO?,
-
     @Embedded("description_")
     val description: SeanimeTextPOJO?,
 
