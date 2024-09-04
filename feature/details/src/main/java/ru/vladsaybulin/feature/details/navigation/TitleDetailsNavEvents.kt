@@ -4,6 +4,7 @@ import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.search.SearchType
+import ru.vladsaybulin.model.userrate.EditableUserRate
 import java.security.KeyStore.Entry
 
 data class TitleDetailsNavEvents(
@@ -22,7 +23,7 @@ data class TitleDetailsNavEvents(
     val navigateToSearchByStudio: (SearchType, studioId: Long) -> Unit,
     val navigateToSearchByPublisher: (SearchType, publisherId: Long) -> Unit,
     val navigateUp: () -> Unit,
-    val showUserRateEditor: (/* TODO EditableUserRate? */) -> Unit,
+    val showUserRateEditor: (EditableUserRate) -> Unit,
     val showFullScreenImage: (allImages: List<Image>, initialImageIndex: Int) -> Unit
 )
 
