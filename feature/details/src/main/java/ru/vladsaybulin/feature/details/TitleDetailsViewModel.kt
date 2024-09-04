@@ -3,6 +3,7 @@ package ru.vladsaybulin.feature.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import dagger.Lazy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -28,7 +29,7 @@ import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.data.repository.UserRateRepository
-import ru.vladsaybulin.feature.details.navigation.toTitleDetailsScreenArgs
+import ru.vladsaybulin.feature.details.navigation.TitleDetailsScreenRoute
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -48,7 +49,7 @@ class TitleDetailsViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val args = savedStateHandle.toTitleDetailsScreenArgs()
+    private val route = savedStateHandle.toRoute<TitleDetailsScreenRoute>()
 
     val enabledAutocorrectStatus = getEnableAutocorrectUserRateUseCase()
         .stateIn(
@@ -57,18 +58,18 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = false
         )
 
-    private val initialRefreshing = refreshTitleDetailsUseCase(args.titleType, args.titleId)
+    private val initialRefreshing = refreshTitleDetailsUseCase(route.titleType, route.titleId)
         .shareIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily
         )
 
-    val detailsState: StateFlow<TitleDetailsState> = when (args.titleType) {
+    val detailsState: StateFlow<TitleDetailsState> = when (route.titleType) {
         EntryType.Anime -> combine(
-            animeRepository.get().getAnimeDetailsStream(args.titleId),
-            getFirstTitleRelatedStreamUseCase(args.titleType, args.titleId),
-            animeRepository.get().getAnimeScreenshots(args.titleId),
-            getFirstAnimeVideosStreamUseCase.get().invoke(args.titleId)
+            animeRepository.get().getAnimeDetailsStream(route.titleId),
+            getFirstTitleRelatedStreamUseCase(route.titleType, route.titleId),
+            animeRepository.get().getAnimeScreenshots(route.titleId),
+            getFirstAnimeVideosStreamUseCase.get().invoke(route.titleId)
         ) { details, relatedSlice, screenshots, videosSlice ->
             successTitleDetails(
                 animeDetails = details,
@@ -79,8 +80,8 @@ class TitleDetailsViewModel @Inject constructor(
         }
 
         EntryType.Manga -> combine(
-            mangaRepository.get().getMangaDetailsStream(args.titleId),
-            getFirstTitleRelatedStreamUseCase(args.titleType, args.titleId)
+            mangaRepository.get().getMangaDetailsStream(route.titleId),
+            getFirstTitleRelatedStreamUseCase(route.titleType, route.titleId)
         ) { details, relatedSlice ->
             successTitleDetails(
                 mangaDetails = details,
@@ -96,16 +97,16 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = TitleDetailsState.Loading
         )
 
-    val rolesState: StateFlow<RolesState> = when (args.titleType) {
+    val rolesState: StateFlow<RolesState> = when (route.titleType) {
         EntryType.Anime -> combine(
-            animeRepository.get().getAnimeMainCharactersStream(args.titleId),
-            animeRepository.get().getAnimeMainAuthorsStream(args.titleId),
+            animeRepository.get().getAnimeMainCharactersStream(route.titleId),
+            animeRepository.get().getAnimeMainAuthorsStream(route.titleId),
             RolesState::Success
         )
 
         EntryType.Manga -> combine(
-            mangaRepository.get().getMangaMainCharactersStream(args.titleId),
-            mangaRepository.get().getMangaMainAuthorsStream(args.titleId),
+            mangaRepository.get().getMangaMainCharactersStream(route.titleId),
+            mangaRepository.get().getMangaMainAuthorsStream(route.titleId),
             RolesState::Success
         )
     }
@@ -117,11 +118,11 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = RolesState.Loading
         )
 
-    val similarState: StateFlow<SimilarState> = when (args.titleType) {
-        EntryType.Anime -> animeRepository.get().getSimilarAnimes(args.titleId)
+    val similarState: StateFlow<SimilarState> = when (route.titleType) {
+        EntryType.Anime -> animeRepository.get().getSimilarAnimes(route.titleId)
             .map { if (it.isEmpty()) SimilarState.Empty else SimilarState.Animes(it) }
 
-        EntryType.Manga -> mangaRepository.get().getSimilarMangasStream(args.titleId)
+        EntryType.Manga -> mangaRepository.get().getSimilarMangasStream(route.titleId)
             .map { if (it.isEmpty()) SimilarState.Empty else SimilarState.Mangas(it) }
     }
         //Await complete Similar refreshing
@@ -132,9 +133,9 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = SimilarState.Loading
         )
 
-    val userRateState = when (args.titleType) {
-        EntryType.Anime -> userRateRepository.getAnimeUserRateStream(args.titleId)
-        EntryType.Manga -> userRateRepository.getMangaUserRateStream(args.titleId)
+    val userRateState = when (route.titleType) {
+        EntryType.Anime -> userRateRepository.getAnimeUserRateStream(route.titleId)
+        EntryType.Manga -> userRateRepository.getMangaUserRateStream(route.titleId)
     }
         .map(UserRateState::Success)
         .stateIn(
@@ -154,8 +155,8 @@ class TitleDetailsViewModel @Inject constructor(
     fun createUserRate(status: UserRateStatus) {
         viewModelScope.launch {
             userRateRepository.createUserRate(
-                entryType = args.titleType,
-                entryId = args.titleId,
+                entryType = route.titleType,
+                entryId = route.titleId,
                 userRateValues = UserRateValues(status = status)
             )
         }
@@ -163,7 +164,7 @@ class TitleDetailsViewModel @Inject constructor(
 
     fun isAuthorized() = authRepository.authState.value == ShikimoriAuthState.LOGGED_IN
 
-    private fun refreshJob(): Job = refreshTitleDetailsUseCase(args.titleType, args.titleId, true).launchIn(viewModelScope)
+    private fun refreshJob(): Job = refreshTitleDetailsUseCase(route.titleType, route.titleId, true).launchIn(viewModelScope)
 
 }
 

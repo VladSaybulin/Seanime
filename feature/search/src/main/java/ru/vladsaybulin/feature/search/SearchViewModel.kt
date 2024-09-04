@@ -3,6 +3,7 @@ package ru.vladsaybulin.feature.search
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,10 +34,7 @@ import ru.vladsaybulin.data.repository.FilterGenreRepository
 import ru.vladsaybulin.data.repository.FilterPublisherRepository
 import ru.vladsaybulin.data.repository.FilterStudioRepository
 import ru.vladsaybulin.data.repository.RecentSearchQueryRepository
-import ru.vladsaybulin.feature.search.navigation.SearchArgs
-import ru.vladsaybulin.feature.search.navigation.UNSPECIFIED_ID
-import ru.vladsaybulin.feature.search.navigation.toSearchArgs
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.feature.search.navigation.SearchScreenRoute
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.search.FilterType
@@ -60,26 +58,26 @@ class SearchViewModel @Inject constructor(
     private val recentSearchQueryRepository: RecentSearchQueryRepository,
 ) : ViewModel() {
 
-    private val args = savedStateHandle.toSearchArgs()
+    private val args = savedStateHandle.toRoute<SearchScreenRoute>()
 
     private val constAppliedFilters = buildMap {
-        putAsSelectedIfNotNull(FilterType.Status, args.entryStatusOrNull()?.serializedName)
+        putAsSelectedIfNotNull(FilterType.Status, args.entryStatus?.serializedName)
         putAsSelectedIfNotNull(FilterType.Genre, args.genreIdOrNull(GenreKind.Genre))
         putAsSelectedIfNotNull(FilterType.Demographic, args.genreIdOrNull(GenreKind.Demographic))
         putAsSelectedIfNotNull(FilterType.Theme, args.genreIdOrNull(GenreKind.Theme))
-        putAsSelectedIfNotNull(FilterType.Studio, args.studioIdOrNull())
-        putAsSelectedIfNotNull(FilterType.Publisher, args.publisherIdOrNull())
+        putAsSelectedIfNotNull(FilterType.Studio, args.studioId)
+        putAsSelectedIfNotNull(FilterType.Publisher, args.publisherId)
     }
 
     private var debouncedSearchJob: Job? = null
 
-    private val availableSearchTypes = if (args != SearchArgs.defaultSearch()) {
+    private val availableSearchTypes = if (args.searchType != null) {
         persistentListOf(args.searchType)
     } else SearchType.entries.toImmutableList()
 
     private val availableOrders = Order.entries.toImmutableList()
 
-    private val currentSearchType = MutableStateFlow(args.searchType)
+    private val currentSearchType = MutableStateFlow(args.searchType ?: DefaultSearchType)
     private val currentOrder = MutableStateFlow(DefaultOrder)
 
     private val appliedFilters = MutableStateFlow<AppliedFilters>(emptyMap())
@@ -89,9 +87,9 @@ class SearchViewModel @Inject constructor(
             FiltersLoadingState.Success(
                 getSearchFiltersUseCase(
                     searchType = searchType,
-                    statusEnabled = args.entryStatus == EntryStatus.None,
-                    studioEnabled = args.studioId == UNSPECIFIED_ID,
-                    publisherEnabled = args.publisherId == UNSPECIFIED_ID,
+                    statusEnabled = args.entryStatus == null,
+                    studioEnabled = args.studioId == null,
+                    publisherEnabled = args.publisherId == null,
                     genreEnabled = args.genreKind != GenreKind.Genre,
                     demographicEnabled = args.genreKind != GenreKind.Demographic,
                     themesEnabled = args.genreKind != GenreKind.Theme
@@ -227,12 +225,12 @@ class SearchViewModel @Inject constructor(
     )
 
     private suspend fun getTitle(): SearchTitle = when {
-        args.studioId != UNSPECIFIED_ID -> getStudioTitle(args.studioId)
-        args.publisherId != UNSPECIFIED_ID -> getPublisherTitle(args.publisherId)
-        args.entryStatus != EntryStatus.None -> SearchTitle.Status(args.entryStatus)
-        args.genreId != UNSPECIFIED_ID -> getGenreTitle(
-            args.searchType,
-            args.genreKind,
+        args.studioId != null -> getStudioTitle(args.studioId)
+        args.publisherId != null -> getPublisherTitle(args.publisherId)
+        args.entryStatus != null -> SearchTitle.Status(args.entryStatus)
+        args.genreId != null -> getGenreTitle(
+            checkNotNull(args.searchType),
+            checkNotNull(args.genreKind),
             args.genreId
         )
 
@@ -314,14 +312,10 @@ val SearchType.entryType: EntryType
         else -> throw IllegalStateException("Can't give EntryType for SearchType.${this.name}")
     }
 
-fun SearchArgs.entryStatusOrNull() = entryStatus.takeIf { it != EntryStatus.None }
-
-private fun SearchArgs.genreIdOrNull(kind: GenreKind) =
+private fun SearchScreenRoute.genreIdOrNull(kind: GenreKind) =
     if (this.genreKind == kind) genreId else null
 
-fun SearchArgs.studioIdOrNull() = studioId.takeIf { it != UNSPECIFIED_ID }
-
-fun SearchArgs.publisherIdOrNull() = publisherId.takeIf { it != UNSPECIFIED_ID }
-
 private const val DebounceSearchQueryMs = 500L
+
 private val DefaultOrder = Order.Popularity
+private val DefaultSearchType = SearchType.Anime

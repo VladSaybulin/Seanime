@@ -2,10 +2,10 @@ package ru.vladsaybulin.seanime.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
-import ru.vladsaybulin.seanime.navigation.routes.CalendarGraph
-import ru.vladsaybulin.seanime.navigation.routes.HomeGraph
-import ru.vladsaybulin.seanime.navigation.routes.MyListGraph
-import ru.vladsaybulin.seanime.navigation.routes.SearchGraph
+import ru.vladsaybulin.feature.calendar.navigation.CalendarGraphRoute
+import ru.vladsaybulin.feature.home.navigation.HomeGraphRoute
+import ru.vladsaybulin.feature.list.navigation.ListGraphRoute
+import ru.vladsaybulin.feature.search.navigation.SearchGraphRoute
 import ru.vladsaybulin.feature.calendar.R as calendarR
 import ru.vladsaybulin.feature.home.R as homeR
 import ru.vladsaybulin.feature.list.R as listR
@@ -19,28 +19,28 @@ enum class TopLevelDestination(
     val titleTextId: Int,
 ) {
     HOME(
-        graphRoute = HomeGraph,
+        graphRoute = HomeGraphRoute,
         selectedIcon = SeanimeIcons.Home,
         unselectedIcon = SeanimeIcons.OutlinedHome,
         iconTextId = homeR.string.feature_home_title,
         titleTextId = homeR.string.feature_home_title
     ),
     SEARCH(
-        graphRoute = SearchGraph,
+        graphRoute = SearchGraphRoute,
         selectedIcon = SeanimeIcons.Search,
         unselectedIcon = SeanimeIcons.Search,
         iconTextId = searchR.string.feature_search_title,
         titleTextId = searchR.string.feature_search_title
     ),
     LIST(
-        graphRoute = MyListGraph,
+        graphRoute = ListGraphRoute,
         selectedIcon = SeanimeIcons.Bookmark,
         unselectedIcon = SeanimeIcons.OutlinedBookmark,
         iconTextId = listR.string.feature_list_title,
         titleTextId = listR.string.feature_list_title,
     ),
     CALENDAR(
-        graphRoute = CalendarGraph,
+        graphRoute = CalendarGraphRoute,
         selectedIcon = SeanimeIcons.CalendarToday,
         unselectedIcon = SeanimeIcons.CalendarToday,
         iconTextId = calendarR.string.feature_calendar_title,

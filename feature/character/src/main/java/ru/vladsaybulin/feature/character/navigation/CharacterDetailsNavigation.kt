@@ -1,18 +1,20 @@
 package ru.vladsaybulin.feature.character.navigation
 
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.serializer
+import kotlinx.serialization.Serializable
 import ru.vladsaybulin.feature.character.CharacterDetailsScreen
 
-@OptIn(InternalSerializationApi::class)
-inline fun <reified Route : CharacterDetailsScreenRoute> NavGraphBuilder.characterDetailsScreen(
-    navEvents: CharacterDetailsNavEvents
-) {
-    check(Route::class.serializer() is CharacterDetailsScreenRouteSerializer)
+@Serializable
+internal data class CharacterDetailsScreenRoute(val characterId: Long)
 
-    composable<Route> {
+fun NavController.navigateToCharacterDetails(characterId: Long) {
+    navigate(CharacterDetailsScreenRoute(characterId))
+}
+
+fun NavGraphBuilder.characterDetailsScreen(navEvents: CharacterDetailsNavEvents) {
+    composable<CharacterDetailsScreenRoute> {
         CharacterDetailsScreen(navEvents = navEvents)
     }
 }
