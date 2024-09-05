@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -20,20 +19,21 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -99,38 +99,35 @@ fun CalendarContent(
     onCalendarItemClick: (CalendarItem) -> Unit,
     onRefresh: suspend () -> Unit
 ) {
-    val pullToRefreshState = rememberPullToRefreshState()
-    if (pullToRefreshState.isRefreshing) {
-        LaunchedEffect(true) {
-            onRefresh()
-            pullToRefreshState.endRefresh()
-        }
-    }
+    val coroutineScope = rememberCoroutineScope()
+    val isRefreshing = remember { mutableStateOf(false) }
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .nestedScroll(pullToRefreshState.nestedScrollConnection),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(
-            top = 16.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
-            bottom = 16.dp
-        )
+    PullToRefreshBox(
+        isRefreshing = isRefreshing.value,
+        onRefresh = {
+            coroutineScope.launch {
+                isRefreshing.value = true
+                onRefresh()
+                isRefreshing.value = false
+            }
+        }
     ) {
-        items(calendarDays) { calendarDay ->
-            CalendarSection(
-                calendarDay = calendarDay,
-                onCalendarItemClick = onCalendarItemClick
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(
+                top = 16.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
+                bottom = 16.dp
             )
+        ) {
+            items(calendarDays) { calendarDay ->
+                CalendarSection(
+                    calendarDay = calendarDay,
+                    onCalendarItemClick = onCalendarItemClick
+                )
+            }
         }
     }
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        PullToRefreshContainer(state = pullToRefreshState)
-    }
-
 }
 
 @Composable

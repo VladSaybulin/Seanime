@@ -1,5 +1,7 @@
 package ru.vladsaybulin.feature.userrate
 
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -108,6 +110,10 @@ fun UserRateContent(
 ) {
     val (expandedStatusButtons, setExpandedStatusButtons) = remember {
         mutableStateOf(false)
+    }
+
+    BackHandler(enabled = expandedStatusButtons) {
+        setExpandedStatusButtons(false)
     }
 
     UserRateLayout(
