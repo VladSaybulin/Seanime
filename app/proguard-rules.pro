@@ -19,3 +19,23 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# For enumaration classes that used in Compose Navigation with SafeArgs
+-keepnames enum ru.vladsaybulin.model.common.EntryType
+-keepnames enum ru.vladsaybulin.model.common.EntryStatus
+-keepnames enum ru.vladsaybulin.model.search.SearchType
+-keepnames enum ru.vladsaybulin.model.genre.GenreKind
+-keepnames enum ru.vladsaybulin.model.userrate.UserRateStatus
+
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite* {
+   <fields>;
+}
+
+# Keep generic signature of Call, Response (R8 full mode strips signatures from non-kept items).
+ -keep,allowobfuscation,allowshrinking interface retrofit2.Call
+ -keep,allowobfuscation,allowshrinking class retrofit2.Response
+
+ # With R8 full mode generic signatures are stripped for classes that are not
+ # kept. Suspend functions are wrapped in continuations where the type argument
+ # is used.
+ -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation

@@ -41,7 +41,7 @@ android {
         }
 
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -93,5 +93,7 @@ dependencies {
     implementation(libs.google.firebase.crashlytics)
 
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.retrofit.core)
 
 }
