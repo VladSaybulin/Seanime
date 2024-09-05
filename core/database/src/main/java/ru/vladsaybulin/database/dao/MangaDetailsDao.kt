@@ -48,6 +48,10 @@ interface MangaDetailsDao {
     @Transaction
     fun getAllMangaAuthors(mangaId: Long): Flow<List<PopulatedMangaAuthor>>
 
+    @Query("SELECT * FROM manga_related WHERE manga_id = :mangaId")
+    @Transaction
+    fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<PopulatedMangaRelated>>
+
     @Insert
     suspend fun insertMangaAuthors(authors: List<MangaPersonRolesEntity>)
 

@@ -1,19 +1,21 @@
 package ru.vladsaybulin.seanime.navigation
 
 import androidx.navigation.NavHostController
-import ru.vladsaybulin.feature.authors.navigation.TitleAuthorsNavEvents
-import ru.vladsaybulin.feature.authors.navigation.navigateToTitleAuthors
+import ru.vladsaybulin.feature.title.authors.navigation.TitleAuthorsNavEvents
+import ru.vladsaybulin.feature.title.authors.navigation.navigateToTitleAuthors
 import ru.vladsaybulin.feature.calendar.navigation.CalendarNavEvents
 import ru.vladsaybulin.feature.character.navigation.CharacterDetailsNavEvents
 import ru.vladsaybulin.feature.character.navigation.navigateToCharacterDetails
-import ru.vladsaybulin.feature.details.navigation.TitleDetailsNavEvents
-import ru.vladsaybulin.feature.details.navigation.navigateToTitleDetails
+import ru.vladsaybulin.feature.title.details.navigation.TitleDetailsNavEvents
+import ru.vladsaybulin.feature.title.details.navigation.navigateToTitleDetails
 import ru.vladsaybulin.feature.home.navigation.HomeNavEvents
 import ru.vladsaybulin.feature.list.navigation.ListNavEvents
 import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchByGenre
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchScreenByStatus
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchScreenByStudioOrPublisher
+import ru.vladsaybulin.feature.title.related.navigation.TitleRelatedNavEvents
+import ru.vladsaybulin.feature.title.related.navigation.navigateToTitleRelated
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
@@ -65,7 +67,7 @@ class SeanimeNavEventsFactory(
         navigateUp = navController::navigateUp,
         showUserRateEditor = showUserRateEditor,
         showFullScreenImage = showFullscreenImage,
-        navigateToTitleRelated = {_, _, -> },
+        navigateToTitleRelated = navController::navigateToTitleRelated,
         navigateToTitleVideos = {_, _ -> },
         navigateToTitleCharacters = {_, _ -> },
         navigateToTitleScreenshots = {_, _ -> }
@@ -73,6 +75,11 @@ class SeanimeNavEventsFactory(
 
     fun createTitleAuthorsNavEvents() = TitleAuthorsNavEvents(
         navigateToPerson = {  },
+        navigateUp = navController::navigateUp
+    )
+
+    fun createTitleRelatedNavEVents() = TitleRelatedNavEvents(
+        navigateToTitleDetails = navController::navigateToTitleDetails,
         navigateUp = navController::navigateUp
     )
 

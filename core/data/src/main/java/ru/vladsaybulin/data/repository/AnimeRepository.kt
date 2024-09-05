@@ -124,6 +124,10 @@ class AnimeRepository @Inject constructor(
         animeDetailsDao.getAllAnimeAuthors(animeId)
             .map { it.map(PopulatedAnimeAuthor::asExternalModel) }
 
+    fun getAllAnimeRelatedTitles(animeId: Long): Flow<List<RelatedEntry>> =
+        animeDetailsDao.getAllAnimeRelatedTitles(animeId)
+            .map { it.map(PopulatedAnimeRelated::asExternalModel) }
+
     suspend fun refreshAnimeDetails(animeId: Long) {
         withContext(ioDispatcher) {
             val response = animeDataSource.getAnimeDetails(animeId)

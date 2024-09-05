@@ -4,15 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import ru.vladsaybulin.feature.authors.navigation.titleAuthorsScreen
+import ru.vladsaybulin.feature.title.authors.navigation.titleAuthorsScreen
 import ru.vladsaybulin.feature.calendar.navigation.calendarGraph
 import ru.vladsaybulin.feature.character.navigation.characterDetailsScreen
-import ru.vladsaybulin.feature.details.navigation.titleDetailsScreen
+import ru.vladsaybulin.feature.title.details.navigation.titleDetailsScreen
 import ru.vladsaybulin.feature.home.navigation.homeGraph
 import ru.vladsaybulin.feature.list.navigation.listGraph
 import ru.vladsaybulin.feature.list.navigation.listScreen
 import ru.vladsaybulin.feature.search.navigation.searchGraph
 import ru.vladsaybulin.feature.search.navigation.searchScreen
+import ru.vladsaybulin.feature.title.related.navigation.titleRelatedScreen
 
 @Composable
 fun SeanimeNavHost(
@@ -53,6 +54,7 @@ fun NavGraphBuilder.sharedScreens(
 
     titleDetailsScreen(navEventsFactory.createTitleDetailNavEvents())
     titleAuthorsScreen(navEventsFactory.createTitleAuthorsNavEvents())
+    titleRelatedScreen(navEventsFactory.createTitleRelatedNavEVents())
 
     characterDetailsScreen(navEventsFactory.createCharacterDetailsNavEvents())
 }

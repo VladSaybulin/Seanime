@@ -210,4 +210,8 @@ class MangaRepository @Inject constructor(
                 LoadResult.Error(e)
             }
         }
+
+    fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedEntry>> =
+        mangaDetailsDao.getAllMangaRelatedTitles(mangaId)
+            .map { it.map(PopulatedMangaRelated::asExternalModel) }
 }
