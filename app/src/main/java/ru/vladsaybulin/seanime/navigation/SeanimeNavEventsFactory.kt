@@ -1,5 +1,6 @@
 package ru.vladsaybulin.seanime.navigation
 
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import ru.vladsaybulin.feature.title.authors.navigation.TitleAuthorsNavEvents
 import ru.vladsaybulin.feature.title.authors.navigation.navigateToTitleAuthors
@@ -18,6 +19,8 @@ import ru.vladsaybulin.feature.title.characters.navigation.TitleCharactersNavEve
 import ru.vladsaybulin.feature.title.characters.navigation.navigateToTitleCharacters
 import ru.vladsaybulin.feature.title.related.navigation.TitleRelatedNavEvents
 import ru.vladsaybulin.feature.title.related.navigation.navigateToTitleRelated
+import ru.vladsaybulin.feature.title.screenshots.navigation.AnimeScreenshotsNavEvents
+import ru.vladsaybulin.feature.title.screenshots.navigation.navigateToAnimeScreenshots
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
@@ -72,7 +75,7 @@ class SeanimeNavEventsFactory(
         navigateToTitleRelated = navController::navigateToTitleRelated,
         navigateToTitleCharacters = navController::navigateToTitleCharacters,
         navigateToTitleVideos = {_, _ -> },
-        navigateToTitleScreenshots = {_, _ -> }
+        navigateToTitleScreenshots = navController::navigateToAnimeScreenshots
     )
 
     fun createTitleAuthorsNavEvents() = TitleAuthorsNavEvents(
@@ -90,6 +93,11 @@ class SeanimeNavEventsFactory(
         navigateUp = navController::navigateUp
     )
 
+    fun createAnimeScreenshotsNavEvents() = AnimeScreenshotsNavEvents(
+        showFullscreenImage = showFullscreenImage,
+        navigateUp = navController::navigateUp
+    )
+
     fun createCharacterDetailsNavEvents() = CharacterDetailsNavEvents(
         navigateToAnimeDetails = { navController.navigateToTitleDetails(EntryType.Anime, it) },
         navigateToMangaDetails = { navController.navigateToTitleDetails(EntryType.Manga, it) },
@@ -98,4 +106,9 @@ class SeanimeNavEventsFactory(
         navigateToUrl = navigateToUrl,
         navigateUp = navController::navigateUp
     )
+}
+
+private fun NavController.navigateToAnimeScreenshots(titleType: EntryType, titleId: Long) {
+    check(titleType == EntryType.Anime)
+    navigateToAnimeScreenshots(titleId)
 }

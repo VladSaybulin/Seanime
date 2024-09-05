@@ -15,6 +15,7 @@ import ru.vladsaybulin.feature.search.navigation.searchGraph
 import ru.vladsaybulin.feature.search.navigation.searchScreen
 import ru.vladsaybulin.feature.title.characters.navigation.titleCharactersScreen
 import ru.vladsaybulin.feature.title.related.navigation.titleRelatedScreen
+import ru.vladsaybulin.feature.title.screenshots.navigation.animeScreenshotsScreen
 
 @Composable
 fun SeanimeNavHost(
@@ -57,6 +58,7 @@ fun NavGraphBuilder.sharedScreens(
     titleAuthorsScreen(navEventsFactory.createTitleAuthorsNavEvents())
     titleRelatedScreen(navEventsFactory.createTitleRelatedNavEVents())
     titleCharactersScreen(navEventsFactory.createTitleCharactersNavEvents())
+    animeScreenshotsScreen(navEventsFactory.createAnimeScreenshotsNavEvents())
 
     characterDetailsScreen(navEventsFactory.createCharacterDetailsNavEvents())
 }
