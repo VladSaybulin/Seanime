@@ -31,11 +31,13 @@ import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object SeanimeIcons {
+    val OutlinedInfo = Icons.Outlined.Info
     val Edit = Icons.Default.Edit
     val ArrowDownward = Icons.Default.ArrowDownward
     val ArrowUpward = Icons.Default.ArrowUpward

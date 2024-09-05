@@ -75,7 +75,7 @@
     <string name="feature_details_info_incomplete_date_day_month_year">dd MMM yyyy г.</string>
     <string name="feature_details_info_incomplete_date_month_year">MMM yyyy г.</string>
     <string name="feature_details_info_incomplete_date_year">yyyy г.</string>
-    <string name="feature_details_info_date_range">с %s по %s</string>
+    <string name="feature_details_info_date_range">с %s\nпо %s</string>
     <string name="feature_details_info_date_aired_on">с %s</string>
     <string name="feature_title_details_title_score">Оценка</string>
 

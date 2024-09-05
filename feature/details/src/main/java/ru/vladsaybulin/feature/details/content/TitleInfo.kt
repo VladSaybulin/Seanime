@@ -3,12 +3,22 @@ package ru.vladsaybulin.feature.details.content
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
@@ -19,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.pluralStringResource
@@ -35,6 +46,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.format.format
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaZoneId
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.colors.entryStatusColor
 import ru.vladsaybulin.core.ui.strings.animeKindString
@@ -146,24 +158,29 @@ fun TitleInfo(
     }
 }
 
-
 @Composable
 private fun AnimeKindPanel(animeKind: AnimeKind) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_kind)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_kind)) }
+    ) {
         Text(text = animeKindString(animeKind = animeKind))
     }
 }
 
 @Composable
 private fun MangaKindPanel(mangaKind: MangaKind) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_kind)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_kind)) }
+    ) {
         Text(text = mangaKindString(mangaKind = mangaKind))
     }
 }
 
 @Composable
 private fun StatusPanel(status: EntryStatus) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_status)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_status)) }
+    ) {
         Text(
             text = entryStatusString(status = status),
             color = entryStatusColor(entryStatus = status)
@@ -173,7 +190,9 @@ private fun StatusPanel(status: EntryStatus) {
 
 @Composable
 private fun EpisodesPanel(episodes: Int, episodesAired: Int) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_episodes)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_episodes)) }
+    ) {
         Text(
             text = when {
                 episodes == episodesAired || episodesAired == 0 -> episodes.toString()
@@ -195,7 +214,9 @@ private fun EpisodesPanel(episodes: Int, episodesAired: Int) {
 
 @Composable
 private fun EpisodeDurationPanel(duration: Int, isSingleEpisode: Boolean) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_episode_duration)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_episode_duration)) }
+    ) {
 
         val hours = duration / 60
         val hoursText = when {
@@ -245,14 +266,18 @@ private fun EpisodeDurationPanel(duration: Int, isSingleEpisode: Boolean) {
 
 @Composable
 private fun ChaptersPanel(chapters: Int) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_chapters)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_chapters)) }
+    ) {
         Text(text = chapters.toString())
     }
 }
 
 @Composable
 private fun VolumesPanel(volumes: Int) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_volumes)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_volumes)) }
+    ) {
         Text(text = volumes.toString())
     }
 }
@@ -270,7 +295,9 @@ private fun SeasonPanel(
 
     AirDateTooltipBox(tooltipState = tooltipState, airedOn = airedOn, releasedOn = releasedOn) {
         InfoPanel(
-            titleText = stringResource(id = R.string.feature_details_info_label_season),
+            label = {
+                WithInfoLabel { Text(stringResource(id = R.string.feature_details_info_label_season)) }
+            },
             modifier = Modifier.clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -279,7 +306,8 @@ private fun SeasonPanel(
                 }
             )
         ) {
-            val seasonText = stringArrayResource(id = R.array.feature_details_info_seasons)[timePeriodAiring.seasonOfYear.ordinal]
+            val seasonText =
+                stringArrayResource(id = R.array.feature_details_info_seasons)[timePeriodAiring.seasonOfYear.ordinal]
             Text(
                 text = "$seasonText ${timePeriodAiring.year} г."
             )
@@ -295,7 +323,9 @@ private fun AirYearPanel(airedOn: IncompleteDate?, releasedOn: IncompleteDate?) 
 
     AirDateTooltipBox(tooltipState = tooltipState, airedOn = airedOn, releasedOn = releasedOn) {
         InfoPanel(
-            titleText = stringResource(id = R.string.feature_details_info_label_air_year),
+            label = {
+                WithInfoLabel { Text(text = stringResource(id = R.string.feature_details_info_label_air_year)) }
+            },
             modifier = Modifier.clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -321,7 +351,9 @@ private fun AirDateTooltipBox(
     TooltipBox(
         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
         tooltip = {
-            AirDateTooltipContent(airedOn = airedOn, releasedOn = releasedOn)
+            PlainTooltip {
+                AirDateTooltipContent(airedOn = airedOn, releasedOn = releasedOn)
+            }
         },
         state = tooltipState,
         content = panelContent
@@ -406,14 +438,18 @@ private fun incompleteDateFormatted(incompleteDate: IncompleteDate, monthCase: M
 
 @Composable
 private fun RatingPanel(rating: AnimeRating) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_rating)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_rating)) }
+    ) {
         Text(text = animeRatingString(animeRating = rating))
     }
 }
 
 @Composable
 private fun NextEpisodeDatePanel(nextEpisodeAt: Instant) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_next_episode)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_next_episode)) }
+    ) {
         Text(
             text = DateTimeFormatter.ofPattern("dd MMM, hh:mm")
                 .withLocale(java.util.Locale.getDefault())
@@ -429,7 +465,9 @@ private fun StudiosPanel(
     studios: List<Studio>,
     onStudioClick: (Studio) -> Unit
 ) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_studios)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_studios)) }
+    ) {
         FlowRow(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -450,7 +488,9 @@ private fun PublishersPanel(
     publishers: List<Publisher>,
     onPublisherClick: (Publisher) -> Unit
 ) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_publishers)) {
+    InfoPanel(
+        label = { Text(stringResource(id = R.string.feature_details_info_label_publishers)) }
+    ) {
         FlowRow(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -470,7 +510,9 @@ private fun GenresPanel(
     genres: List<Genre>,
     onGenreClick: (Genre) -> Unit
 ) {
-    InfoPanel(titleText = stringResource(id = R.string.feature_details_info_label_genres)) {
+    InfoPanel(
+        label = { Text(text = stringResource(id = R.string.feature_details_info_label_genres)) }
+    ) {
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -486,16 +528,34 @@ private fun GenresPanel(
 
 @Composable
 private fun InfoPanel(
-    titleText: String,
+    label: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     Column(modifier = modifier) {
-        Text(titleText, style = SeanimeTheme.typography.labelSmall, modifier = Modifier.alpha(0.5f))
+        Box(modifier = Modifier.alpha(0.5f)) {
+            ProvideTextStyle(value = SeanimeTheme.typography.labelSmall) {
+                label()
+            }
+        }
 
         ProvideTextStyle(SeanimeTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)) {
             content()
         }
+    }
+}
+
+@Composable
+private fun WithInfoLabel(label: @Composable () -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        label()
+        Icon(
+            imageVector = SeanimeIcons.OutlinedInfo,
+            contentDescription = stringResource(id = R.string.feature_details_info_label_kind),
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .size(16.dp)
+        )
     }
 }
 
