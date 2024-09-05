@@ -1,10 +1,10 @@
 package ru.vladsaybulin.model.search
 
 enum class SeasonOfYear(val serializedValue: String) {
+    Winter("winter"),
     Spring("spring"),
-    Fall("fall"),
     Summer("summer"),
-    Winter("winter")
+    Fall("fall")
 }
 
 sealed interface TimePeriodAiring {

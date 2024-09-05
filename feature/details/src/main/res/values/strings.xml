@@ -83,7 +83,7 @@
         <item>Зима</item>
         <item>Весна</item>
         <item>Лето</item>
-        <item>Зима</item>
+        <item>Осень</item>
     </string-array>
 
     <string-array name="feature_title_details_month_names_in_nominative_case">
