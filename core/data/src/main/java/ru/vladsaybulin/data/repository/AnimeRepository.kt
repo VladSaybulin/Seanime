@@ -47,6 +47,7 @@ import ru.vladsaybulin.database.models.anime.AnimeSimilarAnimeCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
 import ru.vladsaybulin.database.models.anime.OngoingAnimeEntity
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeAuthor
+import ru.vladsaybulin.database.models.anime.PopulatedAnimeCharacter
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeRelated
 import ru.vladsaybulin.database.models.anime.PopulatedSimilarAnime
 import ru.vladsaybulin.database.models.anime.asExternalModel
@@ -55,6 +56,7 @@ import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
 import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.character.Character
+import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.person.PersonWithRoles
@@ -127,6 +129,10 @@ class AnimeRepository @Inject constructor(
     fun getAllAnimeRelatedTitles(animeId: Long): Flow<List<RelatedEntry>> =
         animeDetailsDao.getAllAnimeRelatedTitles(animeId)
             .map { it.map(PopulatedAnimeRelated::asExternalModel) }
+
+    fun getAllAnimeCharacters(animeId: Long): Flow<List<CharacterWithRole>> =
+        animeDetailsDao.getAllAnimeCharacters(animeId)
+            .map { it.map(PopulatedAnimeCharacter::asExternalModel) }
 
     suspend fun refreshAnimeDetails(animeId: Long) {
         withContext(ioDispatcher) {

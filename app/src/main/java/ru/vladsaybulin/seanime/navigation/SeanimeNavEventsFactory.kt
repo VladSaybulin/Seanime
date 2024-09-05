@@ -14,6 +14,8 @@ import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchByGenre
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchScreenByStatus
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchScreenByStudioOrPublisher
+import ru.vladsaybulin.feature.title.characters.navigation.TitleCharactersNavEvents
+import ru.vladsaybulin.feature.title.characters.navigation.navigateToTitleCharacters
 import ru.vladsaybulin.feature.title.related.navigation.TitleRelatedNavEvents
 import ru.vladsaybulin.feature.title.related.navigation.navigateToTitleRelated
 import ru.vladsaybulin.model.common.EntryStatus
@@ -68,8 +70,8 @@ class SeanimeNavEventsFactory(
         showUserRateEditor = showUserRateEditor,
         showFullScreenImage = showFullscreenImage,
         navigateToTitleRelated = navController::navigateToTitleRelated,
+        navigateToTitleCharacters = navController::navigateToTitleCharacters,
         navigateToTitleVideos = {_, _ -> },
-        navigateToTitleCharacters = {_, _ -> },
         navigateToTitleScreenshots = {_, _ -> }
     )
 
@@ -80,6 +82,11 @@ class SeanimeNavEventsFactory(
 
     fun createTitleRelatedNavEVents() = TitleRelatedNavEvents(
         navigateToTitleDetails = navController::navigateToTitleDetails,
+        navigateUp = navController::navigateUp
+    )
+
+    fun createTitleCharactersNavEvents() = TitleCharactersNavEvents(
+        navigateToCharacterDetails = navController::navigateToCharacterDetails,
         navigateUp = navController::navigateUp
     )
 

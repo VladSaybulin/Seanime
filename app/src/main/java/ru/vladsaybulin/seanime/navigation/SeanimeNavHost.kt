@@ -13,6 +13,7 @@ import ru.vladsaybulin.feature.list.navigation.listGraph
 import ru.vladsaybulin.feature.list.navigation.listScreen
 import ru.vladsaybulin.feature.search.navigation.searchGraph
 import ru.vladsaybulin.feature.search.navigation.searchScreen
+import ru.vladsaybulin.feature.title.characters.navigation.titleCharactersScreen
 import ru.vladsaybulin.feature.title.related.navigation.titleRelatedScreen
 
 @Composable
@@ -55,6 +56,7 @@ fun NavGraphBuilder.sharedScreens(
     titleDetailsScreen(navEventsFactory.createTitleDetailNavEvents())
     titleAuthorsScreen(navEventsFactory.createTitleAuthorsNavEvents())
     titleRelatedScreen(navEventsFactory.createTitleRelatedNavEVents())
+    titleCharactersScreen(navEventsFactory.createTitleCharactersNavEvents())
 
     characterDetailsScreen(navEventsFactory.createCharacterDetailsNavEvents())
 }

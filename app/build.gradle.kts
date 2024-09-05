@@ -77,6 +77,7 @@ dependencies {
     implementation(project(":feature:title:authors"))
     implementation(project(":feature:title:details"))
     implementation(project(":feature:title:related"))
+    implementation(project(":feature:title:characters"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)

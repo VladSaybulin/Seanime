@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_title_characters_title">Персонажи</string>
+    <string name="feature_title_characters_back">Назад</string>
+    <string name="feature_title_characters_main_charcaters">Главные</string>
+</resources>

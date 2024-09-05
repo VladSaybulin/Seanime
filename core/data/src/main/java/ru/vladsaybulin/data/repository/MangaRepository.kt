@@ -38,10 +38,12 @@ import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
 import ru.vladsaybulin.database.models.manga.PopulatedMangaAuthor
+import ru.vladsaybulin.database.models.manga.PopulatedMangaCharacter
 import ru.vladsaybulin.database.models.manga.PopulatedMangaRelated
 import ru.vladsaybulin.database.models.manga.PopulatedSimilarManga
 import ru.vladsaybulin.database.models.manga.asExternalModel
 import ru.vladsaybulin.model.character.Character
+import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.manga.MangaWithUserRate
@@ -214,4 +216,8 @@ class MangaRepository @Inject constructor(
     fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedEntry>> =
         mangaDetailsDao.getAllMangaRelatedTitles(mangaId)
             .map { it.map(PopulatedMangaRelated::asExternalModel) }
+
+    fun getAllMangaCharacters(mangaId: Long): Flow<List<CharacterWithRole>> =
+        mangaDetailsDao.getAllMangaCharacters(mangaId)
+            .map { it.map(PopulatedMangaCharacter::asExternalModel) }
 }

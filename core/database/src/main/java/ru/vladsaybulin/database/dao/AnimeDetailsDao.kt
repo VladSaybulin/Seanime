@@ -61,6 +61,9 @@ interface AnimeDetailsDao {
     @Transaction
     fun getAllAnimeRelatedTitles(animeId: Long): Flow<List<PopulatedAnimeRelated>>
 
+    @Query("SELECT * FROM anime_characters WHERE anime_id = :animeId ORDER BY is_main DESC")
+    fun getAllAnimeCharacters(animeId: Long): Flow<List<PopulatedAnimeCharacter>>
+
     @Insert
     suspend fun insertAnimeAuthors(authors: List<AnimePersonRolesEntity>)
 
