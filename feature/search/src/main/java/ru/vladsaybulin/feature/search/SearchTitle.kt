@@ -1,6 +1,7 @@
 package ru.vladsaybulin.feature.search
 
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.genre.GenreKind
 
 sealed class SearchTitle {
 
@@ -12,10 +13,5 @@ sealed class SearchTitle {
 
     data class Publisher(val publisherName: String) : SearchTitle()
 
-    data class Genre(val genreName: String) : SearchTitle()
-
-    data class Demographic(val demographicName: String) : SearchTitle()
-
-    data class Theme(val themeName: String) : SearchTitle()
-
+    data class Genre(val genreName: String, val genreKind: GenreKind) : SearchTitle()
 }

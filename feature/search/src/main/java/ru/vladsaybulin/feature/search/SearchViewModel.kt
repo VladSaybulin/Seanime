@@ -254,17 +254,11 @@ class SearchViewModel @Inject constructor(
         genreKind: GenreKind,
         genreId: Long
     ): SearchTitle {
-        val genreName =
-            filterGenreRepositoryProvider.get().getGenreById(searchType.entryType, genreId)
-                ?.run { russianName ?: englishName }
-                ?: return SearchTitle.Search
+        val genreName = filterGenreRepositoryProvider.get().getGenreById(searchType.entryType, genreId)
+            ?.run { russianName ?: englishName }
+            ?: return SearchTitle.Search
 
-        return when (genreKind) {
-            GenreKind.Genre -> SearchTitle.Genre(genreName)
-            GenreKind.Theme -> SearchTitle.Theme(genreName)
-            GenreKind.Demographic -> SearchTitle.Demographic(genreName)
-            else -> SearchTitle.Search
-        }
+        return SearchTitle.Genre(genreName, genreKind)
     }
 }
 

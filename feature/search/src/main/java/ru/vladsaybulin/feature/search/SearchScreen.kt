@@ -335,9 +335,7 @@ private fun SearchMangaResult(
 @ReadOnlyComposable
 private fun searchTitleText(title: SearchTitle) = when (title) {
     SearchTitle.Search -> stringResource(id = R.string.feature_search_title)
-    is SearchTitle.Demographic -> title.demographicName
     is SearchTitle.Genre -> title.genreName
-    is SearchTitle.Theme -> title.themeName
     is SearchTitle.Status -> statusTitleText(entryStatus = title.entryStatus)
 
     is SearchTitle.Publisher -> stringResource(
