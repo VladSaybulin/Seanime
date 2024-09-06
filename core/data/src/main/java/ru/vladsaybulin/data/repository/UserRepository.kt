@@ -1,6 +1,7 @@
 package ru.vladsaybulin.data.repository
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.common.network.di.ApplicationScope
@@ -23,7 +24,7 @@ class UserRepository @Inject constructor(
 ) {
     init {
         appScope.launch {
-            shikimoriAuthorization.shikimoriAuthState.collect { state ->
+            shikimoriAuthorization.shikimoriAuthState.drop(1).collect { state ->
                 when (state) {
                     ShikimoriAuthState.LOGGED_OUT -> prefsDataSource.setMyId(null)
                     ShikimoriAuthState.LOGGED_IN -> loadAndSaveMe()
