@@ -63,6 +63,7 @@ import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedEntry
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.models.NetworkAnime
 import javax.inject.Inject
@@ -228,9 +229,11 @@ class AnimeRepository @Inject constructor(
         val response = animeDataSource.getAnime(
             page = pageNumber,
             limit = pageSize,
-            statusString = EntryStatus.Ongoing.serializedName,
-            order = Order.Popularity,
-            myListString = "!watching,!rewatching"
+            queryMap = mapOf(
+                QueryMapKey.Status to EntryStatus.Ongoing.serializedName,
+                QueryMapKey.Order to Order.Popularity.serializedValue,
+                QueryMapKey.MyList to "!${UserRateStatus.Watching.serializedName},!${UserRateStatus.Rewatching.serializedName}"
+            )
         )
         val animes = response.map(NetworkAnime::asEntity)
         val ongoingAnime = animes.mapIndexed { index, dbo ->

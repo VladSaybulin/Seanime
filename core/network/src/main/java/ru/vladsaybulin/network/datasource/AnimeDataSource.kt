@@ -64,49 +64,6 @@ class AnimeDataSource @Inject constructor(
         return response.dataAssertNoErrors.animes.map { it.asNetworkModels() }
     }
 
-    suspend fun getAnime(
-        page: Int? = null,
-        limit: Int? = null,
-        order: Order = Order.Popularity,
-        kindString: String? = null,
-        statusString: String? = null,
-        seasonString: String? = null,
-        score: Int? = null,
-        durationString: String? = null,
-        ratingString: String? = null,
-        genreString: String? = null,
-        studioString: String? = null,
-        franchise: String? = null,
-        censored: Boolean? = null,
-        myListString: String? = null,
-        idsString: String? = null,
-        excludedIdsString: String? = null,
-        search: String? = null
-    ): List<NetworkAnime> {
-        val response = apolloClient.query(
-            AnimeQuery(
-                page = presentIfNotNull(page),
-                limit = presentIfNotNull(limit),
-                order = Optional.present(order.asOrderEnum()),
-                kind = presentIfNotNull(kindString),
-                status = presentIfNotNull(statusString),
-                season = presentIfNotNull(seasonString),
-                score = presentIfNotNull(score),
-                duration = presentIfNotNull(durationString),
-                rating = presentIfNotNull(ratingString),
-                genre = presentIfNotNull(genreString),
-                studio = presentIfNotNull(studioString),
-                franchise = presentIfNotNull(franchise),
-                censored = presentIfNotNull(censored),
-                mylist = presentIfNotNull(myListString),
-                ids = Optional.present(idsString),
-                excludeIds = presentIfNotNull(excludedIdsString),
-                search = presentIfNotNull(search)
-            )
-        ).execute()
-        return response.dataAssertNoErrors.animes.map { it.asNetworkModels() }
-    }
-
     suspend fun getAnimeDetails(animeId: Long): NetworkAnimeDetails {
         val response = apolloClient.query(AnimeDetailsQuery(id = animeId.toString())).execute()
         return response.dataAssertNoErrors.animes.firstOrNull()?.asNetworkModel()
