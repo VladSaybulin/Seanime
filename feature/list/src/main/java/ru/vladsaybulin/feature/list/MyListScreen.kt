@@ -199,7 +199,8 @@ private fun UserRatesPaging(
             onAnimeClick = onAnimeClick,
             onMangaClick = onMangaClick,
             showUserRateBadge = false,
-            onEditClick = onEditClick
+            onEditClick = onEditClick,
+            modifier = Modifier.animateItem()
         )
     }
 }
