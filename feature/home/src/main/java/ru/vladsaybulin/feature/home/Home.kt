@@ -102,7 +102,7 @@ private fun HomeContent(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "Shikimori") },
+                title = { Text(text = stringResource(id = R.string.feature_home_app_name)) },
                 scrollBehavior = topBarScrollBehaviour
             )
         },
