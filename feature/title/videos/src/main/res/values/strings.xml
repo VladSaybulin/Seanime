@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_anime_videos_title">Видео</string>
+    <string name="feature_anime_videos_back">Назад</string>
+    <string name="feature_anime_videos_no_name">Без имени</string>
+    <string name="feature_anime_videos_video_kind_pv">PV</string>
+    <string name="feature_anime_videos_video_kind_character_trailer">Трейлер персонажа</string>
+    <string name="feature_anime_videos_video_kind_cm">CM</string>
+    <string name="feature_anime_videos_video_kind_op">OP</string>
+    <string name="feature_anime_videos_video_kind_ed">ED</string>
+    <string name="feature_anime_videos_video_kind_op_ed_clip">OP-ED-Clip</string>
+    <string name="feature_anime_videos_video_kind_clip">Муз. клип</string>
+    <string name="feature_anime_videos_video_kind_other">Прочее</string>
+    <string name="feature_anime_videos_video_kind_episode_preview">Превью эпизода</string>
+</resources>

@@ -22,6 +22,7 @@ import ru.vladsaybulin.database.models.anime.PopulatedAnimeDetails
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeRelated
 import ru.vladsaybulin.database.models.anime.PopulatedSimilarAnime
 import ru.vladsaybulin.database.models.anime.StudioEntity
+import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.related.RelatedEntry
 
 @Dao
@@ -63,6 +64,9 @@ interface AnimeDetailsDao {
 
     @Query("SELECT * FROM anime_characters WHERE anime_id = :animeId ORDER BY is_main DESC")
     fun getAllAnimeCharacters(animeId: Long): Flow<List<PopulatedAnimeCharacter>>
+
+    @Query("SELECT * FROM anime_videos WHERE anime_id = :animeId")
+    fun getAllAnimeVideos(animeId: Long): Flow<List<AnimeVideoEntity>>
 
     @Insert
     suspend fun insertAnimeAuthors(authors: List<AnimePersonRolesEntity>)
