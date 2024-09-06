@@ -59,7 +59,7 @@ class MangaDataSource @Inject constructor(
 
     suspend fun getMangaDetails(mangaId: Long): NetworkMangaDetails {
         val response = apolloClient.query(MangaDetailsQuery(id = mangaId.toString())).execute()
-        return response.dataAssertNoErrors.mangas.firstOrNull()?.asNetworkModel()
+        return response.dataAssertNoErrors.mangas.singleOrNull()?.asNetworkModel()
             ?: throw ShikimoriException("Not found manga where id = $mangaId")
     }
 

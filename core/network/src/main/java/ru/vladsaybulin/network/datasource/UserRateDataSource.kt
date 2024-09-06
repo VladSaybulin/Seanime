@@ -105,14 +105,14 @@ class UserRateDataSource @Inject constructor(
 
     suspend fun getAnimeUserRate(animeId: Long): NetworkUserRate? {
         val response = apolloClient.query(AnimeUserRateQuery(id = animeId.toString())).execute()
-        val anime = response.dataAssertNoErrors.animes.firstOrNull()
+        val anime = response.dataAssertNoErrors.animes.singleOrNull()
             ?: throw ShikimoriException("Not found anime where id = $animeId")
         return anime.userRate?.asNetworkModel()
     }
 
     suspend fun getMangaUserRate(mangaId: Long): NetworkUserRate? {
         val response = apolloClient.query(MangaUserRateQuery(id = mangaId.toString())).execute()
-        val manga = response.dataAssertNoErrors.mangas.firstOrNull()
+        val manga = response.dataAssertNoErrors.mangas.singleOrNull()
             ?: throw ShikimoriException("Not found manga where id = $mangaId")
         return manga.userRate?.asNetworkModel()
     }

@@ -66,7 +66,7 @@ class AnimeDataSource @Inject constructor(
 
     suspend fun getAnimeDetails(animeId: Long): NetworkAnimeDetails {
         val response = apolloClient.query(AnimeDetailsQuery(id = animeId.toString())).execute()
-        return response.dataAssertNoErrors.animes.firstOrNull()?.asNetworkModel()
+        return response.dataAssertNoErrors.animes.singleOrNull()?.asNetworkModel()
             ?: throw ShikimoriException("Not found anime where id = $animeId")
     }
 
