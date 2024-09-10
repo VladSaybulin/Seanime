@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -43,7 +44,7 @@ fun TitlePoster(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .matchParentSize()
-                    //.blur(16.dp)
+                    .blur(8.dp)
                     .drawForegroundGradientScrim(
                         topColor = SeanimeTheme.colorScheme.surface.copy(alpha = 0.8f),
                         bottomColor = SeanimeTheme.colorScheme.surface
