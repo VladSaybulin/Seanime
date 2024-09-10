@@ -1,9 +1,13 @@
-query MangaUserRateQuery($id: String!) {
+query MangaUserRateQuery(
+    $ids: String!,
+    $limit: Int!
+) {
     mangas(
         page: 1
-        limit: 1
-        ids: $id
+        limit: $limit
+        ids: $ids
     ) {
+        id
         userRate {
             id
             createdAt

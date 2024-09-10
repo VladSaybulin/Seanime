@@ -78,7 +78,7 @@ interface UserRateDao {
             LIMIT :limit
         """
     )
-    fun getLastInProgressUserRates(limit: Int): Flow<List<PopulatedUserRate>>
+    fun getFirstInProgressUserRates(limit: Int): Flow<List<PopulatedUserRate>>
 
     @Query(
         value = """
@@ -140,5 +140,8 @@ interface UserRateDao {
 
     @Query("DELETE FROM user_rates")
     suspend fun deleteAll()
+
+    @Query("DELETE FROM user_rates WHERE id IN (:ids)")
+    fun deleteUserRatesByIds(ids: List<Long>)
 
 }

@@ -38,13 +38,13 @@ import javax.inject.Singleton
 private interface UserRateApi {
 
     @POST("/api/v2/user_rates/")
-    suspend fun createUserRate(@Body userRate: JsonObject) : UserRateWithEntryLinkDto?
+    suspend fun createUserRate(@Body userRate: JsonObject): UserRateWithEntryLinkDto?
 
     @PUT("/api/v2/user_rates/{id}")
     suspend fun updateUserRate(
         @Path("id") userRateId: Long,
         @Body userRate: JsonObject
-    ) : UserRateWithEntryLinkDto?
+    ): UserRateWithEntryLinkDto?
 
     @DELETE("/api/v2/user_rates/{id}")
     suspend fun deleteUserRate(@Path("id") userRateId: Long): Response<ResponseBody>
@@ -74,7 +74,7 @@ class UserRateDataSource @Inject constructor(
             userId = Optional.presentIfNotNull(userId),
             orderInput = UserRateOrderInputType(
                 field = field.asUserRateOrderFieldEnum(),
-                order =sortOrder.asSortOrderEnum()
+                order = sortOrder.asSortOrderEnum()
             )
         )
         val response = apolloClient.query(query).execute().dataAssertNoErrors
@@ -88,7 +88,7 @@ class UserRateDataSource @Inject constructor(
         field: UserRateOrderField,
         sortOrder: UserRateOrder,
         userId: Long? = null
-    ) : List<UserRateWithEntryDto> {
+    ): List<UserRateWithEntryDto> {
         val query = MangaUserRatesQuery(
             page = page,
             limit = limit,
@@ -96,7 +96,7 @@ class UserRateDataSource @Inject constructor(
             userId = Optional.presentIfNotNull(userId),
             orderInput = UserRateOrderInputType(
                 field = field.asUserRateOrderFieldEnum(),
-                order =sortOrder.asSortOrderEnum()
+                order = sortOrder.asSortOrderEnum()
             )
         )
         val response = apolloClient.query(query).execute().dataAssertNoErrors
@@ -104,18 +104,37 @@ class UserRateDataSource @Inject constructor(
     }
 
     suspend fun getAnimeUserRate(animeId: Long): NetworkUserRate? {
-        val response = apolloClient.query(AnimeUserRateQuery(id = animeId.toString())).execute()
+        val response = apolloClient.query(AnimeUserRateQuery(ids = animeId.toString(), limit = 1))
+            .execute()
         val anime = response.dataAssertNoErrors.animes.singleOrNull()
             ?: throw ShikimoriException("Not found anime where id = $animeId")
         return anime.userRate?.asNetworkModel()
     }
 
     suspend fun getMangaUserRate(mangaId: Long): NetworkUserRate? {
-        val response = apolloClient.query(MangaUserRateQuery(id = mangaId.toString())).execute()
+        val response = apolloClient.query(MangaUserRateQuery(ids = mangaId.toString(), limit = 1))
+            .execute()
         val manga = response.dataAssertNoErrors.mangas.singleOrNull()
             ?: throw ShikimoriException("Not found manga where id = $mangaId")
         return manga.userRate?.asNetworkModel()
     }
+
+    suspend fun getAnimeUserRatesByAnimeIds(animeIds: List<Long>): Map<Long, NetworkUserRate?> =
+        apolloClient.query(
+            AnimeUserRateQuery(
+                ids = animeIds.joinToString(separator = ","),
+                limit = animeIds.size
+            )
+        ).execute()
+            .dataAssertNoErrors.animes
+            .associate { it.id to it.userRate!!.asNetworkModel() }
+
+    suspend fun getMangaUserRatesByMangaIds(mangaIds: List<Long>): Map<Long, NetworkUserRate?> =
+        apolloClient.query(
+            MangaUserRateQuery(ids = mangaIds.joinToString(separator = ","), limit = mangaIds.size)
+        ).execute()
+            .dataAssertNoErrors.mangas
+            .associate { it.id to it.userRate?.asNetworkModel() }
 
     suspend fun createUserRate(createUserRateDto: CreateUserRateDto): UserRateWithEntryLinkDto? {
         val wrappedBody = JsonObject(

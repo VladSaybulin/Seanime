@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import ru.vladsaybulin.core.domain.home.GetInProgressUserRatesUseCase
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.TopicsRepository
 import ru.vladsaybulin.data.repository.UserRateRepository
@@ -17,11 +18,11 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     animeRepository: AnimeRepository,
     topicsRepository: TopicsRepository,
-    userRateRepository: UserRateRepository
+    getInProgressUserRatesUseCase: GetInProgressUserRatesUseCase
 ) : ViewModel() {
 
     val uiState = combine(
-        userRateRepository.getLastInProgressUserRates(),
+        getInProgressUserRatesUseCase(),
         animeRepository.getOngoingAnime(10),
         topicsRepository.getNewsTopics()
     ) { userRates, ongoingAnime, newsTopics ->

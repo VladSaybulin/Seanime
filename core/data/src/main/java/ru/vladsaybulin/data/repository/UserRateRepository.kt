@@ -10,12 +10,16 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -39,7 +43,6 @@ import ru.vladsaybulin.model.common.EntryType.Anime
 import ru.vladsaybulin.model.common.EntryType.Manga
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
-import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -61,11 +64,20 @@ class UserRateRepository @Inject constructor(
     private val authRepository: AuthRepository,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-    fun getLastInProgressUserRates(): Flow<List<UserRateWithEntry>> =
-        userRateDao.getLastInProgressUserRates(10)
-            .onStart { loadLastInProgressUserRates(10) }
+    fun getInProgressUserRates(limit: Int): Flow<List<UserRateWithEntry>> = flow {
+        var refreshed = false
+        userRateDao.getFirstInProgressUserRates(limit)
             .map { it.map(PopulatedUserRate::asExternalModel) }
-            .flowOn(ioDispatcher)
+            .collect {
+                emit(it)
+                if (!refreshed) {
+                    runBlocking {
+                        refreshInProgressUserRates(it)
+                        refreshed = true
+                    }
+                }
+            }
+    }
 
     fun getPagedAnimeUserRates(
         status: UserRateStatus,
@@ -180,14 +192,43 @@ class UserRateRepository @Inject constructor(
         }
     }
 
-    private suspend fun loadLastInProgressUserRates(limit: Int) {
-        val animeUserRates = animeDataSource.getAnime(
-            page = 1,
-            limit = limit,
-            queryMap = mapOf(QueryMapKey.MyList to UserRateStatus.Watching.serializedName)
-        )
-        animeDao.upsertAnimes(animeUserRates.map { it.asEntity() })
-        userRateDao.insertOrReplaceUserRates(animeUserRates.mapNotNull { it.userRateEntityShell() })
+    private suspend fun refreshInProgressUserRates(userRates: List<UserRateWithEntry>) {
+        val animeIds = mutableListOf<Long>()
+        val mangaIds = mutableListOf<Long>()
+
+        userRates.forEach {
+            it.anime?.id?.apply(animeIds::add)
+            it.manga?.id?.apply(mangaIds::add)
+        }
+
+        coroutineScope {
+            val animesDeferred = if (animeIds.isNotEmpty()) {
+                async(ioDispatcher) {
+                    userRateDataSource.getAnimeUserRatesByAnimeIds(animeIds)
+                        .mapNotNull { it.value?.asEntity(animeId = it.key) }
+                }
+            } else null
+
+            val mangasDeferred = if (mangaIds.isNotEmpty()) {
+                async(ioDispatcher) {
+                    userRateDataSource.getMangaUserRatesByMangaIds(mangaIds)
+                        .mapNotNull { it.value?.asEntity(mangaId = it.key) }
+                }
+            } else null
+
+            val animeUserRateEntities = animesDeferred?.await() ?: emptyList()
+            val mangaUserRateEntities = mangasDeferred?.await() ?: emptyList()
+
+            databaseTransactionRunner {
+                userRateDao.deleteUserRatesByIds(userRates.map { it.userRate.id })
+                if (animeUserRateEntities.isNotEmpty()) {
+                    userRateDao.insertOrReplaceUserRates(animeUserRateEntities)
+                }
+                if (mangaUserRateEntities.isNotEmpty()) {
+                    userRateDao.insertOrReplaceUserRates(mangaUserRateEntities)
+                }
+            }
+        }
     }
 
     @OptIn(ExperimentalPagingApi::class)
