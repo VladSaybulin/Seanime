@@ -14,7 +14,7 @@ import ru.vladsaybulin.model.request.Request
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.hours
 
-class RefreshTitleDetailsUseCase @Inject constructor(
+class UpdateTitleDetailsUseCase @Inject constructor(
     private val animeRepository: Lazy<AnimeRepository>,
     private val mangaRepository: Lazy<MangaRepository>,
     private val lastRequestRepository: LastRequestRepository
