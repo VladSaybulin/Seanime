@@ -2,12 +2,15 @@ package ru.vladsaybulin.core.ui.filters
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -65,18 +69,20 @@ fun FiltersBottomSheet(
         }.invokeOnCompletion { onDismissRequest() }
     }
 
-    ShikimoriModalBottomSheet(
+    ModalBottomSheet(
         onDismissRequest = {
             onApplyFilters(filtersState.getAppliedFilters())
             onDismissRequest()
         },
-        sheetState = sheetState
-    ) {
-        FiltersContent(
-            filtersState = filtersState,
-            onDismissRequest = closeSheet
-        )
-    }
+        sheetState = sheetState,
+        contentWindowInsets = { WindowInsets.statusBars },
+        content = {
+            FiltersContent(
+                filtersState = filtersState,
+                onDismissRequest = closeSheet
+            )
+        }
+    )
 }
 
 @Composable
@@ -228,14 +234,18 @@ fun FiltersContent(
                 filtersState.cancelChanges()
                 onDismissRequest()
             },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         ) {
             Text(text = stringResource(id = R.string.core_ui_cancel))
         }
 
         TextButton(
             onClick = { filtersState.resetAll() },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.core_ui_reset),
