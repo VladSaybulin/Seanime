@@ -3,6 +3,7 @@ package ru.vladsaybulin.feature.title.details.content
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -17,40 +18,48 @@ import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
 import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.feature.title.details.R
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.feature.title.details.UserRateState
+import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 internal fun UserRateFab(
-    userRateStatus: UserRateStatus?,
-    entryType: EntryType,
+    userRateState: UserRateState,
     expanded: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val transition = updateTransition(targetState = userRateStatus, label = "UserRateStatus")
+    val transition = updateTransition(targetState = userRateState, label = "UserRateStatus")
 
-    val animatedContainerColor by transition.animateColor(label = "ContainerColor") { status ->
-        if (status == null || status == UserRateStatus.None) {
-            SeanimeTheme.colorScheme.primaryContainer
-        } else userRateStatusContainerColor(userRateStatus = status)
+    val animatedContainerColor by transition.animateColor(label = "ContainerColor") { state ->
+        if (state is UserRateState.Success) {
+            userRateStatusContainerColor(userRateStatus = state.userRate.status)
+        } else SeanimeTheme.colorScheme.primaryContainer
     }
 
-    val animatedContentColor by transition.animateColor(label = "ContentColor") { status ->
-        if (status == null || status == UserRateStatus.None) {
-            SeanimeTheme.colorScheme.onPrimaryContainer
-        } else onUserRateStatusContainerColor(userRateStatus = status)
+    val animatedContentColor by transition.animateColor(label = "ContentColor") { state ->
+        if (state is UserRateState.Success) {
+            onUserRateStatusContainerColor(userRateStatus = state.userRate.status)
+        } else SeanimeTheme.colorScheme.onPrimaryContainer
     }
 
     ExtendedFloatingActionButton(
         text = {
-            transition.AnimatedContent { status ->
-                UserRateFabText(status = status, entryType = entryType)
+            transition.AnimatedContent { state ->
+                when (state) {
+                    UserRateState.Loading -> Text(stringResource(id = R.string.feature_title_details_user_rate_loading))
+                    is UserRateState.Success -> Text(text = userRateStatusString(state.userRate.status))
+                    else -> Text(stringResource(id = R.string.feature_title_details_user_rate_add))
+                }
             }
         },
         icon = {
-            transition.AnimatedContent { status ->
-                UserRateFabIcon(status = status)
+            transition.AnimatedContent { state ->
+                when (state) {
+                    UserRateState.Loading -> CircularProgressIndicator()
+                    is UserRateState.Success -> UserRateStatusIcon(status = state.userRate.status)
+                    else -> AddIcon()
+                }
             }
         },
         onClick = onClick,
@@ -62,32 +71,17 @@ internal fun UserRateFab(
 }
 
 @Composable
-private fun UserRateFabText(
-    status: UserRateStatus?,
-    entryType: EntryType,
-    modifier: Modifier = Modifier
-) {
-    val text = if (status == null || status == UserRateStatus.None) {
-        stringResource(id = R.string.add)
-    } else userRateStatusString(status)
-
-    Text(
-        text = text,
-        modifier = modifier
+private fun AddIcon() {
+    Icon(
+        imageVector = SeanimeIcons.Add,
+        contentDescription = stringResource(id = R.string.feature_title_details_add_to_list)
     )
 }
 
 @Composable
-private fun UserRateFabIcon(
-    status: UserRateStatus?,
-    modifier: Modifier = Modifier
-) {
+private fun UserRateStatusIcon(status: UserRateStatus) {
     Icon(
-        imageVector = if (status == null || status == UserRateStatus.None) {
-            SeanimeIcons.Add
-        } else notNoneUserRateStatusIcon(userRateStatus = status),
-        contentDescription = null,
-        modifier = modifier
+        imageVector = notNoneUserRateStatusIcon(userRateStatus = status),
+        contentDescription = userRateStatusString(userRateStatus = status)
     )
-
 }

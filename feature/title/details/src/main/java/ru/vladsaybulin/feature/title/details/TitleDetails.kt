@@ -22,6 +22,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,8 +44,11 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
+import ru.vladsaybulin.core.designsystem.theme.LocalEntryStatusColors
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
+import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
+import ru.vladsaybulin.core.ui.strings.TargetStringsEntry
 import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
 import ru.vladsaybulin.feature.title.details.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.content.PreviewUserRateStatusStatistics
@@ -105,7 +109,6 @@ fun TitleDetailsScreen(
     val similarState by viewModel.similarState.collectAsStateWithLifecycle()
     val userRateState by viewModel.userRateState.collectAsStateWithLifecycle()
     val enabledAutocorrect by viewModel.enabledAutocorrectStatus.collectAsStateWithLifecycle()
-    val isAuthorized = viewModel.isAuthorized()
 
     DetailsScreen(
         detailsState = detailsState,
@@ -113,7 +116,6 @@ fun TitleDetailsScreen(
         similarState = similarState,
         userRateState = userRateState,
         enabledAutocorrect = enabledAutocorrect,
-        isAuthorized = isAuthorized,
         onRetry = viewModel::onRetry,
         refresh = viewModel::refresh,
         onCreateUserRate = viewModel::createUserRate,
@@ -128,7 +130,6 @@ fun DetailsScreen(
     similarState: SimilarState,
     userRateState: UserRateState,
     enabledAutocorrect: Boolean,
-    isAuthorized: Boolean,
     onRetry: () -> Unit,
     refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
@@ -149,7 +150,6 @@ fun DetailsScreen(
                 similarState,
                 userRateState,
                 enabledAutocorrect = enabledAutocorrect,
-                isAuthorized = isAuthorized,
                 refresh = refresh,
                 onCreateUserRate = onCreateUserRate,
                 navEvents = navEvents
@@ -173,7 +173,6 @@ private fun DetailsContent(
     similarState: SimilarState,
     userRateState: UserRateState,
     enabledAutocorrect: Boolean,
-    isAuthorized: Boolean,
     refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
     navEvents: TitleDetailsNavEvents
@@ -183,7 +182,6 @@ private fun DetailsContent(
 
     val coroutineScope = rememberCoroutineScope()
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val pullToRefreshState = rememberPullToRefreshState()
     val listState = rememberLazyListState()
 
     val visibleTopBar by remember {
@@ -194,220 +192,228 @@ private fun DetailsContent(
         derivedStateOf { listState.firstVisibleItemIndex == 0 }
     }
 
-
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = {
-            coroutineScope.launch {
-                isRefreshing = true
-                refresh()
-                isRefreshing = false
-            }
-        }
-    ) {
-        Scaffold(
-            modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
-            topBar = {
-                DetailsTopBar(
-                    visibleTopBar = visibleTopBar,
-                    title = detailsState.run { russianName ?: name },
-                    onBackClick = navEvents.navigateUp,
-                    scrollBehavior = topAppBarScrollBehavior
-                )
-            },
-            floatingActionButton = {
-                val userRate = (userRateState as? UserRateState.Success)?.userRate
-                UserRateFab(
-                    userRateStatus = userRate?.status ?: UserRateStatus.None,
-                    entryType = detailsState.entryType,
-                    expanded = expandedFab,
-                    onClick = {
-                        when {
-                            !isAuthorized -> navEvents.navigateToAuthorization()
-                            userRate != null -> navEvents.showUserRateEditor(
-                                EditableUserRate(
-                                    userRate,
-                                    titleType = detailsState.entryType,
-                                    entryStatus = detailsState.status,
-                                    maxEpisodes = detailsState.episodes,
-                                    maxChapters = detailsState.chapters,
-                                    maxVolumes = detailsState.volumes
-                                )
-                            )
-
-                            enabledAutocorrect && detailsState.status == Anons ->
-                                onCreateUserRate(UserRateStatus.Planned)
-
-                            else -> showUserRateStatusSelection = true
-                        }
-                    }
-                )
-            }
-        ) { scaffoldPadding ->
-            LazyColumn(
-                state = listState,
-                //FAB padding
-                contentPadding = PaddingValues(bottom = 56.dp + 32.dp)
-            ) {
-
-                titlePoster(
-                    posterUrl = detailsState.poster?.originalUrl,
-                    topSpace = scaffoldPadding.calculateTopPadding(),
-                    onClick = {
-                        detailsState.poster?.let { navEvents.showFullScreenImage(listOf(it), 0) }
-                    }
-                )
-
-                gutterSpacer()
-                titleName(
-                    name = detailsState.name,
-                    russianName = detailsState.russianName
-                )
-
-                gutterSpacer()
-                titleInfo(
-                    animeKind = detailsState.animeKind,
-                    mangaKind = detailsState.mangaKind,
-                    status = detailsState.status,
-                    episodes = detailsState.episodes,
-                    episodesAired = detailsState.episodesAired,
-                    episodeDuration = detailsState.episodeDuration,
-                    chapters = detailsState.chapters,
-                    volumes = detailsState.volumes,
-                    nextEpisodeAt = detailsState.nextEpisodeAt,
-                    airedOn = detailsState.airedOn,
-                    releasedOn = detailsState.releasedOn,
-                    timePeriodAiring = detailsState.season,
-                    rating = detailsState.rating,
-                    studios = detailsState.studios,
-                    publishers = detailsState.publishers,
-                    genres = detailsState.genres,
-                    onStudioClick = { navEvents.navigateToSearchByStudio(detailsState.searchType(), it.id) },
-                    onPublisherClick = { navEvents.navigateToSearchByPublisher(detailsState.searchType(), it.id) },
-                    onGenreClick = { navEvents.navigateToSearchByGenre(detailsState.searchType(), it.kind, it.id) }
-                )
-
-                detailsState.description?.takeIf { it.text.isNotEmpty() }?.let { description ->
-                    gutterSpacer()
-                    titleDescription(
-                        description = description,
-                        onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it) },
-                        onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it) },
-                        onCharacterClick = { navEvents.navigateToCharacterDetails(it) },
-                        onPersonClick = { navEvents.navigateToPersonDetails(it) },
-                        onUrlClick = { navEvents.navigateToUrl(it) }
-                    )
-                }
-
-                (rolesState as? RolesState.Success)?.mainAuthors?.takeIf { it.isNotEmpty() }?.let { authors ->
-                    gutterSpacer()
-                    titleAuthors(
-                        authors = authors,
-                        onAuthorClick = { navEvents.navigateToPersonDetails(it.id) },
-                        onMoreClick = {
-                            navEvents.navigateToTitleAuthors(detailsState.entryType, detailsState.entryId)
-                        }
-                    )
-                }
-
-                if (detailsState.score > 0f) {
-                    gutterSpacer()
-                    titleScore(
-                        score = detailsState.score,
-                        stats = detailsState.scoreStatisticsItems
-                    )
-                }
-
-                if (!detailsState.userRateStatusStatisticItems.isNullOrEmpty()) {
-                    gutterSpacer()
-                    titleUserRateStatusDiagram(detailsState.userRateStatusStatisticItems)
-                }
-
-                detailsState.relatedSlice?.let { dataSlice ->
-                    gutterSpacer()
-                    titleRelated(
-                        relatedEntriesSlice = dataSlice,
-                        onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-                        onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
-                        onMoreClick = { navEvents.navigateToTitleRelated(detailsState.entryType, detailsState.entryId) }
-                    )
-                }
-
-                (rolesState as? RolesState.Success)?.mainCharacters?.takeIf { it.isNotEmpty() }?.let { characters ->
-                    gutterSpacer()
-                    titleCharacters(
-                        characters = characters,
-                        onCharacterClick = { navEvents.navigateToCharacterDetails(it.id) },
-                        onMoreClick = {
-                            navEvents.navigateToTitleCharacters(
-                                detailsState.entryType,
-                                detailsState.entryId
-                            )
-                        }
-                    )
-                }
-
-                detailsState.screenshotsSlice?.let { dataSlice ->
-                    gutterSpacer()
-                    titleScreenshots(
-                        screenshotsSlice = dataSlice,
-                        onScreenshotClick = { initialIndex ->
-                            navEvents.showFullScreenImage(detailsState.allScreenshots, initialIndex)
-                        },
-                        onMoreClick = {
-                            navEvents.navigateToTitleScreenshots(
-                                detailsState.entryType,
-                                detailsState.entryId
-                            )
-                        }
-                    )
-                }
-
-                detailsState.videosSlice?.let { videosSlice ->
-                    gutterSpacer()
-                    titleVideos(
-                        videosSlice = videosSlice,
-                        onVideoClick = { navEvents.navigateToUrl(it.videoUrl) },
-                        onMoreClick = { navEvents.navigateToTitleVideos(detailsState.entryType, detailsState.entryId) }
-                    )
-                }
-
-                when (similarState) {
-                    SimilarState.Empty -> Unit
-                    SimilarState.Loading -> Unit
-                    is SimilarState.Animes -> {
-                        gutterSpacer()
-                        titleSimilarAnimes(
-                            similarAnimes = similarState.animes,
-                            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) }
-                        )
-                    }
-
-                    is SimilarState.Mangas -> {
-                        gutterSpacer()
-                        titleSimilarMangas(
-                            similarMangas = similarState.mangas,
-                            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) }
-                        )
-                    }
-                }
-            }
-        }
+    val targetStringsEntry = when (detailsState.entryType) {
+        EntryType.Anime -> TargetStringsEntry.Anime
+        EntryType.Manga -> TargetStringsEntry.Manga
     }
-
-    if (showUserRateStatusSelection) {
-        UserRateStatusSelectionBottomSheet(
-            enabledAutocorrect = enabledAutocorrect,
-            entryType = detailsState.entryType,
-            entryStatus = detailsState.status,
-            onStatusClick = {
-                onCreateUserRate(it)
-                showUserRateStatusSelection = false
-            },
-            onDismissRequest = {
-                showUserRateStatusSelection = false
+    CompositionLocalProvider(value = LocalTargetStringsEntry provides targetStringsEntry) {
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                coroutineScope.launch {
+                    isRefreshing = true
+                    refresh()
+                    isRefreshing = false
+                }
             }
-        )
+        ) {
+            Scaffold(
+                modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+                topBar = {
+                    DetailsTopBar(
+                        visibleTopBar = visibleTopBar,
+                        title = detailsState.run { russianName ?: name },
+                        onBackClick = navEvents.navigateUp,
+                        scrollBehavior = topAppBarScrollBehavior
+                    )
+                },
+                floatingActionButton = {
+                    val userRate = (userRateState as? UserRateState.Success)?.userRate
+                    UserRateFab(
+                        userRateState = userRateState,
+                        expanded = expandedFab,
+                        onClick = {
+                            when (userRateState) {
+                                is UserRateState.NotAuthorized -> navEvents.navigateToAuthorization()
+                                is UserRateState.Success -> navEvents.showUserRateEditor(
+                                    createEditableUserRate(detailsState, userRateState)
+                                )
+
+                                is UserRateState.NoUserRate -> if (detailsState.status == Anons) {
+                                    onCreateUserRate(UserRateStatus.Planned)
+                                } else showUserRateStatusSelection = true
+
+                                else -> {}
+                            }
+                        }
+                    )
+                }
+            ) { scaffoldPadding ->
+                LazyColumn(
+                    state = listState,
+                    //FAB padding
+                    contentPadding = PaddingValues(bottom = 56.dp + 32.dp)
+                ) {
+
+                    titlePoster(
+                        posterUrl = detailsState.poster?.originalUrl,
+                        topSpace = scaffoldPadding.calculateTopPadding(),
+                        onClick = {
+                            detailsState.poster?.let { navEvents.showFullScreenImage(listOf(it), 0) }
+                        }
+                    )
+
+                    gutterSpacer()
+                    titleName(
+                        name = detailsState.name,
+                        russianName = detailsState.russianName
+                    )
+
+                    gutterSpacer()
+                    titleInfo(
+                        animeKind = detailsState.animeKind,
+                        mangaKind = detailsState.mangaKind,
+                        status = detailsState.status,
+                        episodes = detailsState.episodes,
+                        episodesAired = detailsState.episodesAired,
+                        episodeDuration = detailsState.episodeDuration,
+                        chapters = detailsState.chapters,
+                        volumes = detailsState.volumes,
+                        nextEpisodeAt = detailsState.nextEpisodeAt,
+                        airedOn = detailsState.airedOn,
+                        releasedOn = detailsState.releasedOn,
+                        timePeriodAiring = detailsState.season,
+                        rating = detailsState.rating,
+                        studios = detailsState.studios,
+                        publishers = detailsState.publishers,
+                        genres = detailsState.genres,
+                        onStudioClick = { navEvents.navigateToSearchByStudio(detailsState.searchType(), it.id) },
+                        onPublisherClick = { navEvents.navigateToSearchByPublisher(detailsState.searchType(), it.id) },
+                        onGenreClick = { navEvents.navigateToSearchByGenre(detailsState.searchType(), it.kind, it.id) }
+                    )
+
+                    detailsState.description?.takeIf { it.text.isNotEmpty() }?.let { description ->
+                        gutterSpacer()
+                        titleDescription(
+                            description = description,
+                            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it) },
+                            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it) },
+                            onCharacterClick = { navEvents.navigateToCharacterDetails(it) },
+                            onPersonClick = { navEvents.navigateToPersonDetails(it) },
+                            onUrlClick = { navEvents.navigateToUrl(it) }
+                        )
+                    }
+
+                    (rolesState as? RolesState.Success)?.mainAuthors?.takeIf { it.isNotEmpty() }?.let { authors ->
+                        gutterSpacer()
+                        titleAuthors(
+                            authors = authors,
+                            onAuthorClick = { navEvents.navigateToPersonDetails(it.id) },
+                            onMoreClick = {
+                                navEvents.navigateToTitleAuthors(detailsState.entryType, detailsState.entryId)
+                            }
+                        )
+                    }
+
+                    if (detailsState.score > 0f) {
+                        gutterSpacer()
+                        titleScore(
+                            score = detailsState.score,
+                            stats = detailsState.scoreStatisticsItems
+                        )
+                    }
+
+                    if (!detailsState.userRateStatusStatisticItems.isNullOrEmpty()) {
+                        gutterSpacer()
+                        titleUserRateStatusDiagram(detailsState.userRateStatusStatisticItems)
+                    }
+
+                    detailsState.relatedSlice?.let { dataSlice ->
+                        gutterSpacer()
+                        titleRelated(
+                            relatedEntriesSlice = dataSlice,
+                            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
+                            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
+                            onMoreClick = {
+                                navEvents.navigateToTitleRelated(
+                                    detailsState.entryType,
+                                    detailsState.entryId
+                                )
+                            }
+                        )
+                    }
+
+                    (rolesState as? RolesState.Success)?.mainCharacters?.takeIf { it.isNotEmpty() }?.let { characters ->
+                        gutterSpacer()
+                        titleCharacters(
+                            characters = characters,
+                            onCharacterClick = { navEvents.navigateToCharacterDetails(it.id) },
+                            onMoreClick = {
+                                navEvents.navigateToTitleCharacters(
+                                    detailsState.entryType,
+                                    detailsState.entryId
+                                )
+                            }
+                        )
+                    }
+
+                    detailsState.screenshotsSlice?.let { dataSlice ->
+                        gutterSpacer()
+                        titleScreenshots(
+                            screenshotsSlice = dataSlice,
+                            onScreenshotClick = { initialIndex ->
+                                navEvents.showFullScreenImage(detailsState.allScreenshots, initialIndex)
+                            },
+                            onMoreClick = {
+                                navEvents.navigateToTitleScreenshots(
+                                    detailsState.entryType,
+                                    detailsState.entryId
+                                )
+                            }
+                        )
+                    }
+
+                    detailsState.videosSlice?.let { videosSlice ->
+                        gutterSpacer()
+                        titleVideos(
+                            videosSlice = videosSlice,
+                            onVideoClick = { navEvents.navigateToUrl(it.videoUrl) },
+                            onMoreClick = {
+                                navEvents.navigateToTitleVideos(
+                                    detailsState.entryType,
+                                    detailsState.entryId
+                                )
+                            }
+                        )
+                    }
+
+                    when (similarState) {
+                        SimilarState.Empty -> Unit
+                        SimilarState.Loading -> Unit
+                        is SimilarState.Animes -> {
+                            gutterSpacer()
+                            titleSimilarAnimes(
+                                similarAnimes = similarState.animes,
+                                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) }
+                            )
+                        }
+
+                        is SimilarState.Mangas -> {
+                            gutterSpacer()
+                            titleSimilarMangas(
+                                similarMangas = similarState.mangas,
+                                onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        if (showUserRateStatusSelection) {
+            UserRateStatusSelectionBottomSheet(
+                enabledAutocorrect = enabledAutocorrect,
+                entryType = detailsState.entryType,
+                entryStatus = detailsState.status,
+                onStatusClick = {
+                    onCreateUserRate(it)
+                    showUserRateStatusSelection = false
+                },
+                onDismissRequest = {
+                    showUserRateStatusSelection = false
+                }
+            )
+        }
     }
 }
 
@@ -842,9 +848,8 @@ fun EntryDetailsScreenPreview() {
             detailsState = detailsState,
             rolesState = rolesState,
             similarState = SimilarState.Empty,
-            userRateState = UserRateState.Success(null),
+            userRateState = UserRateState.NoUserRate,
             enabledAutocorrect = false,
-            isAuthorized = false,
             refresh = {},
             onCreateUserRate = {},
             navEvents = IdleTitleDetailsNavEvents

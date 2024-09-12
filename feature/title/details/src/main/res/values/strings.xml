@@ -78,6 +78,9 @@
     <string name="feature_details_info_date_range">с %s\nпо %s</string>
     <string name="feature_details_info_date_aired_on">с %s</string>
     <string name="feature_title_details_title_score">Оценка</string>
+    <string name="feature_title_details_add_to_list">Добавить в свой список</string>
+    <string name="feature_title_details_user_rate_loading">Загрузка…</string>
+    <string name="feature_title_details_user_rate_add">Добавить</string>
 
     <string-array name="feature_details_info_seasons">
         <item>Зима</item>

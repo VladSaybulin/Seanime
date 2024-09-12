@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -133,16 +135,20 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = SimilarState.Loading
         )
 
-    val userRateState = when (route.titleType) {
-        EntryType.Anime -> userRateRepository.getAnimeUserRateStream(route.titleId)
-        EntryType.Manga -> userRateRepository.getMangaUserRateStream(route.titleId)
-    }
-        .map(UserRateState::Success)
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = UserRateState.Loading
-        )
+    val userRateState = authRepository.authState.flatMapLatest { authState ->
+        if (authState == ShikimoriAuthState.LOGGED_OUT) {
+            flowOf(UserRateState.NotAuthorized)
+        } else {
+            when (route.titleType) {
+                EntryType.Anime -> userRateRepository.getAnimeUserRateStream(route.titleId)
+                EntryType.Manga -> userRateRepository.getMangaUserRateStream(route.titleId)
+            }.map { if (it != null) UserRateState.Success(it) else UserRateState.NoUserRate }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = UserRateState.Loading
+    )
 
     suspend fun refresh() {
         refreshJob().join()
@@ -164,7 +170,8 @@ class TitleDetailsViewModel @Inject constructor(
 
     fun isAuthorized() = authRepository.authState.value == ShikimoriAuthState.LOGGED_IN
 
-    private fun refreshJob(): Job = updateTitleDetailsUseCase(route.titleType, route.titleId, true).launchIn(viewModelScope)
+    private fun refreshJob(): Job =
+        updateTitleDetailsUseCase(route.titleType, route.titleId, true).launchIn(viewModelScope)
 
 }
 
