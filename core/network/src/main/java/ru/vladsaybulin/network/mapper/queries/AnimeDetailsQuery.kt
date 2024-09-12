@@ -142,16 +142,17 @@ private fun AnimeDetailsQuery.Video.asNetworkModel() = NetworkVideo(
 )
 
 private fun String.parseSeasonOrNull(): TimePeriodAiring.Season? {
-    val (seasonOfYearStr, yearStr) = split('_')
+    val delimiterIndex = this.indexOf('-')
+    if (delimiterIndex == -1) return null
 
-    val seasonOfYear = when (seasonOfYearStr) {
+    val seasonOfYear = when (this.substring(0, delimiterIndex)) {
         "winter" -> SeasonOfYear.Winter
         "spring" -> SeasonOfYear.Spring
         "summer" -> SeasonOfYear.Summer
         "fall" -> SeasonOfYear.Fall
         else -> return null
     }
-    val year = yearStr.toIntOrNull() ?: return null
+    val year = this.substring(delimiterIndex, this.length).toIntOrNull() ?: return null
 
     return TimePeriodAiring.Season(seasonOfYear, year)
 }
