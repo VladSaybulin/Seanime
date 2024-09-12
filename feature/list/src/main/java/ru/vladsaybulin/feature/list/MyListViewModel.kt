@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,16 +44,23 @@ class MyListViewModel @Inject constructor(
         )
     )
 
+    private val pagedUserRates = authState.flatMapLatest { currentAuthState ->
+        if (currentAuthState == ShikimoriAuthState.LOGGED_OUT) {
+            flowOf(PagingData.empty())
+        } else {
+            controlPanel.flatMapLatest { (type, status, field, order) ->
+                getPagedUserRatesUseCase(type, status, field, order)
+            }
+        }
+    }.cachedIn(viewModelScope)
+
     internal val screenState = authState.flatMapLatest { currentAuthState ->
         if (currentAuthState == ShikimoriAuthState.LOGGED_OUT) {
             flowOf<ListScreenState>(ListScreenState.LoggedOut)
         } else {
-            val data = controlPanel.flatMapLatest { (type, status, field, order) ->
-                getPagedUserRatesUseCase(type, status, field, order).cachedIn(viewModelScope)
-            }
             controlPanel.map { controlPanelState ->
                 ListScreenState.Success(
-                    data = data,
+                    data = pagedUserRates,
                     controlPanelState = controlPanelState
                 )
             }
