@@ -21,6 +21,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -81,23 +82,24 @@ fun UserRateBottomSheet(
         }.invokeOnCompletion { onDismissRequest() }
     }
 
-    ShikimoriModalBottomSheet(
+    ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        modifier = modifier
-    ) {
-        UserRateContent(
-            state = userRateState,
-            onSave = {
-                viewModel.save(editableUserRate.userRate.id, userRateState.toUserRateValues())
-                closeSheet()
-            },
-            onDelete = {
-                viewModel.delete(editableUserRate.userRate.id)
-                closeSheet()
-            }
-        )
-    }
+        modifier = modifier,
+        content = {
+            UserRateContent(
+                state = userRateState,
+                onSave = {
+                    viewModel.save(editableUserRate.userRate.id, userRateState.toUserRateValues())
+                    closeSheet()
+                },
+                onDelete = {
+                    viewModel.delete(editableUserRate.userRate.id)
+                    closeSheet()
+                }
+            )
+        }
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -176,7 +178,7 @@ fun UserRateContent(
                 label = { Text(stringResource(R.string.counter_label_rewatches)) },
             )
         }
-        //Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider()
@@ -298,7 +300,7 @@ private fun UserRateLayout(
 
         val inputsConstraints = constraints.copy(minHeight = 0)
         val inputsPlaceable = subcompose(slotId = UserRateLayoutSlotId.Inputs) {
-            Surface {
+            Surface(color = SeanimeTheme.colorScheme.surfaceContainerLow) {
                 Column(
                     modifier = Modifier.alpha(1 - animatedExpandable),
                     content = inputsContent

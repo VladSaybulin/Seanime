@@ -82,8 +82,7 @@ object UserRateStatusButtonDefaults {
 
     @Composable
     fun userRateStatusButtonColors(
-        containerColor: Color = SeanimeTheme.colorScheme
-            .surfaceColorAtElevation(LocalAbsoluteTonalElevation.current),
+        containerColor: Color = SeanimeTheme.colorScheme.surface.copy(alpha = 0f),
         contentColor: Color = SeanimeTheme.colorScheme.onSurface
     ) = UserRateStatusButtonColors(
         containerColor = containerColor,
