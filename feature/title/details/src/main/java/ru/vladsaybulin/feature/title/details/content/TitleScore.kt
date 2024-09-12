@@ -62,8 +62,6 @@ internal fun TitleScore(
                     .layoutId(ScoreValueId)
             )
 
-            val statsBarArrangement = Arrangement.SpaceBetween
-
             ScoreDiagram(
                 stats = stats,
                 modifier = Modifier
@@ -148,7 +146,7 @@ private fun ScoreDiagram(
                 }
 
                 Text(
-                    text = i.toString(),
+                    text = (i + 1).toString(),
                     style = SeanimeTheme.typography.bodySmall,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
