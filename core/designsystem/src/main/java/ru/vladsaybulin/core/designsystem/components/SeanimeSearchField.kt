@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
@@ -84,6 +85,7 @@ fun SeanimeSearchField(
         textStyle = LocalTextStyle.current.merge(TextStyle(color = textColor)),
         enabled = enabled,
         singleLine = true,
+        cursorBrush = SolidColor(textFieldColors.cursorColor),
         interactionSource = interactionSource,
         decorationBox = { innerTextField ->
             TextFieldDefaults.DecorationBox(
