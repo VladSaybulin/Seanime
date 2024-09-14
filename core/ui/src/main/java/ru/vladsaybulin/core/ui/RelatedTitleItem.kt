@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +17,7 @@ import ru.vladsaybulin.core.ui.anime.AnimeInfoKindAndYearText
 import ru.vladsaybulin.core.ui.entry.EntryInfoScore
 import ru.vladsaybulin.core.ui.entry.EntryListItem
 import ru.vladsaybulin.core.ui.manga.MangaInfoKindAndYearText
+import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
@@ -54,36 +56,38 @@ private fun RelatedAnimeItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    EntryListItem(
-        name = anime.run { russianName ?: name },
-        imageUrl = anime.poster?.previewUrl,
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        imageWidth = 72.dp,
-        imageIgnoresPadding = true,
-        metadata = {
-            AnimeInfoKindAndYearText(kind = anime.kind, year = anime.airedOn?.year)
+    CompositionLocalProvider(value = LocalTitleStrings provides EntryType.Anime) {
+        EntryListItem(
+            name = anime.run { russianName ?: name },
+            imageUrl = anime.poster?.previewUrl,
+            onClick = onClick,
+            modifier = modifier.fillMaxWidth(),
+            imageWidth = 72.dp,
+            imageIgnoresPadding = true,
+            metadata = {
+                AnimeInfoKindAndYearText(kind = anime.kind, year = anime.airedOn?.year)
 
-            Row {
-                if (anime.status != EntryStatus.None) {
-                    EntryStatusBadge(
-                        status = anime.status,
-                        modifier = Modifier.padding(
-                            top = 2.dp,
-                            bottom = 2.dp,
-                            end = 4.dp
+                Row {
+                    if (anime.status != EntryStatus.None) {
+                        EntryStatusBadge(
+                            status = anime.status,
+                            modifier = Modifier.padding(
+                                top = 2.dp,
+                                bottom = 2.dp,
+                                end = 4.dp
+                            )
                         )
-                    )
+                    }
+
+                    ShikimoriTextBadge {
+                        Text(relationTypeString(relationType))
+                    }
                 }
 
-                ShikimoriTextBadge {
-                    Text(relationTypeString(relationType))
-                }
+                EntryInfoScore(score = anime.score ?: 0f)
             }
-
-            EntryInfoScore(score = anime.score ?: 0f)
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -93,40 +97,42 @@ private fun RelatedMangaItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    EntryListItem(
-        name = manga.run { russianName ?: name },
-        imageUrl = manga.poster?.previewUrl,
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        imageWidth = 72.dp,
-        imageIgnoresPadding = true,
-        metadata = {
-            MangaInfoKindAndYearText(kind = manga.kind, year = manga.airedOn?.year)
+    CompositionLocalProvider(value = LocalTitleStrings provides EntryType.Manga) {
+        EntryListItem(
+            name = manga.run { russianName ?: name },
+            imageUrl = manga.poster?.previewUrl,
+            onClick = onClick,
+            modifier = modifier.fillMaxWidth(),
+            imageWidth = 72.dp,
+            imageIgnoresPadding = true,
+            metadata = {
+                MangaInfoKindAndYearText(kind = manga.kind, year = manga.airedOn?.year)
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (manga.status != EntryStatus.None) {
-                    EntryStatusBadge(
-                        status = manga.status,
-                        modifier = Modifier.padding(
-                            top = 2.dp,
-                            bottom = 2.dp,
-                            end = 4.dp
-                        ),
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (manga.status != EntryStatus.None) {
+                        EntryStatusBadge(
+                            status = manga.status,
+                            modifier = Modifier.padding(
+                                top = 2.dp,
+                                bottom = 2.dp,
+                                end = 4.dp
+                            ),
+                        )
+                    }
+
+                    ShikimoriTextBadge {
+                        Text(
+                            text = relationTypeString(relationType),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
 
-                ShikimoriTextBadge {
-                    Text(
-                        text = relationTypeString(relationType),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                EntryInfoScore(score = manga.score ?: 0f)
             }
-
-            EntryInfoScore(score = manga.score ?: 0f)
-        }
-    )
+        )
+    }
 }
 
 @Composable
