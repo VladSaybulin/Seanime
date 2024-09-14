@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import ru.vladsaybulin.core.domain.GetPagedUserRatesUseCase
-import ru.vladsaybulin.data.repository.AuthRepository
+import ru.vladsaybulin.core.domain.shared.GetAuthStateStreamUseCase
 import ru.vladsaybulin.feature.list.navigation.ListScreenRoute
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
@@ -28,12 +28,12 @@ import javax.inject.Inject
 class MyListViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getPagedUserRatesUseCase: GetPagedUserRatesUseCase,
-    authRepository: AuthRepository,
+    getAuthStateStreamUseCase: GetAuthStateStreamUseCase
 ) : ViewModel() {
 
     private val args = savedStateHandle.toRoute<ListScreenRoute>()
 
-    private val authState = authRepository.authState
+    private val authState = getAuthStateStreamUseCase()
 
     private val controlPanel = MutableStateFlow(
         ListControlPanelState(

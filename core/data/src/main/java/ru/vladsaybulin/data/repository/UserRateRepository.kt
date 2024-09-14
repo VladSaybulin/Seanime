@@ -23,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import ru.vladsaybulin.data.model.CreateUserRateDto
 import ru.vladsaybulin.data.model.animeEntityOrNullShells
 import ru.vladsaybulin.data.model.asDto
@@ -48,20 +49,18 @@ import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
-import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.datasource.UserRateDataSource
 import ru.vladsaybulin.network.models.UserRateWithEntryDto
 import javax.inject.Inject
 
 class UserRateRepository @Inject constructor(
     private val userRateDataSource: UserRateDataSource,
-    private val animeDataSource: AnimeDataSource,
     private val userRateDao: UserRateDao,
     private val animeDao: AnimeDao,
     private val mangaDao: MangaDao,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val userRepository: UserRepository,
-    private val authRepository: AuthRepository,
+    private val auth: ShikimoriAuthorization,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     fun getInProgressUserRates(limit: Int): Flow<List<UserRateWithEntry>> = flow {
@@ -110,7 +109,7 @@ class UserRateRepository @Inject constructor(
     )
 
     fun getAnimeUserRateStream(animeId: Long): Flow<UserRate?> =
-        authRepository.authState.flatMapLatest { authState ->
+        auth.shikimoriAuthState.flatMapLatest { authState ->
 
             if (authState == ShikimoriAuthState.LOGGED_IN) {
 
@@ -125,7 +124,7 @@ class UserRateRepository @Inject constructor(
         }
 
     fun getMangaUserRateStream(mangaId: Long): Flow<UserRate?> =
-        authRepository.authState.flatMapLatest { authState ->
+        auth.shikimoriAuthState.flatMapLatest { authState ->
 
             if (authState == ShikimoriAuthState.LOGGED_IN) {
 

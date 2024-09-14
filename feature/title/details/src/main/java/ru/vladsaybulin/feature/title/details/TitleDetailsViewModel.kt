@@ -22,13 +22,14 @@ import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetFirstAnimeVideosStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetFirstTitleRelatedStreamUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetUserRateScreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Details
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Roles
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.SkipRefresh
+import ru.vladsaybulin.core.domain.titledetails.UserRateResult
 import ru.vladsaybulin.data.repository.AnimeRepository
-import ru.vladsaybulin.data.repository.AuthRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.feature.title.details.navigation.TitleDetailsScreenRoute
@@ -48,7 +49,7 @@ class TitleDetailsViewModel @Inject constructor(
     getFirstTitleRelatedStreamUseCase: GetFirstTitleRelatedStreamUseCase,
     getFirstAnimeVideosStreamUseCase: Lazy<GetFirstAnimeVideosStreamUseCase>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
-    private val authRepository: AuthRepository
+    getUserRateScreamUseCase: GetUserRateScreamUseCase
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<TitleDetailsScreenRoute>()
@@ -135,14 +136,10 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = SimilarState.Loading
         )
 
-    val userRateState = authRepository.authState.flatMapLatest { authState ->
-        if (authState == ShikimoriAuthState.LOGGED_OUT) {
-            flowOf(UserRateState.NotAuthorized)
-        } else {
-            when (route.titleType) {
-                EntryType.Anime -> userRateRepository.getAnimeUserRateStream(route.titleId)
-                EntryType.Manga -> userRateRepository.getMangaUserRateStream(route.titleId)
-            }.map { if (it != null) UserRateState.Success(it) else UserRateState.NoUserRate }
+    val userRateState = getUserRateScreamUseCase(route.titleType, route.titleId).map {
+        when (it) {
+            UserRateResult.NotAuthorized -> UserRateState.NotAuthorized
+            is UserRateResult.Success -> it.userRate?.let(UserRateState::Success) ?: UserRateState.NoUserRate
         }
     }.stateIn(
         scope = viewModelScope,
@@ -167,8 +164,6 @@ class TitleDetailsViewModel @Inject constructor(
             )
         }
     }
-
-    fun isAuthorized() = authRepository.authState.value == ShikimoriAuthState.LOGGED_IN
 
     private fun refreshJob(): Job =
         updateTitleDetailsUseCase(route.titleType, route.titleId, true).launchIn(viewModelScope)
