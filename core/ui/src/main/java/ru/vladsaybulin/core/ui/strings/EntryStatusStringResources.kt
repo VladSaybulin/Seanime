@@ -5,21 +5,22 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 
-fun entryStatusStringId(status: EntryStatus, target: TargetStringsEntry) = when (target) {
-    TargetStringsEntry.Anime -> animeStatusStringId(status)
-    TargetStringsEntry.Manga -> mangaStatusStringId(status)
+fun entryStatusStringId(status: EntryStatus, titleType: EntryType) = when (titleType) {
+    EntryType.Anime -> animeStatusStringId(status)
+    EntryType.Manga -> mangaStatusStringId(status)
 }
 
 @Composable
 @ReadOnlyComposable
 fun entryStatusStringId(status: EntryStatus) =
-    entryStatusStringId(status, LocalTargetStringsEntry.current)
+    entryStatusStringId(status, LocalTitleStrings.current)
 
 @Composable
 @ReadOnlyComposable
-fun entryStatusString(status: EntryStatus, target: TargetStringsEntry) =
-    entryStatusStringId(status, target)?.let { stringResource(id = it) }
+fun entryStatusString(status: EntryStatus, titleType: EntryType) =
+    entryStatusStringId(status, titleType)?.let { stringResource(id = it) }
 
 @Composable
 @ReadOnlyComposable

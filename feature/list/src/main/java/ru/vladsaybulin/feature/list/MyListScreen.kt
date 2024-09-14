@@ -29,8 +29,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LazyPagingColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
-import ru.vladsaybulin.core.ui.strings.asTargetStringEntry
+import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.entryTypeString
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
@@ -106,7 +105,7 @@ private fun ListContent(
     onMangaClick: (Manga) -> Unit,
     onEditClick: (EditableUserRate) -> Unit
 ) {
-    CompositionLocalProvider(value = LocalTargetStringsEntry provides state.controlPanelState.entryType.asTargetStringEntry()) {
+    CompositionLocalProvider(value = LocalTitleStrings provides state.controlPanelState.entryType) {
         Column {
             ControlPanel(
                 entryType = state.controlPanelState.entryType,

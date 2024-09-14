@@ -22,6 +22,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,13 +50,13 @@ import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
 import ru.vladsaybulin.core.ui.manga.MangaWithUserRateGrid
-import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
-import ru.vladsaybulin.core.ui.strings.TargetStringsEntry
+import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.orderString
 import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.search.Order
@@ -97,52 +98,58 @@ private fun SearchScreen(
     onAnimeClick: (Anime) -> Unit,
     onMangaClick: (Manga) -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .navigationBarsPadding()
-            .padding(LocalScreenContentPadding.current)
-            .fillMaxSize()
-    ) {
+    val titleType = when (uiState.selectedSearchType) {
+        SearchType.Manga, SearchType.Ranobe -> EntryType.Manga
+        else -> EntryType.Anime
+    }
+    CompositionLocalProvider(value = LocalTitleStrings provides titleType) {
+        Box(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .padding(LocalScreenContentPadding.current)
+                .fillMaxSize()
+        ) {
 
-        var showFilters by remember { mutableStateOf(false) }
+            var showFilters by remember { mutableStateOf(false) }
 
-        val filtersLoadingState = uiState.filtersLoadingState
-        val filtersState = if (filtersLoadingState is FiltersLoadingState.Success) {
-            rememberFiltersState(
-                filters = filtersLoadingState.filters,
-                appliedFilters = uiState.appliedFilters
-            )
-        } else null
+            val filtersLoadingState = uiState.filtersLoadingState
+            val filtersState = if (filtersLoadingState is FiltersLoadingState.Success) {
+                rememberFiltersState(
+                    filters = filtersLoadingState.filters,
+                    appliedFilters = uiState.appliedFilters
+                )
+            } else null
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            SearchTopBar(
-                searchQuery = searchQuery,
-                title = uiState.title,
-                availableSearchTypes = uiState.availableSearchTypes,
-                selectedSearchType = uiState.selectedSearchType,
-                availableOrders = uiState.availableOrders,
-                selectedOrder = uiState.selectedOrder,
-                appliedFiltersCount = uiState.countActiveFilter(),
-                onSearchQueryChange = onSearchQueryChanged,
-                onSearchTypeChanged = onSearchTypeChanged,
-                onOrderChanged = onOrderChanged,
-                onFiltersClick = { showFilters = true }
-            )
+            Column(modifier = Modifier.fillMaxSize()) {
+                SearchTopBar(
+                    searchQuery = searchQuery,
+                    title = uiState.title,
+                    availableSearchTypes = uiState.availableSearchTypes,
+                    selectedSearchType = uiState.selectedSearchType,
+                    availableOrders = uiState.availableOrders,
+                    selectedOrder = uiState.selectedOrder,
+                    appliedFiltersCount = uiState.countActiveFilter(),
+                    onSearchQueryChange = onSearchQueryChanged,
+                    onSearchTypeChanged = onSearchTypeChanged,
+                    onOrderChanged = onOrderChanged,
+                    onFiltersClick = { showFilters = true }
+                )
 
-            SearchResult(
-                searchType = uiState.selectedSearchType,
-                pagingFlows = searchResultFlows,
-                onAnimeClick = onAnimeClick,
-                onMangaClick = onMangaClick
-            )
-        }
+                SearchResult(
+                    searchType = uiState.selectedSearchType,
+                    pagingFlows = searchResultFlows,
+                    onAnimeClick = onAnimeClick,
+                    onMangaClick = onMangaClick
+                )
+            }
 
-        if (filtersState != null && showFilters) {
-            FiltersBottomSheet(
-                filtersState = filtersState,
-                onDismissRequest = { showFilters = false },
-                onApplyFilters = onApplyFilters
-            )
+            if (filtersState != null && showFilters) {
+                FiltersBottomSheet(
+                    filtersState = filtersState,
+                    onDismissRequest = { showFilters = false },
+                    onApplyFilters = onApplyFilters
+                )
+            }
         }
     }
 }
@@ -356,7 +363,7 @@ private fun statusTitleText(entryStatus: EntryStatus) = stringResource(
     when (entryStatus) {
         EntryStatus.Anons -> R.string.feature_search_title_status_anonses
         EntryStatus.Ongoing -> R.string.feature_search_title_status_ongoings
-        EntryStatus.Released -> if (LocalTargetStringsEntry.current == TargetStringsEntry.Anime) {
+        EntryStatus.Released -> if (LocalTitleStrings.current == EntryType.Anime) {
             R.string.feature_search_title_status_anime_releases
         } else {
             R.string.feature_search_title_status_manga_releases

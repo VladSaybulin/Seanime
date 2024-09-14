@@ -46,8 +46,7 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.RelatedTitleItem
-import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
-import ru.vladsaybulin.core.ui.strings.TargetStringsEntry
+import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
 import ru.vladsaybulin.feature.title.details.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.content.PreviewUserRateStatusStatistics
@@ -192,11 +191,7 @@ private fun DetailsContent(
         derivedStateOf { listState.firstVisibleItemIndex == 0 }
     }
 
-    val targetStringsEntry = when (detailsState.entryType) {
-        EntryType.Anime -> TargetStringsEntry.Anime
-        EntryType.Manga -> TargetStringsEntry.Manga
-    }
-    CompositionLocalProvider(value = LocalTargetStringsEntry provides targetStringsEntry) {
+    CompositionLocalProvider(value = LocalTitleStrings provides detailsState.entryType) {
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = {

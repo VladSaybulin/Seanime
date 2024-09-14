@@ -4,17 +4,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 @ReadOnlyComposable
 fun userRateStatusString(userRateStatus: UserRateStatus) =
-    userRateStatusString(userRateStatus, LocalTargetStringsEntry.current)
+    userRateStatusString(userRateStatus, LocalTitleStrings.current)
 
 @Composable
 @ReadOnlyComposable
-fun userRateStatusString(userRateStatus: UserRateStatus, target: TargetStringsEntry) =
-    userRateStatusStringId(userRateStatus, target)
+fun userRateStatusString(userRateStatus: UserRateStatus, titleType: EntryType) =
+    userRateStatusStringId(userRateStatus, titleType)
         ?.let { stringResource(id = it) }
         ?: userRateStatus.name
 
@@ -22,12 +23,12 @@ fun userRateStatusString(userRateStatus: UserRateStatus, target: TargetStringsEn
 @ReadOnlyComposable
 fun userRateStatusStringId(userRateStatus: UserRateStatus) = userRateStatusStringId(
     userRateStatus = userRateStatus,
-    target = LocalTargetStringsEntry.current
+    titleType = LocalTitleStrings.current
 )
 
-fun userRateStatusStringId(userRateStatus: UserRateStatus, target: TargetStringsEntry) = when (target) {
-    TargetStringsEntry.Anime -> animeUserRateStatusStringId(userRateStatus)
-    TargetStringsEntry.Manga -> mangaUserRateStatusStringId(userRateStatus)
+fun userRateStatusStringId(userRateStatus: UserRateStatus, titleType: EntryType) = when (titleType) {
+    EntryType.Anime -> animeUserRateStatusStringId(userRateStatus)
+    EntryType.Manga -> mangaUserRateStatusStringId(userRateStatus)
 }
 
 fun animeUserRateStatusStringId(userRateStatus: UserRateStatus) = when (userRateStatus) {
