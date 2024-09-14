@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
-import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
@@ -50,46 +49,48 @@ fun TitleVideos(videos: List<Video>, onVideoClick: (Video) -> Unit) {
 
 @Composable
 private fun VideoCard(video: Video, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Layout(
-        content = {
-            video.name?.let {
-                VideoName(name = it, modifier = Modifier.layoutId("name"))
-            }
-            VideoPreviewImage(
-                url = video.previewImageUrl,
-                modifier = Modifier
-                    .layoutId("preview")
-                    .drawForegroundGradientScrim(SeanimeTheme.colorScheme.surface)
-            )
-            VideoPlayIcon(modifier = Modifier.layoutId("icon"))
-        },
-        modifier = modifier
-            .width(VideoCardWidth)
-            .aspectRatio(VideoCardAspectRatio)
-            .clickable(onClick = onClick)
-            .clip(SeanimeTheme.shapes.large),
-        measurePolicy = { measurables, constraints ->
-            val constraintsForMeasurables = constraints.copy(minWidth = 0, minHeight = 0)
-
-            val namePlaceable =
-                measurables.firstOrNull { it.layoutId == "name" }?.measure(constraintsForMeasurables)
-            val iconPlaceable = measurables.first { it.layoutId == "icon" }.measure(constraintsForMeasurables)
-            val previewPlaceable =
-                measurables.first { it.layoutId == "preview" }.measure(constraintsForMeasurables)
-
-            val width = constraints.maxWidth
-            val height = constraints.maxHeight
-
-            layout(width, height) {
-                previewPlaceable.place(0, 0)
-                iconPlaceable.place(
-                    (width - iconPlaceable.width) / 2,
-                    (height - iconPlaceable.height) / 2
+    SeanimeTheme(darkTheme = true) {
+        Layout(
+            content = {
+                video.name?.let {
+                    VideoName(name = it, modifier = Modifier.layoutId(VideoCardNameKey))
+                }
+                VideoPreviewImage(
+                    url = video.previewImageUrl,
+                    modifier = Modifier
+                        .layoutId(VideoCardPreviewKey)
+                        .drawForegroundGradientScrim(SeanimeTheme.colorScheme.surface)
                 )
-                namePlaceable?.placeRelative(0, height - namePlaceable.height)
+                VideoPlayIcon(modifier = Modifier.layoutId(VideoCardIconKey))
+            },
+            modifier = modifier
+                .width(VideoCardWidth)
+                .aspectRatio(VideoCardAspectRatio)
+                .clickable(onClick = onClick)
+                .clip(SeanimeTheme.shapes.large),
+            measurePolicy = { measurables, constraints ->
+                val constraintsForMeasurables = constraints.copy(minWidth = 0, minHeight = 0)
+
+                val namePlaceable =
+                    measurables.firstOrNull { it.layoutId == VideoCardNameKey }?.measure(constraintsForMeasurables)
+                val iconPlaceable = measurables.first { it.layoutId == VideoCardIconKey }.measure(constraintsForMeasurables)
+                val previewPlaceable =
+                    measurables.first { it.layoutId == VideoCardPreviewKey }.measure(constraintsForMeasurables)
+
+                val width = constraints.maxWidth
+                val height = constraints.maxHeight
+
+                layout(width, height) {
+                    previewPlaceable.place(0, 0)
+                    iconPlaceable.place(
+                        (width - iconPlaceable.width) / 2,
+                        (height - iconPlaceable.height) / 2
+                    )
+                    namePlaceable?.placeRelative(0, height - namePlaceable.height)
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 
@@ -134,6 +135,10 @@ private fun VideoPlayIcon(modifier: Modifier = Modifier) {
         )
     }
 }
+
+private const val VideoCardPreviewKey = "preview"
+private const val VideoCardNameKey = "name"
+private const  val VideoCardIconKey = "icon"
 
 private val PlayIconBoxSize = 40.dp
 private val VideoCardWidth = 200.dp
