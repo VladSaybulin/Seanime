@@ -8,13 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -116,7 +111,7 @@ fun TitleInfo(
             if (episodeDuration != 0) {
                 EpisodeDurationPanel(
                     duration = episodeDuration,
-                    isSingleEpisode = episodesAired > 1 || episodes > 1
+                    isSingleEpisode = episodes == 1 || (episodes == 0 && episodesAired == 1)
                 )
             }
 
@@ -224,12 +219,14 @@ private fun EpisodeDurationPanel(duration: Int, isSingleEpisode: Boolean) {
 
             isSingleEpisode -> pluralStringResource(
                 id = R.plurals.feature_details_info_duration_hours_in_normative_case,
-                count = hours
+                count = hours,
+                hours
             )
 
             else -> pluralStringResource(
                 id = R.plurals.feature_details_info_duration_by_hours_in_genitive_case,
-                count = hours
+                count = hours,
+                hours
             )
         }
 
