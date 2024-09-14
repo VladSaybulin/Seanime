@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarouselDefaults
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.entry.EntryGridItem
 import ru.vladsaybulin.core.ui.entry.EntryGridItemDefaults
 import ru.vladsaybulin.model.character.Character
@@ -51,7 +52,8 @@ private fun CharacterCard(
         name = character.run { russianName ?: originalName },
         imageUrl = character.poster?.originalUrl,
         onClick = onClick,
-        modifier = Modifier.width(CharacterCardWidth)
+        modifier = Modifier.width(CharacterCardWidth),
+        nameTextStyle = SeanimeTheme.typography.labelSmall
     )
 }
 
