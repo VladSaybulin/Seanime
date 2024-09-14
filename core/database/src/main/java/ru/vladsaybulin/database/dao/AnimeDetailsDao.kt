@@ -22,8 +22,6 @@ import ru.vladsaybulin.database.models.anime.PopulatedAnimeDetails
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeRelated
 import ru.vladsaybulin.database.models.anime.PopulatedSimilarAnime
 import ru.vladsaybulin.database.models.anime.StudioEntity
-import ru.vladsaybulin.model.anime.Video
-import ru.vladsaybulin.model.related.RelatedEntry
 
 @Dao
 interface AnimeDetailsDao {

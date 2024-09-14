@@ -7,7 +7,7 @@ import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.model.common.DataSlice
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelatedTitle
 import javax.inject.Inject
 
 class GetFirstTitleRelatedStreamUseCase @Inject constructor(
@@ -18,7 +18,7 @@ class GetFirstTitleRelatedStreamUseCase @Inject constructor(
         titleType: EntryType,
         titleId: Long,
         limit: Int = DefaultRelatedEntriesLimit
-    ): Flow<DataSlice<RelatedEntry>> = when (titleType) {
+    ): Flow<DataSlice<RelatedTitle>> = when (titleType) {
         EntryType.Anime -> animeRepository.get().getFirstAnimeRelatedStream(titleId, limit + 1)
         EntryType.Manga -> mangaRepository.get().getFirstMangaRelatedStream(titleId, limit + 1)
     }.map { relatedEntries ->

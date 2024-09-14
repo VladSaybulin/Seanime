@@ -60,7 +60,7 @@ import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -111,7 +111,7 @@ class AnimeRepository @Inject constructor(
     fun getAnimeMainAuthorsStream(animeId: Long): Flow<List<PersonWithRoles>> =
         animeDetailsDao.getMainAnimeAuthors(animeId).map { it.map(PopulatedAnimeAuthor::asExternalModel) }
 
-    fun getFirstAnimeRelatedStream(animeId: Long, limit: Int): Flow<List<RelatedEntry>> =
+    fun getFirstAnimeRelatedStream(animeId: Long, limit: Int): Flow<List<RelatedTitle>> =
         animeDetailsDao.getFirstAnimeRelated(animeId, limit).map { it.map(PopulatedAnimeRelated::asExternalModel) }
 
     fun getAnimeScreenshots(animeId: Long): Flow<List<Image>> =
@@ -127,7 +127,7 @@ class AnimeRepository @Inject constructor(
         animeDetailsDao.getAllAnimeAuthors(animeId)
             .map { it.map(PopulatedAnimeAuthor::asExternalModel) }
 
-    fun getAllAnimeRelatedTitles(animeId: Long): Flow<List<RelatedEntry>> =
+    fun getAllAnimeRelatedTitles(animeId: Long): Flow<List<RelatedTitle>> =
         animeDetailsDao.getAllAnimeRelatedTitles(animeId)
             .map { it.map(PopulatedAnimeRelated::asExternalModel) }
 

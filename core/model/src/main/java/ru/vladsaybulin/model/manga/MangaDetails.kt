@@ -1,16 +1,11 @@
 package ru.vladsaybulin.model.manga
 
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
-import ru.vladsaybulin.model.character.CharacterWithRole
-import ru.vladsaybulin.model.common.DataSlice
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.genre.Genre
-import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.related.RelatedEntry
-import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 data class MangaDetails(

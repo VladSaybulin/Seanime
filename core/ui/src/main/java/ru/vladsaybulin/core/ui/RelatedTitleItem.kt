@@ -19,29 +19,28 @@ import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelatedAnime
+import ru.vladsaybulin.model.related.RelatedManga
+import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.related.RelationType
 
 @Composable
 fun RelatedTitleItem(
-    relatedTitle: RelatedEntry,
+    relatedTitle: RelatedTitle,
     onClick: (EntryType, Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (relatedTitle.anime != null) {
-        val nonNullAnime = checkNotNull(relatedTitle.anime)
-        RelatedAnimeItem(
-            anime = nonNullAnime,
+    when (relatedTitle) {
+        is RelatedAnime -> RelatedAnimeItem(
+            anime = relatedTitle.anime,
             relationType = relatedTitle.relationType,
-            onClick = { onClick(EntryType.Anime, nonNullAnime.id) },
+            onClick = { onClick(EntryType.Anime, relatedTitle.anime.id) },
             modifier = modifier
         )
-    } else {
-        val nonNullManga = checkNotNull(relatedTitle.manga)
-        RelatedMangaItem(
-            manga = nonNullManga,
+        is RelatedManga -> RelatedMangaItem(
+            manga = relatedTitle.manga,
             relationType = relatedTitle.relationType,
-            onClick = { onClick(EntryType.Manga, nonNullManga.id) },
+            onClick = { onClick(EntryType.Manga, relatedTitle.manga.id) },
             modifier = modifier
         )
     }

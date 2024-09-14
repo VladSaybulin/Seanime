@@ -4,7 +4,9 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.asExternalModel
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelatedAnime
+import ru.vladsaybulin.model.related.RelatedManga
+import ru.vladsaybulin.model.related.RelatedTitle
 
 data class PopulatedAnimeRelated(
 
@@ -26,8 +28,8 @@ data class PopulatedAnimeRelated(
     val mangaEntity: MangaEntity?
 )
 
-fun PopulatedAnimeRelated.asExternalModel() = RelatedEntry(
-    anime = animeEntity?.asExternalModel(),
-    manga = mangaEntity?.asExternalModel(),
-    relationType = animeRelatedEntity.relationType
-)
+fun PopulatedAnimeRelated.asExternalModel() = when {
+    animeEntity != null -> RelatedAnime(animeEntity.asExternalModel(), animeRelatedEntity.relationType)
+    mangaEntity != null -> RelatedManga(mangaEntity.asExternalModel(), animeRelatedEntity.relationType)
+    else -> error("animeEntity and mangaEntity can't be null at the same time")
+}

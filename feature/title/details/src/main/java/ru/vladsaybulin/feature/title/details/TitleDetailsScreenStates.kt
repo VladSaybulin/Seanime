@@ -22,7 +22,7 @@ import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.model.manga.ranobeKind
 import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.EditableUserRate
@@ -59,7 +59,7 @@ sealed class TitleDetailsState {
         val descriptionSource: String?,
         val scoreStatisticsItems: List<StatisticsItem<Int>>,
         val userRateStatusStatisticItems: List<StatisticsItem<UserRateStatus>>?,
-        val relatedSlice: DataSlice<RelatedEntry>?,
+        val relatedSlice: DataSlice<RelatedTitle>?,
         val allScreenshots: List<Image>,
         val screenshotsSlice: DataSlice<Image>?,
         val videosSlice: DataSlice<Video>?
@@ -109,7 +109,7 @@ internal fun createEditableUserRate(
 
 fun successTitleDetails(
     animeDetails: AnimeDetails,
-    relatedSlice: DataSlice<RelatedEntry>,
+    relatedSlice: DataSlice<RelatedTitle>,
     screenshots: List<Image>,
     videosSlice: DataSlice<Video>
 ) = with(animeDetails) {
@@ -158,7 +158,7 @@ fun successTitleDetails(
 
 fun successTitleDetails(
     mangaDetails: MangaDetails,
-    relatedSlice: DataSlice<RelatedEntry>
+    relatedSlice: DataSlice<RelatedTitle>
 ) = with(mangaDetails) {
     TitleDetailsState.Success(
         entryType = EntryType.Manga,

@@ -48,7 +48,7 @@ import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.MangaDataSource
 import javax.inject.Inject
@@ -79,7 +79,7 @@ class MangaRepository @Inject constructor(
     fun getMangaDetailsStream(mangaId: Long): Flow<MangaDetails> =
         mangaDetailsDao.getMangaDetails(mangaId).map { it.asExternalModel() }
 
-    fun getFirstMangaRelatedStream(mangaId: Long, limit: Int): Flow<List<RelatedEntry>> =
+    fun getFirstMangaRelatedStream(mangaId: Long, limit: Int): Flow<List<RelatedTitle>> =
         mangaDetailsDao.getFirstMangaRelated(mangaId, limit)
             .map { it.map(PopulatedMangaRelated::asExternalModel) }
 
@@ -213,7 +213,7 @@ class MangaRepository @Inject constructor(
             }
         }
 
-    fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedEntry>> =
+    fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedTitle>> =
         mangaDetailsDao.getAllMangaRelatedTitles(mangaId)
             .map { it.map(PopulatedMangaRelated::asExternalModel) }
 

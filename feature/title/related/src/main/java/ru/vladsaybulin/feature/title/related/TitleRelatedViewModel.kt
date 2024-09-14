@@ -12,7 +12,7 @@ import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.feature.title.related.navigation.TitleRelatedScreenRoute
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelatedTitle
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +28,7 @@ class TitleRelatedViewModel @Inject constructor(
         EntryType.Anime -> animeRepository.getAllAnimeRelatedTitles(route.titleId)
         EntryType.Manga -> mangaRepository.getAllMangaRelatedTitles(route.titleId)
     }
-        .map<List<RelatedEntry>, TitleRelatedUiState> { TitleRelatedUiState.Success(it) }
+        .map<List<RelatedTitle>, TitleRelatedUiState> { TitleRelatedUiState.Success(it) }
         .stateIn(
             initialValue = TitleRelatedUiState.Loading,
             started = SharingStarted.WhileSubscribed(5000),
@@ -40,5 +40,5 @@ class TitleRelatedViewModel @Inject constructor(
 sealed class TitleRelatedUiState {
     data object Loading : TitleRelatedUiState()
 
-    class Success(val relatedTitles: List<RelatedEntry>) : TitleRelatedUiState()
+    class Success(val relatedTitles: List<RelatedTitle>) : TitleRelatedUiState()
 }

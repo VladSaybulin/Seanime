@@ -20,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
@@ -44,9 +43,9 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
-import ru.vladsaybulin.core.designsystem.theme.LocalEntryStatusColors
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
+import ru.vladsaybulin.core.ui.RelatedTitleItem
 import ru.vladsaybulin.core.ui.strings.LocalTargetStringsEntry
 import ru.vladsaybulin.core.ui.strings.TargetStringsEntry
 import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
@@ -58,7 +57,6 @@ import ru.vladsaybulin.feature.title.details.content.TitleDescription
 import ru.vladsaybulin.feature.title.details.content.TitleInfo
 import ru.vladsaybulin.feature.title.details.content.TitleName
 import ru.vladsaybulin.feature.title.details.content.TitlePoster
-import ru.vladsaybulin.feature.title.details.content.TitleRelatedItem
 import ru.vladsaybulin.feature.title.details.content.TitleScore
 import ru.vladsaybulin.feature.title.details.content.TitleScreenshots
 import ru.vladsaybulin.feature.title.details.content.TitleSimilarAnimes
@@ -92,12 +90,14 @@ import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.model.person.Person
 import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.related.RelatedEntry
+import ru.vladsaybulin.model.related.RelatedAnime
+import ru.vladsaybulin.model.related.RelatedManga
+import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.search.SeasonOfYear
 import ru.vladsaybulin.model.search.TimePeriodAiring
-import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import java.security.KeyStore.Entry
 
 @Composable
 fun TitleDetailsScreen(
@@ -322,8 +322,7 @@ private fun DetailsContent(
                         gutterSpacer()
                         titleRelated(
                             relatedEntriesSlice = dataSlice,
-                            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-                            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
+                            onTitleClick = navEvents.navigateToTitleDetails,
                             onMoreClick = {
                                 navEvents.navigateToTitleRelated(
                                     detailsState.entryType,
@@ -546,9 +545,8 @@ private fun LazyListScope.titleUserRateStatusDiagram(statisticItems: List<Statis
 }
 
 private fun LazyListScope.titleRelated(
-    relatedEntriesSlice: DataSlice<RelatedEntry>,
-    onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit,
+    relatedEntriesSlice: DataSlice<RelatedTitle>,
+    onTitleClick: (EntryType, Long) -> Unit,
     onMoreClick: () -> Unit
 ) {
     dataSliceHeader(
@@ -558,10 +556,9 @@ private fun LazyListScope.titleRelated(
     )
 
     items(items = relatedEntriesSlice.data) {
-        TitleRelatedItem(
-            relatedEntry = it,
-            onAnimeClick = onAnimeClick,
-            onMangaClick = onMangaClick,
+        RelatedTitleItem(
+            relatedTitle = it,
+            onClick = onTitleClick,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
         )
     }
@@ -761,7 +758,7 @@ fun EntryDetailsScreenPreview() {
             userRateStatusStatisticItems = PreviewUserRateStatusStatistics,
             relatedSlice = DataSlice(
                 data = listOf(
-                    RelatedEntry(
+                    RelatedAnime(
                         anime = Anime(
                             id = 813,
                             name = "Dragon Ball Z",
@@ -778,7 +775,7 @@ fun EntryDetailsScreenPreview() {
                         ),
                         relationType = RelationType.Character
                     ),
-                    RelatedEntry(
+                    RelatedManga(
                         manga = Manga(
                             id = 13,
                             name = "One Piece",
