@@ -9,6 +9,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
 import ru.vladsaybulin.core.ui.anime.AnimeInfoKindAndYearText
@@ -115,7 +116,11 @@ private fun RelatedMangaItem(
                 }
 
                 ShikimoriTextBadge {
-                    Text(relationTypeString(relationType))
+                    Text(
+                        text = relationTypeString(relationType),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
 
