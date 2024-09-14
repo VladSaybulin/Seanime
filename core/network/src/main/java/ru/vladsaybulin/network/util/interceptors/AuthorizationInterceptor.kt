@@ -1,5 +1,6 @@
 package ru.vladsaybulin.network.util.interceptors
 
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
@@ -10,11 +11,13 @@ class AuthorizationInterceptor @Inject constructor(
     private val authorization: ShikimoriAuthorization
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val accessToken = authorization.getFreshAccessToken()
-            ?: return chain.proceed(chain.request())
-        val request = chain.request().newBuilder()
-            .addAuthorizationHeader(accessToken)
-            .build()
-        return chain.proceed(request)
+        return runBlocking {
+            val accessToken = authorization.getFreshAccessToken()
+                ?: return@runBlocking chain.proceed(chain.request())
+            val request = chain.request().newBuilder()
+                .addAuthorizationHeader(accessToken)
+                .build()
+            chain.proceed(request)
+        }
     }
 }

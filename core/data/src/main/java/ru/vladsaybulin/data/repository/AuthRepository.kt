@@ -10,7 +10,7 @@ class AuthRepository @Inject constructor(
 ) {
     val authState: StateFlow<ShikimoriAuthState> = authorization.shikimoriAuthState
 
-    suspend fun signOut() {
-        authorization.signOut()
+    fun logOut() {
+        authorization.logOut()
     }
 }

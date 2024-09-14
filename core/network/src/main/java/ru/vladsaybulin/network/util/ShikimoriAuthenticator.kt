@@ -11,18 +11,18 @@ import javax.inject.Inject
 class ShikimoriAuthenticator @Inject constructor(
     private val authorization: ShikimoriAuthorization
 ) : Authenticator {
-    override fun authenticate(route: Route?, response: Response): Request? {
-        if (response.code != 401) return null
-        val freshAccessToken = authorization.getFreshAccessToken() ?: return null
-        val tokenFromResponse = response.request.getAccessToken() ?: return null
+    override fun authenticate(route: Route?, response: Response): Request? = runBlocking {
+        if (response.code != 401) return@runBlocking null
+        val freshAccessToken = authorization.getFreshAccessToken() ?: return@runBlocking null
+        val tokenFromResponse = response.request.getAccessToken() ?: return@runBlocking null
         if (freshAccessToken == tokenFromResponse) {
-            runBlocking { authorization.signOut() }
-            return response.request.newBuilder()
+            authorization.logOut()
+            return@runBlocking response.request.newBuilder()
                 .removeAuthorizationHeader()
                 .build()
         }
 
-        return response.request.newBuilder()
+        return@runBlocking response.request.newBuilder()
             .replaceAuthorizationHeader(freshAccessToken)
             .build()
     }
