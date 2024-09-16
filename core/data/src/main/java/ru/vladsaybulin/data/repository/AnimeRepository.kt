@@ -215,7 +215,7 @@ class AnimeRepository @Inject constructor(
             databaseTransactionRunner {
                 animeDetailsDao.deleteAnimeSimilarAnimeCrossRef(animeId)
 
-                animeDao.upsertAnimes(animes)
+                animeDao.insertOrIgnoreAnimes(animes)
                 animeDetailsDao.insertAnimeSimilarAnimeCrossReferences(crossRefs)
             }
         }

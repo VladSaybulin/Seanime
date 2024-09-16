@@ -168,7 +168,7 @@ class MangaRepository @Inject constructor(
             databaseTransactionRunner {
                 mangaDetailsDao.deleteMangaSimilarMangaCrossRef(mangaId)
 
-                mangaDao.upsertMangas(mangas)
+                mangaDao.insertOrIgnoreMangas(mangas)
                 mangaDetailsDao.insertMangaSimilarMangaCrossReferences(crossRefs)
             }
         }

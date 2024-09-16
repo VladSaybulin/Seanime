@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.onStart
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.animeShell
-import ru.vladsaybulin.data.model.asPOJO
+import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.util.sync
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CalendarDao
@@ -37,8 +37,8 @@ class CalendarRepository @Inject constructor(
     suspend fun refreshCalendarItems() {
         val response = calendarDataSource.getAllCalendarItems()
         calendarDao.deleteAllItems()
-        animeDao.upsertAnimes(response.map(CalendarItemDto::animeShell))
-        calendarDao.insertCalendarItems(response.map(CalendarItemDto::asPOJO))
+        animeDao.insertOrIgnoreAnimes(response.map(CalendarItemDto::animeShell))
+        calendarDao.insertCalendarItems(response.map(CalendarItemDto::asEntity))
     }
 
     private suspend fun syncCalendarItems() {

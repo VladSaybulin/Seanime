@@ -21,4 +21,7 @@ interface MangaDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceMangas(mangas: List<MangaEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertOrIgnoreMangas(mangas: List<MangaEntity>)
 }

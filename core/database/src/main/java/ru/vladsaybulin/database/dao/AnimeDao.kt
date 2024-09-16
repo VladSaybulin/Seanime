@@ -18,4 +18,7 @@ interface AnimeDao {
 
     @Upsert
     suspend fun upsertAnimes(animes: List<AnimeEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertOrIgnoreAnimes(animes: List<AnimeEntity>)
 }

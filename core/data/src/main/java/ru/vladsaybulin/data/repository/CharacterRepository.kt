@@ -55,11 +55,11 @@ class CharacterRepository @Inject constructor(
         val seyuCrossRef = response.seyuCrossRefs()
 
         databaseTransactionRunner {
-            animeDao.upsertAnimes(animeEntities)
-            mangaDao.insertOrReplaceMangas(mangaEntities)
+            animeDao.insertOrIgnoreAnimes(animeEntities)
+            mangaDao.insertOrIgnoreMangas(mangaEntities)
             personDao.insertOrReplacePersons(personEntities)
 
-            characterDao.insertOrReplaceCharacter(entity)
+            characterDao.insertOrIgnoreCharacter(entity)
             characterDao.insertOrReplaceCharacterDetails(detailsEntity)
 
             characterDao.insertCharacterAnimeCrossReferences(animeCrossRefs)
