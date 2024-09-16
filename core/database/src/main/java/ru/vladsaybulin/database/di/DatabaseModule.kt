@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.vladsaybulin.database.ShikiRoomDatabase
+import ru.vladsaybulin.database.utils.StatsTypeConverter
 import ru.vladsaybulin.database.utils.TextRangesTypeConverter
 import javax.inject.Singleton
 
@@ -19,7 +20,8 @@ class DatabaseModule {
     @Singleton
     fun provideShikiDatabase(
         @ApplicationContext applicationContext: Context,
-        textRangesTypeConverter: TextRangesTypeConverter
+        textRangesTypeConverter: TextRangesTypeConverter,
+        statsTypeConverter: StatsTypeConverter,
     ): ShikiRoomDatabase =
         Room.databaseBuilder(
             checkNotNull(applicationContext.applicationContext),
@@ -27,6 +29,7 @@ class DatabaseModule {
             "shiki_database"
         )
             .addTypeConverter(textRangesTypeConverter)
+            .addTypeConverter(statsTypeConverter)
             .build()
 
 }

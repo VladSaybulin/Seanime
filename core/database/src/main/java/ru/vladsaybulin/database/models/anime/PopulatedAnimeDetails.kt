@@ -6,6 +6,7 @@ import androidx.room.Relation
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.genre.asExternalModel
+import ru.vladsaybulin.database.models.stats.asExternalModel
 import ru.vladsaybulin.database.models.text.asExternalModel
 import ru.vladsaybulin.model.anime.AnimeDetails
 
@@ -69,8 +70,8 @@ fun PopulatedAnimeDetails.asExternalModel(): AnimeDetails = AnimeDetails(
     genres = genres.map { it.asExternalModel() },
     subbers = animeDetailsEntity.subbers,
     dubbers = animeDetailsEntity.dubbers,
-    scoreStats = animeDetailsEntity.scoreStats,
-    userRateStatusStats = animeDetailsEntity.statusStats,
+    scoreStats = animeDetailsEntity.scoreStats.asExternalModel(),
+    userRateStatusStats = animeDetailsEntity.statusStats.asExternalModel(),
     studios = studios.map { it.asExternalModel() },
     season = animeDetailsEntity.season?.asExternalModel()
 )

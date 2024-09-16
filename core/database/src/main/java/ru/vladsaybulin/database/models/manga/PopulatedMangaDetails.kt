@@ -6,8 +6,10 @@ import androidx.room.Relation
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.genre.asExternalModel
+import ru.vladsaybulin.database.models.stats.asExternalModel
 import ru.vladsaybulin.database.models.text.asExternalModel
 import ru.vladsaybulin.model.common.DataSlice
+import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.manga.MangaDetails
 
 data class PopulatedMangaDetails(
@@ -64,7 +66,7 @@ fun PopulatedMangaDetails.asExternalModel(): MangaDetails = MangaDetails(
     description = mangaDetailsEntity.description?.asExternalModel(),
     descriptionSource = mangaDetailsEntity.descriptionSource,
     genres = genres.map { it.asExternalModel() },
-    scoreStats = mangaDetailsEntity.scoreStats,
-    userRateStatusStats = mangaDetailsEntity.statusStats,
+    scoreStats = mangaDetailsEntity.scoreStats.asExternalModel(),
+    userRateStatusStats = mangaDetailsEntity.statusStats.asExternalModel(),
     publishers = publishers.map { it.asExternalModel() }
 )

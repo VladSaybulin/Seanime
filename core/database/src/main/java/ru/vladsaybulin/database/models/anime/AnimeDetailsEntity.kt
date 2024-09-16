@@ -7,6 +7,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.database.models.common.SeasonPOJO
+import ru.vladsaybulin.database.models.stats.StatsProto
 import ru.vladsaybulin.database.models.text.SeanimeTextPOJO
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.common.StatisticsItem
@@ -65,8 +66,8 @@ class AnimeDetailsEntity(
     val dubbers: List<String>?,
 
     @ColumnInfo("score_stats")
-    val scoreStats: List<StatisticsItem<Int>>?,
+    val scoreStats: StatsProto<Int>,
 
     @ColumnInfo("status_stats")
-    val statusStats: List<StatisticsItem<UserRateStatus>>?
+    val statusStats: StatsProto<UserRateStatus>
 )

@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.vladsaybulin.database.models.common.SeasonPOJO
+import ru.vladsaybulin.database.models.stats.StatsProto
 import ru.vladsaybulin.database.models.text.SeanimeTextPOJO
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -35,8 +36,8 @@ data class MangaDetailsEntity(
     val descriptionSource: String?,
 
     @ColumnInfo("score_stats")
-    val scoreStats: List<StatisticsItem<Int>>?,
+    val scoreStats: StatsProto<Int>,
 
     @ColumnInfo("status_stats")
-    val statusStats: List<StatisticsItem<UserRateStatus>>?
+    val statusStats: StatsProto<UserRateStatus>
 )

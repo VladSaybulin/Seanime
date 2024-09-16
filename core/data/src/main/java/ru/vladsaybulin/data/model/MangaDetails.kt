@@ -5,6 +5,8 @@ import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.MangaGenreCrossRef
 import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
 import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
+import ru.vladsaybulin.database.models.stats.StatsItemProto
+import ru.vladsaybulin.database.models.stats.StatsProto
 import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
 
 fun NetworkMangaDetails.asMangaDetailsEntity() =
@@ -16,8 +18,8 @@ fun NetworkMangaDetails.asMangaDetailsEntity() =
         licenseNameRu = licenseNameRu,
         description = descriptionHtml?.asSeanimeText()?.asSeanimeTextPOJO(),
         descriptionSource = descriptionSource,
-        scoreStats = scoreStats?.map { it.asExternalModel() },
-        statusStats = userRateStatusStats?.map { it.asExternalModel() }
+        scoreStats = scoreStats.asDbModel(),
+        statusStats = userRateStatusStats.asDbModel()
     )
 
 fun NetworkMangaDetails.asMangaEntity() = MangaEntity(

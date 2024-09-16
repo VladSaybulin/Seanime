@@ -8,6 +8,7 @@ import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
 import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
 import ru.vladsaybulin.database.models.common.SeasonPOJO
+import ru.vladsaybulin.database.models.stats.StatsProto
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 
 fun NetworkAnimeDetails.asAnimeDetailsEntity() = AnimeDetailsEntity(
@@ -23,8 +24,8 @@ fun NetworkAnimeDetails.asAnimeDetailsEntity() = AnimeDetailsEntity(
     descriptionSource = descriptionSource,
     subbers = subbers,
     dubbers = dubbers,
-    scoreStats = scoreStats?.map { it.asExternalModel() },
-    statusStats = userRateStatusStats?.map { it.asExternalModel() },
+    scoreStats = scoreStats.asDbModel(),
+    statusStats = userRateStatusStats.asDbModel(),
     season = season?.let { SeasonPOJO(it.seasonOfYear, year = it.year) }
 )
 
