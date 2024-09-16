@@ -42,7 +42,7 @@ class ShikimoriAuthorization @Inject internal constructor(
         appScope.launch { readAuthState() }
     }
 
-    suspend fun getFreshAccessToken(): String? = if (appAuthState != null) {
+    suspend fun getFreshAccessToken(): String? = if (appAuthState?.isAuthorized == true) {
         suspendCoroutine { cont ->
             appAuthState?.performActionWithFreshTokens(service.get()) { freshAccessToken, _, exception ->
                 if (exception != null) {
@@ -68,12 +68,12 @@ class ShikimoriAuthorization @Inject internal constructor(
     }
 
     fun logOut() {
-        appAuthState = AuthState()
+        appAuthState = null
         onAuthStateUpdated()
     }
 
     private fun onAuthStateUpdated(skipWrite: Boolean = false) {
-        _shikimoriAuthState.value = if (appAuthState != null && appAuthState!!.isAuthorized) {
+        _shikimoriAuthState.value = if (appAuthState?.isAuthorized == true) {
             ShikimoriAuthState.LOGGED_IN
         } else {
             ShikimoriAuthState.LOGGED_OUT
@@ -100,13 +100,13 @@ class ShikimoriAuthorization @Inject internal constructor(
     fun authorizationFailed(exception: AuthorizationException) {
         appAuthState = null
         onAuthStateUpdated()
-        Log.e("ShikimoriAuth", "Authorization failed with exception: $exception")
+        Log.e("ShikimoriAuthorization", "Authorization failed with exception: $exception")
     }
 
     private fun refreshTokenFailed(exception: AuthorizationException) {
         appAuthState = null
         onAuthStateUpdated()
-        Log.e("ShikimoriAuth", "Refresh token failed with exception: $exception")
+        Log.e("ShikimoriAuthorization", "Refresh token failed with exception: $exception")
     }
 }
 
