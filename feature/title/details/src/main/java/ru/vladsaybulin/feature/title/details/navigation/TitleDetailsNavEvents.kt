@@ -17,13 +17,13 @@ data class TitleDetailsNavEvents(
     val navigateToTitleCharacters: (EntryType, Long) -> Unit,
     val navigateToTitleScreenshots: (EntryType, Long) -> Unit,
     val navigateToTitleVideos: (EntryType, Long) -> Unit,
-    val navigateToAuthorization: () -> Unit,
     val navigateToSearchByGenre: (type: SearchType, kind: GenreKind, genreId: Long) -> Unit,
     val navigateToSearchByStudio: (SearchType, studioId: Long) -> Unit,
     val navigateToSearchByPublisher: (SearchType, publisherId: Long) -> Unit,
     val navigateUp: () -> Unit,
     val showUserRateEditor: (EditableUserRate) -> Unit,
-    val showFullScreenImage: (allImages: List<Image>, initialImageIndex: Int) -> Unit
+    val showFullScreenImage: (allImages: List<Image>, initialImageIndex: Int) -> Unit,
+    val authWithShikimori: () -> Unit
 )
 
 /**
@@ -39,11 +39,11 @@ internal val IdleTitleDetailsNavEvents = TitleDetailsNavEvents(
     navigateToTitleCharacters = { _, _ -> },
     navigateToTitleScreenshots = { _, _ -> },
     navigateToTitleVideos = { _, _ -> },
-    navigateToAuthorization = { },
     navigateToSearchByGenre = { _, _, _ -> },
     navigateToSearchByStudio = { _, _ -> },
     navigateToSearchByPublisher = { _, _ -> },
     navigateUp = { },
     showUserRateEditor = { },
-    showFullScreenImage = { _, _ -> }
+    showFullScreenImage = { _, _ -> },
+    authWithShikimori = { }
 )

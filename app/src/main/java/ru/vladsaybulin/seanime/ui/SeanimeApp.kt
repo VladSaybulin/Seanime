@@ -82,9 +82,6 @@ fun SeanimeApp(
                         showUserRateEditor = { editableUserRate = it },
                         showFullscreenImage = { images, startIndex ->
                             scope.launch { fullScreenImageState.show(images, startIndex) }
-                        },
-                        showRequestAuthorization = {
-                            
                         }
                     )
                 )

@@ -50,6 +50,7 @@ import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
 import ru.vladsaybulin.feature.title.details.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.content.PreviewUserRateStatusStatistics
+import ru.vladsaybulin.feature.title.details.content.RequireAuthDialog
 import ru.vladsaybulin.feature.title.details.content.TitleAuthors
 import ru.vladsaybulin.feature.title.details.content.TitleCharacters
 import ru.vladsaybulin.feature.title.details.content.TitleDescription
@@ -177,6 +178,7 @@ private fun DetailsContent(
     navEvents: TitleDetailsNavEvents
 ) {
     var showUserRateStatusSelection by remember { mutableStateOf(false) }
+    val (showRequireAuthDialog, setShowRequireAuthDialog) = remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -219,7 +221,7 @@ private fun DetailsContent(
                         expanded = expandedFab,
                         onClick = {
                             when (userRateState) {
-                                is UserRateState.NotAuthorized -> navEvents.navigateToAuthorization()
+                                is UserRateState.NotAuthorized -> setShowRequireAuthDialog(true)
                                 is UserRateState.Success -> navEvents.showUserRateEditor(
                                     createEditableUserRate(detailsState, userRateState)
                                 )
@@ -392,6 +394,18 @@ private fun DetailsContent(
                     }
                 }
             }
+        }
+
+        if (showRequireAuthDialog) {
+            RequireAuthDialog(
+                authWithShikimori = {
+                    navEvents.authWithShikimori()
+                    setShowRequireAuthDialog(false)
+                },
+                onDismissRequest = {
+                    setShowRequireAuthDialog(false)
+                }
+            )
         }
 
         if (showUserRateStatusSelection) {

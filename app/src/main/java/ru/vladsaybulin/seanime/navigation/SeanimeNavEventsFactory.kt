@@ -33,7 +33,6 @@ class SeanimeNavEventsFactory(
     private val navController: NavHostController,
     private val navigateToUrl: (String) -> Unit,
     private val showUserRateEditor: (EditableUserRate) -> Unit,
-    private val showRequestAuthorization: () -> Unit,
     private val runAuthorization: () -> Unit,
     private val showFullscreenImage: (images: List<Image>, initialIndex: Int) -> Unit
 ) {
@@ -67,7 +66,6 @@ class SeanimeNavEventsFactory(
         navigateToPersonDetails = { },
         navigateToUrl = navigateToUrl,
         navigateToTitleAuthors = navController::navigateToTitleAuthors,
-        navigateToAuthorization = showRequestAuthorization,
         navigateToSearchByGenre = navController::navigateToSearchByGenre,
         navigateToSearchByStudio = navController::navigateToSearchScreenByStudioOrPublisher,
         navigateToSearchByPublisher = navController::navigateToSearchScreenByStudioOrPublisher,
@@ -77,7 +75,8 @@ class SeanimeNavEventsFactory(
         navigateToTitleRelated = navController::navigateToTitleRelated,
         navigateToTitleCharacters = navController::navigateToTitleCharacters,
         navigateToTitleVideos = navController::navigateToAnimeVideos,
-        navigateToTitleScreenshots = navController::navigateToAnimeScreenshots
+        navigateToTitleScreenshots = navController::navigateToAnimeScreenshots,
+        authWithShikimori = runAuthorization
     )
 
     fun createTitleAuthorsNavEvents() = TitleAuthorsNavEvents(

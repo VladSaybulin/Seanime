@@ -82,6 +82,14 @@
     <string name="feature_title_details_user_rate_loading">Загрузка…</string>
     <string name="feature_title_details_user_rate_add">Добавить</string>
 
+    <string name="feature_title_details_require_auth_title">Авторизация</string>
+    <string name="feature_title_details_require_auth_anime">аниме</string>
+    <string name="feature_title_details_require_auth_manga">мангу</string>
+    <string name="feature_title_details_require_auth_message">Чтобы добавить %s в свой список, необходимо войти в аккаунт</string>
+    <string name="feature_title_details_require_auth_with_shikimori">Войти через Shikimori</string>
+    <string name="feature_title_details_require_close">Закрыть</string>
+
+
     <string-array name="feature_details_info_seasons">
         <item>Зима</item>
         <item>Весна</item>
