@@ -80,6 +80,7 @@ dependencies {
     implementation(project(":feature:title:characters"))
     implementation(project(":feature:title:screenshots"))
     implementation(project(":feature:title:videos"))
+    implementation(project(":feature:profile"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)

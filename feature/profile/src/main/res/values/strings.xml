@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_profile_title">Профиль</string>
+    <string name="feature_profile_logout">Выйти из аккаунта</string>
+    <string name="feature_profile_not_authorized_headline">Авторизация</string>
+    <string name="feature_profile_not_authorized_message">Для разблокировки всего функционала, необходимо войти в аккаунт</string>
+    <string name="feature_profile_not_authorized_login_with_shikimori">Войти через Shikimori</string>
+    <string name="feature_profile_logout_confirm">Выйти</string>
+    <string name="feature_profile_logout_dismiss">Отмена</string>
+    <string name="feature_profile_logout_title">Выйти из аккаунта?</string>
+    <string name="feature_profile_logout_message">При выходе из аккаунта некоторые функции приложения станут недоступны</string>
+</resources>

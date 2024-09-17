@@ -1,15 +1,17 @@
 package ru.vladsaybulin.data.repository
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import ru.vladsaybulin.common.network.di.ApplicationScope
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.mapNotNull
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.database.dao.UsersDao
+import ru.vladsaybulin.database.models.user.asExternalModel
 import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.network.datasource.UserDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,28 +21,25 @@ class UserRepository @Inject constructor(
     private val userDataSource: UserDataSource,
     private val usersDao: UsersDao,
     private val prefsDataSource: ShikiPreferencesDataSource,
-    @ApplicationScope appScope: CoroutineScope,
-    shikimoriAuthorization: ShikimoriAuthorization
+    private val shikimoriAuthorization: ShikimoriAuthorization
 ) {
-    init {
-        appScope.launch {
-            shikimoriAuthorization.shikimoriAuthState.drop(1).collect { state ->
-                when (state) {
-                    ShikimoriAuthState.LOGGED_OUT -> prefsDataSource.setMyId(null)
-                    ShikimoriAuthState.LOGGED_IN -> loadAndSaveMe()
-                }
-            }
-        }
+    suspend fun getMyId(): Long? =
+        if (shikimoriAuthorization.shikimoriAuthState.value == ShikimoriAuthState.LOGGED_IN) {
+            prefsDataSource.myId.first() ?: updateMeAndReturnMyId()
+        } else null
+
+    fun getMeStream(): Flow<BriefUser?> = prefsDataSource.myId.flatMapLatest { myId ->
+        if (myId != null) getUserStream(myId) else flowOf(null)
     }
 
-    suspend fun getMyId(): Long? =
-        prefsDataSource.myId.first()
+    fun getUserStream(id: Long): Flow<BriefUser> =
+        usersDao.getUserById(id).mapNotNull { it?.asExternalModel() }
 
-    private suspend fun loadAndSaveMe() {
+    private suspend fun updateMeAndReturnMyId(): Long {
         val user = userDataSource.whoAmI()?.asExternalModel()
         checkNotNull(user) { "whoAmI returned null" }
         usersDao.insertOrReplaceUser(user)
         prefsDataSource.setMyId(user.id)
+        return user.id
     }
-
 }

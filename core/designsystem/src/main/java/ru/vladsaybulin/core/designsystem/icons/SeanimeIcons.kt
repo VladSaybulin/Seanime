@@ -3,6 +3,7 @@ package ru.vladsaybulin.core.designsystem.icons
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -37,6 +38,7 @@ import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object SeanimeIcons {
+    val Logout = Icons.AutoMirrored.Filled.Logout
     val OutlinedInfo = Icons.Outlined.Info
     val Edit = Icons.Default.Edit
     val ArrowDownward = Icons.Default.ArrowDownward

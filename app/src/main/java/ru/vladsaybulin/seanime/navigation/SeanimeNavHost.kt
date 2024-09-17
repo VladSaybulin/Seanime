@@ -17,6 +17,7 @@ import ru.vladsaybulin.feature.title.characters.navigation.titleCharactersScreen
 import ru.vladsaybulin.feature.title.related.navigation.titleRelatedScreen
 import ru.vladsaybulin.feature.title.screenshots.navigation.animeScreenshotsScreen
 import ru.vladsaybulin.feature.title.videos.navigation.animeVideosScreen
+import ru.vladsaybulin.feature.profile.navigation.profileGraph
 
 @Composable
 fun SeanimeNavHost(
@@ -39,6 +40,9 @@ fun SeanimeNavHost(
         }
         calendarGraph(navEventsFactory.createCalendarNavEvents()) {
             sharedScreens(navEventsFactory, TopLevelDestination.CALENDAR)
+        }
+        profileGraph {
+            sharedScreens(navEventsFactory, TopLevelDestination.PROFILE)
         }
     }
 }
