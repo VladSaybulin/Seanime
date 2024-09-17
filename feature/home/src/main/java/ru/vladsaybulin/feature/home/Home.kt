@@ -134,7 +134,7 @@ private fun HomeContent(
             newsTopicsHeader()
             newsTopicsFeed(
                 newsTopics = uiState.newsTopics,
-                onTopicClick = {},
+                onTopicClick = { navEvents.navigateToUrl("https://shikimori.one/forum/news/${it.id}") },
                 onUserClick = {}
             )
             allNewsTopicsButton(onAllNewsTopicsClick = navEvents.navigateToAllNewsTopics)

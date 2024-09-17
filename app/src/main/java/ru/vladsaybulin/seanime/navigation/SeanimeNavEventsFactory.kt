@@ -40,7 +40,7 @@ class SeanimeNavEventsFactory(
         navigateToTitleDetails = navController::navigateToTitleDetails,
         navigateToSearchAnimeOngoing = { navController.navigateToSearchScreenByStatus(SearchType.Anime, EntryStatus.Ongoing) },
         navigateToUrl = navigateToUrl,
-        navigateToAllNewsTopics = {  },
+        navigateToAllNewsTopics = { navigateToUrl("https://shikimori.one/forum/news") },
         showUserRateEditor = showUserRateEditor
     )
 
