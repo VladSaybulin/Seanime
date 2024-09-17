@@ -411,7 +411,6 @@ private fun DetailsContent(
         if (showUserRateStatusSelection) {
             UserRateStatusSelectionBottomSheet(
                 enabledAutocorrect = enabledAutocorrect,
-                entryType = detailsState.entryType,
                 entryStatus = detailsState.status,
                 onStatusClick = {
                     onCreateUserRate(it)
