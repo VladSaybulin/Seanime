@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.domain
+package ru.vladsaybulin.core.domain.calendar
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -43,7 +43,7 @@ import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.domain.CalendarDay
+import ru.vladsaybulin.core.domain.calendar.CalendarDay
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
