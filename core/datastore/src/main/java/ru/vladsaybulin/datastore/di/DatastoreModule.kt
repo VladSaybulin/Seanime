@@ -14,8 +14,8 @@ import kotlinx.coroutines.CoroutineScope
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.network.di.ApplicationScope
-import ru.vladsaybulin.core.datastore.proto.ShikiPreferences
-import ru.vladsaybulin.datastore.ShikiPreferencesSerializer
+import ru.vladsaybulin.core.datastore.proto.SeanimePreferences
+import ru.vladsaybulin.datastore.SeanimePreferencesSerializer
 import javax.inject.Singleton
 
 @Module
@@ -24,17 +24,17 @@ class DatastoreModule {
 
     @Provides
     @Singleton
-    internal fun providesShikiPreferencesDataStore(
+    internal fun providesSeanimePreferencesDataStore(
         @ApplicationContext context: Context,
         @Dispatcher(IO) ioDispatcher: CoroutineDispatcher,
         @ApplicationScope scope: CoroutineScope,
-        shikiPreferencesSerializer: ShikiPreferencesSerializer,
-    ): DataStore<ShikiPreferences> =
+        seanimePreferencesSerializer: SeanimePreferencesSerializer,
+    ): DataStore<SeanimePreferences> =
         DataStoreFactory.create(
-            serializer = shikiPreferencesSerializer,
+            serializer = seanimePreferencesSerializer,
             scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
         ) {
-            context.dataStoreFile("shiki_preferences.proto.pb")
+            context.dataStoreFile("seanime_preferences.proto.pb")
         }
 
 }

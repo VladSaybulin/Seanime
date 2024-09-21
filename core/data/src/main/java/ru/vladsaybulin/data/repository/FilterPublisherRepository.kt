@@ -9,7 +9,7 @@ import ru.vladsaybulin.data.util.sync
 import ru.vladsaybulin.database.dao.FiltersPublisherDao
 import ru.vladsaybulin.database.models.filters.FilterPublisherEntity
 import ru.vladsaybulin.database.models.filters.asExternalModel
-import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
+import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.network.datasource.PublisherDataSource
 import javax.inject.Inject
@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.days
 class FilterPublisherRepository @Inject constructor(
     private val publisherDataSource: PublisherDataSource,
     private val filtersPublisherDao: FiltersPublisherDao,
-    private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
+    private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
@@ -37,8 +37,8 @@ class FilterPublisherRepository @Inject constructor(
     private suspend fun syncPublishers() {
         sync(
             ttl = PUBLISHERS_TTL,
-            lastRequestDateFlow = shikiPreferencesDataSource.publishersLastRequestDate,
-            updateLastRequest = shikiPreferencesDataSource::setLastPublishersRequestDate
+            lastRequestDateFlow = seanimePreferencesDataSource.publishersLastRequestDate,
+            updateLastRequest = seanimePreferencesDataSource::setLastPublishersRequestDate
         ) {
             val response = publisherDataSource.getPublishers()
             filtersPublisherDao.deleteAllFilterPublishers()

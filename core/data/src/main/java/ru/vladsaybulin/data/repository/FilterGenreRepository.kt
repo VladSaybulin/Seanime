@@ -9,7 +9,7 @@ import ru.vladsaybulin.data.util.sync
 import ru.vladsaybulin.database.dao.FilterGenreDao
 import ru.vladsaybulin.database.models.filters.FilterGenreEntity
 import ru.vladsaybulin.database.models.filters.asExternalModel
-import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
+import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.days
 class FilterGenreRepository @Inject constructor(
     private val genreDataSource: GenreDataSource,
     private val filtersGenreDao: FilterGenreDao,
-    private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
+    private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend fun getGenreById(entryType: EntryType, genreId: Long): Genre? =
@@ -41,12 +41,12 @@ class FilterGenreRepository @Inject constructor(
         sync(
             ttl = GENRES_TTL,
             lastRequestDateFlow = when (entryType) {
-                EntryType.Anime -> shikiPreferencesDataSource.animeGenresLastRequestDate
-                EntryType.Manga -> shikiPreferencesDataSource.mangaGenresLastRequestDate
+                EntryType.Anime -> seanimePreferencesDataSource.animeGenresLastRequestDate
+                EntryType.Manga -> seanimePreferencesDataSource.mangaGenresLastRequestDate
             },
             updateLastRequest = when (entryType) {
-                EntryType.Anime -> shikiPreferencesDataSource::setLastAnimeGenresRequestDate
-                EntryType.Manga -> shikiPreferencesDataSource::setLastMangaGenresRequestDate
+                EntryType.Anime -> seanimePreferencesDataSource::setLastAnimeGenresRequestDate
+                EntryType.Manga -> seanimePreferencesDataSource::setLastMangaGenresRequestDate
             }
         ) {
             val response = genreDataSource.getGenres(entryType)

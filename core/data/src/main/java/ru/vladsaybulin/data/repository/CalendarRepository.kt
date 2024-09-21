@@ -14,7 +14,7 @@ import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CalendarDao
 import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
 import ru.vladsaybulin.database.models.calendar.asExternalModel
-import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
+import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.network.datasource.CalendarDataSource
 import ru.vladsaybulin.network.models.CalendarItemDto
@@ -25,7 +25,7 @@ class CalendarRepository @Inject constructor(
     private val calendarDataSource: CalendarDataSource,
     private val calendarDao: CalendarDao,
     private val animeDao: AnimeDao,
-    private val shikiPreferencesDataSource: ShikiPreferencesDataSource,
+    private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     fun getCalendarItems(): Flow<List<CalendarItem>> =
@@ -44,8 +44,8 @@ class CalendarRepository @Inject constructor(
     private suspend fun syncCalendarItems() {
         sync(
             ttl = CALENDAR_TTL,
-            lastRequestDateFlow = shikiPreferencesDataSource.calendarLastRequestDate,
-            updateLastRequest = shikiPreferencesDataSource::setLastCalendarRequestDate,
+            lastRequestDateFlow = seanimePreferencesDataSource.calendarLastRequestDate,
+            updateLastRequest = seanimePreferencesDataSource::setLastCalendarRequestDate,
             refresh = ::refreshCalendarItems
         )
     }

@@ -3,7 +3,7 @@ syntax = "proto3";
 option java_package = "ru.vladsaybulin.core.datastore.proto";
 option java_multiple_files = true;
 
-message ShikiPreferences {
+message SeanimePreferences {
   int64 myId = 1;
   int64 lastCalendarRequestDate = 2;
   int64 lastAnimeGenresRequestDate = 3;

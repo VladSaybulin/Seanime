@@ -9,7 +9,7 @@ import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.database.dao.UsersDao
 import ru.vladsaybulin.database.models.user.asExternalModel
-import ru.vladsaybulin.datastore.ShikiPreferencesDataSource
+import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.network.datasource.UserDataSource
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 class UserRepository @Inject constructor(
     private val userDataSource: UserDataSource,
     private val usersDao: UsersDao,
-    private val prefsDataSource: ShikiPreferencesDataSource,
+    private val prefsDataSource: SeanimePreferencesDataSource,
     private val shikimoriAuthorization: ShikimoriAuthorization
 ) {
     suspend fun getMyId(): Long? =
