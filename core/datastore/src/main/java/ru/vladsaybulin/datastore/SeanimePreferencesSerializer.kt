@@ -10,7 +10,9 @@ import javax.inject.Inject
 
 class SeanimePreferencesSerializer @Inject constructor() : Serializer<SeanimePreferences> {
 
-    override val defaultValue: ShikiPreferences = ShikiPreferences.getDefaultInstance()
+    override val defaultValue: SeanimePreferences = SeanimePreferences.getDefaultInstance().toBuilder()
+        .setMyId(NULL_MY_ID)
+        .build()
 
     override suspend fun readFrom(input: InputStream): SeanimePreferences =
         try {
