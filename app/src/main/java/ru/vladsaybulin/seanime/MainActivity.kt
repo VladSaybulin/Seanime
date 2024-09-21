@@ -11,7 +11,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import dagger.hilt.android.AndroidEntryPoint
-import ru.vladsaybulin.core.auth.ShikimoriLoginAction
+import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import ru.vladsaybulin.seanime.ui.SeanimeApp
 import ru.vladsaybulin.seanime.ui.rememberSeanimeAppState
 import javax.inject.Inject
@@ -20,13 +20,13 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var loginAction: ShikimoriLoginAction
+    lateinit var shikimoriAuthorization: ShikimoriAuthorization
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        loginAction.register(this)
+        shikimoriAuthorization.registerLoginAction(this)
 
         enableEdgeToEdge()
 
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                         val intent = CustomTabsIntent.Builder().build()
                         intent.launchUrl(this@MainActivity, Uri.parse(url))
                     },
-                    onAuth = loginAction::invoke
+                    onAuth = shikimoriAuthorization::login
                 )
             }
         }

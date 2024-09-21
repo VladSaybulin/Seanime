@@ -11,7 +11,7 @@ import ru.vladsaybulin.database.models.user.UserEntity
 interface UsersDao {
 
     @Query("SELECT * FROM users WHERE id = :id")
-    fun getUserById(id: Long) : Flow<UserEntity?>
+    fun getUserById(id: Long) : Flow<UserEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOrReplaceUser(user: UserEntity)

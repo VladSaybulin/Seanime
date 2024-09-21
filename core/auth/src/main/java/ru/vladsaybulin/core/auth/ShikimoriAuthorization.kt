@@ -2,6 +2,8 @@ package ru.vladsaybulin.core.auth
 
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.edit
 import dagger.Lazy
 import kotlinx.coroutines.CoroutineDispatcher
@@ -12,7 +14,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 import ru.vladsaybulin.common.network.Dispatcher
@@ -30,6 +31,7 @@ class ShikimoriAuthorization @Inject internal constructor(
     private val sharedPreferences: SharedPreferences,
     private val client: Lazy<ClientAuthentication>,
     private val service: Lazy<AuthorizationService>,
+    private val contract: Lazy<ShikimoriAuthorizationContract>,
     @ApplicationScope private val appScope: CoroutineScope,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
@@ -37,6 +39,8 @@ class ShikimoriAuthorization @Inject internal constructor(
 
     private val _shikimoriAuthState = MutableStateFlow(ShikimoriAuthState.LOGGED_OUT)
     val shikimoriAuthState = _shikimoriAuthState.asStateFlow()
+
+    private var loginLauncher: ActivityResultLauncher<Unit>? = null
 
     init {
         appScope.launch { readAuthState() }
@@ -55,21 +59,35 @@ class ShikimoriAuthorization @Inject internal constructor(
         }
     } else null
 
-    internal fun logIn(authResponse: AuthorizationResponse) {
-        val request = authResponse.createTokenExchangeRequest()
-        service.get().performTokenRequest(request, client.get()) { tokenResponse, exception ->
-            if (tokenResponse != null) {
-                appAuthState = AuthState(authResponse, tokenResponse, null)
-                onAuthStateUpdated()
-            } else {
-                refreshTokenFailed(checkNotNull(exception))
-            }
-        }
+    fun login() {
+        checkNotNull(loginLauncher) { "Login action not registered" }.launch(Unit)
     }
 
-    fun logOut() {
+    fun logout() {
         appAuthState = null
         onAuthStateUpdated()
+    }
+
+    fun registerLoginAction(activity: ComponentActivity) {
+        loginLauncher = activity.registerForActivityResult(contract.get()) { result ->
+            if (result == null) return@registerForActivityResult
+
+            val (authResponse, exception) = result
+
+            if (authResponse != null) {
+                val request = authResponse.createTokenExchangeRequest()
+                service.get().performTokenRequest(request, client.get()) { tokenResponse, exception ->
+                    if (tokenResponse != null) {
+                        appAuthState = AuthState(authResponse, tokenResponse, null)
+                        onAuthStateUpdated()
+                    } else {
+                        refreshTokenFailed(checkNotNull(exception))
+                    }
+                }
+            } else {
+                authorizationFailed(checkNotNull(exception))
+            }
+        }
     }
 
     private fun onAuthStateUpdated(skipWrite: Boolean = false) {
@@ -97,7 +115,7 @@ class ShikimoriAuthorization @Inject internal constructor(
         onAuthStateUpdated(skipWrite = true)
     }
 
-    fun authorizationFailed(exception: AuthorizationException) {
+    private fun authorizationFailed(exception: AuthorizationException) {
         appAuthState = null
         onAuthStateUpdated()
         Log.e("ShikimoriAuthorization", "Authorization failed with exception: $exception")

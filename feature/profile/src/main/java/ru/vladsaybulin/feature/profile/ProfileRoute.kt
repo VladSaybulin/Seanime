@@ -50,21 +50,21 @@ fun ProfileRoute(
 
     ProfileScreen(
         state = state,
-        onLogout = { },
-        onLoginWithShikimori = { }
+        onLogout = viewModel::logout,
+        onLoginViaShikimori = viewModel::loginViaShikimori
     )
 }
 
 @Composable
 private fun ProfileScreen(
     state: ProfileUiState,
-    onLoginWithShikimori: () -> Unit,
+    onLoginViaShikimori: () -> Unit,
     onLogout: () -> Unit
 ) {
     Box(modifier = Modifier.padding(LocalScreenContentPadding.current)) {
         ProfileContent(
             state = state,
-            onLoginWithShikimori = onLoginWithShikimori,
+            onLoginViaShikimori = onLoginViaShikimori,
             onLogout = onLogout
         )
     }
@@ -74,7 +74,7 @@ private fun ProfileScreen(
 @Composable
 private fun ProfileContent(
     state: ProfileUiState,
-    onLoginWithShikimori: () -> Unit,
+    onLoginViaShikimori: () -> Unit,
     onLogout: () -> Unit,
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -100,7 +100,7 @@ private fun ProfileContent(
         ) {
             when (state) {
                 ProfileUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                ProfileUiState.NotAuthorized -> NotAuthorizedBody(onLoginWithShikimori = onLoginWithShikimori)
+                ProfileUiState.NotAuthorized -> NotAuthorizedBody(onLoginViaShikimori = onLoginViaShikimori)
                 is ProfileUiState.Success -> ProfileBody(state = state)
             }
         }
@@ -142,13 +142,13 @@ private fun ProfileTopBar(
 }
 
 @Composable
-private fun NotAuthorizedBody(onLoginWithShikimori: () -> Unit) {
+private fun NotAuthorizedBody(onLoginViaShikimori: () -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
         Text(stringResource(id = R.string.feature_profile_not_authorized_headline))
         Text(stringResource(id = R.string.feature_profile_not_authorized_message))
-        Button(onClick = onLoginWithShikimori) {
+        Button(onClick = onLoginViaShikimori) {
             Text(stringResource(id = R.string.feature_profile_not_authorized_login_with_shikimori))
         }
     }

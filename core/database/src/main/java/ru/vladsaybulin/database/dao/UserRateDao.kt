@@ -142,6 +142,9 @@ interface UserRateDao {
     suspend fun deleteAll()
 
     @Query("DELETE FROM user_rates WHERE id IN (:ids)")
-    fun deleteUserRatesByIds(ids: List<Long>)
+    suspend fun deleteUserRatesByIds(ids: List<Long>)
+
+    @Query("DELETE FROM user_rates")
+    suspend fun deleteAllUserRates()
 
 }
