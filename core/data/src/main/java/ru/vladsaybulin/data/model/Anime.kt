@@ -8,7 +8,7 @@ import ru.vladsaybulin.network.models.NetworkAnime
 fun NetworkAnime.asEntity() = AnimeEntity(
     id = id,
     originalName = originalName,
-    russianName = russianName,
+    russianName = russianName?.ifEmpty { null },
     poster = poster?.asPOJO(),
     kind = kind,
     status = status,
