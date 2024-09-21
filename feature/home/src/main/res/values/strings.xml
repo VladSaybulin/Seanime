@@ -6,4 +6,5 @@
     <string name="feature_home_news_topics">Новости</string>
     <string name="feature_home_all_news_topics">Все новости</string>
     <string name="feature_home_app_name">Seanime</string>
+    <string name="feature_home_anime_ongoing_header_more">Показать все аниме, которые сейчас выходят</string>
 </resources>

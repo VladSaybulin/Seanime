@@ -1,6 +1,7 @@
 package ru.vladsaybulin.feature.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.pager.HorizontalPager
@@ -20,6 +22,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
+import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
@@ -113,35 +118,40 @@ private fun HomeContent(
             modifier = Modifier.padding(scaffoldPadding)
         ) {
 
-            if (uiState.inProgressUserRates.isNotEmpty()) {
-                inProgressUserRatesPager(
-                    userRates = uiState.inProgressUserRates,
-                    onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-                    onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
-                    onEditClick = navEvents.showUserRateEditor
-                )
-                sectionSpace()
-            }
 
-            animeOngoingHeader(onMoreClick = navEvents.navigateToSearchAnimeOngoing)
-            animeOngoingCarousel(
-                ongoingAnime = uiState.ongoings,
-                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) }
+            inProgressUserRatesPager(
+                userRates = uiState.inProgressUserRates,
+                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
+                onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
+                onEditClick = navEvents.showUserRateEditor
             )
 
-            sectionSpace()
+
+            animeOngoingCarousel(
+                ongoingAnime = uiState.ongoings,
+                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
+                onMoreClick = navEvents.navigateToAllNewsTopics
+            )
 
             newsTopicsHeader()
             newsTopicsFeed(
                 newsTopics = uiState.newsTopics,
                 onTopicClick = { navEvents.navigateToUrl("https://shikimori.one/forum/news/${it.id}") },
-                onUserClick = {}
+                onUserClick = {},
+                key = { "$NewsTopicKeyPrefix${it.id}" }
             )
             allNewsTopicsButton(onAllNewsTopicsClick = navEvents.navigateToAllNewsTopics)
-
-            bottomSpace()
         }
     }
+}
+
+fun LazyListScope.newsTopicsHeader() {
+    item(key = NewsHeaderKey) {
+        SeanimeHeader(modifier = Modifier.animateItem()) {
+            Text(text = stringResource(id = R.string.feature_home_news_topics))
+        }
+    }
+
 }
 
 private fun LazyListScope.allNewsTopicsButton(
@@ -149,7 +159,9 @@ private fun LazyListScope.allNewsTopicsButton(
 ) {
     item {
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateItem(),
             contentAlignment = Alignment.TopCenter
         ) {
             ElevatedButton(onClick = onAllNewsTopicsClick) {
@@ -159,59 +171,34 @@ private fun LazyListScope.allNewsTopicsButton(
     }
 }
 
-private fun LazyListScope.bottomSpace() {
-    item { Spacer(modifier = Modifier.height(80.dp)) }
-}
-
-private fun LazyListScope.animeOngoingHeader(
-    onMoreClick: () -> Unit
-) {
-    item {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.feature_home_on_air_now),
-                style = SeanimeTheme.typography.titleMedium
-            )
-            TextButton(onClick = onMoreClick) {
-                Text(text = stringResource(id = R.string.feature_home_more))
-            }
-        }
-    }
-}
-
-private fun LazyListScope.newsTopicsHeader() {
-    item {
-        Column {
-            Text(
-                text = stringResource(R.string.feature_home_news_topics),
-                style = SeanimeTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-        }
-    }
-}
-
-private fun LazyListScope.sectionSpace() {
-    item {
-        Spacer(modifier = Modifier.height(24.dp))
-    }
-}
-
 private fun LazyListScope.animeOngoingCarousel(
     ongoingAnime: ImmutableList<Anime>,
-    onAnimeClick: (Anime) -> Unit
+    onAnimeClick: (Anime) -> Unit,
+    onMoreClick: () -> Unit
 ) {
-    item {
-        AnimeCarousel(
-            anime = ongoingAnime,
-            onClick = onAnimeClick
-        )
+    item(key = OngoingAnimesKey) {
+        Column(
+            modifier = Modifier
+                .padding(vertical = 24.dp)
+                .animateItem()
+        ) {
+            SeanimeHeader(
+                modifier = Modifier.clickable(onClick = onMoreClick),
+                trailing = {
+                    Icon(
+                        imageVector = SeanimeIcons.ArrowForwardIos,
+                        contentDescription = stringResource(id = R.string.feature_home_anime_ongoing_header_more),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            ) {
+                Text(text = stringResource(id = R.string.feature_home_on_air_now))
+            }
+            AnimeCarousel(
+                anime = ongoingAnime,
+                onClick = onAnimeClick
+            )
+        }
     }
 }
 
@@ -222,23 +209,30 @@ private fun LazyListScope.inProgressUserRatesPager(
     onEditClick: (EditableUserRate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    item @OptIn(ExperimentalFoundationApi::class) {
-        val pagerState = rememberPagerState { userRates.size }
+    item(key = InProgressUserRatesKey) {
+        Box(modifier = Modifier.animateItem()) {
+            val pagerState = rememberPagerState { userRates.size }
 
-        HorizontalPager(
-            state = pagerState,
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            pageSpacing = 8.dp,
-            key = { userRates[it].userRate.id },
-            modifier = modifier
-        ) {
-            UserRateEntryCard(
-                userRateWithEntry = userRates[it],
-                onAnimeClick = onAnimeClick,
-                onMangaClick = onMangaClick,
-                showUserRateBadge = true,
-                onEditClick = onEditClick
-            )
+            HorizontalPager(
+                state = pagerState,
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                pageSpacing = 8.dp,
+                key = { userRates[it].userRate.id },
+                modifier = modifier
+            ) {
+                UserRateEntryCard(
+                    userRateWithEntry = userRates[it],
+                    onAnimeClick = onAnimeClick,
+                    onMangaClick = onMangaClick,
+                    showUserRateBadge = true,
+                    onEditClick = onEditClick
+                )
+            }
         }
     }
 }
+
+private const val InProgressUserRatesKey = "user_rates"
+private const val OngoingAnimesKey = "ongoing"
+private const val NewsHeaderKey = "news_header"
+private const val NewsTopicKeyPrefix = "news"

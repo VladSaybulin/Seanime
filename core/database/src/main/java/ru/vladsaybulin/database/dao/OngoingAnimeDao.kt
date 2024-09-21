@@ -1,6 +1,5 @@
 package ru.vladsaybulin.database.dao
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -13,19 +12,9 @@ interface OngoingAnimeDao {
     @Query(
         value = """
             SELECT animes.* 
-            FROM ongoing_animes 
-            INNER JOIN animes ON anime_id = animes.id 
-            ORDER BY `order`
-        """
-    )
-    fun getOngoingAnimePagingSource(): PagingSource<Int, AnimeEntity>
-
-    @Query(
-        value = """
-            SELECT animes.* 
             FROM ongoing_animes
             INNER JOIN animes ON anime_id = animes.id
-            ORDER BY `order`
+            ORDER BY RANDOM()
             LIMIT :limit
         """
     )

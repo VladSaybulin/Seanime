@@ -20,6 +20,5 @@ class OngoingAnimeEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("id")
     val id: Long? = null,
-    @ColumnInfo("anime_id") val animeId: Long,
-    @ColumnInfo("order") val order: Int
+    @ColumnInfo("anime_id") val animeId: Long
 )

@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
         .catch { emit(HomeUiState.Error(it)) }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.Lazily,
             initialValue = HomeUiState.Loading
         )
 }

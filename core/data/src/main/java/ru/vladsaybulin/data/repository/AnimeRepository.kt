@@ -63,7 +63,6 @@ import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
-import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.models.NetworkAnime
 import javax.inject.Inject
@@ -96,7 +95,7 @@ class AnimeRepository @Inject constructor(
 
     fun getOngoingAnime(limit: Int = 10): Flow<List<Anime>> =
         flowOf { ongoingAnimeDao.getOngoingAnime(limit) }
-            .onStart { loadOngoingAnime(INITIAL_PAGE, limit, true) }
+            .onStart { loadFirstOngoingAnime(limit) }
             .map { it.map(AnimeEntity::asExternalModel) }
             .flowOn(ioDispatcher)
 
@@ -221,35 +220,26 @@ class AnimeRepository @Inject constructor(
         }
     }
 
-    private suspend fun loadOngoingAnime(
-        pageNumber: Int,
-        pageSize: Int,
-        isRefreshing: Boolean
-    ): Boolean {
+    private suspend fun loadFirstOngoingAnime(limit: Int) {
         val response = animeDataSource.getAnime(
-            page = pageNumber,
-            limit = pageSize,
+            page = 1,
+            limit = 50,
             queryMap = mapOf(
                 QueryMapKey.Status to EntryStatus.Ongoing.serializedName,
-                QueryMapKey.Order to Order.Popularity.serializedValue,
-                QueryMapKey.MyList to "!${UserRateStatus.Watching.serializedName},!${UserRateStatus.Rewatching.serializedName}"
+                QueryMapKey.Order to Order.Popularity.serializedValue
             )
-        )
+        ).let {
+            it.shuffled().subList(0, limit.coerceAtMost(it.size))
+        }
+
         val animes = response.map(NetworkAnime::asEntity)
         val ongoingAnime = animes.mapIndexed { index, dbo ->
-            OngoingAnimeEntity(
-                animeId = dbo.id,
-                order = pageNumber * pageSize + index
-            )
+            OngoingAnimeEntity(animeId = dbo.id)
         }
 
-        if (isRefreshing) {
-            ongoingAnimeDao.deleteAll()
-        }
         animeDao.upsertAnimes(animes)
+        ongoingAnimeDao.deleteAll()
         ongoingAnimeDao.insertAll(ongoingAnime)
-
-        return animes.size < pageSize
     }
 
     private fun getPagedAnimePagingSource(queryMap: Map<QueryMapKey, String>) =
