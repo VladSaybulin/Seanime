@@ -63,7 +63,7 @@ class UserRateRepository @Inject constructor(
     private val auth: ShikimoriAuthorization,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-    fun getInProgressUserRates(limit: Int): Flow<List<UserRateWithEntry>> = flow {
+    fun getInProgressUserRates(limit: Int): Flow<List<UserRateWithEntry>> = flow<List<UserRateWithEntry>> {
         var refreshed = false
         userRateDao.getFirstInProgressUserRates(limit)
             .map { it.map(PopulatedUserRate::asExternalModel) }
@@ -76,7 +76,7 @@ class UserRateRepository @Inject constructor(
                     }
                 }
             }
-    }
+    }.flowOn(ioDispatcher)
 
     fun getPagedAnimeUserRates(
         status: UserRateStatus,
