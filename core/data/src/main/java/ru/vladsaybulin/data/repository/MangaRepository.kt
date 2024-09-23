@@ -69,7 +69,7 @@ class MangaRepository @Inject constructor(
     fun getPagedManga(
         queryMap: Map<QueryMapKey, String>,
         pagingConfig: PagingConfig = DefaultSearchPagingConfig
-    ): Flow<PagingData<MangaWithUserRate>> = Pager(
+    ): Flow<PagingData<Manga>> = Pager(
         config = pagingConfig,
         pagingSourceFactory = { getPagedMangaPagingSource(queryMap) }
     )
@@ -175,11 +175,11 @@ class MangaRepository @Inject constructor(
     }
 
     private fun getPagedMangaPagingSource(queryMap: Map<QueryMapKey, String>) =
-        object : AbstractShikimoriPagingSource<MangaWithUserRate>() {
+        object : AbstractShikimoriPagingSource<Manga>() {
             override suspend fun loadPage(
                 pageNumber: Int,
                 pageSize: Int
-            ): LoadResult<Int, MangaWithUserRate> = try {
+            ): LoadResult<Int, Manga> = try {
                 val networkMangas = mangaDataSource.getManga(
                     page = pageNumber,
                     limit = pageSize,
@@ -196,12 +196,7 @@ class MangaRepository @Inject constructor(
                     userRateDao.insertOrReplaceUserRates(userRatesEntities)
                 }
 
-                val mangas = networkMangas.map {
-                    MangaWithUserRate(
-                        manga = it.asExternalModel(),
-                        userRate = it.userRate?.asExternalModel()
-                    )
-                }
+                val mangas = networkMangas.map { it.asExternalModel() }
 
                 LoadResult.Page(
                     data = mangas,

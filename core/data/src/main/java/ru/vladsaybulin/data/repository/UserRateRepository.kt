@@ -138,6 +138,10 @@ class UserRateRepository @Inject constructor(
             } else flowOf(null)
         }
 
+    fun getAllAnimeUserRateStatusesStream() = userRateDao.getAllAnimeUserRateStatusesStream()
+
+    fun getAllMangaUserRateStatusesStream() = userRateDao.getAllMangaUserRateStatusesStream()
+
     suspend fun createUserRate(
         entryType: EntryType,
         entryId: Long,

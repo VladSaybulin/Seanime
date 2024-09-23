@@ -3,6 +3,8 @@ package ru.vladsaybulin.database.dao
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.MapColumn
+import androidx.room.MapInfo
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +32,11 @@ interface UserRateDao {
             ORDER BY page ASC, `index` ASC
         """
     )
-    fun getPagedAnimeUserRates(status: UserRateStatus, orderField: UserRateOrderField, order: UserRateOrder): PagingSource<Int, PopulatedPagedUserRate>
+    fun getPagedAnimeUserRates(
+        status: UserRateStatus,
+        orderField: UserRateOrderField,
+        order: UserRateOrder
+    ): PagingSource<Int, PopulatedPagedUserRate>
 
     @Query(
         value = """
@@ -44,7 +50,11 @@ interface UserRateDao {
             ORDER BY page ASC, `index` ASC
         """
     )
-    fun getPagedMangaUserRates(status: UserRateStatus, orderField: UserRateOrderField, order: UserRateOrder): PagingSource<Int, PopulatedPagedUserRate>
+    fun getPagedMangaUserRates(
+        status: UserRateStatus,
+        orderField: UserRateOrderField,
+        order: UserRateOrder
+    ): PagingSource<Int, PopulatedPagedUserRate>
 
     @Query(
         value = """
@@ -56,7 +66,11 @@ interface UserRateDao {
                 AND anime_id IS NOT NULL
         """
     )
-    suspend fun getLastAnimeUserRatesPage(status: UserRateStatus, orderField: UserRateOrderField, order: UserRateOrder): Int
+    suspend fun getLastAnimeUserRatesPage(
+        status: UserRateStatus,
+        orderField: UserRateOrderField,
+        order: UserRateOrder
+    ): Int
 
     @Query(
         value = """
@@ -68,7 +82,11 @@ interface UserRateDao {
                 AND manga_id IS NOT NULL
         """
     )
-    suspend fun getLastMangaUserRatesPage(status: UserRateStatus, orderField: UserRateOrderField, order: UserRateOrder): Int
+    suspend fun getLastMangaUserRatesPage(
+        status: UserRateStatus,
+        orderField: UserRateOrderField,
+        order: UserRateOrder
+    ): Int
 
     @Query(
         value = """
@@ -79,6 +97,12 @@ interface UserRateDao {
         """
     )
     fun getFirstInProgressUserRates(limit: Int): Flow<List<PopulatedUserRate>>
+
+    @Query("SELECT anime_id, status FROM user_rates")
+    fun getAllAnimeUserRateStatusesStream(): Flow<Map<@MapColumn(columnName = "anime_id") Long, @MapColumn(columnName = "status") UserRateStatus>>
+
+    @Query("SELECT manga_id, status FROM user_rates")
+    fun getAllMangaUserRateStatusesStream(): Flow<Map<@MapColumn(columnName = "manga_id") Long, @MapColumn(columnName = "status") UserRateStatus>>
 
     @Query(
         value = """

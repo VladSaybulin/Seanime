@@ -14,6 +14,7 @@ import ru.vladsaybulin.core.ui.entry.EntryGrid
 import ru.vladsaybulin.core.ui.entry.EntryGridDefaults
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeWithUserRate
+import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
@@ -85,17 +86,18 @@ fun AnimeWithUserRateGrid(
 }
 
 @Composable
-fun AnimeWithUserRateGrid(
-    items: LazyPagingItems<AnimeWithUserRate>,
-    onEntryClick: (AnimeWithUserRate) -> Unit,
+fun AnimeWithUserRateStatusGrid(
+    items: LazyPagingItems<Anime>,
+    onEntryClick: (Anime) -> Unit,
     modifier: Modifier = Modifier,
-    key: ((AnimeWithUserRate) -> Any)? = { it.anime.id },
+    key: ((Anime) -> Any)? = { it.id },
+    userRateStatus: (Anime) -> UserRateStatus = { UserRateStatus.None },
     columns: GridCells = EntryGridDefaults.DefaultColumns,
     state: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = EntryGridDefaults.DefaultContentPadding,
     horizontalArrangement: Arrangement.Horizontal = EntryGridDefaults.DefaultHorizontalArrangement,
     verticalArrangement: Arrangement.Vertical = EntryGridDefaults.DefaultVerticalArrangement,
-    metadata: (@Composable ColumnScope.(AnimeWithUserRate) -> Unit)? = { AnimeGridMetadata(it.anime) }
+    metadata: (@Composable ColumnScope.(Anime) -> Unit)? = { AnimeGridMetadata(it) }
 ) {
     EntryGrid(
         items = items,
@@ -106,14 +108,14 @@ fun AnimeWithUserRateGrid(
         contentPadding = contentPadding,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement,
-    ) { animeWithUSerRate ->
+    ) { anime ->
         AnimeGridItem(
-            anime = animeWithUSerRate.anime,
-            onClick = { onEntryClick(animeWithUSerRate) },
+            anime = anime,
+            onClick = { onEntryClick(anime) },
             modifier = Modifier.fillMaxWidth(),
-            userRateStatus = animeWithUSerRate.userRate?.status ?: UserRateStatus.None,
+            userRateStatus = userRateStatus(anime),
             metadata = if (metadata != null) {
-                { metadata(animeWithUSerRate) }
+                { metadata(anime) }
             } else null
         )
     }

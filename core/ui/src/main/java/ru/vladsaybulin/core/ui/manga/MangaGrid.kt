@@ -51,7 +51,7 @@ fun MangaGrid(
 }
 
 @Composable
-fun MangaWithUserRateGrid(
+fun MangaWithUserRateStatusGrid(
     items: List<MangaWithUserRate>,
     onEntryClick: (MangaWithUserRate) -> Unit,
     modifier: Modifier = Modifier,
@@ -86,17 +86,18 @@ fun MangaWithUserRateGrid(
 }
 
 @Composable
-fun MangaWithUserRateGrid(
-    items: LazyPagingItems<MangaWithUserRate>,
-    onEntryClick: (MangaWithUserRate) -> Unit,
+fun MangaWithUserRateStatusGrid(
+    items: LazyPagingItems<Manga>,
+    onEntryClick: (Manga) -> Unit,
     modifier: Modifier = Modifier,
-    key: ((MangaWithUserRate) -> Any)? = { it.manga.id },
+    key: ((Manga) -> Any)? = { it.id },
+    userRateStatus: (Manga) -> UserRateStatus = { UserRateStatus.None },
     columns: GridCells = EntryGridDefaults.DefaultColumns,
     state: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = EntryGridDefaults.DefaultContentPadding,
     horizontalArrangement: Arrangement.Horizontal = EntryGridDefaults.DefaultHorizontalArrangement,
     verticalArrangement: Arrangement.Vertical = EntryGridDefaults.DefaultVerticalArrangement,
-    metadata: (@Composable (MangaWithUserRate) -> Unit)? = { MangaGridMetadata(it.manga) }
+    metadata: (@Composable (Manga) -> Unit)? = { MangaGridMetadata(it) }
 ) {
     EntryGrid(
         items = items,
@@ -107,14 +108,14 @@ fun MangaWithUserRateGrid(
         contentPadding = contentPadding,
         horizontalArrangement = horizontalArrangement,
         verticalArrangement = verticalArrangement
-    ) { mangaWithUserRate ->
+    ) { manga ->
         MangaGridItem(
-            manga = mangaWithUserRate.manga,
-            onClick = { onEntryClick(mangaWithUserRate) },
+            manga = manga,
+            onClick = { onEntryClick(manga) },
             modifier = Modifier.fillMaxWidth(),
-            userRateStatus = mangaWithUserRate.userRate?.status ?: UserRateStatus.None,
+            userRateStatus = userRateStatus(manga),
             metadata = if (metadata != null) {
-                { metadata(mangaWithUserRate) }
+                { metadata(manga) }
             } else null
         )
     }

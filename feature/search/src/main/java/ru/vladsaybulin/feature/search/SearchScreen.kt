@@ -39,17 +39,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.vladsaybulin.core.designsystem.components.SeanimeSearchField
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateGrid
+import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateStatusGrid
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
-import ru.vladsaybulin.core.ui.manga.MangaWithUserRateGrid
+import ru.vladsaybulin.core.ui.manga.MangaWithUserRateStatusGrid
 import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.orderString
 import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
@@ -61,6 +63,7 @@ import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
+import ru.vladsaybulin.model.userrate.UserRateStatus
 import kotlin.math.max
 import kotlin.math.min
 
@@ -72,6 +75,7 @@ fun SearchScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val userRates by viewModel.allUserRateStatuses.collectAsStateWithLifecycle()
 
     SearchScreen(
         uiState = uiState,
@@ -82,7 +86,8 @@ fun SearchScreen(
         onApplyFilters = viewModel::onApplyFilters,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onAnimeClick = { navEvents.navigateToAnime(it.id) },
-        onMangaClick = { navEvents.navigateToManga(it.id) }
+        onMangaClick = { navEvents.navigateToManga(it.id) },
+        userRates = userRates
     )
 }
 
@@ -91,6 +96,7 @@ private fun SearchScreen(
     uiState: SearchUiState,
     searchQuery: String,
     searchResultFlows: SearchResultFlows,
+    userRates: Map<Long, UserRateStatus>,
     onSearchTypeChanged: (SearchType) -> Unit,
     onOrderChanged: (Order) -> Unit,
     onApplyFilters: (AppliedFilters) -> Unit,
@@ -139,7 +145,8 @@ private fun SearchScreen(
                     searchType = uiState.selectedSearchType,
                     pagingFlows = searchResultFlows,
                     onAnimeClick = onAnimeClick,
-                    onMangaClick = onMangaClick
+                    onMangaClick = onMangaClick,
+                    userRates = userRates
                 )
             }
 
@@ -294,17 +301,20 @@ private fun FiltersButton(
 private fun SearchResult(
     searchType: SearchType,
     pagingFlows: SearchResultFlows,
+    userRates: Map<Long, UserRateStatus>,
     onAnimeClick: (Anime) -> Unit,
     onMangaClick: (Manga) -> Unit
 ) {
     when (searchType) {
         SearchType.Anime -> SearchAnimeResult(
             searchAnimeResult = pagingFlows.searchAnimeResult,
+            userRates = userRates,
             onAnimeClick = onAnimeClick
         )
 
         SearchType.Manga, SearchType.Ranobe -> SearchMangaResult(
             searchMangaResult = pagingFlows.searchMangaResult,
+            userRates = userRates,
             onMangaClick = onMangaClick
         )
     }
@@ -312,28 +322,32 @@ private fun SearchResult(
 
 @Composable
 private fun SearchAnimeResult(
-    searchAnimeResult: Flow<PagingData<AnimeWithUserRate>>,
+    searchAnimeResult: Flow<PagingData<Anime>>,
+    userRates: Map<Long, UserRateStatus>,
     onAnimeClick: (Anime) -> Unit
 ) {
     val items = searchAnimeResult.collectAsLazyPagingItems()
 
-    AnimeWithUserRateGrid(
+    AnimeWithUserRateStatusGrid(
         items = items,
-        onEntryClick = { onAnimeClick(it.anime) },
+        onEntryClick = { onAnimeClick(it) },
+        userRateStatus = { userRates[it.id] ?: UserRateStatus.None },
         modifier = Modifier.fillMaxSize()
     )
 }
 
 @Composable
 private fun SearchMangaResult(
-    searchMangaResult: Flow<PagingData<MangaWithUserRate>>,
+    searchMangaResult: Flow<PagingData<Manga>>,
+    userRates: Map<Long, UserRateStatus>,
     onMangaClick: (Manga) -> Unit
 ) {
     val items = searchMangaResult.collectAsLazyPagingItems()
 
-    MangaWithUserRateGrid(
+    MangaWithUserRateStatusGrid(
         items = items,
-        onEntryClick = { onMangaClick(it.manga) },
+        onEntryClick = { onMangaClick(it) },
+        userRateStatus = { userRates[it.id] ?: UserRateStatus.None },
         modifier = Modifier.fillMaxSize()
     )
 }

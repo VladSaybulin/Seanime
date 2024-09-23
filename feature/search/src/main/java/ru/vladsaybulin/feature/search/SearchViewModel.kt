@@ -27,6 +27,7 @@ import ru.vladsaybulin.core.domain.GetSearchFiltersUseCase
 import ru.vladsaybulin.core.domain.SearchAnimeUseCase
 import ru.vladsaybulin.core.domain.SearchMangaUseCase
 import ru.vladsaybulin.core.domain.SearchRanobeUseCase
+import ru.vladsaybulin.core.domain.search.GetAllUserRatesUseCase
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.AppliedOptionValues
 import ru.vladsaybulin.core.ui.filters.OptionValue
@@ -52,6 +53,7 @@ class SearchViewModel @Inject constructor(
     searchAnimeUseCaseProvider: Provider<SearchAnimeUseCase>,
     searchMangaUseCaseProvider: Provider<SearchMangaUseCase>,
     searchRanobeUseCaseProvider: Provider<SearchRanobeUseCase>,
+    getAllUserRatesUseCase: GetAllUserRatesUseCase,
     private val filterStudioRepositoryProvider: Provider<FilterStudioRepository>,
     private val filterPublisherRepositoryProvider: Provider<FilterPublisherRepository>,
     private val filterGenreRepositoryProvider: Provider<FilterGenreRepository>,
