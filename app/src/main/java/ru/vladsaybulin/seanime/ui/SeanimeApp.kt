@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavDestination
@@ -37,10 +38,9 @@ import ru.vladsaybulin.seanime.navigation.TopLevelDestination
 fun SeanimeApp(
     appState: SeanimeAppState,
     openUrl: (String) -> Unit,
-    onAuth: () -> Unit
+    onAuth: () -> Unit,
 ) {
     SeanimeTheme {
-
         val scope = rememberCoroutineScope()
         val fullScreenImageState = remember { FullScreenImageState() }
 

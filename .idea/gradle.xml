@@ -43,6 +43,7 @@
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/imageview" />
             <option value="$PROJECT_DIR$/feature/list" />
+            <option value="$PROJECT_DIR$/feature/profile" />
             <option value="$PROJECT_DIR$/feature/search" />
             <option value="$PROJECT_DIR$/feature/title" />
             <option value="$PROJECT_DIR$/feature/title/authors" />
@@ -50,6 +51,7 @@
             <option value="$PROJECT_DIR$/feature/title/details" />
             <option value="$PROJECT_DIR$/feature/title/related" />
             <option value="$PROJECT_DIR$/feature/title/screenshots" />
+            <option value="$PROJECT_DIR$/feature/title/videos" />
             <option value="$PROJECT_DIR$/feature/userrate" />
             <option value="$PROJECT_DIR$/gradle/build-logic" />
             <option value="$PROJECT_DIR$/gradle/build-logic/convention" />

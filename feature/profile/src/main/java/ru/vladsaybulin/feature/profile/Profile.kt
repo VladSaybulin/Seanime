@@ -1,9 +1,13 @@
 package ru.vladsaybulin.feature.profile
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,26 +36,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import coil.compose.AsyncImage
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.model.user.UserImage
 
 @Composable
-fun ProfileRoute(
-    viewModel: ProfileViewModel = hiltViewModel()
-) {
+fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ProfileScreen(
         state = state,
         onLogout = viewModel::logout,
-        onLoginViaShikimori = viewModel::loginViaShikimori
+        onLoginViaShikimori = viewModel::loginViaShikimori,
     )
 }
 
@@ -59,13 +66,13 @@ fun ProfileRoute(
 private fun ProfileScreen(
     state: ProfileUiState,
     onLoginViaShikimori: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
 ) {
     Box(modifier = Modifier.padding(LocalScreenContentPadding.current)) {
         ProfileContent(
             state = state,
             onLoginViaShikimori = onLoginViaShikimori,
-            onLogout = onLogout
+            onLogout = onLogout,
         )
     }
 }
@@ -93,16 +100,20 @@ private fun ProfileContent(
         },
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPaddings ->
-        Box(
+        Column(
             modifier = Modifier
                 .padding(scaffoldPaddings)
                 .fillMaxSize()
         ) {
-            when (state) {
-                ProfileUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                ProfileUiState.NotAuthorized -> NotAuthorizedBody(onLoginViaShikimori = onLoginViaShikimori)
-                is ProfileUiState.Success -> ProfileBody(state = state)
+            Box(modifier = Modifier.weight(1f)) {
+                when (state) {
+                    ProfileUiState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    ProfileUiState.NotAuthorized -> NotAuthorizedBody(onLoginViaShikimori = onLoginViaShikimori)
+                    is ProfileUiState.Success -> ProfileBody(state = state)
+                }
             }
+
+            SeanimeLinks()
         }
     }
 
@@ -158,15 +169,15 @@ private fun NotAuthorizedBody(onLoginViaShikimori: () -> Unit) {
 private fun ProfileBody(
     state: ProfileUiState.Success
 ) {
-    LazyColumn {
-        item {
-            UserImage(state.user.image)
-        }
-
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        item {
-            UserNickname(nickname = state.user.nickname)
+    Column {
+        UserImage(state.user.image)
+        Spacer(modifier = Modifier.height(16.dp))
+        UserNickname(nickname = state.user.nickname)
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            WorkInProgressProfileSection()
         }
     }
 }
@@ -197,6 +208,53 @@ private fun UserNickname(nickname: String) {
 }
 
 @Composable
+private fun WorkInProgressProfileSection() {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = SeanimeIcons.Construction,
+            contentDescription = stringResource(id = R.string.feature_profile_work_in_progress_profile_section),
+            modifier = Modifier.size(64.dp),
+        )
+        Text(
+            text = stringResource(id = R.string.feature_profile_work_in_progress_profile_section),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun SeanimeLinks() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val uriHandler = LocalUriHandler.current
+        val context = LocalContext.current
+
+        TextButton(onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) }) {
+            Text(text = stringResource(R.string.feature_profile_privacy_policy))
+        }
+
+        TextButton(onClick = { context.startActivity(Intent(context, OssLicensesMenuActivity::class.java)) }) {
+            Text(text = stringResource(R.string.feature_profile_open_source_licenses))
+        }
+
+        TextButton(onClick = { uriHandler.openUri(FEEDBACK_URL) }) {
+            Text(text = stringResource(R.string.feature_profile_feedback))
+        }
+    }
+}
+
+@Composable
 private fun LogoutConfirmationDialog(
     onConfirmed: () -> Unit,
     onDismissRequest: () -> Unit
@@ -220,3 +278,6 @@ private fun LogoutConfirmationDialog(
         text = { Text(text = stringResource(id = R.string.feature_profile_logout_message)) }
     )
 }
+
+private const val PRIVACY_POLICY_URL = "" //TODO insert privacy policy url
+private const val FEEDBACK_URL = "https://forms.yandex.ru/u/66ef341273cee76f30ff63e2/"

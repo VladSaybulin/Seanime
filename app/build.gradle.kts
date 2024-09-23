@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
     alias(libs.plugins.kotlinx.serialization)
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
@@ -91,6 +92,8 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.google.oss.licenses)
 
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.analytics)

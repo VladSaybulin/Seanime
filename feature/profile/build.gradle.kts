@@ -13,4 +13,5 @@ dependencies {
     implementation(project(":core:data"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.kt.compose)
+    implementation(libs.google.oss.licenses)
 }
