@@ -16,7 +16,6 @@ import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.OngoingAnimeDao
 import ru.vladsaybulin.database.dao.PersonDao
-import ru.vladsaybulin.database.dao.RecentSearchQueriesDao
 import ru.vladsaybulin.database.dao.TopicsDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.dao.UsersDao
@@ -52,10 +51,6 @@ class DaosModule {
     @Provides
     fun provideTopicsDao(database: ShikiRoomDatabase): TopicsDao =
         database.topicsDao()
-
-    @Provides
-    fun provideRecentSearchQueriesDao(database: ShikiRoomDatabase): RecentSearchQueriesDao =
-        database.recentSearchQueriesDao()
 
     @Provides
     fun provideFilterStudioDao(database: ShikiRoomDatabase): FilterStudioDao =

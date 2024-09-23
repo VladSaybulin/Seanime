@@ -16,7 +16,6 @@ import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.OngoingAnimeDao
 import ru.vladsaybulin.database.dao.PersonDao
-import ru.vladsaybulin.database.dao.RecentSearchQueriesDao
 import ru.vladsaybulin.database.dao.TopicsDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.dao.UsersDao
@@ -53,7 +52,6 @@ import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
 import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
 import ru.vladsaybulin.database.models.manga.PublisherEntity
 import ru.vladsaybulin.database.models.person.PersonEntity
-import ru.vladsaybulin.database.models.search.RecentSearchQueryEntity
 import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
@@ -90,7 +88,6 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         TopicEntity::class,
 
         /* Search entities */
-        RecentSearchQueryEntity::class,
         FilterStudioEntity::class,
         FilterPublisherEntity::class,
         FilterGenreEntity::class,
@@ -167,7 +164,6 @@ abstract class ShikiRoomDatabase : RoomDatabase() {
     abstract fun usersDao(): UsersDao
     abstract fun topicsDao(): TopicsDao
 
-    abstract fun recentSearchQueriesDao(): RecentSearchQueriesDao
     abstract fun filterStudioDao(): FilterStudioDao
     abstract fun filterPublisherDao(): FiltersPublisherDao
     abstract fun filterGenreDao(): FilterGenreDao

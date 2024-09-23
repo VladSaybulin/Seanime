@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.core.domain.GetRecentSearchQueriesUseCase
 import ru.vladsaybulin.core.domain.GetSearchFiltersUseCase
 import ru.vladsaybulin.core.domain.SearchAnimeUseCase
 import ru.vladsaybulin.core.domain.SearchMangaUseCase
@@ -34,7 +33,6 @@ import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.data.repository.FilterGenreRepository
 import ru.vladsaybulin.data.repository.FilterPublisherRepository
 import ru.vladsaybulin.data.repository.FilterStudioRepository
-import ru.vladsaybulin.data.repository.RecentSearchQueryRepository
 import ru.vladsaybulin.feature.search.navigation.SearchScreenRoute
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.genre.GenreKind
@@ -49,7 +47,6 @@ import javax.inject.Provider
 class SearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getSearchFiltersUseCase: GetSearchFiltersUseCase,
-    getRecentSearchQueriesUseCase: GetRecentSearchQueriesUseCase,
     searchAnimeUseCaseProvider: Provider<SearchAnimeUseCase>,
     searchMangaUseCaseProvider: Provider<SearchMangaUseCase>,
     searchRanobeUseCaseProvider: Provider<SearchRanobeUseCase>,
@@ -57,7 +54,6 @@ class SearchViewModel @Inject constructor(
     private val filterStudioRepositoryProvider: Provider<FilterStudioRepository>,
     private val filterPublisherRepositoryProvider: Provider<FilterPublisherRepository>,
     private val filterGenreRepositoryProvider: Provider<FilterGenreRepository>,
-    private val recentSearchQueryRepository: RecentSearchQueryRepository,
 ) : ViewModel() {
 
     private val args = savedStateHandle.toRoute<SearchScreenRoute>()
@@ -149,12 +145,11 @@ class SearchViewModel @Inject constructor(
         }
     )
 
-    val recentSearchQueriesState = getRecentSearchQueriesUseCase()
-        .map { RecentSearchQueriesState.Success(it) }
+    val allUserRateStatuses = currentSearchType.flatMapLatest { getAllUserRatesUseCase(it) }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = RecentSearchQueriesState.Loading
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyMap()
         )
 
     fun onSearchTypeChanged(searchType: SearchType) {
@@ -186,21 +181,6 @@ class SearchViewModel @Inject constructor(
             delay(DebounceSearchQueryMs)
             searchParams.emit(searchParams.value.copy(searchQuery = searchQuery))
         }.also { it.invokeOnCompletion { debouncedSearchJob = null } }
-    }
-
-    fun onSearchTriggered(searchQuery: String) {
-        debouncedSearchJob?.cancel()
-        _searchQuery.value = searchQuery
-        viewModelScope.launch {
-            recentSearchQueryRepository.insertOrReplaceRecentSearchQuery(searchQuery)
-        }
-        searchParams.update { it.copy(searchQuery = searchQuery) }
-    }
-
-    fun onDeleteRecentSearchQuery(query: String) {
-        viewModelScope.launch {
-            recentSearchQueryRepository.deleteRecentSearchQuery(query)
-        }
     }
 
     private fun SearchParams.buildQueryMap() =
