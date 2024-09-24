@@ -1,16 +1,11 @@
 package ru.vladsaybulin.feature.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,7 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,7 +33,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
-import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
@@ -65,6 +58,7 @@ fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
     uiState: HomeUiState,
@@ -76,72 +70,79 @@ private fun HomeScreen(
             .padding(LocalScreenContentPadding.current)
             .fillMaxSize()
     ) {
-        when (uiState) {
-            is HomeUiState.Success -> HomeContent(
-                uiState = uiState,
-                navEvents = navEvents
-            )
+        val topBarScrollBehaviour = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-            is HomeUiState.Error -> FullScreenErrorMessage(throwable = uiState.throwable)
-
-            else -> HomeLoading()
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text(text = stringResource(id = R.string.feature_home_app_name)) },
+                    scrollBehavior = topBarScrollBehaviour
+                )
+            },
+            modifier = Modifier.nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
+        ) { scaffoldPadding ->
+            Box(modifier = Modifier.padding(scaffoldPadding)) {
+                HomeContent(
+                    uiState = uiState,
+                    navEvents = navEvents
+                )
+            }
         }
     }
 }
 
 @Composable
-fun HomeLoading() {
+private fun HomeContent(
+    uiState: HomeUiState,
+    navEvents: HomeNavEvents
+) {
+    when (uiState) {
+        is HomeUiState.Success -> HomeBody(
+            uiState = uiState,
+            navEvents = navEvents
+        )
+
+        is HomeUiState.Error -> FullScreenErrorMessage(throwable = uiState.throwable)
+
+        else -> LoadingHomeBody()
+    }
+}
+
+@Composable
+private fun LoadingHomeBody() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeContent(
+private fun HomeBody(
     uiState: HomeUiState.Success,
     navEvents: HomeNavEvents,
 ) {
-    val topBarScrollBehaviour = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(id = R.string.feature_home_app_name)) },
-                scrollBehavior = topBarScrollBehaviour
-            )
-        },
-        modifier = Modifier.nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
-    ) { scaffoldPadding ->
-        LazyColumn(
-            contentPadding = PaddingValues(vertical = 16.dp),
-            modifier = Modifier.padding(scaffoldPadding)
-        ) {
+    LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
+        inProgressUserRatesPager(
+            userRates = uiState.inProgressUserRates,
+            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
+            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
+            onEditClick = navEvents.showUserRateEditor
+        )
 
 
-            inProgressUserRatesPager(
-                userRates = uiState.inProgressUserRates,
-                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-                onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
-                onEditClick = navEvents.showUserRateEditor
-            )
+        animeOngoingCarousel(
+            ongoingAnime = uiState.ongoings,
+            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
+            onMoreClick = navEvents.navigateToAllNewsTopics
+        )
 
-
-            animeOngoingCarousel(
-                ongoingAnime = uiState.ongoings,
-                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-                onMoreClick = navEvents.navigateToAllNewsTopics
-            )
-
-            newsTopicsHeader()
-            newsTopicsFeed(
-                newsTopics = uiState.newsTopics,
-                onTopicClick = { navEvents.navigateToUrl("https://shikimori.one/forum/news/${it.id}") },
-                onUserClick = {},
-                key = { "$NewsTopicKeyPrefix${it.id}" }
-            )
-            allNewsTopicsButton(onAllNewsTopicsClick = navEvents.navigateToAllNewsTopics)
-        }
+        newsTopicsHeader()
+        newsTopicsFeed(
+            newsTopics = uiState.newsTopics,
+            onTopicClick = { navEvents.navigateToUrl("https://shikimori.one/forum/news/${it.id}") },
+            onUserClick = {},
+            key = { "$NewsTopicKeyPrefix${it.id}" }
+        )
+        allNewsTopicsButton(onAllNewsTopicsClick = navEvents.navigateToAllNewsTopics)
     }
 }
 
@@ -179,7 +180,7 @@ private fun LazyListScope.animeOngoingCarousel(
     item(key = OngoingAnimesKey) {
         Column(
             modifier = Modifier
-                .padding(vertical = 24.dp)
+                .padding(bottom = 24.dp)
                 .animateItem()
         ) {
             SeanimeHeader(
@@ -218,7 +219,7 @@ private fun LazyListScope.inProgressUserRatesPager(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 pageSpacing = 8.dp,
                 key = { userRates[it].userRate.id },
-                modifier = modifier
+                modifier = modifier.let { if (userRates.isNotEmpty()) it.padding(bottom = 24.dp) else it }
             ) {
                 UserRateEntryCard(
                     userRateWithEntry = userRates[it],
