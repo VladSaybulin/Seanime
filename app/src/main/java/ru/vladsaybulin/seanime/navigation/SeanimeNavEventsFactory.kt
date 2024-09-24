@@ -1,5 +1,6 @@
 package ru.vladsaybulin.seanime.navigation
 
+import androidx.compose.ui.platform.UriHandler
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import ru.vladsaybulin.feature.title.authors.navigation.TitleAuthorsNavEvents
@@ -33,10 +34,10 @@ import ru.vladsaybulin.model.userrate.EditableUserRate
 
 class SeanimeNavEventsFactory(
     private val navController: NavHostController,
-    private val navigateToUrl: (String) -> Unit,
     private val showUserRateEditor: (EditableUserRate) -> Unit,
     private val runAuthorization: () -> Unit,
-    private val showFullscreenImage: (images: List<Image>, initialIndex: Int) -> Unit
+    private val showFullscreenImage: (images: List<Image>, initialIndex: Int) -> Unit,
+    private val uriHandler: UriHandler
 ) {
     fun createHomeNavEvents() = HomeNavEvents(
         navigateToTitleDetails = navController::navigateToTitleDetails,
@@ -65,8 +66,7 @@ class SeanimeNavEventsFactory(
     fun createTitleDetailNavEvents() = TitleDetailsNavEvents(
         navigateToTitleDetails = navController::navigateToTitleDetails,
         navigateToCharacterDetails = navController::navigateToCharacterDetails,
-        navigateToPersonDetails = { },
-        navigateToUrl = navigateToUrl,
+        navigateToPersonDetails = { uriHandler.openUri("$PERSON_URI/$it") },
         navigateToTitleAuthors = navController::navigateToTitleAuthors,
         navigateToSearchByGenre = navController::navigateToSearchByGenre,
         navigateToSearchByStudio = navController::navigateToSearchScreenByStudioOrPublisher,
@@ -82,7 +82,7 @@ class SeanimeNavEventsFactory(
     )
 
     fun createTitleAuthorsNavEvents() = TitleAuthorsNavEvents(
-        navigateToPerson = {  },
+        navigateToPerson = { uriHandler.openUri("$PERSON_URI/$it") },
         navigateUp = navController::navigateUp
     )
 
@@ -102,7 +102,7 @@ class SeanimeNavEventsFactory(
     )
 
     fun createAnimeVideosNavEvents() = AnimeVideosNavEvents(
-        navigateToVideo = { url, _, _ -> navigateToUrl(url) },
+        navigateToVideo = { url, _, _ -> uriHandler.openUri(url) },
         navigateUp = navController::navigateUp
     )
 
@@ -110,8 +110,7 @@ class SeanimeNavEventsFactory(
         navigateToAnimeDetails = { navController.navigateToTitleDetails(EntryType.Anime, it) },
         navigateToMangaDetails = { navController.navigateToTitleDetails(EntryType.Manga, it) },
         navigateToCharacterDetails = navController::navigateToCharacterDetails,
-        navigateToPersonDetails = { },
-        navigateToUrl = navigateToUrl,
+        navigateToPersonDetails = { uriHandler.openUri("$PERSON_URI/$it") },
         navigateUp = navController::navigateUp
     )
 }
@@ -125,3 +124,5 @@ private fun NavController.navigateToAnimeVideos(titleType: EntryType, titleId: L
     check(titleType == EntryType.Anime)
     navigateToAnimeVideos(titleId)
 }
+
+private const val PERSON_URI = "https://shikimori.one/people"

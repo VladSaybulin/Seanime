@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -66,7 +67,6 @@ fun CharacterDetailsScreen(
         onMangaClick = navEvents.navigateToMangaDetails,
         onCharacterClick = navEvents.navigateToCharacterDetails,
         onPersonClick = navEvents.navigateToPersonDetails,
-        onUrlClick = navEvents.navigateToUrl,
         onBack = navEvents.navigateUp
     )
 
@@ -79,7 +79,6 @@ fun CharacterDetailsScreen(
     onMangaClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
     onPersonClick: (id: Long) -> Unit,
-    onUrlClick: (String) -> Unit,
     onBack: () -> Unit
 ) {
     Box(
@@ -97,7 +96,6 @@ fun CharacterDetailsScreen(
                 onMangaClick = onMangaClick,
                 onCharacterClick = onCharacterClick,
                 onPersonClick = onPersonClick,
-                onUrlClick = onUrlClick,
                 onBack = onBack
             )
         }
@@ -111,7 +109,6 @@ fun CharacterDetailsContent(
     onMangaClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
     onPersonClick: (id: Long) -> Unit,
-    onUrlClick: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val details = uiState.characterDetails
@@ -135,13 +132,15 @@ fun CharacterDetailsContent(
 
         if (details.description != null) {
             item(key = CharacterLazyListItemKey.Description) {
+                val uriHandler = LocalUriHandler.current
+
                 CharacterDescription(
                     description = details.description!!,
                     onAnimeClick = onAnimeClick,
                     onMangaClick = onMangaClick,
                     onCharacterClick = onCharacterClick,
                     onPersonClick = onPersonClick,
-                    onUrlClick = onUrlClick
+                    onUrlClick = { uriHandler.openUri(it) }
                 )
             }
         }
@@ -353,7 +352,6 @@ fun CharacterDetailsContentPreview() {
                 onMangaClick = { },
                 onCharacterClick = { },
                 onPersonClick = { },
-                onUrlClick = { },
                 onBack = { }
             )
         }

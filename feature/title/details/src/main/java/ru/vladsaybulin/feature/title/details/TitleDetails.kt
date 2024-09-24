@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -236,6 +237,8 @@ private fun DetailsContent(
                     )
                 }
             ) { scaffoldPadding ->
+                val uriHandler = LocalUriHandler.current
+
                 LazyColumn(
                     state = listState,
                     //FAB padding
@@ -285,9 +288,9 @@ private fun DetailsContent(
                             description = description,
                             onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it) },
                             onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it) },
-                            onCharacterClick = { navEvents.navigateToCharacterDetails(it) },
-                            onPersonClick = { navEvents.navigateToPersonDetails(it) },
-                            onUrlClick = { navEvents.navigateToUrl(it) }
+                            onCharacterClick = navEvents.navigateToCharacterDetails,
+                            onPersonClick = navEvents.navigateToPersonDetails,
+                            onUrlClick = uriHandler::openUri
                         )
                     }
 
@@ -363,7 +366,7 @@ private fun DetailsContent(
                         gutterSpacer()
                         titleVideos(
                             videosSlice = videosSlice,
-                            onVideoClick = { navEvents.navigateToUrl(it.videoUrl) },
+                            onVideoClick = { uriHandler.openUri(it.videoUrl) },
                             onMoreClick = {
                                 navEvents.navigateToTitleVideos(
                                     detailsState.entryType,

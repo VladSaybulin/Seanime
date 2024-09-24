@@ -5,6 +5,5 @@ data class CharacterDetailsNavEvents(
     val navigateToMangaDetails: (Long) -> Unit,
     val navigateToCharacterDetails: (Long) -> Unit,
     val navigateToPersonDetails: (Long) -> Unit,
-    val navigateToUrl: (String) -> Unit,
     val navigateUp: () -> Unit
 )

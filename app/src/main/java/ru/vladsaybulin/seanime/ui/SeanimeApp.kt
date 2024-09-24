@@ -37,7 +37,6 @@ import ru.vladsaybulin.seanime.navigation.TopLevelDestination
 @Composable
 fun SeanimeApp(
     appState: SeanimeAppState,
-    openUrl: (String) -> Unit,
     onAuth: () -> Unit,
 ) {
     SeanimeTheme {
@@ -77,12 +76,12 @@ fun SeanimeApp(
                     navController = appState.navController,
                     navEventsFactory = SeanimeNavEventsFactory(
                         navController = appState.navController,
-                        navigateToUrl = openUrl,
                         runAuthorization = onAuth,
                         showUserRateEditor = { editableUserRate = it },
                         showFullscreenImage = { images, startIndex ->
                             scope.launch { fullScreenImageState.show(images, startIndex) }
-                        }
+                        },
+                        uriHandler = LocalUriHandler.current
                     )
                 )
             }

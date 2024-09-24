@@ -33,13 +33,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CompositionLocalProvider(value = LocalLifecycleOwner provides this) { //TODO FIX. Not provided
                 SeanimeApp(
-                    appState = rememberSeanimeAppState(
-                        windowSizeClass = calculateWindowSizeClass(this)
-                    ),
-                    openUrl = { url ->
-                        val intent = CustomTabsIntent.Builder().build()
-                        intent.launchUrl(this@MainActivity, Uri.parse(url))
-                    },
+                    appState = rememberSeanimeAppState(windowSizeClass = calculateWindowSizeClass(this)),
                     onAuth = shikimoriAuthorization::login
                 )
             }
