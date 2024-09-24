@@ -48,10 +48,12 @@ import ru.vladsaybulin.model.user.UserImage
 
 @Composable
 fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
+    val isMe by viewModel.isMe.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ProfileScreen(
         state = state,
+        isMe = isMe,
         onLogout = viewModel::logout,
         onLoginViaShikimori = viewModel::loginViaShikimori,
     )
@@ -60,12 +62,14 @@ fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
 @Composable
 private fun ProfileScreen(
     state: ProfileUiState,
+    isMe: Boolean,
     onLoginViaShikimori: () -> Unit,
     onLogout: () -> Unit,
 ) {
     Box(modifier = Modifier.padding(LocalScreenContentPadding.current)) {
         ProfileContent(
             state = state,
+            isMe = isMe,
             onLoginViaShikimori = onLoginViaShikimori,
             onLogout = onLogout,
         )
@@ -76,6 +80,7 @@ private fun ProfileScreen(
 @Composable
 private fun ProfileContent(
     state: ProfileUiState,
+    isMe: Boolean,
     onLoginViaShikimori: () -> Unit,
     onLogout: () -> Unit,
 ) {
@@ -88,7 +93,7 @@ private fun ProfileContent(
     Scaffold(
         topBar = {
             ProfileTopBar(
-                isAuthorized = state != ProfileUiState.NotAuthorized,
+                isMe = isMe,
                 onLogoutClick = { setShowLogoutConfirmationDialog(true) },
                 scrollBehavior = topAppBarScrollBehavior
             )
@@ -108,7 +113,9 @@ private fun ProfileContent(
                 }
             }
 
-            SeanimeLinks()
+            if (isMe) {
+                SeanimeLinks()
+            }
         }
     }
 
@@ -126,14 +133,14 @@ private fun ProfileContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileTopBar(
-    isAuthorized: Boolean,
+    isMe: Boolean,
     onLogoutClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
     TopAppBar(
         title = { },
         actions = {
-            if (isAuthorized) {
+            if (isMe) {
                 IconButton(onClick = onLogoutClick) {
                     Icon(
                         imageVector = SeanimeIcons.Logout,
@@ -172,7 +179,8 @@ private fun ProfileBody(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            WorkInProgressProfileSection()
+            val uriHandler = LocalUriHandler.current
+            WorkInProgressProfileSection(openInBrowser = { uriHandler.openUri("$USER_URL/${state.user.nickname}") })
         }
     }
 }
@@ -203,7 +211,7 @@ private fun UserNickname(nickname: String) {
 }
 
 @Composable
-private fun WorkInProgressProfileSection() {
+private fun WorkInProgressProfileSection(openInBrowser: () -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
@@ -220,6 +228,10 @@ private fun WorkInProgressProfileSection() {
             text = stringResource(id = R.string.feature_profile_work_in_progress_profile_section),
             textAlign = TextAlign.Center
         )
+
+        TextButton(onClick = openInBrowser) {
+            Text(text = stringResource(id = R.string.feature_profile_open_in_browser))
+        }
     }
 }
 
@@ -276,3 +288,5 @@ private fun LogoutConfirmationDialog(
 
 private const val PRIVACY_POLICY_URL = "" //TODO insert privacy policy url
 private const val FEEDBACK_URL = "https://forms.yandex.ru/u/66ef341273cee76f30ff63e2/"
+
+private const val USER_URL = "https://shikimori.one/users"

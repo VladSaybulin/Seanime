@@ -13,4 +13,5 @@
     <string name="feature_profile_privacy_policy">Политика конфиденциальности</string>
     <string name="feature_profile_open_source_licenses">Лицензии открытого ПО</string>
     <string name="feature_profile_feedback">Обратная связь</string>
+    <string name="feature_profile_open_in_browser">Открыть в браузере</string>
 </resources>

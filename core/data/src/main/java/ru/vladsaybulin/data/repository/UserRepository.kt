@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
-import ru.vladsaybulin.common.network.ShikiDispatchers
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import ru.vladsaybulin.data.model.asExternalModel
@@ -32,7 +32,7 @@ class UserRepository @Inject constructor(
 ) {
     suspend fun getMyId(): Long? = getMyIdStream().first()
 
-    private fun getMyIdStream(): Flow<Long?> = shikimoriAuthorization.shikimoriAuthState.map {
+    fun getMyIdStream(): Flow<Long?> = shikimoriAuthorization.shikimoriAuthState.map {
         if (it == ShikimoriAuthState.LOGGED_IN) requireMyId() else null
     }
 
@@ -45,6 +45,15 @@ class UserRepository @Inject constructor(
 
     fun getUserStream(id: Long): Flow<BriefUser> =
         usersDao.getUserById(id).mapNotNull { it.asExternalModel() }
+            .onStart { refreshUserBrief(id) }
+
+    private suspend fun refreshUserBrief(id: Long) {
+        withContext(ioDispatcher) {
+            val response = userDataSource.getUserBriefById(id)
+
+            usersDao.insertOrReplaceUser(response.asExternalModel())
+        }
+    }
 
     private suspend fun requireMyId(): Long =
         prefsDataSource.myId.first() ?: updateMeAndReturnMyId()

@@ -1,6 +1,7 @@
 package ru.vladsaybulin.core.domain.profile
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onStart
 import ru.vladsaybulin.data.repository.UserRepository
 import ru.vladsaybulin.model.user.BriefUser
 import javax.inject.Inject

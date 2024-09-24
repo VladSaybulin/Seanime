@@ -181,7 +181,7 @@ private fun HomeBody(
         newsTopicsFeed(
             newsTopics = uiState.newsTopics,
             onTopicClick = { uriHandler.openUri("$SHIKIMORI_NEWS_URL/${it.id}") },
-            onUserClick = { uriHandler.openUri("$SHIKIMORI_USER_URL/${it.nickname}") },
+            onUserClick = { navEvents.navigateToUser(it.id) },
             key = { "$NewsTopicKeyPrefix${it.id}" }
         )
         allNewsTopicsButton(onAllNewsTopicsClick = { uriHandler.openUri(SHIKIMORI_NEWS_URL) })

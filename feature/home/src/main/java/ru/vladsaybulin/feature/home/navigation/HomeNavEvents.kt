@@ -7,5 +7,6 @@ data class HomeNavEvents(
     val navigateToTitleDetails: (type: EntryType, id: Long) -> Unit,
     val navigateToSearchAnimeOngoing: () -> Unit,
     val navigateToMe: () -> Unit,
+    val navigateToUser: (userId: Long) -> Unit,
     val showUserRateEditor: (EditableUserRate) -> Unit
 )
