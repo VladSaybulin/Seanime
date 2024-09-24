@@ -1,5 +1,6 @@
 package ru.vladsaybulin.feature.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,27 +14,37 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
@@ -43,6 +54,7 @@ import ru.vladsaybulin.feature.home.navigation.HomeNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
@@ -75,9 +87,10 @@ private fun HomeScreen(
 
         Scaffold(
             topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text(text = stringResource(id = R.string.feature_home_app_name)) },
-                    scrollBehavior = topBarScrollBehaviour
+                HomeTopBar(
+                    me = (uiState as? HomeUiState.Success)?.me,
+                    scrollBehavior = topBarScrollBehaviour,
+                    onMeClick = navEvents.navigateToMe
                 )
             },
             modifier = Modifier.nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
@@ -107,6 +120,32 @@ private fun HomeContent(
 
         else -> LoadingHomeBody()
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeTopBar(
+    me: BriefUser?,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onMeClick: () -> Unit
+) {
+    TopAppBar(
+        title = { Text(text = stringResource(id = R.string.feature_home_title)) },
+        actions = {
+            IconButton(onClick = onMeClick) {
+                val userImagePainter = me?.image?.x64Url?.let { rememberAsyncImagePainter(it) }
+                    ?: rememberVectorPainter(SeanimeIcons.AccountCircle)
+                Image(
+                    painter = userImagePainter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(24.dp).clip(CircleShape),
+                    colorFilter = me?.let { null } ?: ColorFilter.tint(SeanimeTheme.colorScheme.onSurface)
+                )
+            }
+        },
+        scrollBehavior = scrollBehavior
+    )
 }
 
 @Composable
@@ -242,4 +281,3 @@ private const val NewsHeaderKey = "news_header"
 private const val NewsTopicKeyPrefix = "news"
 
 private const val SHIKIMORI_NEWS_URL = "https://shikimori.one/forum/news"
-private const val SHIKIMORI_USER_URL = "https://shikimori.one/users"

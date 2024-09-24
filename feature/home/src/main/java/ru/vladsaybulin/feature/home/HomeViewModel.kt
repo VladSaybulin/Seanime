@@ -9,27 +9,31 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.core.domain.home.GetInProgressUserRatesUseCase
+import ru.vladsaybulin.core.domain.profile.GetBriefUserStreamUseCase
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.TopicsRepository
-import ru.vladsaybulin.data.repository.UserRateRepository
+import ru.vladsaybulin.data.repository.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     animeRepository: AnimeRepository,
     topicsRepository: TopicsRepository,
-    getInProgressUserRatesUseCase: GetInProgressUserRatesUseCase
+    getInProgressUserRatesUseCase: GetInProgressUserRatesUseCase,
+    userRepository: UserRepository
 ) : ViewModel() {
 
     val uiState = combine(
         getInProgressUserRatesUseCase(),
         animeRepository.getOngoingAnime(10),
-        topicsRepository.getNewsTopics()
-    ) { userRates, ongoingAnime, newsTopics ->
+        topicsRepository.getNewsTopics(),
+        userRepository.getMeStream()
+    ) { userRates, ongoingAnime, newsTopics, me ->
         HomeUiState.Success(
             inProgressUserRates = userRates.toImmutableList(),
             ongoings = ongoingAnime.toImmutableList(),
-            newsTopics = newsTopics.toImmutableList()
+            newsTopics = newsTopics.toImmutableList(),
+            me = me
         ) as HomeUiState
     }
         .catch { emit(HomeUiState.Error(it)) }

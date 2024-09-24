@@ -12,17 +12,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import ru.vladsaybulin.feature.calendar.navigation.navigateToCalendarGraph
-import ru.vladsaybulin.feature.home.navigation.HomeGraphRoute
 import ru.vladsaybulin.feature.home.navigation.navigateToHomeGraph
 import ru.vladsaybulin.feature.list.navigation.navigateToListGraph
-import ru.vladsaybulin.feature.list.navigation.navigateToListScreen
-import ru.vladsaybulin.feature.profile.navigation.navigateToProfileGraph
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchGraph
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination.CALENDAR
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination.HOME
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination.LIST
-import ru.vladsaybulin.seanime.navigation.TopLevelDestination.PROFILE
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination.SEARCH
 
 @Composable
@@ -76,7 +72,6 @@ class SeanimeAppState(
             SEARCH -> navController.navigateToSearchGraph(navOptions = topLevelNavOptions)
             CALENDAR -> navController.navigateToCalendarGraph(navOptions = topLevelNavOptions)
             LIST -> navController.navigateToListGraph(navOptions = topLevelNavOptions)
-            PROFILE -> navController.navigateToProfileGraph(navOptions = topLevelNavOptions)
         }
     }
 }

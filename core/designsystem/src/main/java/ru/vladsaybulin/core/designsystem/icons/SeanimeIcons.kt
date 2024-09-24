@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -39,6 +40,7 @@ import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object SeanimeIcons {
+    val AccountCircle = Icons.Filled.AccountCircle
     val Construction = Icons.Filled.Construction
     val Logout = Icons.AutoMirrored.Filled.Logout
     val OutlinedInfo = Icons.Outlined.Info

@@ -6,12 +6,10 @@ import ru.vladsaybulin.feature.calendar.navigation.CalendarGraphRoute
 import ru.vladsaybulin.feature.home.navigation.HomeGraphRoute
 import ru.vladsaybulin.feature.list.navigation.ListGraphRoute
 import ru.vladsaybulin.feature.search.navigation.SearchGraphRoute
-import ru.vladsaybulin.feature.profile.navigation.ProfileGraphRoute
 import ru.vladsaybulin.feature.calendar.R as calendarR
 import ru.vladsaybulin.feature.home.R as homeR
 import ru.vladsaybulin.feature.list.R as listR
 import ru.vladsaybulin.feature.search.R as searchR
-import ru.vladsaybulin.feature.profile.R as profileR
 
 enum class TopLevelDestination(
     val graphRoute: Any,
@@ -47,12 +45,5 @@ enum class TopLevelDestination(
         unselectedIcon = SeanimeIcons.CalendarToday,
         iconTextId = calendarR.string.feature_calendar_title,
         titleTextId = calendarR.string.feature_calendar_title,
-    ),
-    PROFILE(
-        graphRoute = ProfileGraphRoute,
-        selectedIcon = SeanimeIcons.Person,
-        unselectedIcon = SeanimeIcons.Person,
-        iconTextId = profileR.string.feature_profile_title,
-        titleTextId = profileR.string.feature_profile_title,
     )
 }

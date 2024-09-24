@@ -11,6 +11,7 @@ import ru.vladsaybulin.feature.title.details.navigation.TitleDetailsNavEvents
 import ru.vladsaybulin.feature.title.details.navigation.navigateToTitleDetails
 import ru.vladsaybulin.feature.home.navigation.HomeNavEvents
 import ru.vladsaybulin.feature.list.navigation.ListNavEvents
+import ru.vladsaybulin.feature.profile.navigation.navigateToMe
 import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchByGenre
 import ru.vladsaybulin.feature.search.navigation.navigateToSearchScreenByStatus
@@ -39,7 +40,8 @@ class SeanimeNavEventsFactory(
     fun createHomeNavEvents() = HomeNavEvents(
         navigateToTitleDetails = navController::navigateToTitleDetails,
         navigateToSearchAnimeOngoing = { navController.navigateToSearchScreenByStatus(SearchType.Anime, EntryStatus.Ongoing) },
-        showUserRateEditor = showUserRateEditor
+        showUserRateEditor = showUserRateEditor,
+        navigateToMe = navController::navigateToMe
     )
 
     fun createSearchNavEvents() = SearchNavEvents(
