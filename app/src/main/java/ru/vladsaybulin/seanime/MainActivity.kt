@@ -31,12 +31,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            CompositionLocalProvider(value = LocalLifecycleOwner provides this) { //TODO FIX. Not provided
-                SeanimeApp(
-                    appState = rememberSeanimeAppState(windowSizeClass = calculateWindowSizeClass(this)),
-                    onAuth = shikimoriAuthorization::login
-                )
-            }
+            SeanimeApp(
+                appState = rememberSeanimeAppState(windowSizeClass = calculateWindowSizeClass(this)),
+                onAuth = shikimoriAuthorization::login
+            )
         }
     }
 }
