@@ -1,6 +1,6 @@
 query AnimeUserRatesQuery(
-    $page: Int!
-    $limit: Int!
+    $page: PositiveInt!
+    $limit: PositiveInt!
     $status: UserRateStatusEnum!
     $orderInput: UserRateOrderInputType!
     $userId: ID,

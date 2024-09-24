@@ -23,5 +23,6 @@ apollo {
             targetName = "kotlinx.datetime.Instant",
             expression = "com.apollographql.apollo3.adapter.KotlinxInstantAdapter"
         )
+        mapScalarToKotlinInt("PositiveInt")
     }
 }

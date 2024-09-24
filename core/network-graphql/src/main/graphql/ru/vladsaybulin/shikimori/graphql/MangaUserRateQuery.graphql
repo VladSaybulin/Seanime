@@ -1,6 +1,6 @@
 query MangaUserRateQuery(
     $ids: String!,
-    $limit: Int!
+    $limit: PositiveInt!
 ) {
     mangas(
         page: 1

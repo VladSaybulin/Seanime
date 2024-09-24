@@ -1,6 +1,6 @@
 query AnimeUserRateQuery(
     $ids: String!,
-    $limit: Int!
+    $limit: PositiveInt!
 ) {
     animes(
         page: 1

@@ -1,6 +1,6 @@
 query AnimeQuery(
-    $page: Int
-    $limit: Int
+    $page: PositiveInt
+    $limit: PositiveInt
     $order: OrderEnum
     $kind: AnimeKindString
     $status: AnimeStatusString
