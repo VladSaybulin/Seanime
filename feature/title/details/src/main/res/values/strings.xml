@@ -91,7 +91,13 @@
     <string name="feature_title_details_info_label_anime_anons_date">Выходит</string>
     <string name="feature_title_details_info_label_manga_anons_data">Издаётся</string>
 
-
+    <string name="feature_title_details_anime_rating_g_description">Для всех возрастов. В фильме нет сцен, которые могут испугать или смутить детей. Подходит для всей семьи</string>
+    <string name="feature_title_details_anime_rating_pg_description">Детям рекомендуется смотреть с родителями. Фильм может содержать небольшие элементы насилия или напряжённые сцены, но они не должны быть слишком пугающими</string>
+    <string name="feature_title_details_anime_rating_pg13_description">Детям до 13 лет просмотр нежелателен. В фильме могут быть умеренные сцены насилия, нецензурная лексика или короткие эпизоды сексуального характера</string>
+    <string name="feature_title_details_anime_rating_r_description">Лицам до 17 лет требуется сопровождение взрослого. В фильме присутствуют более выраженные сцены насилия, нецензурная лексика или сексуальные сцены</string>
+    <string name="feature_title_details_anime_rating_r_plus_description">Для зрителей старше 18 лет. Содержит контент, включающий более жестокие сцены или явные сексуальные изображения, чем в рейтинге R</string>
+    <string name="feature_title_details_anime_rating_rx_description">Только для взрослых (18+). Содержит откровенные сцены сексуального характера, экстримальные сцены насилия или прочие элементы, не предназначенные для широкой аудитории</string>
+    
     <string-array name="feature_details_info_seasons">
         <item>Зима</item>
         <item>Весна</item>

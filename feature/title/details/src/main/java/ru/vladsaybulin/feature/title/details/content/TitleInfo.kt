@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -311,7 +312,7 @@ private fun SeasonPanel(
     AirDateTooltipBox(tooltipState = tooltipState, airedOn = airedOn, releasedOn = releasedOn) {
         InfoPanel(
             label = {
-                WithInfoLabel { Text(stringResource(id = R.string.feature_details_info_label_season)) }
+                WithInfoIconLabel { Text(stringResource(id = R.string.feature_details_info_label_season)) }
             },
             modifier = Modifier.clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -339,7 +340,7 @@ private fun AirYearPanel(airedOn: IncompleteDate?, releasedOn: IncompleteDate?) 
     AirDateTooltipBox(tooltipState = tooltipState, airedOn = airedOn, releasedOn = releasedOn) {
         InfoPanel(
             label = {
-                WithInfoLabel { Text(text = stringResource(id = R.string.feature_details_info_label_air_year)) }
+                WithInfoIconLabel { Text(text = stringResource(id = R.string.feature_details_info_label_air_year)) }
             },
             modifier = Modifier.clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -366,7 +367,7 @@ private fun AirDateTooltipBox(
     TooltipBox(
         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
         tooltip = {
-            PlainTooltip {
+            RichTooltip {
                 AirDateTooltipContent(airedOn = airedOn, releasedOn = releasedOn)
             }
         },
@@ -409,55 +410,27 @@ private fun AirDateTooltipContent(airedOn: IncompleteDate?, releasedOn: Incomple
     )
 }
 
-@Composable
-@ReadOnlyComposable
-private fun incompleteDateFormatted(incompleteDate: IncompleteDate, monthCase: MonthCase = MonthCase.Auto): String {
-    val monthNames = MonthNames(
-        stringArrayResource(
-            id = when {
-                monthCase == MonthCase.Nominative -> R.array.feature_title_details_month_names_in_nominative_case
-                monthCase == MonthCase.Genitive -> R.array.feature_title_details_month_names_in_genitive_case
-                incompleteDate.day != null -> R.array.feature_title_details_month_names_in_genitive_case
-                else -> R.array.feature_title_details_month_names_in_nominative_case
-            }
-        ).toList()
-    )
-
-    return DateTimeComponents.Format {
-        var addSpace = false
-        if (incompleteDate.day != null) {
-            dayOfMonth()
-            addSpace = true
-        }
-
-        if (incompleteDate.month != null) {
-            if (addSpace) {
-                char(' ')
-            }
-            monthName(monthNames)
-            addSpace = true
-        }
-
-        if (incompleteDate.year != null) {
-            if (addSpace) {
-                char(' ')
-            }
-            year()
-        }
-    }.format {
-        dayOfMonth = incompleteDate.day
-        monthNumber = incompleteDate.month
-        year = incompleteDate.year
-    }
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RatingPanel(rating: AnimeRating) {
-    InfoPanel(
-        label = { Text(stringResource(id = R.string.feature_details_info_label_rating)) }
+    val tooltipState = rememberTooltipState(isPersistent = true)
+    val scope = rememberCoroutineScope()
+
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+        tooltip = {
+            RichTooltip { Text(text = animeRatingDescription(rating = rating)) }
+        },
+        state = tooltipState
     ) {
-        Text(text = animeRatingString(animeRating = rating))
+        InfoPanel(
+            label = { WithInfoIconLabel { Text(stringResource(id = R.string.feature_details_info_label_rating)) } },
+            modifier = Modifier.clickable { scope.launch { tooltipState.show() } }
+        ) {
+            Text(text = animeRatingString(animeRating = rating))
+        }
     }
+
 }
 
 @Composable
@@ -561,7 +534,7 @@ private fun InfoPanel(
 }
 
 @Composable
-private fun WithInfoLabel(label: @Composable () -> Unit) {
+private fun WithInfoIconLabel(label: @Composable () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         label()
         Icon(
@@ -573,5 +546,58 @@ private fun WithInfoLabel(label: @Composable () -> Unit) {
         )
     }
 }
+
+@Composable
+@ReadOnlyComposable
+private fun incompleteDateFormatted(incompleteDate: IncompleteDate, monthCase: MonthCase = MonthCase.Auto): String {
+    val monthNames = MonthNames(
+        stringArrayResource(
+            id = when {
+                monthCase == MonthCase.Nominative -> R.array.feature_title_details_month_names_in_nominative_case
+                monthCase == MonthCase.Genitive -> R.array.feature_title_details_month_names_in_genitive_case
+                incompleteDate.day != null -> R.array.feature_title_details_month_names_in_genitive_case
+                else -> R.array.feature_title_details_month_names_in_nominative_case
+            }
+        ).toList()
+    )
+
+    return DateTimeComponents.Format {
+        var addSpace = false
+        if (incompleteDate.day != null) {
+            dayOfMonth()
+            addSpace = true
+        }
+
+        if (incompleteDate.month != null) {
+            if (addSpace) {
+                char(' ')
+            }
+            monthName(monthNames)
+            addSpace = true
+        }
+
+        if (incompleteDate.year != null) {
+            if (addSpace) {
+                char(' ')
+            }
+            year()
+        }
+    }.format {
+        dayOfMonth = incompleteDate.day
+        monthNumber = incompleteDate.month
+        year = incompleteDate.year
+    }
+}
+
+@Composable
+private fun animeRatingDescription(rating: AnimeRating) = when (rating) {
+    AnimeRating.G -> R.string.feature_title_details_anime_rating_g_description
+    AnimeRating.PG -> R.string.feature_title_details_anime_rating_pg_description
+    AnimeRating.PG13 -> R.string.feature_title_details_anime_rating_pg13_description
+    AnimeRating.R -> R.string.feature_title_details_anime_rating_r_description
+    AnimeRating.RPlus -> R.string.feature_title_details_anime_rating_r_plus_description
+    AnimeRating.RX -> R.string.feature_title_details_anime_rating_rx_description
+    AnimeRating.None -> null
+}?.let { stringResource(it) } ?: ""
 
 private enum class MonthCase { Nominative, Genitive, Auto }
