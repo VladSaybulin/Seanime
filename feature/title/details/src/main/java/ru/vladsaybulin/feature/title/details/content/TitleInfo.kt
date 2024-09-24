@@ -44,6 +44,7 @@ import kotlinx.datetime.toJavaZoneId
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.colors.entryStatusColor
+import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.animeRatingString
 import ru.vladsaybulin.core.ui.strings.entryStatusString
@@ -53,6 +54,7 @@ import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.isNullOrEmpty
 import ru.vladsaybulin.model.genre.Genre
@@ -123,10 +125,13 @@ fun TitleInfo(
                 VolumesPanel(volumes = volumes)
             }
 
-            if (season != null) {
-                SeasonPanel(timePeriodAiring = season, airedOn = airedOn, releasedOn = releasedOn)
-            } else if (airedOn?.year != null || releasedOn?.year != null) {
-                AirYearPanel(airedOn = airedOn, releasedOn = releasedOn)
+            when {
+                status == EntryStatus.Anons && airedOn != null -> AirDatePanel(airedOn)
+                season != null -> SeasonPanel(timePeriodAiring = season, airedOn = airedOn, releasedOn = releasedOn)
+                airedOn?.year != null || releasedOn?.year != null -> AirYearPanel(
+                    airedOn = airedOn,
+                    releasedOn = releasedOn
+                )
             }
 
             if (rating != AnimeRating.None) {
@@ -276,6 +281,19 @@ private fun VolumesPanel(volumes: Int) {
         label = { Text(stringResource(id = R.string.feature_details_info_label_volumes)) }
     ) {
         Text(text = volumes.toString())
+    }
+}
+
+@Composable
+fun AirDatePanel(airedOn: IncompleteDate) {
+    val labelId = when (LocalTitleStrings.current) {
+        EntryType.Anime -> R.string.feature_title_details_info_label_anime_anons_date
+        EntryType.Manga -> R.string.feature_title_details_info_label_manga_anons_data
+    }
+    InfoPanel(
+        label = { Text(stringResource(id = labelId)) }
+    ) {
+        Text(text = incompleteDateFormatted(incompleteDate = airedOn))
     }
 }
 

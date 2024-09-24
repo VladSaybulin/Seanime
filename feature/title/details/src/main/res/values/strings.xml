@@ -88,6 +88,8 @@
     <string name="feature_title_details_require_auth_message">Чтобы добавить %s в свой список, необходимо войти в аккаунт</string>
     <string name="feature_title_details_require_auth_with_shikimori">Войти через Shikimori</string>
     <string name="feature_title_details_require_close">Закрыть</string>
+    <string name="feature_title_details_info_label_anime_anons_date">Выходит</string>
+    <string name="feature_title_details_info_label_manga_anons_data">Издаётся</string>
 
 
     <string-array name="feature_details_info_seasons">
