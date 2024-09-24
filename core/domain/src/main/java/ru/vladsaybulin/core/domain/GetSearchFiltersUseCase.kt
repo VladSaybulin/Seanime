@@ -10,7 +10,6 @@ class GetSearchFiltersUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         searchType: SearchType,
-        statusEnabled: Boolean = true,
         studioEnabled: Boolean = true,
         publisherEnabled: Boolean = true,
         genreEnabled: Boolean = true,
@@ -21,12 +20,11 @@ class GetSearchFiltersUseCase @Inject constructor(
         SearchType.Manga -> filtersRepository.getMangaFilters()
         SearchType.Ranobe -> filtersRepository.getRanobeFilters()
     }.let {
-        if (statusEnabled && studioEnabled && publisherEnabled && genreEnabled && themesEnabled && demographicEnabled) it
+        if (studioEnabled && publisherEnabled && genreEnabled && themesEnabled && demographicEnabled) it
         else it.copy(
-            statusOptions = if (statusEnabled) it.statusOptions else null,
             studiosOptions = if (studioEnabled) it.studiosOptions else null,
             publishersOptions = if (publisherEnabled) it.publishersOptions else null,
-            genresOption = if (statusEnabled) it.genresOption else null,
+            genresOption = if (genreEnabled) it.genresOption else null,
             themesOptions = if (themesEnabled) it.genresOption else null,
             demographicOptions = if (demographicEnabled) it.genresOption else null
         )

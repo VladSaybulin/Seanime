@@ -59,7 +59,6 @@ class SearchViewModel @Inject constructor(
     private val args = savedStateHandle.toRoute<SearchScreenRoute>()
 
     private val constAppliedFilters = buildMap {
-        putAsSelectedIfNotNull(FilterType.Status, args.entryStatus?.serializedName)
         putAsSelectedIfNotNull(FilterType.Genre, args.genreIdOrNull(GenreKind.Genre))
         putAsSelectedIfNotNull(FilterType.Demographic, args.genreIdOrNull(GenreKind.Demographic))
         putAsSelectedIfNotNull(FilterType.Theme, args.genreIdOrNull(GenreKind.Theme))
@@ -69,7 +68,7 @@ class SearchViewModel @Inject constructor(
 
     private var debouncedSearchJob: Job? = null
 
-    private val availableSearchTypes = if (args.searchType != null) {
+    private val availableSearchTypes = if (args.searchType != null && args.entryStatus == null) {
         persistentListOf(args.searchType)
     } else SearchType.entries.toImmutableList()
 
@@ -78,14 +77,15 @@ class SearchViewModel @Inject constructor(
     private val currentSearchType = MutableStateFlow(args.searchType ?: DefaultSearchType)
     private val currentOrder = MutableStateFlow(DefaultOrder)
 
-    private val appliedFilters = MutableStateFlow<AppliedFilters>(emptyMap())
+    private val appliedFilters = MutableStateFlow(
+        buildMap { putAsSelectedIfNotNull(FilterType.Status, args.entryStatus?.serializedName) }
+    )
 
     private val filtersLoadingState = currentSearchType
         .map<SearchType, FiltersLoadingState> { searchType ->
             FiltersLoadingState.Success(
                 getSearchFiltersUseCase(
                     searchType = searchType,
-                    statusEnabled = args.entryStatus == null,
                     studioEnabled = args.studioId == null,
                     publisherEnabled = args.publisherId == null,
                     genreEnabled = args.genreKind != GenreKind.Genre,
@@ -155,7 +155,7 @@ class SearchViewModel @Inject constructor(
     fun onSearchTypeChanged(searchType: SearchType) {
         if (availableSearchTypes.size == 1) return
         currentSearchType.value = searchType
-        appliedFilters.value = emptyMap()
+        appliedFilters.value = buildMap { putAsSelectedIfNotNull(FilterType.Status, args.entryStatus?.serializedName) }
         searchParams.update {
             it.copy(
                 searchType = searchType,
