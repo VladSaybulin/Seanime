@@ -6,7 +6,5 @@ import ru.vladsaybulin.model.userrate.EditableUserRate
 data class HomeNavEvents(
     val navigateToTitleDetails: (type: EntryType, id: Long) -> Unit,
     val navigateToSearchAnimeOngoing: () -> Unit,
-    val navigateToUrl: (url: String) -> Unit,
-    val navigateToAllNewsTopics: () -> Unit,
     val showUserRateEditor: (EditableUserRate) -> Unit
 )

@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -120,6 +121,8 @@ private fun HomeBody(
     uiState: HomeUiState.Success,
     navEvents: HomeNavEvents,
 ) {
+    val uriHandler = LocalUriHandler.current
+
     LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
         inProgressUserRatesPager(
             userRates = uiState.inProgressUserRates,
@@ -132,17 +135,17 @@ private fun HomeBody(
         animeOngoingCarousel(
             ongoingAnime = uiState.ongoings,
             onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-            onMoreClick = navEvents.navigateToAllNewsTopics
+            onMoreClick = navEvents.navigateToSearchAnimeOngoing
         )
 
         newsTopicsHeader()
         newsTopicsFeed(
             newsTopics = uiState.newsTopics,
-            onTopicClick = { navEvents.navigateToUrl("https://shikimori.one/forum/news/${it.id}") },
-            onUserClick = {},
+            onTopicClick = { uriHandler.openUri("$SHIKIMORI_NEWS_URL/${it.id}") },
+            onUserClick = { uriHandler.openUri("$SHIKIMORI_USER_URL/${it.nickname}") },
             key = { "$NewsTopicKeyPrefix${it.id}" }
         )
-        allNewsTopicsButton(onAllNewsTopicsClick = navEvents.navigateToAllNewsTopics)
+        allNewsTopicsButton(onAllNewsTopicsClick = { uriHandler.openUri(SHIKIMORI_NEWS_URL) })
     }
 }
 
@@ -237,3 +240,6 @@ private const val InProgressUserRatesKey = "user_rates"
 private const val OngoingAnimesKey = "ongoing"
 private const val NewsHeaderKey = "news_header"
 private const val NewsTopicKeyPrefix = "news"
+
+private const val SHIKIMORI_NEWS_URL = "https://shikimori.one/forum/news"
+private const val SHIKIMORI_USER_URL = "https://shikimori.one/users"
