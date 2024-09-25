@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ru.vladsaybulin.database.ShikiRoomDatabase
+import ru.vladsaybulin.database.SeanimeRoomDatabase
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.AnimeDetailsDao
 import ru.vladsaybulin.database.dao.CalendarDao
@@ -25,66 +25,66 @@ import ru.vladsaybulin.database.dao.UsersDao
 class DaosModule {
 
     @Provides
-    fun provideAnimeDao(database: ShikiRoomDatabase): AnimeDao =
+    fun provideAnimeDao(database: SeanimeRoomDatabase): AnimeDao =
         database.animeDao()
 
     @Provides
-    fun provideMangaDao(database: ShikiRoomDatabase): MangaDao =
+    fun provideMangaDao(database: SeanimeRoomDatabase): MangaDao =
         database.mangaDao()
 
     @Provides
-    fun providePersonDao(database: ShikiRoomDatabase): PersonDao =
+    fun providePersonDao(database: SeanimeRoomDatabase): PersonDao =
         database.personDao()
 
     @Provides
-    fun provideCharactersDao(database: ShikiRoomDatabase): CharacterDao =
+    fun provideCharactersDao(database: SeanimeRoomDatabase): CharacterDao =
         database.characterDao()
 
     @Provides
-    fun provideUserRateDao(database: ShikiRoomDatabase): UserRateDao =
+    fun provideUserRateDao(database: SeanimeRoomDatabase): UserRateDao =
         database.userRateDao()
 
     @Provides
-    fun provideUserDao(database: ShikiRoomDatabase): UsersDao =
+    fun provideUserDao(database: SeanimeRoomDatabase): UsersDao =
         database.usersDao()
 
     @Provides
-    fun provideTopicsDao(database: ShikiRoomDatabase): TopicsDao =
+    fun provideTopicsDao(database: SeanimeRoomDatabase): TopicsDao =
         database.topicsDao()
 
     @Provides
-    fun provideFilterStudioDao(database: ShikiRoomDatabase): FilterStudioDao =
+    fun provideFilterStudioDao(database: SeanimeRoomDatabase): FilterStudioDao =
         database.filterStudioDao()
 
     @Provides
-    fun provideFilterPublisherDao(database: ShikiRoomDatabase): FiltersPublisherDao =
+    fun provideFilterPublisherDao(database: SeanimeRoomDatabase): FiltersPublisherDao =
         database.filterPublisherDao()
 
     @Provides
-    fun provideFilterGenreDao(database: ShikiRoomDatabase) =
+    fun provideFilterGenreDao(database: SeanimeRoomDatabase) =
         database.filterGenreDao()
 
     @Provides
-    fun provideGenreDao(database: ShikiRoomDatabase) =
+    fun provideGenreDao(database: SeanimeRoomDatabase) =
         database.genreDao()
 
     @Provides
-    fun provideAnimeDetailsDao(database: ShikiRoomDatabase): AnimeDetailsDao =
+    fun provideAnimeDetailsDao(database: SeanimeRoomDatabase): AnimeDetailsDao =
         database.animeDetailsDao()
 
     @Provides
-    fun provideMangaDetailsDao(database: ShikiRoomDatabase): MangaDetailsDao =
+    fun provideMangaDetailsDao(database: SeanimeRoomDatabase): MangaDetailsDao =
         database.mangaDetailsDao()
 
     @Provides
-    fun provideLastRequestDao(database: ShikiRoomDatabase): LastRequestDao =
+    fun provideLastRequestDao(database: SeanimeRoomDatabase): LastRequestDao =
         database.lastRequestDao()
 
     @Provides
-    fun provideCalendarDao(database: ShikiRoomDatabase): CalendarDao =
+    fun provideCalendarDao(database: SeanimeRoomDatabase): CalendarDao =
         database.calendarDao()
 
     @Provides
-    fun provideOngoingAnimesDao(database: ShikiRoomDatabase): OngoingAnimeDao =
+    fun provideOngoingAnimesDao(database: SeanimeRoomDatabase): OngoingAnimeDao =
         database.ongoingAnimeDao()
 }

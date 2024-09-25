@@ -157,7 +157,7 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         StatsTypeConverter::class
     ]
 )
-abstract class ShikiRoomDatabase : RoomDatabase() {
+abstract class SeanimeRoomDatabase : RoomDatabase() {
     abstract fun animeDao(): AnimeDao
     abstract fun mangaDao(): MangaDao
     abstract fun characterDao(): CharacterDao
