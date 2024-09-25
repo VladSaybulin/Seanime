@@ -1,0 +1,68 @@
+query UserRatesQuery(
+    $page: PositiveInt!
+    $limit: PositiveInt!
+    $userId: ID
+    $targetType: UserRateTargetTypeEnum
+    $status: UserRateStatusEnum
+    $order: UserRateOrderInputType
+) {
+    userRates(
+        limit: $limit
+        page: $page
+        userId: $userId
+        targetType: $targetType
+        status: $status
+        order: $order
+    ) {
+        id
+        createdAt
+        updatedAt
+        status
+        score
+        episodes
+        chapters
+        volumes
+        rewatches
+        text
+        anime {
+            id
+            name
+            russian
+            poster {
+                originalUrl
+                main2xUrl
+            }
+            kind
+            score
+            status
+            episodes
+            episodesAired
+            airedOn {
+                date
+            }
+            releasedOn {
+                date
+            }
+        }
+        manga {
+            id
+            name
+            russian
+            poster {
+                originalUrl
+                main2xUrl
+            }
+            kind
+            score
+            status
+            chapters
+            volumes
+            airedOn {
+                date
+            }
+            releasedOn {
+                date
+            }
+        }
+    }
+}

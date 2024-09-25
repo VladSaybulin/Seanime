@@ -4,10 +4,11 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.MapColumn
-import androidx.room.MapInfo
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.database.models.userrate.InProgressUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedEditableUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
@@ -90,13 +91,14 @@ interface UserRateDao {
 
     @Query(
         value = """
-            SELECT * FROM user_rates
-            WHERE status = 'watching' OR status = 'rewatching' 
-            ORDER BY updated_at DESC
+            SELECT user_rates.* 
+            FROM in_progress_user_rates 
+                JOIN user_rates ON user_rate_id = user_rates.id
+            ORDER BY user_rates.updated_at DESC
             LIMIT :limit
         """
     )
-    fun getFirstInProgressUserRates(limit: Int): Flow<List<PopulatedUserRate>>
+    fun getFirstInProgressUserRatesStream(limit: Int): Flow<List<PopulatedUserRate>>
 
     @Query("SELECT anime_id, status FROM user_rates")
     fun getAllAnimeUserRateStatusesStream(): Flow<Map<@MapColumn(columnName = "anime_id") Long, @MapColumn(columnName = "status") UserRateStatus>>
@@ -153,6 +155,15 @@ interface UserRateDao {
     @Insert
     suspend fun insertUserRateOrder(userRateOrder: List<PagedUserRateEntity>)
 
+    @Insert
+    suspend fun insertInProgressUserRates(inProgressUserRates: List<InProgressUserRateEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertOrIgnoreInProgressUserRate(inProgressUserRate: InProgressUserRateEntity)
+
+    @Update
+    suspend fun updateUserRate(userRate: UserRateEntity)
+
     @Query("DELETE FROM paged_user_rates")
     suspend fun deleteAllOrderedUserRates()
 
@@ -170,5 +181,8 @@ interface UserRateDao {
 
     @Query("DELETE FROM user_rates")
     suspend fun deleteAllUserRates()
+
+    @Query("DELETE FROM in_progress_user_rates")
+    suspend fun deleteAllInProgressUserRates()
 
 }

@@ -9,7 +9,7 @@ class GetInProgressUserRatesUseCase @Inject constructor(
     private val userRateRepository: UserRateRepository
 ) {
     operator fun invoke(limit: Int = DefaultInProgressUserRatesLimit): Flow<List<UserRateWithEntry>> =
-        userRateRepository.getInProgressUserRates(limit)
+        userRateRepository.getInProgressUserRatesStream(limit)
 }
 
 private const val DefaultInProgressUserRatesLimit = 10

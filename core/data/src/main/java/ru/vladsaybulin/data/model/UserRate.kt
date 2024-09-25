@@ -30,6 +30,9 @@ fun NetworkUserRate.asEntity(
     updatedAt = updatedAt
 )
 
+fun UserRateWithEntryDto.asEntity() =
+    networkUserRate.asEntity(animeId = networkAnime?.id, mangaId = networkManga?.id)
+
 fun NetworkUserRate.asExternalModel() = UserRate(
     id = id,
     createdAt = createdAt,

@@ -33,13 +33,11 @@ class TopicsRepository @Inject constructor(
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
     private val json: Json,
 ) {
-    fun getNewsTopics(): Flow<List<Topic>> = topicsDao.getNewsTopic()
-        .onStart { refreshNewResources() }
+    fun getNewsTopicsStream(): Flow<List<Topic>> = topicsDao.getNewsTopic()
         .map { topics -> topics.map(PopulatedTopic::asExternalModel) }
         .flowOn(ioDispatcher)
 
-
-    private suspend fun refreshNewResources() {
+    suspend fun refreshNewsTopics() {
         val freshTopics = topicsDataSource.getTopics(
             limit = 10,
             forumPermalink = "news"

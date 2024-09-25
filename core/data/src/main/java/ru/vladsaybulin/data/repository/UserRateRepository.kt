@@ -1,5 +1,6 @@
 package ru.vladsaybulin.data.repository
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.Pager
@@ -11,15 +12,12 @@ import androidx.paging.RemoteMediator
 import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -34,6 +32,7 @@ import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.UserRateDao
+import ru.vladsaybulin.database.models.userrate.InProgressUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
@@ -63,20 +62,9 @@ class UserRateRepository @Inject constructor(
     private val auth: ShikimoriAuthorization,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-    fun getInProgressUserRates(limit: Int): Flow<List<UserRateWithEntry>> = flow<List<UserRateWithEntry>> {
-        var refreshed = false
-        userRateDao.getFirstInProgressUserRates(limit)
+    fun getInProgressUserRatesStream(limit: Int): Flow<List<UserRateWithEntry>> =
+        userRateDao.getFirstInProgressUserRatesStream(limit)
             .map { it.map(PopulatedUserRate::asExternalModel) }
-            .collect {
-                emit(it)
-                if (!refreshed) {
-                    runBlocking {
-                        refreshInProgressUserRates(it)
-                        refreshed = true
-                    }
-                }
-            }
-    }.flowOn(ioDispatcher)
 
     fun getPagedAnimeUserRates(
         status: UserRateStatus,
@@ -164,9 +152,15 @@ class UserRateRepository @Inject constructor(
                 throw exception
             }
             if (response != null) {
+                val userRate = response.asEntity()
+                val inProgressUserRateEntityOrNull = if (response.status == UserRateStatus.None) {
+                    InProgressUserRateEntity(userRate.id)
+                } else null
+
                 databaseTransactionRunner {
-                    userRateDao.insertOrReplaceUserRate(response.asEntity())
+                    userRateDao.insertOrReplaceUserRate(userRate)
                     userRateDao.deleteOrderUserRateByStatus(userRateValues.status)
+                    inProgressUserRateEntityOrNull?.let { userRateDao.insertOrIgnoreInProgressUserRate(it) }
                 }
             }
         }
@@ -182,8 +176,16 @@ class UserRateRepository @Inject constructor(
     suspend fun updateUserRate(userRateId: Long, userRateValues: UserRateValues) {
         withContext(ioDispatcher) {
             val response = userRateDataSource.updateUserRate(userRateId, userRateValues.asDto())
-            if (response != null) {
-                userRateDao.insertOrReplaceUserRate(response.asEntity())
+
+            if (response == null) {
+                Log.e("UserRateRepository", "Update user rate failed")
+                return@withContext
+            } else {
+                val inProgressUserRateEntityOrNull = if (response.status == UserRateStatus.None) {
+                    InProgressUserRateEntity(userRateId)
+                } else null
+                userRateDao.updateUserRate(response.asEntity())
+                inProgressUserRateEntityOrNull?.let { userRateDao.insertOrIgnoreInProgressUserRate(it) }
             }
         }
     }
@@ -195,41 +197,42 @@ class UserRateRepository @Inject constructor(
         }
     }
 
-    private suspend fun refreshInProgressUserRates(userRates: List<UserRateWithEntry>) {
-        val animeIds = mutableListOf<Long>()
-        val mangaIds = mutableListOf<Long>()
+    suspend fun refreshInProgressUserRates() {
+        withContext(ioDispatcher) {
+            val watchingDeferred = async(ioDispatcher) {
+                userRateDataSource.getUserRates(
+                    page = 1,
+                    limit = 50,
+                    status = UserRateStatus.Watching,
+                    order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
+                )
+            }
 
-        userRates.forEach {
-            it.anime?.id?.apply(animeIds::add)
-            it.manga?.id?.apply(mangaIds::add)
-        }
+            val rewatchingDeferred = async(ioDispatcher) {
+                userRateDataSource.getUserRates(
+                    page = 1,
+                    limit = 50,
+                    status = UserRateStatus.Rewatching,
+                    order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
+                )
+            }
 
-        coroutineScope {
-            val animesDeferred = if (animeIds.isNotEmpty()) {
-                async(ioDispatcher) {
-                    userRateDataSource.getAnimeUserRatesByAnimeIds(animeIds)
-                        .mapNotNull { it.value?.asEntity(animeId = it.key) }
-                }
-            } else null
+            val networkUserRates = watchingDeferred.await() + rewatchingDeferred.await()
 
-            val mangasDeferred = if (mangaIds.isNotEmpty()) {
-                async(ioDispatcher) {
-                    userRateDataSource.getMangaUserRatesByMangaIds(mangaIds)
-                        .mapNotNull { it.value?.asEntity(mangaId = it.key) }
-                }
-            } else null
+            val userRateEntities = networkUserRates.map { it.asEntity() }
+            val animeEntities = networkUserRates.mapNotNull { it.networkAnime?.asEntity() }
+            val mangasEntities = networkUserRates.mapNotNull { it.networkManga?.asEntity() }
 
-            val animeUserRateEntities = animesDeferred?.await() ?: emptyList()
-            val mangaUserRateEntities = mangasDeferred?.await() ?: emptyList()
+            val inProgressUserRateEntities = networkUserRates.map {
+                InProgressUserRateEntity(userRateId = it.networkUserRate.id)
+            }
 
             databaseTransactionRunner {
-                userRateDao.deleteUserRatesByIds(userRates.map { it.userRate.id })
-                if (animeUserRateEntities.isNotEmpty()) {
-                    userRateDao.insertOrReplaceUserRates(animeUserRateEntities)
-                }
-                if (mangaUserRateEntities.isNotEmpty()) {
-                    userRateDao.insertOrReplaceUserRates(mangaUserRateEntities)
-                }
+                userRateDao.deleteAllInProgressUserRates()
+                animeDao.upsertAnimes(animeEntities)
+                mangaDao.upsertMangas(mangasEntities)
+                userRateDao.insertOrReplaceUserRates(userRateEntities)
+                userRateDao.insertInProgressUserRates(inProgressUserRateEntities)
             }
         }
     }

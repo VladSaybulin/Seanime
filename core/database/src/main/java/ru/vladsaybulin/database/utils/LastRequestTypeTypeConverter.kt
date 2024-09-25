@@ -10,6 +10,8 @@ class LastRequestTypeTypeConverter {
         Request.ANIME -> "anime"
         Request.MANGA -> "manga"
         Request.CHARACTER -> "character"
+        Request.ANIME_ONGOINGS -> "anime_ongoing"
+        Request.NEWS -> "news"
     }
 
     @TypeConverter
@@ -17,6 +19,8 @@ class LastRequestTypeTypeConverter {
         "anime" -> Request.ANIME
         "manga" -> Request.MANGA
         "character" -> Request.CHARACTER
+        "anime_ongoing" -> Request.ANIME_ONGOINGS
+        "news" -> Request.NEWS
         else -> throw IllegalArgumentException("Unknown LastRequestType for $value")
     }
 

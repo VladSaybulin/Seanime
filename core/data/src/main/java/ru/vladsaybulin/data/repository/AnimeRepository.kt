@@ -7,8 +7,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.data.model.animeCharacterEntities
@@ -31,7 +31,6 @@ import ru.vladsaybulin.data.model.studioEntityShells
 import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.util.AbstractShikimoriPagingSource
 import ru.vladsaybulin.data.util.DefaultSearchPagingConfig
-import ru.vladsaybulin.data.util.flowOf
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.AnimeDetailsDao
@@ -53,7 +52,6 @@ import ru.vladsaybulin.database.models.anime.PopulatedSimilarAnime
 import ru.vladsaybulin.database.models.anime.asExternalModel
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
-import ru.vladsaybulin.model.anime.AnimeWithUserRate
 import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.model.character.CharacterWithRole
@@ -67,6 +65,7 @@ import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.models.NetworkAnime
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Singleton
 class AnimeRepository @Inject constructor(
@@ -93,11 +92,9 @@ class AnimeRepository @Inject constructor(
         .flow
         .flowOn(ioDispatcher)
 
-    fun getOngoingAnime(limit: Int = 10): Flow<List<Anime>> =
-        flowOf { ongoingAnimeDao.getOngoingAnime(limit) }
-            .onStart { loadFirstOngoingAnime(limit) }
+    fun getOngoingAnimesStream(limit: Int): Flow<List<Anime>> =
+        ongoingAnimeDao.getOngoingAnime(limit)
             .map { it.map(AnimeEntity::asExternalModel) }
-            .flowOn(ioDispatcher)
 
     fun getAnimeDetailsStream(animeId: Long): Flow<AnimeDetails> =
         animeDetailsDao.getAnimeDetails(animeId).map { it.asExternalModel() }
@@ -220,7 +217,7 @@ class AnimeRepository @Inject constructor(
         }
     }
 
-    private suspend fun loadFirstOngoingAnime(limit: Int) {
+    suspend fun refreshOngoingAnimes(limit: Int) {
         val response = animeDataSource.getAnime(
             page = 1,
             limit = 50,
@@ -228,18 +225,18 @@ class AnimeRepository @Inject constructor(
                 QueryMapKey.Status to EntryStatus.Ongoing.serializedName,
                 QueryMapKey.Order to Order.Popularity.serializedValue
             )
-        ).let {
-            it.shuffled().subList(0, limit.coerceAtMost(it.size))
-        }
+        )
+            .shuffledAnimeOngoings()
+            .let { it.subList(0, limit.coerceAtMost(it.size)) }
 
         val animes = response.map(NetworkAnime::asEntity)
-        val ongoingAnime = animes.mapIndexed { index, dbo ->
-            OngoingAnimeEntity(animeId = dbo.id)
-        }
+        val ongoingAnime = animes.map {OngoingAnimeEntity(animeId = it.id) }
 
         animeDao.upsertAnimes(animes)
-        ongoingAnimeDao.deleteAll()
-        ongoingAnimeDao.insertAll(ongoingAnime)
+        databaseTransactionRunner {
+            ongoingAnimeDao.deleteAll()
+            ongoingAnimeDao.insertAll(ongoingAnime)
+        }
     }
 
     private fun getPagedAnimePagingSource(queryMap: Map<QueryMapKey, String>) =
@@ -274,7 +271,15 @@ class AnimeRepository @Inject constructor(
             } catch (e: Exception) {
                 LoadResult.Error(e)
             }
+
         }
+
+    private fun List<NetworkAnime>.shuffledAnimeOngoings(): List<NetworkAnime> {
+        val seed = Clock.System.now().toEpochMilliseconds() / MILLISECONDS_IN_DAY
+        return shuffled(Random(seed))
+    }
 }
+
+private const val MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000
 
 private const val INITIAL_PAGE = 1

@@ -54,6 +54,7 @@ import ru.vladsaybulin.database.models.manga.PublisherEntity
 import ru.vladsaybulin.database.models.person.PersonEntity
 import ru.vladsaybulin.database.models.topic.TopicEntity
 import ru.vladsaybulin.database.models.user.UserEntity
+import ru.vladsaybulin.database.models.userrate.InProgressUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.utils.AnimeKindTypeConverter
@@ -128,7 +129,8 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         /* Other entities */
         CalendarItemEntity::class,
         OngoingAnimeEntity::class,
-        PagedUserRateEntity::class
+        PagedUserRateEntity::class,
+        InProgressUserRateEntity::class
     ],
     version = 1,
 )
