@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -42,11 +42,10 @@ class HomeViewModel @Inject constructor(
     private val updateInProgressUserRatesUseCase: UpdateInProgressUserRatesUseCase
 ) : ViewModel() {
 
-    private val refreshingUserRate = getAuthStateStreamUseCase().onEach {
-        if (it == ShikimoriAuthState.LOGGED_IN) {
-            updateInProgressUserRatesUseCase()
-        }
-    }
+    private val refreshingUserRate = getAuthStateStreamUseCase()
+        .drop(1)
+        .filter { it == ShikimoriAuthState.LOGGED_IN }
+        .onEach { updateInProgressUserRatesUseCase() }
 
     val uiState = combine<List<UserRateWithEntry>, List<Anime>, List<Topic>, BriefUser?, HomeUiState>(
         getInProgressUserRatesUseCase(),
@@ -74,7 +73,7 @@ class HomeViewModel @Inject constructor(
         coroutineScope {
             launch { updateOngoingAnimesUseCase(false) }
             launch { updateNewsTopicsUseCase(false) }
-            launch { refreshingUserRate.first() }
+            launch { updateInProgressUserRatesUseCase() }
         }
     }
 }
