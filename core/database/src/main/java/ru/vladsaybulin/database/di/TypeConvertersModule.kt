@@ -15,7 +15,4 @@ class TypeConvertersModule {
 
     @Provides
     fun provideProtobuf(): ProtoBuf = ProtoBuf
-
-    @Provides
-    fun provideTextRangesTypeConverter(protoBuf: ProtoBuf) = TextRangesTypeConverter(protoBuf)
 }
