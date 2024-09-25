@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -53,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
@@ -212,6 +214,7 @@ fun Counter(
         textStyle = textStyle,
         modifier = modifier.width(IntrinsicSize.Min),
         cursorBrush = SolidColor(colors.cursorColor),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         decorationBox = {
             CounterDecorationBox(
                 innerTextField = it,
