@@ -289,4 +289,4 @@ private fun LogoutConfirmationDialog(
 private const val PRIVACY_POLICY_URL = "" //TODO insert privacy policy url
 private const val FEEDBACK_URL = "https://forms.yandex.ru/u/66ef341273cee76f30ff63e2/"
 
-private const val USER_URL = "https://shikimori.one/users"
+private const val USER_URL = "https://shikimori.one"
