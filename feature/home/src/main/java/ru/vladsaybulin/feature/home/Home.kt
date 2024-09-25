@@ -139,8 +139,8 @@ private fun HomeTopBar(
                     painter = userImagePainter,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(24.dp).clip(CircleShape),
-                    colorFilter = me?.let { null } ?: ColorFilter.tint(SeanimeTheme.colorScheme.onSurface)
+                    modifier = Modifier.size(32.dp).clip(CircleShape),
+                    colorFilter = if (me == null) ColorFilter.tint(SeanimeTheme.colorScheme.onSurface) else null
                 )
             }
         },
