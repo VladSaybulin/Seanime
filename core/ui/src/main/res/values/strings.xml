@@ -151,12 +151,13 @@
     <string name="core_ui_person_role_art">Иллюстрация</string>
     <string name="core_ui_person_role_story_and_art">Сижет и иллюстрация</string>
 
+    <!-- Relation types -->
     <string name="core_ui_relation_type_adaptation">Адаптация</string>
     <string name="core_ui_relation_type_alt_setting">Альтернативный сеттинг</string>
     <string name="core_ui_relation_type_alt_history">Альтернативная история</string>
     <string name="core_ui_relation_type_side_story">Другая история</string>
     <string name="core_ui_relation_type_full_story">Полная история</string>
-    <string name="core_ui_relation_type_parent_history">Parent history</string>
+    <string name="core_ui_relation_type_parent_history">Изначальная история</string>
     <string name="core_ui_relation_type_spin_off">Ответвление от оригинала</string>
     <string name="core_ui_relation_type_sequel">Продолжение</string>
     <string name="core_ui_relation_type_prequel">Предыстория</string>
