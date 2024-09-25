@@ -1,5 +1,6 @@
 package ru.vladsaybulin.feature.userrate
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.input.TextFieldValue
  * @param limit the max value that count can take. Must be [CounterState.UNLIMITED_LIMIT] if counter is unlimited
  * It is recommended that this limit be less than 99999 for correct display
  */
+@Stable
 class CounterState(
     initialCount: Int,
     val limit: Int = UNLIMITED_LIMIT
