@@ -141,35 +141,21 @@ fun UserRateContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            state.progressCounterStates[Episodes]?.let {
+            state.progressCounterStates.forEach { (type, counterState) ->
                 Counter(
-                    state = it,
+                    state = counterState,
                     enabled = state.progressCounterEnabled,
-                    label = { Text(stringResource(R.string.counter_label_episodes)) },
-                    limit = if (it.limit != UNLIMITED_LIMIT) {
+                    label = { Text(counterLabel(type = type)) },
+                    limit = if (counterState.limit != UNLIMITED_LIMIT) {
                         {
                             Text(
                                 stringResource(
                                     id = R.string.feature_user_rate_counter_default_limit,
-                                    it.limit
+                                    counterState.limit
                                 )
                             )
                         }
                     } else null
-                )
-            }
-            state.progressCounterStates[Chapters]?.let {
-                Counter(
-                    state = it,
-                    enabled = state.progressCounterEnabled,
-                    label = { Text(stringResource(R.string.counter_label_chapters)) }
-                )
-            }
-            state.progressCounterStates[Volumes]?.let {
-                Counter(
-                    state = it,
-                    enabled = state.progressCounterEnabled,
-                    label = { Text(stringResource(R.string.counter_label_volumes)) }
                 )
             }
 
@@ -363,6 +349,15 @@ private fun SelectedStatusButton(
         )
     }
 }
+
+@Composable
+private fun counterLabel(type: ProgressCounterType) = stringResource(
+    id = when (type) {
+        Episodes -> R.string.counter_label_episodes
+        Chapters -> R.string.counter_label_chapters
+        Volumes -> R.string.counter_label_volumes
+    }
+)
 
 @Composable
 @Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)

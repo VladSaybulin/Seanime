@@ -2,18 +2,20 @@ package ru.vladsaybulin.feature.userrate
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.vladsaybulin.feature.userrate.CounterState.Companion.UNLIMITED_LIMIT
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryStatus.Anons
@@ -48,9 +50,8 @@ fun EditableUserRate.asState(): UserRateState {
         )
     }
 
-    val scope = rememberCoroutineScope()
-    LaunchedEffect(state, scope) {
-        state.collectProgressCounterStates(scope)
+    LaunchedEffect(state) {
+        state.startAutocomplete()
     }
 
     return state
@@ -60,6 +61,7 @@ enum class ProgressCounterType {
     Episodes, Chapters, Volumes
 }
 
+@Stable
 class UserRateState(
     val availableStatuses: ImmutableList<UserRateStatus>,
     initialUserRateStatus: UserRateStatus,
@@ -81,16 +83,26 @@ class UserRateState(
     val text
         get() = _text.value
 
-    val progressCounterEnabled by derivedStateOf { _status.value in InProgressStatuses }
+    private val _prevStatus = mutableStateOf<UserRateStatus?>(null)
+
+    //TODO add undo button
+    private val undoStatusEnabled: Boolean
+        get() = _prevStatus.value != null
+
+    val progressCounterEnabled by derivedStateOf {
+        undoStatusEnabled || _status.value in InProgressStatuses
+    }
 
     fun onStatusChanged(newStatus: UserRateStatus) {
+        if (_status.value == newStatus) return
+        _prevStatus.value = null
         _status.value = newStatus
 
         if (newStatus == Completed) {
             progressCounterStates.forEach { (_, counterState) -> counterState.setMaxCount() }
         }
 
-        if (newStatus == Rewatching) {
+        if (newStatus in InProgressStatuses) {
             progressCounterStates.forEach { (_, counterState) -> counterState.setZeroCount() }
         }
     }
@@ -104,9 +116,28 @@ class UserRateState(
         _text.value = newText
     }
 
-    private fun onCounterLimitReached(type: ProgressCounterType) {
-        if (!isEnded || _status.value in InProgressStatuses) return
+    fun undoStatus() {
+        _prevStatus.value?.let {
+            _status.value = it
+            _prevStatus.value = null
+        }
+    }
 
+    suspend fun startAutocomplete() {
+        if (!isEnded) return
+        coroutineScope {
+            progressCounterStates
+                .filter { (_, state) -> !state.isUnlimitedLimit() }
+                .forEach { (type, state) ->
+                    snapshotFlow { state.value }
+                        .drop(1)
+                        .onEach { if (it == state.limit) onCounterLimitReached(type) else undoStatus() }
+                        .launchIn(this)
+                }
+        }
+    }
+
+    private fun onCounterLimitReached(type: ProgressCounterType) {
         progressCounterStates.forEach { (counterType, counterState) ->
             if (counterType == type) return@forEach
             counterState.setMaxCount()
@@ -115,26 +146,17 @@ class UserRateState(
         if (_status.value == Rewatching) {
             rewatchesCounterState.onIncrement()
         }
+        _prevStatus.value = _status.value
         _status.value = Completed
-    }
-
-    fun collectProgressCounterStates(scope: CoroutineScope) {
-        progressCounterStates.forEach { (type, state) ->
-            if (state.isUnlimitedLimit()) return@forEach
-            val flow = snapshotFlow { state.value }.filter { it == state.value }
-            scope.launch {
-                flow.collect { onCounterLimitReached(type) }
-            }
-        }
     }
 }
 
-fun CounterState.setMaxCount() {
+private fun CounterState.setMaxCount() {
     if (isUnlimitedLimit()) return
     value = limit
 }
 
-fun CounterState.setZeroCount() {
+private fun CounterState.setZeroCount() {
     value = 0
 }
 
