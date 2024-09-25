@@ -39,11 +39,8 @@ import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.asExternalModel
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.common.EntryType.Anime
-import ru.vladsaybulin.model.common.EntryType.Manga
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
-import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
@@ -165,13 +162,6 @@ class UserRateRepository @Inject constructor(
             }
         }
     }
-
-    suspend fun getEditingUserRate(entryType: EntryType, entryId: Long): EditableUserRate =
-        when (entryType) {
-            Anime -> userRateDao.getEditingAnimeUserRate(entryId)
-            Manga -> userRateDao.getEditingMangaUserRate(entryId)
-        }
-            .asExternalModel(entryType)
 
     suspend fun updateUserRate(userRateId: Long, userRateValues: UserRateValues) {
         withContext(ioDispatcher) {
