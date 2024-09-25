@@ -1,0 +1,36 @@
+query MangaQuery(
+    $page: PositiveInt
+    $limit: PositiveInt
+    $order: OrderEnum
+    $kind: MangaKindString
+    $status: MangaStatusString
+    $score: Int
+    $genre: String
+    $publisher: String
+    $franchise: String
+    $censored: Boolean
+    $mylist: MylistString
+    $ids: String
+    $excludeIds: String
+    $search: String
+) {
+    mangas(
+        page: $page
+        limit: $limit
+        order: $order
+        kind: $kind
+        status: $status
+        score: $score
+        genre: $genre
+        publisher: $publisher
+        franchise: $franchise
+        censored: $censored
+        mylist: $mylist
+        ids: $ids
+        excludeIds: $excludeIds
+        search: $search
+    ) {
+        ...MangaFragment
+        userRate { ...UserRateFragment }
+    }
+}

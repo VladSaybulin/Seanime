@@ -1,0 +1,13 @@
+query AnimeUserRateQuery(
+    $ids: String!,
+    $limit: PositiveInt!
+) {
+    animes(
+        page: 1
+        limit: $limit
+        ids: $ids
+    ) {
+        id
+        userRate { ...UserRateFragment }
+    }
+}

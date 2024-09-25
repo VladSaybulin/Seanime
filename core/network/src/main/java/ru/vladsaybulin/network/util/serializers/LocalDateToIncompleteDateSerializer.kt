@@ -8,7 +8,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import ru.vladsaybulin.network.models.NetworkIncompleteDate
+import ru.vladsaybulin.network.models.common.NetworkIncompleteDate
 
 class LocalDateToIncompleteDateSerializer : KSerializer<NetworkIncompleteDate?> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(

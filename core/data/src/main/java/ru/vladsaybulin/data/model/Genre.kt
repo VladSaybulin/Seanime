@@ -3,7 +3,7 @@ package ru.vladsaybulin.data.model
 import ru.vladsaybulin.database.models.filters.FilterGenreEntity
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.model.genre.Genre
-import ru.vladsaybulin.network.models.NetworkGenre
+import ru.vladsaybulin.network.models.common.NetworkGenre
 
 fun NetworkGenre.asFilterEntity() = FilterGenreEntity(
     id = id,

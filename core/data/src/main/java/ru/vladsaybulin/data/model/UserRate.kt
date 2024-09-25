@@ -1,16 +1,14 @@
 package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
-import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateValues
-import ru.vladsaybulin.network.models.CreateUserRateDto
-import ru.vladsaybulin.network.models.NetworkUserRate
-import ru.vladsaybulin.network.models.NetworkUserRateValues
-import ru.vladsaybulin.network.models.UserRateWithEntryDto
-import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
+import ru.vladsaybulin.network.models.userrate.CreateUserRateRequest
+import ru.vladsaybulin.network.models.userrate.NetworkUserRate
+import ru.vladsaybulin.network.models.userrate.UpdateUserRateRequest
+import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitle
+import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitleLink
 
 fun NetworkUserRate.asEntity(
     animeId: Long? = null,
@@ -30,7 +28,7 @@ fun NetworkUserRate.asEntity(
     updatedAt = updatedAt
 )
 
-fun UserRateWithEntryDto.asEntity() =
+fun NetworkUserRateWithTitle.asEntity() =
     networkUserRate.asEntity(animeId = networkAnime?.id, mangaId = networkManga?.id)
 
 fun NetworkUserRate.asExternalModel() = UserRate(
@@ -59,37 +57,7 @@ fun UserRateEntity.asUserRate() = UserRate(
     text = text
 )
 
-fun AnimeUserRateQuery.UserRate.asPOJO(animeId: Long) = UserRateEntity(
-    id = id,
-    animeId = animeId,
-    mangaId = null,
-    status = status.asUserRateStatus(),
-    score = score,
-    episodes = episodes,
-    chapters = 0,
-    volumes = 0,
-    rewatches = rewatches,
-    text = text ?: "",
-    createdAt = createdAt,
-    updatedAt = updatedAt
-)
-
-fun MangaUserRateQuery.UserRate.asPOJO(mangaId: Long) = UserRateEntity(
-    id = id,
-    animeId = null,
-    mangaId = mangaId,
-    status = status.asUserRateStatus(),
-    score = score,
-    episodes = 0,
-    chapters = chapters,
-    volumes = volumes,
-    rewatches = 0,
-    text = text ?: "",
-    createdAt = createdAt,
-    updatedAt = updatedAt
-)
-
-fun UserRateValues.asDto() = NetworkUserRateValues(
+fun UserRateValues.asDto() = UpdateUserRateRequest(
     status = status,
     score = score,
     episodes = episodes ?: 0,
@@ -123,7 +91,7 @@ fun UserRate.asEntity(
     updatedAt = updatedAt
 )
 
-fun UserRateWithEntryLinkDto.asEntity() = UserRateEntity(
+fun NetworkUserRateWithTitleLink.asEntity() = UserRateEntity(
     id = id,
     animeId = when (entryType) {
         EntryType.Anime -> entryId
@@ -144,13 +112,13 @@ fun UserRateWithEntryLinkDto.asEntity() = UserRateEntity(
     updatedAt = updatedAt
 )
 
-fun CreateUserRateDto(
+fun CreateUserRateRequest(
     userId: Long,
     entryType: EntryType,
     entryId: Long,
     userRateValues: UserRateValues
 ) = with(userRateValues) {
-    CreateUserRateDto(
+    CreateUserRateRequest(
         userId = userId,
         targetType = entryType,
         targetId = entryId,
@@ -164,7 +132,7 @@ fun CreateUserRateDto(
     )
 }
 
-internal fun UserRateWithEntryDto.userRateEntityShell() = with(networkUserRate) {
+internal fun NetworkUserRateWithTitle.userRateEntityShell() = with(networkUserRate) {
     UserRateEntity(
         id = id,
         animeId = networkAnime?.id,
@@ -181,8 +149,8 @@ internal fun UserRateWithEntryDto.userRateEntityShell() = with(networkUserRate) 
     )
 }
 
-internal fun UserRateWithEntryDto.animeEntityOrNullShells() =
+internal fun NetworkUserRateWithTitle.animeEntityOrNullShells() =
     networkAnime?.asEntity()
 
-internal fun UserRateWithEntryDto.mangaEntityOrNullShells() =
+internal fun NetworkUserRateWithTitle.mangaEntityOrNullShells() =
     networkManga?.asEntity()

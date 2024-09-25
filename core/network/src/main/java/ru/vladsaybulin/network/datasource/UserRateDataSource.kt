@@ -31,24 +31,24 @@ import ru.vladsaybulin.network.mapper.enums.asUserRateStatusEnum
 import ru.vladsaybulin.network.mapper.enums.asUserRateTargetTypeEnum
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.mapper.queries.asNetworkModels
-import ru.vladsaybulin.network.models.CreateUserRateDto
-import ru.vladsaybulin.network.models.NetworkUserRate
-import ru.vladsaybulin.network.models.NetworkUserRateValues
-import ru.vladsaybulin.network.models.UserRateWithEntryDto
-import ru.vladsaybulin.network.models.UserRateWithEntryLinkDto
+import ru.vladsaybulin.network.models.userrate.CreateUserRateRequest
+import ru.vladsaybulin.network.models.userrate.NetworkUserRate
+import ru.vladsaybulin.network.models.userrate.UpdateUserRateRequest
+import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitle
+import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitleLink
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private interface UserRateApi {
 
     @POST("/api/v2/user_rates/")
-    suspend fun createUserRate(@Body userRate: JsonObject): UserRateWithEntryLinkDto?
+    suspend fun createUserRate(@Body userRate: JsonObject): NetworkUserRateWithTitleLink?
 
     @PUT("/api/v2/user_rates/{id}")
     suspend fun updateUserRate(
         @Path("id") userRateId: Long,
         @Body userRate: JsonObject
-    ): UserRateWithEntryLinkDto?
+    ): NetworkUserRateWithTitleLink?
 
     @DELETE("/api/v2/user_rates/{id}")
     suspend fun deleteUserRate(@Path("id") userRateId: Long): Response<ResponseBody>
@@ -70,7 +70,7 @@ class UserRateDataSource @Inject constructor(
         field: UserRateOrderField,
         sortOrder: UserRateOrder,
         userId: Long? = null
-    ): List<UserRateWithEntryDto> {
+    ): List<NetworkUserRateWithTitle> {
         val query = AnimeUserRatesQuery(
             page = page,
             limit = limit,
@@ -92,7 +92,7 @@ class UserRateDataSource @Inject constructor(
         field: UserRateOrderField,
         sortOrder: UserRateOrder,
         userId: Long? = null
-    ): List<UserRateWithEntryDto> {
+    ): List<NetworkUserRateWithTitle> {
         val query = MangaUserRatesQuery(
             page = page,
             limit = limit,
@@ -114,7 +114,7 @@ class UserRateDataSource @Inject constructor(
         targetType: EntryType? = null,
         order: Pair<UserRateOrderField, UserRateOrder>?,
         userId: Long? = null
-    ): List<UserRateWithEntryDto> {
+    ): List<NetworkUserRateWithTitle> {
         val query = UserRatesQuery(
             page = page,
             limit = limit,
@@ -160,17 +160,17 @@ class UserRateDataSource @Inject constructor(
             .dataAssertNoErrors.mangas
             .associate { it.id to it.userRate?.asNetworkModel() }
 
-    suspend fun createUserRate(createUserRateDto: CreateUserRateDto): UserRateWithEntryLinkDto? {
+    suspend fun createUserRate(createUserRateRequest: CreateUserRateRequest): NetworkUserRateWithTitleLink? {
         val wrappedBody = JsonObject(
-            mapOf("user_rate" to json.encodeToJsonElement(createUserRateDto))
+            mapOf("user_rate" to json.encodeToJsonElement(createUserRateRequest))
         )
         return api.createUserRate(wrappedBody)
     }
 
     suspend fun updateUserRate(
         userRateId: Long,
-        userRateValues: NetworkUserRateValues
-    ): UserRateWithEntryLinkDto? {
+        userRateValues: UpdateUserRateRequest
+    ): NetworkUserRateWithTitleLink? {
         val wrappedBody = JsonObject(
             mapOf("user_rate" to json.encodeToJsonElement(userRateValues))
         )

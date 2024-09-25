@@ -16,6 +16,7 @@ dependencies {
 
 apollo {
     service("service") {
+        addTypename = "ifAbstract"
         packageName.set("ru.vladsaybulin.core.network.graphql")
         mapScalarToKotlinLong("ID")
         mapScalar(

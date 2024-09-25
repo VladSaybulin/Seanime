@@ -1,0 +1,12 @@
+fragment UserRateFragment on UserRate {
+    id
+    createdAt
+    updatedAt
+    status
+    score
+    episodes
+    chapters
+    volumes
+    rewatches
+    text
+}

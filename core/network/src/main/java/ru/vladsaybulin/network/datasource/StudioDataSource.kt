@@ -3,7 +3,7 @@ package ru.vladsaybulin.network.datasource
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
-import ru.vladsaybulin.network.models.NetworkStudio
+import ru.vladsaybulin.network.models.anime.NetworkStudio
 import javax.inject.Inject
 
 interface StudioApi {

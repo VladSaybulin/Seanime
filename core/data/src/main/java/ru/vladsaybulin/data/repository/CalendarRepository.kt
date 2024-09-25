@@ -17,7 +17,7 @@ import ru.vladsaybulin.database.models.calendar.asExternalModel
 import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.network.datasource.CalendarDataSource
-import ru.vladsaybulin.network.models.CalendarItemDto
+import ru.vladsaybulin.network.models.calendar.NetworkCalendarItem
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.hours
 
@@ -37,8 +37,8 @@ class CalendarRepository @Inject constructor(
     suspend fun refreshCalendarItems() {
         val response = calendarDataSource.getAllCalendarItems()
         calendarDao.deleteAllItems()
-        animeDao.insertOrIgnoreAnimes(response.map(CalendarItemDto::animeShell))
-        calendarDao.insertCalendarItems(response.map(CalendarItemDto::asEntity))
+        animeDao.insertOrIgnoreAnimes(response.map(NetworkCalendarItem::animeShell))
+        calendarDao.insertCalendarItems(response.map(NetworkCalendarItem::asEntity))
     }
 
     private suspend fun syncCalendarItems() {

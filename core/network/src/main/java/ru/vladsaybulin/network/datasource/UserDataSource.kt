@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
 import retrofit2.http.Path
-import ru.vladsaybulin.network.models.NetworkBriefUser
+import ru.vladsaybulin.network.models.user.NetworkBriefUser
 import javax.inject.Inject
 
 interface UsersApi {

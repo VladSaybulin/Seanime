@@ -1,0 +1,6 @@
+fragment CharacterFragment on Character {
+    id
+    name
+    russian
+    poster { ...PosterFragment }
+}

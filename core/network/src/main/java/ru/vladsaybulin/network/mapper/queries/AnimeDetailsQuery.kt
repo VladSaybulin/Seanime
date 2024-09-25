@@ -8,23 +8,16 @@ import ru.vladsaybulin.network.mapper.enums.asAnimeKind
 import ru.vladsaybulin.network.mapper.enums.asAnimeRating
 import ru.vladsaybulin.network.mapper.enums.asEntryStatus
 import ru.vladsaybulin.network.mapper.enums.asGenreKind
-import ru.vladsaybulin.network.mapper.enums.asMangaKind
 import ru.vladsaybulin.network.mapper.enums.asRelationType
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatus
 import ru.vladsaybulin.network.mapper.enums.asVideoKind
-import ru.vladsaybulin.network.models.NetworkAnime
-import ru.vladsaybulin.network.models.NetworkGenre
-import ru.vladsaybulin.network.models.NetworkIncompleteDate
-import ru.vladsaybulin.network.models.NetworkManga
-import ru.vladsaybulin.network.models.NetworkStudio
+import ru.vladsaybulin.network.mapper.fragments.asNetworkModel
+import ru.vladsaybulin.network.models.common.NetworkGenre
+import ru.vladsaybulin.network.models.anime.NetworkStudio
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 import ru.vladsaybulin.network.models.anime.NetworkVideo
-import ru.vladsaybulin.network.models.character.NetworkCharacter
-import ru.vladsaybulin.network.models.character.NetworkCharacterWithRole
 import ru.vladsaybulin.network.models.common.NetworkImage
 import ru.vladsaybulin.network.models.common.NetworkStatisticsItem
-import ru.vladsaybulin.network.models.person.NetworkPerson
-import ru.vladsaybulin.network.models.person.NetworkPersonWithRoles
 import ru.vladsaybulin.network.models.related.NetworkRelated
 
 internal fun AnimeDetailsQuery.Anime.asNetworkModel() = NetworkAnimeDetails(
@@ -35,17 +28,17 @@ internal fun AnimeDetailsQuery.Anime.asNetworkModel() = NetworkAnimeDetails(
     nameJp = japanese,
     alternativeName = synonyms,
     licenseNameRu = licenseNameRu,
-    poster = poster?.run { NetworkImage(originalUrl, mini2xUrl) },
+    poster = poster?.posterFragment?.asNetworkModel(),
     kind = kind.asAnimeKind(),
-    score = score?.toScore(),
+    score = score?.toFloat() ?: 0f,
     status = status.asEntryStatus(),
     rating = rating.asAnimeRating(),
     episodes = episodes,
     episodesAired = episodesAired,
     nextEpisodeAt = nextEpisodeAt,
     duration = duration,
-    airedOn = airedOn?.run { NetworkIncompleteDate(day, month, year) },
-    releasedOn = releasedOn?.run { NetworkIncompleteDate(day, month, year) },
+    airedOn = airedOn?.incompleteDateFragment?.asNetworkModel(),
+    releasedOn = releasedOn?.incompleteDateFragment?.asNetworkModel(),
     season = season?.parseSeasonOrNull(),
     descriptionHtml = descriptionHtml?.takeIf { it.isNotBlank() },
     descriptionSource = descriptionSource?.takeIf { it.isNotBlank() },
@@ -60,8 +53,6 @@ internal fun AnimeDetailsQuery.Anime.asNetworkModel() = NetworkAnimeDetails(
     videos = videos.map(AnimeDetailsQuery.Video::asNetworkModel)
 )
 
-private fun Double?.toScore() = this?.toFloat() ?: 0f
-
 private fun AnimeDetailsQuery.Genre.asNetworkModel() = NetworkGenre(
     id = id,
     name = name,
@@ -70,7 +61,8 @@ private fun AnimeDetailsQuery.Genre.asNetworkModel() = NetworkGenre(
     kind = kind.asGenreKind()
 )
 
-private fun AnimeDetailsQuery.ScoresStat.asNetworkModel() = NetworkStatisticsItem(score, count)
+private fun AnimeDetailsQuery.ScoresStat.asNetworkModel() =
+    NetworkStatisticsItem(score, count)
 
 private fun AnimeDetailsQuery.StatusesStat.asNetworkModel() =
     NetworkStatisticsItem(status.asUserRateStatus(), count)
@@ -83,47 +75,8 @@ private fun AnimeDetailsQuery.Studio.asNetworkModel() = NetworkStudio(
 
 private fun AnimeDetailsQuery.Related.asNetworkModel() = if (anime != null || manga != null) {
     NetworkRelated(
-        anime = anime?.run {
-            NetworkAnime(
-                id = id,
-                originalName = name,
-                russianName = russian,
-                poster = poster?.let { p ->
-                    NetworkImage(
-                        previewUrl = p.main2xUrl,
-                        originalUrl = p.originalUrl
-                    )
-                },
-                kind = kind.asAnimeKind(),
-                status = status.asEntryStatus(),
-                score = score.toScore(),
-                episodes = episodes,
-                episodesAired = episodesAired,
-                airedOn = airedOn?.let { NetworkIncompleteDate(it.day, it.month, it.year) },
-                releasedOn = releasedOn?.let { NetworkIncompleteDate(it.day, it.month, it.year) },
-                userRate = null
-            )
-        },
-        manga = manga?.run {
-            NetworkManga(
-                id = id,
-                originalName = name,
-                russianName = russian,
-                poster = poster?.let { p ->
-                    NetworkImage(
-                        previewUrl = p.main2xUrl,
-                        originalUrl = p.originalUrl
-                    )
-                },
-                kind = kind.asMangaKind(),
-                status = status.asEntryStatus(),
-                score = score?.toScore(),
-                chapters = chapters,
-                volumes = volumes,
-                airedOn = airedOn?.let { NetworkIncompleteDate(it.day, it.month, it.year) },
-                releasedOn = releasedOn?.let { NetworkIncompleteDate(it.day, it.month, it.year) },
-            )
-        },
+        anime = anime?.animeFragment?.asNetworkModel(),
+        manga = manga?.mangaFragment?.asNetworkModel(),
         relationType = relationKind.asRelationType()
     )
 } else null

@@ -62,7 +62,7 @@ import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.AnimeDataSource
-import ru.vladsaybulin.network.models.NetworkAnime
+import ru.vladsaybulin.network.models.anime.NetworkAnime
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random

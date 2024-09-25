@@ -1,0 +1,23 @@
+fragment BaseMangaFragment on Manga {
+    id
+    name
+    russian
+    poster { ...PosterFragment }
+    kind
+    score
+    status
+    chapters
+    volumes
+}
+
+fragment MangaFragment on Manga {
+    ...BaseMangaFragment
+    airedOn { ...IncompleteDateFragment }
+    releasedOn { ...IncompleteDateFragment }
+}
+
+fragment MangaWithLocalDateFragment on Manga {
+    ...BaseMangaFragment
+    airedOn { date }
+    releasedOn { date }
+}

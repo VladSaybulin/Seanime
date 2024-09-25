@@ -5,7 +5,7 @@ import ru.vladsaybulin.core.network.graphql.GenresQuery
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.network.mapper.enums.asGenreEntryTypeEnum
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
-import ru.vladsaybulin.network.models.NetworkGenre
+import ru.vladsaybulin.network.models.common.NetworkGenre
 import javax.inject.Inject
 
 class GenreDataSource @Inject constructor(

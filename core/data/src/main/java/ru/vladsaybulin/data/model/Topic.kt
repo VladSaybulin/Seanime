@@ -10,9 +10,9 @@ import ru.vladsaybulin.model.topic.TopicLinkedType
 import ru.vladsaybulin.model.topic.TopicLinkedType.Anime
 import ru.vladsaybulin.model.topic.TopicLinkedType.Manga
 import ru.vladsaybulin.model.topic.TopicLinkedType.Ranobe
-import ru.vladsaybulin.network.models.NetworkAnime
-import ru.vladsaybulin.network.models.NetworkManga
-import ru.vladsaybulin.network.models.NetworkTopic
+import ru.vladsaybulin.network.models.anime.NetworkAnime
+import ru.vladsaybulin.network.models.manga.NetworkManga
+import ru.vladsaybulin.network.models.forum.NetworkTopic
 
 fun NetworkTopic.asEntity() = TopicEntity(
     id = id,

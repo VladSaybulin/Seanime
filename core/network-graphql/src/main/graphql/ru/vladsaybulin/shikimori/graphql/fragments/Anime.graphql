@@ -1,0 +1,23 @@
+fragment BaseAnimeFragment on Anime {
+    id
+    name
+    russian
+    poster { ...PosterFragment }
+    kind
+    score
+    status
+    episodes
+    episodesAired
+}
+
+fragment AnimeFragment on Anime {
+    ...BaseAnimeFragment
+    airedOn { ...IncompleteDateFragment }
+    releasedOn { ...IncompleteDateFragment }
+}
+
+fragment AnimeWithLocalDateFragment on Anime {
+    ...BaseAnimeFragment
+    airedOn { date }
+    releasedOn { date }
+}

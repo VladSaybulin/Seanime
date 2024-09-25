@@ -2,8 +2,8 @@ package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.user.UserEntity
 import ru.vladsaybulin.database.models.user.UserImagePOJO
-import ru.vladsaybulin.network.models.NetworkBriefUser
-import ru.vladsaybulin.network.models.UserImageDto
+import ru.vladsaybulin.network.models.user.NetworkBriefUser
+import ru.vladsaybulin.network.models.user.UserImageDto
 
 fun NetworkBriefUser.asExternalModel() = UserEntity(
     id = id,

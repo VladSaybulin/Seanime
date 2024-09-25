@@ -3,13 +3,10 @@ package ru.vladsaybulin.network.models.manga
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.network.models.NetworkGenre
-import ru.vladsaybulin.network.models.NetworkIncompleteDate
-import ru.vladsaybulin.network.models.NetworkPublisher
-import ru.vladsaybulin.network.models.character.NetworkCharacterWithRole
+import ru.vladsaybulin.network.models.common.NetworkGenre
+import ru.vladsaybulin.network.models.common.NetworkIncompleteDate
 import ru.vladsaybulin.network.models.common.NetworkImage
 import ru.vladsaybulin.network.models.common.NetworkStatisticsItem
-import ru.vladsaybulin.network.models.person.NetworkPersonWithRoles
 import ru.vladsaybulin.network.models.related.NetworkRelated
 
 data class NetworkMangaDetails(

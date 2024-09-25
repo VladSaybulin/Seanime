@@ -6,9 +6,8 @@ import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.network.models.NetworkGenre
-import ru.vladsaybulin.network.models.NetworkIncompleteDate
-import ru.vladsaybulin.network.models.NetworkStudio
+import ru.vladsaybulin.network.models.common.NetworkGenre
+import ru.vladsaybulin.network.models.common.NetworkIncompleteDate
 import ru.vladsaybulin.network.models.common.NetworkImage
 import ru.vladsaybulin.network.models.common.NetworkStatisticsItem
 import ru.vladsaybulin.network.models.related.NetworkRelated

@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
-import ru.vladsaybulin.data.model.CreateUserRateDto
+import ru.vladsaybulin.data.model.CreateUserRateRequest
 import ru.vladsaybulin.data.model.animeEntityOrNullShells
 import ru.vladsaybulin.data.model.asDto
 import ru.vladsaybulin.data.model.asEntity
@@ -46,7 +46,7 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.network.datasource.UserRateDataSource
-import ru.vladsaybulin.network.models.UserRateWithEntryDto
+import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitle
 import javax.inject.Inject
 
 class UserRateRepository @Inject constructor(
@@ -137,7 +137,7 @@ class UserRateRepository @Inject constructor(
             val myId = userRepository.getMyId() ?: throw IllegalStateException("Not authorized")
             val response = try {
                 userRateDataSource.createUserRate(
-                    CreateUserRateDto(
+                    CreateUserRateRequest(
                         userId = myId,
                         entryType = entryType,
                         entryId = entryId,
@@ -279,11 +279,11 @@ class UserRateRepository @Inject constructor(
         orderField: UserRateOrderField,
         sortOrder: UserRateOrder,
         page: Int,
-        userRates: List<UserRateWithEntryDto>
+        userRates: List<NetworkUserRateWithTitle>
     ) {
-        val userRatesEntities = userRates.map(UserRateWithEntryDto::userRateEntityShell)
-        val animeEntities = userRates.mapNotNull(UserRateWithEntryDto::animeEntityOrNullShells)
-        val mangaEntities = userRates.mapNotNull(UserRateWithEntryDto::mangaEntityOrNullShells)
+        val userRatesEntities = userRates.map(NetworkUserRateWithTitle::userRateEntityShell)
+        val animeEntities = userRates.mapNotNull(NetworkUserRateWithTitle::animeEntityOrNullShells)
+        val mangaEntities = userRates.mapNotNull(NetworkUserRateWithTitle::mangaEntityOrNullShells)
 
         val order = userRates.mapIndexed { index, networkModel ->
             PagedUserRateEntity(
@@ -329,7 +329,7 @@ private typealias LoadPage = suspend (
     status: UserRateStatus,
     orderField: UserRateOrderField,
     sortOrder: UserRateOrder
-) -> List<UserRateWithEntryDto>
+) -> List<NetworkUserRateWithTitle>
 
 private typealias GetLastPage = suspend (
     status: UserRateStatus,

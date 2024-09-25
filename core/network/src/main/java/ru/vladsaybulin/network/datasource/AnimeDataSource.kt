@@ -1,7 +1,6 @@
 package ru.vladsaybulin.network.datasource
 
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.api.Optional.Companion.presentIfNotNull
 import retrofit2.Retrofit
 import retrofit2.create
@@ -11,12 +10,10 @@ import ru.vladsaybulin.common.network.ShikimoriException
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.core.network.graphql.AnimeQuery
 import ru.vladsaybulin.core.network.graphql.AnimeRolesQuery
-import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
-import ru.vladsaybulin.network.mapper.enums.asOrderEnum
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.mapper.queries.asNetworkModels
-import ru.vladsaybulin.network.models.NetworkAnime
+import ru.vladsaybulin.network.models.anime.NetworkAnime
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 import ru.vladsaybulin.network.models.common.NetworkTitleRoles
 import ru.vladsaybulin.network.util.getOrderEnum

@@ -3,8 +3,8 @@ package ru.vladsaybulin.network.models.character
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.vladsaybulin.network.models.NetworkAnime
-import ru.vladsaybulin.network.models.NetworkManga
+import ru.vladsaybulin.network.models.anime.NetworkAnime
+import ru.vladsaybulin.network.models.manga.NetworkManga
 import ru.vladsaybulin.network.models.common.NetworkImage
 import ru.vladsaybulin.network.models.person.NetworkPerson
 import ru.vladsaybulin.network.util.serializers.ImageSerializer

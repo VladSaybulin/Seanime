@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.vladsaybulin.model.topic.TopicLinkedType
 import ru.vladsaybulin.model.topic.TopicType
-import ru.vladsaybulin.network.models.NetworkTopic
+import ru.vladsaybulin.network.models.forum.NetworkTopic
 import javax.inject.Inject
 
 interface TopicApi {

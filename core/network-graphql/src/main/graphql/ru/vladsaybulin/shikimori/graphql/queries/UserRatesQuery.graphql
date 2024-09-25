@@ -1,0 +1,21 @@
+query UserRatesQuery(
+    $page: PositiveInt!
+    $limit: PositiveInt!
+    $userId: ID
+    $targetType: UserRateTargetTypeEnum
+    $status: UserRateStatusEnum
+    $order: UserRateOrderInputType
+) {
+    userRates(
+        limit: $limit
+        page: $page
+        userId: $userId
+        targetType: $targetType
+        status: $status
+        order: $order
+    ) {
+        ...UserRateFragment
+        anime { ...AnimeWithLocalDateFragment }
+        manga { ...MangaWithLocalDateFragment }
+    }
+}

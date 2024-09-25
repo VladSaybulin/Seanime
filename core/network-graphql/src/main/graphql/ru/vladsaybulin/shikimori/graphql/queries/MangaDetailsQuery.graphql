@@ -1,0 +1,44 @@
+query MangaDetailsQuery($id: String!) {
+    mangas(ids: $id) {
+        id
+        name
+        russian
+        english
+        japanese
+        synonyms
+        licenseNameRu
+        poster { ...PosterFragment }
+        kind
+        score
+        status
+        chapters
+        volumes
+        airedOn { ...IncompleteDateFragment }
+        releasedOn { ...IncompleteDateFragment }
+        descriptionHtml
+        descriptionSource
+        genres {
+            id
+            name
+            russian
+            kind
+        }
+        scoresStats {
+            score
+            count
+        }
+        statusesStats {
+            status
+            count
+        }
+        publishers {
+            id
+            name
+        }
+        related {
+            anime { ...AnimeFragment }
+            manga { ...MangaFragment }
+            relationKind
+        }
+    }
+}

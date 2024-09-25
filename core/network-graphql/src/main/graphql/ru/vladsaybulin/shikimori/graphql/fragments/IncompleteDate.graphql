@@ -1,0 +1,5 @@
+fragment IncompleteDateFragment on IncompleteDate {
+    day
+    month
+    year
+}

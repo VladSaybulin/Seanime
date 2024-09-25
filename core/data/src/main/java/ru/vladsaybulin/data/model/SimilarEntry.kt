@@ -2,8 +2,8 @@ package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.model.SimilarEntry
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.network.models.NetworkAnime
-import ru.vladsaybulin.network.models.NetworkManga
+import ru.vladsaybulin.network.models.anime.NetworkAnime
+import ru.vladsaybulin.network.models.manga.NetworkManga
 
 fun NetworkAnime.asSimilarEntry() = SimilarEntry(
     entryId = id,

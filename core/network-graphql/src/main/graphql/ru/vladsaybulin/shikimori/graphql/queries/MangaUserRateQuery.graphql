@@ -1,0 +1,13 @@
+query MangaUserRateQuery(
+    $ids: String!,
+    $limit: PositiveInt!
+) {
+    mangas(
+        page: 1
+        limit: $limit
+        ids: $ids
+    ) {
+        id
+        userRate { ...UserRateFragment }
+    }
+}

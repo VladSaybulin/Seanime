@@ -1,0 +1,4 @@
+fragment PosterFragment on Poster {
+    originalUrl
+    main2xUrl
+}

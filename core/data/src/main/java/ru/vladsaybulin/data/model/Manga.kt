@@ -3,7 +3,7 @@ package ru.vladsaybulin.data.model
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.network.models.NetworkManga
+import ru.vladsaybulin.network.models.manga.NetworkManga
 
 fun Manga.asPOJO() = MangaEntity(
     id = id,

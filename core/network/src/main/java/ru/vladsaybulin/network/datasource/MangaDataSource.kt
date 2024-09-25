@@ -7,13 +7,12 @@ import retrofit2.create
 import retrofit2.http.GET
 import retrofit2.http.Path
 import ru.vladsaybulin.common.network.ShikimoriException
-import ru.vladsaybulin.core.network.graphql.AnimeRolesQuery
 import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
 import ru.vladsaybulin.core.network.graphql.MangaQuery
 import ru.vladsaybulin.core.network.graphql.MangaRolesQuery
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
-import ru.vladsaybulin.network.models.NetworkManga
+import ru.vladsaybulin.network.models.manga.NetworkManga
 import ru.vladsaybulin.network.models.common.NetworkTitleRoles
 import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
 import ru.vladsaybulin.network.util.getOrderEnum
