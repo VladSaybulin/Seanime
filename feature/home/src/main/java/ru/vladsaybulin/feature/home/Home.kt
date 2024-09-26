@@ -47,6 +47,7 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
+import ru.vladsaybulin.core.ui.ProfileButton
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
@@ -132,17 +133,7 @@ private fun HomeTopBar(
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.feature_home_title)) },
         actions = {
-            IconButton(onClick = onMeClick) {
-                val userImagePainter = me?.image?.x64Url?.let { rememberAsyncImagePainter(it) }
-                    ?: rememberVectorPainter(SeanimeIcons.AccountCircle)
-                Image(
-                    painter = userImagePainter,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(32.dp).clip(CircleShape),
-                    colorFilter = if (me == null) ColorFilter.tint(SeanimeTheme.colorScheme.onSurface) else null
-                )
-            }
+            ProfileButton(image = me?.image, onClick = onMeClick)
         },
         scrollBehavior = scrollBehavior
     )
