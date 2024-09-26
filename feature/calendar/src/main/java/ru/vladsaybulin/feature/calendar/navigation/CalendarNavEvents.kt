@@ -4,5 +4,6 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class CalendarNavEvents(
-    val navigateToAnimeDetails: (Long) -> Unit
+    val navigateToAnimeDetails: (Long) -> Unit,
+    val navigateToMe: () -> Unit
 )

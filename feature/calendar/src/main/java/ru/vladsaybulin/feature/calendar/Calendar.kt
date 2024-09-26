@@ -5,20 +5,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,9 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,20 +38,25 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.DayOfWeekNames
+import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalTime
-import kotlinx.datetime.toJavaZoneId
 import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.domain.calendar.CalendarDay
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
+import ru.vladsaybulin.core.ui.ProfileButton
 import ru.vladsaybulin.core.ui.anime.AnimeCarousel
+import ru.vladsaybulin.core.ui.colors.entryStatusColor
+import ru.vladsaybulin.core.ui.R as uiR
 import ru.vladsaybulin.feature.calendar.navigation.CalendarNavEvents
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.user.BriefUser
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @Composable
 fun CalendarRoute(
@@ -59,10 +64,12 @@ fun CalendarRoute(
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val me by viewModel.me.collectAsStateWithLifecycle()
 
     CalendarScreen(
         uiState = uiState,
-        onAnimeClick = navEvents.navigateToAnimeDetails,
+        me = me,
+        navEvents = navEvents,
         onRefresh = viewModel::forceRefresh
     )
 }
@@ -70,21 +77,20 @@ fun CalendarRoute(
 @Composable
 fun CalendarScreen(
     uiState: CalendarUiState,
-    onAnimeClick: (animeId: Long) -> Unit = {},
+    me: BriefUser?,
+    navEvents: CalendarNavEvents,
     onRefresh: suspend () -> Unit = {},
 ) {
-    Box(
-        modifier = Modifier
-            .navigationBarsPadding()
-            .padding(LocalScreenContentPadding.current)
-            .fillMaxSize()
-    ) {
-        when (uiState) {
-            is CalendarUiState.Error -> FullScreenErrorMessage(throwable = uiState.throwable)
-            CalendarUiState.Loading -> CalendarLoading(modifier = Modifier.fillMaxSize())
-            is CalendarUiState.Success -> CalendarContent(
-                calendarDays = uiState.calendarDays,
-                onCalendarItemClick = { onAnimeClick(it.anime.id) },
+    Scaffold(
+        modifier = Modifier.padding(LocalScreenContentPadding.current),
+        topBar = {
+            CalendarTopBar(me = me, navigateToMe = navEvents.navigateToMe)
+        }
+    ) { scaffoldPadding ->
+        Box(modifier = Modifier.padding(scaffoldPadding)) {
+            CalendarContent(
+                state = uiState,
+                navigateToAnimeDetails = navEvents.navigateToAnimeDetails,
                 onRefresh = onRefresh
             )
         }
@@ -93,7 +99,38 @@ fun CalendarScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarContent(
+private fun CalendarTopBar(
+    me: BriefUser?,
+    navigateToMe: () -> Unit
+) {
+    TopAppBar(
+        title = { Text(stringResource(id = R.string.feature_calendar_title)) },
+        actions = {
+            ProfileButton(image = me?.image, onClick = navigateToMe)
+        }
+    )
+}
+
+@Composable
+private fun CalendarContent(
+    state: CalendarUiState,
+    navigateToAnimeDetails: (Long) -> Unit,
+    onRefresh: suspend () -> Unit
+) {
+    when (state) {
+        is CalendarUiState.Error -> FullScreenErrorMessage(throwable = state.throwable)
+        CalendarUiState.Loading -> CalendarLoadingBody(modifier = Modifier.fillMaxSize())
+        is CalendarUiState.Success -> CalendarBody(
+            calendarDays = state.calendarDays,
+            onCalendarItemClick = { navigateToAnimeDetails(it.anime.id) },
+            onRefresh = onRefresh
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CalendarBody(
     modifier: Modifier = Modifier,
     calendarDays: List<CalendarDay>,
     onCalendarItemClick: (CalendarItem) -> Unit,
@@ -116,7 +153,7 @@ fun CalendarContent(
             modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(
-                top = 16.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
+                top = 16.dp,
                 bottom = 16.dp
             )
         ) {
@@ -131,7 +168,7 @@ fun CalendarContent(
 }
 
 @Composable
-private fun CalendarLoading(modifier: Modifier) {
+private fun CalendarLoadingBody(modifier: Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -170,9 +207,16 @@ private fun CalendarSectionHeader(date: LocalDate?) {
     val headerText = if (date == null) {
         stringResource(id = R.string.was_on_aired)
     } else {
-        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
-            .withZone(TimeZone.currentSystemDefault().toJavaZoneId())
-        formatter.format(date.toJavaLocalDate())
+        val weekNames = DayOfWeekNames(stringArrayResource(id = uiR.array.core_ui_week_names).toList())
+        val monthNames = MonthNames(stringArrayResource(id = uiR.array.core_ui_month_names_in_nominative_case).toList())
+        val formatter = LocalDate.Format {
+            dayOfWeek(weekNames)
+            chars(", ")
+            dayOfMonth()
+            chars(" ")
+            monthName(monthNames)
+        }
+        formatter.format(date).replaceFirstChar { it.uppercase() }
     }
 
     Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -202,25 +246,26 @@ private fun CalendarItemDetails(
         }
     }
 
-    val episodeText = if (nextEpisode > 0) {
-        stringResource(id = R.string.episode, nextEpisode)
-    } else null
+    val isAnons = nextEpisode <= 1
 
-    val text = buildString {
-        if (episodeText != null) {
-            append(episodeText)
-            append(" \u00B7 ")
-        }
+    val episodeText = when (isAnons) {
+        true -> stringResource(id = R.string.feature_calendar_anons)
+        else -> stringResource(id = R.string.feature_calendar_episode, nextEpisode)
+    }
+
+    val anonsColor = entryStatusColor(entryStatus = EntryStatus.Anons)
+
+    val text = buildAnnotatedString {
+        val index = if (isAnons) {
+            pushStyle(SpanStyle(color = anonsColor))
+        } else null
+        append(episodeText)
+        index?.let { pop(it) }
+        append(" \u00B7 ")
         append(timeText)
     }
 
     Text(text = text)
-}
-
-class CalendarPreviewProvider : PreviewParameterProvider<CalendarItem> {
-    override val values: Sequence<CalendarItem>
-        get() = previewCalendarItems.asSequence()
-
 }
 
 @Preview
@@ -247,7 +292,7 @@ fun CalendarSectionPreview() {
 fun CalendarLoadingPreview() {
     SeanimeTheme {
         Surface {
-            CalendarLoading(modifier = Modifier.fillMaxSize())
+            CalendarLoadingBody(modifier = Modifier.fillMaxSize())
         }
     }
 }

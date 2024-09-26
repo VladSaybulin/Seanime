@@ -11,13 +11,23 @@ import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.core.domain.calendar.CalendarDay
 import ru.vladsaybulin.core.domain.calendar.GetCalendarDaysUseCase
 import ru.vladsaybulin.data.repository.CalendarRepository
+import ru.vladsaybulin.data.repository.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
-    getCalendarDaysUseCase: GetCalendarDaysUseCase
+    getCalendarDaysUseCase: GetCalendarDaysUseCase,
+    userRepository: UserRepository,
 ) : ViewModel() {
+
+    val me = userRepository.getMeStream()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
     val uiState: StateFlow<CalendarUiState> = getCalendarDaysUseCase()
         .map { CalendarUiState.Success(it) as CalendarUiState }
         .catch { emit(CalendarUiState.Error(it)) }

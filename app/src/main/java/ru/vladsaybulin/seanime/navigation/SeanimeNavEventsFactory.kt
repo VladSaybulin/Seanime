@@ -61,6 +61,7 @@ class SeanimeNavEventsFactory(
 
     fun createCalendarNavEvents() = CalendarNavEvents(
         navigateToAnimeDetails = { navController.navigateToTitleDetails(EntryType.Anime, it) },
+        navigateToMe = navController::navigateToMe
     )
 
     fun createTitleDetailNavEvents() = TitleDetailsNavEvents(
