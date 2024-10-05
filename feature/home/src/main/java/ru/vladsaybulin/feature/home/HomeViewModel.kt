@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -47,6 +49,8 @@ class HomeViewModel @Inject constructor(
         .filter { it == ShikimoriAuthState.LOGGED_IN }
         .onEach { updateInProgressUserRatesUseCase() }
 
+    private var refreshingUserRatesJob: Job? = null
+
     val uiState = combine<List<UserRateWithEntry>, List<Anime>, List<Topic>, BriefUser?, HomeUiState>(
         getInProgressUserRatesUseCase(),
         getOngoingAnimesStreamUseCase(),
@@ -61,7 +65,8 @@ class HomeViewModel @Inject constructor(
         )
     }
         .onStart { internalRefresh() }
-        .onStart { refreshingUserRate.launchIn(viewModelScope) }
+        .onStart { refreshingUserRatesJob = refreshingUserRate.launchIn(viewModelScope) }
+        .onCompletion { refreshingUserRatesJob?.cancel() }
         .catch { emit(HomeUiState.Error(it)) }
         .stateIn(
             scope = viewModelScope,
