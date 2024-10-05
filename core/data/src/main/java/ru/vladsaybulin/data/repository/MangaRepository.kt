@@ -3,6 +3,8 @@ package ru.vladsaybulin.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.PagingSource.LoadResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -36,6 +38,7 @@ import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.UserRateDao
+import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
 import ru.vladsaybulin.database.models.manga.PopulatedMangaAuthor
 import ru.vladsaybulin.database.models.manga.PopulatedMangaCharacter
@@ -66,15 +69,8 @@ class MangaRepository @Inject constructor(
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    fun getPagedManga(
-        queryMap: Map<QueryMapKey, String>,
-        pagingConfig: PagingConfig = DefaultSearchPagingConfig
-    ): Flow<PagingData<Manga>> = Pager(
-        config = pagingConfig,
-        pagingSourceFactory = { getPagedMangaPagingSource(queryMap) }
-    )
-        .flow
-        .flowOn(ioDispatcher)
+    fun mangaSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Manga> =
+        SearchPagingSource { page, limit -> loadMangaSearchPage(page, limit, queryMap) }
 
     fun getMangaDetailsStream(mangaId: Long): Flow<MangaDetails> =
         mangaDetailsDao.getMangaDetails(mangaId).map { it.asExternalModel() }
@@ -163,7 +159,7 @@ class MangaRepository @Inject constructor(
             val response = mangaDataSource.getSimilarManga(mangaId)
 
             val mangas = response.map { it.asEntity() }
-            val crossRefs = response.map { MangaSimilarMangaCrossRef( mangaId, it.id) }
+            val crossRefs = response.map { MangaSimilarMangaCrossRef(mangaId, it.id) }
 
             databaseTransactionRunner {
                 mangaDetailsDao.deleteMangaSimilarMangaCrossRef(mangaId)
@@ -174,39 +170,29 @@ class MangaRepository @Inject constructor(
         }
     }
 
-    private fun getPagedMangaPagingSource(queryMap: Map<QueryMapKey, String>) =
-        object : AbstractShikimoriPagingSource<Manga>() {
-            override suspend fun loadPage(
-                pageNumber: Int,
-                pageSize: Int
-            ): LoadResult<Int, Manga> = try {
-                val networkMangas = mangaDataSource.getManga(
-                    page = pageNumber,
-                    limit = pageSize,
-                    queryMap = queryMap
-                )
-                val mangaEntities = networkMangas.map { it.asEntity() }
-                val userRatesEntities = networkMangas.mapNotNull { it.userRateEntityShell() }
+    private suspend fun loadMangaSearchPage(
+        page: Int,
+        limit: Int,
+        queryMap: Map<QueryMapKey, String>
+    ): List<Manga> {
+        val networkMangas = mangaDataSource.getManga(
+            page = page,
+            limit = limit,
+            queryMap = queryMap
+        )
+        val mangaEntities = networkMangas.map { it.asEntity() }
+        val userRatesEntities = networkMangas.mapNotNull { it.userRateEntityShell() }
 
-                if (mangaEntities.isNotEmpty()) {
-                    mangaDao.insertOrReplaceMangas(mangaEntities)
-                }
-
-                if (userRatesEntities.isNotEmpty()) {
-                    userRateDao.insertOrReplaceUserRates(userRatesEntities)
-                }
-
-                val mangas = networkMangas.map { it.asExternalModel() }
-
-                LoadResult.Page(
-                    data = mangas,
-                    nextKey = if (mangas.size == pageSize) pageNumber + 1 else null,
-                    prevKey = null
-                )
-            } catch (e: Exception) {
-                LoadResult.Error(e)
-            }
+        if (mangaEntities.isNotEmpty()) {
+            mangaDao.insertOrReplaceMangas(mangaEntities)
         }
+
+        if (userRatesEntities.isNotEmpty()) {
+            userRateDao.insertOrReplaceUserRates(userRatesEntities)
+        }
+
+        return mangaEntities.map(MangaEntity::asExternalModel)
+    }
 
     fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedTitle>> =
         mangaDetailsDao.getAllMangaRelatedTitles(mangaId)

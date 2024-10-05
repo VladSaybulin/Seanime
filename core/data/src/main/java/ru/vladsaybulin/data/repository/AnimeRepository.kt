@@ -1,11 +1,8 @@
 package ru.vladsaybulin.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -30,7 +27,6 @@ import ru.vladsaybulin.data.model.relatedMangaEntityShells
 import ru.vladsaybulin.data.model.studioEntityShells
 import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.util.AbstractShikimoriPagingSource
-import ru.vladsaybulin.data.util.DefaultSearchPagingConfig
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.AnimeDetailsDao
@@ -81,16 +77,8 @@ class AnimeRepository @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-
-    fun getPagedAnime(
-        queryMap: Map<QueryMapKey, String>,
-        pagingConfig: PagingConfig = DefaultSearchPagingConfig
-    ): Flow<PagingData<Anime>> = Pager(
-        config = pagingConfig,
-        pagingSourceFactory = { getPagedAnimePagingSource(queryMap) }
-    )
-        .flow
-        .flowOn(ioDispatcher)
+    fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime> =
+        SearchPagingSource { page, limit -> loadSearchAnimePage(page, limit, queryMap) }
 
     fun getOngoingAnimesStream(limit: Int): Flow<List<Anime>> =
         ongoingAnimeDao.getOngoingAnime(limit)
@@ -230,13 +218,37 @@ class AnimeRepository @Inject constructor(
             .let { it.subList(0, limit.coerceAtMost(it.size)) }
 
         val animes = response.map(NetworkAnime::asEntity)
-        val ongoingAnime = animes.map {OngoingAnimeEntity(animeId = it.id) }
+        val ongoingAnime = animes.map { OngoingAnimeEntity(animeId = it.id) }
 
         animeDao.upsertAnimes(animes)
         databaseTransactionRunner {
             ongoingAnimeDao.deleteAll()
             ongoingAnimeDao.insertAll(ongoingAnime)
         }
+    }
+
+    private suspend fun loadSearchAnimePage(
+        page: Int,
+        limit: Int,
+        queryMap: Map<QueryMapKey, String>
+    ): List<Anime> = withContext(ioDispatcher) {
+        val networkAnimes = animeDataSource.getAnime(
+            page = page,
+            limit = limit,
+            queryMap = queryMap
+        )
+        val animeEntities = networkAnimes.map { it.asEntity() }
+        val userRatesEntities = networkAnimes.mapNotNull { it.userRateEntityShell() }
+
+        if (animeEntities.isNotEmpty()) {
+            animeDao.upsertAnimes(animeEntities)
+        }
+
+        if (userRatesEntities.isNotEmpty()) {
+            userRateDao.insertOrReplaceUserRates(userRatesEntities)
+        }
+
+        animeEntities.map { it.asExternalModel() }
     }
 
     private fun getPagedAnimePagingSource(queryMap: Map<QueryMapKey, String>) =

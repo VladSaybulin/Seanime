@@ -14,7 +14,7 @@ val DefaultSearchPagingConfig = PagingConfig(
     pageSize = 50,
     prefetchDistance = 10,
     initialLoadSize = 50,
-    enablePlaceholders = false
+    enablePlaceholders = true
 )
 
 abstract class AbstractShikimoriPagingSource<T : Any> : PagingSource<Int, T>() {
