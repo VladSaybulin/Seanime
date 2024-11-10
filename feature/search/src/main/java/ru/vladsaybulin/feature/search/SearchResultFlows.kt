@@ -8,6 +8,7 @@ import ru.vladsaybulin.model.manga.Manga
 
 @Immutable
 data class SearchResultFlows(
-    val searchAnimeResult: Flow<PagingData<Anime>>,
-    val searchMangaResult: Flow<PagingData<Manga>>,
+    val animeSearchResult: Flow<PagingData<Anime>>,
+    val mangaSearchResult: Flow<PagingData<Manga>>,
+    val ranobeSearchResult: Flow<PagingData<Manga>>,
 )

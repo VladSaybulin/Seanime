@@ -22,7 +22,7 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.entry.EntryInfoKindAndYear
-import ru.vladsaybulin.core.ui.entry.EntryListItem
+import ru.vladsaybulin.core.ui.entry.list.EntryListItem
 import ru.vladsaybulin.core.ui.score.ScoreStars
 import ru.vladsaybulin.core.ui.score.SmallStarSize
 import ru.vladsaybulin.core.ui.strings.animeKindStringResId

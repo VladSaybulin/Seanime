@@ -11,7 +11,7 @@ class Manga(
     val poster: Image?,
     val kind: MangaKind,
     val status: EntryStatus,
-    val score: Float?,
+    val score: Float,
     val chapters: Int,
     val volumes: Int,
     val airedOn: IncompleteDate?,

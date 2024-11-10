@@ -128,118 +128,120 @@ class SearchViewModel @Inject constructor(
     )
 
     val searchResultFlows = SearchResultFlows(
-        searchAnimeResult = searchParams.flatMapLatest { params ->
+        animeSearchResult = searchParams.flatMapLatest { params ->
             if (params.searchType == SearchType.Anime) {
                 getPagedAnimeSearchUseCase.get().invoke(params.buildQueryMap())
             } else flowOf(PagingData.empty())
         }.cachedIn(viewModelScope),
-        searchMangaResult = searchParams.flatMapLatest { params ->
-            if (params.searchType != SearchType.Anime) {
-                getPagedMangaSearchUseCase.get().invoke(
-                    queryMap = params.buildQueryMap(),
-                    isRanobe = params.searchType == SearchType.Ranobe
-                )
+        mangaSearchResult = searchParams.flatMapLatest { params ->
+            if (params.searchType == SearchType.Manga) {
+                getPagedMangaSearchUseCase.get().invoke(params.buildQueryMap(), false)
+            } else flowOf(PagingData.empty())
+        }.cachedIn(viewModelScope),
+        ranobeSearchResult = searchParams.flatMapLatest { params ->
+            if (params.searchType == SearchType.Ranobe) {
+                getPagedMangaSearchUseCase.get().invoke(params.buildQueryMap(), true)
             } else flowOf(PagingData.empty())
         }.cachedIn(viewModelScope)
-)
-
-val allUserRateStatuses = currentSearchType.flatMapLatest { getAllUserRatesUseCase(it) }
-    .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyMap()
     )
 
-fun onSearchTypeChanged(searchType: SearchType) {
-    if (availableSearchTypes.size == 1) return
-    currentSearchType.value = searchType
-    appliedFilters.value = buildMap { putAsSelectedIfNotNull(FilterType.Status, args.entryStatus?.serializedName) }
-    searchParams.update {
-        it.copy(
-            searchType = searchType,
-            appliedFilters = emptyMap()
+    val allUserRateStatuses = currentSearchType.flatMapLatest { getAllUserRatesUseCase(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyMap()
         )
-    }
-}
 
-fun onOrderChanged(order: Order) {
-    currentOrder.value = order
-    searchParams.update { it.copy(order = order) }
-}
-
-fun onApplyFilters(map: AppliedFilters) {
-    appliedFilters.value = map
-    searchParams.update { it.copy(appliedFilters = map) }
-}
-
-fun onSearchQueryChanged(searchQuery: String) {
-    _searchQuery.value = searchQuery
-    debouncedSearchJob?.cancel()
-    debouncedSearchJob = viewModelScope.launch {
-        delay(DebounceSearchQueryMs)
-        searchParams.emit(searchParams.value.copy(searchQuery = searchQuery))
-    }.also { it.invokeOnCompletion { debouncedSearchJob = null } }
-}
-
-private fun SearchParams.buildQueryMap() =
-    buildMap {
-        putFrom(appliedFilters)
-        putFrom(constAppliedFilters)
-        put(QueryMapKey.Search, searchQuery)
-        put(QueryMapKey.Order, order.serializedValue)
+    fun onSearchTypeChanged(searchType: SearchType) {
+        if (availableSearchTypes.size == 1) return
+        currentSearchType.value = searchType
+        appliedFilters.value = buildMap { putAsSelectedIfNotNull(FilterType.Status, args.entryStatus?.serializedName) }
+        searchParams.update {
+            it.copy(
+                searchType = searchType,
+                appliedFilters = emptyMap()
+            )
+        }
     }
 
-private suspend fun createSearchUiState(
-    currentSearchType: SearchType,
-    currentOrder: Order,
-    filtersLoadingState: FiltersLoadingState,
-    appliedFilters: AppliedFilters
-) = SearchUiState(
-    selectedSearchType = currentSearchType,
-    selectedOrder = currentOrder,
-    filtersLoadingState = filtersLoadingState,
-    appliedFilters = appliedFilters,
-    availableSearchTypes = availableSearchTypes,
-    availableOrders = availableOrders,
-    title = getTitle()
-)
+    fun onOrderChanged(order: Order) {
+        currentOrder.value = order
+        searchParams.update { it.copy(order = order) }
+    }
 
-private suspend fun getTitle(): SearchTitle = when {
-    args.studioId != null -> getStudioTitle(args.studioId)
-    args.publisherId != null -> getPublisherTitle(args.publisherId)
-    args.entryStatus != null -> SearchTitle.Status(args.entryStatus)
-    args.genreId != null -> getGenreTitle(
-        checkNotNull(args.searchType),
-        checkNotNull(args.genreKind),
-        args.genreId
+    fun onApplyFilters(map: AppliedFilters) {
+        appliedFilters.value = map
+        searchParams.update { it.copy(appliedFilters = map) }
+    }
+
+    fun onSearchQueryChanged(searchQuery: String) {
+        _searchQuery.value = searchQuery
+        debouncedSearchJob?.cancel()
+        debouncedSearchJob = viewModelScope.launch {
+            delay(DebounceSearchQueryMs)
+            searchParams.emit(searchParams.value.copy(searchQuery = searchQuery))
+        }.also { it.invokeOnCompletion { debouncedSearchJob = null } }
+    }
+
+    private fun SearchParams.buildQueryMap() =
+        buildMap {
+            putFrom(appliedFilters)
+            putFrom(constAppliedFilters)
+            put(QueryMapKey.Search, searchQuery)
+            put(QueryMapKey.Order, order.serializedValue)
+        }
+
+    private suspend fun createSearchUiState(
+        currentSearchType: SearchType,
+        currentOrder: Order,
+        filtersLoadingState: FiltersLoadingState,
+        appliedFilters: AppliedFilters
+    ) = SearchUiState(
+        selectedSearchType = currentSearchType,
+        selectedOrder = currentOrder,
+        filtersLoadingState = filtersLoadingState,
+        appliedFilters = appliedFilters,
+        availableSearchTypes = availableSearchTypes,
+        availableOrders = availableOrders,
+        title = getTitle()
     )
 
-    else -> SearchTitle.Search
-}
+    private suspend fun getTitle(): SearchTitle = when {
+        args.studioId != null -> getStudioTitle(args.studioId)
+        args.publisherId != null -> getPublisherTitle(args.publisherId)
+        args.entryStatus != null -> SearchTitle.Status(args.entryStatus)
+        args.genreId != null -> getGenreTitle(
+            checkNotNull(args.searchType),
+            checkNotNull(args.genreKind),
+            args.genreId
+        )
 
-private suspend fun getStudioTitle(studioId: Long) =
-    filterStudioRepositoryProvider.get()
-        .getFilterStudioById(studioId)
-        ?.let { SearchTitle.Studio(it.name) }
-        ?: SearchTitle.Search
+        else -> SearchTitle.Search
+    }
 
-private suspend fun getPublisherTitle(publisherId: Long) =
-    filterPublisherRepositoryProvider.get()
-        .getFilterPublisherById(publisherId)
-        ?.let { SearchTitle.Studio(it.name) }
-        ?: SearchTitle.Search
+    private suspend fun getStudioTitle(studioId: Long) =
+        filterStudioRepositoryProvider.get()
+            .getFilterStudioById(studioId)
+            ?.let { SearchTitle.Studio(it.name) }
+            ?: SearchTitle.Search
 
-private suspend fun getGenreTitle(
-    searchType: SearchType,
-    genreKind: GenreKind,
-    genreId: Long
-): SearchTitle {
-    val genreName = filterGenreRepositoryProvider.get().getGenreById(searchType.entryType, genreId)
-        ?.run { russianName ?: englishName }
-        ?: return SearchTitle.Search
+    private suspend fun getPublisherTitle(publisherId: Long) =
+        filterPublisherRepositoryProvider.get()
+            .getFilterPublisherById(publisherId)
+            ?.let { SearchTitle.Studio(it.name) }
+            ?: SearchTitle.Search
 
-    return SearchTitle.Genre(genreName, genreKind)
-}
+    private suspend fun getGenreTitle(
+        searchType: SearchType,
+        genreKind: GenreKind,
+        genreId: Long
+    ): SearchTitle {
+        val genreName = filterGenreRepositoryProvider.get().getGenreById(searchType.entryType, genreId)
+            ?.run { russianName ?: englishName }
+            ?: return SearchTitle.Search
+
+        return SearchTitle.Genre(genreName, genreKind)
+    }
 }
 
 private data class SearchParams(

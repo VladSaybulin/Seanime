@@ -37,30 +37,27 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.map
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import ru.vladsaybulin.core.designsystem.components.SeanimeInformation
 import ru.vladsaybulin.core.designsystem.components.SeanimeSearchField
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.anime.AnimeWithUserRateStatusGrid
+import ru.vladsaybulin.core.ui.entry.grid.anime.animeGridItems
+import ru.vladsaybulin.core.ui.entry.grid.EntryGrid
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
-import ru.vladsaybulin.core.ui.manga.MangaWithUserRateStatusGrid
+import ru.vladsaybulin.core.ui.entry.grid.manga.mangaGridItems
+import ru.vladsaybulin.core.ui.paging.PagingBox
 import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.orderString
 import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.anime.AnimeWithUserRate
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -305,50 +302,46 @@ private fun SearchResult(
     onAnimeClick: (Anime) -> Unit,
     onMangaClick: (Manga) -> Unit
 ) {
-    when (searchType) {
-        SearchType.Anime -> SearchAnimeResult(
-            searchAnimeResult = pagingFlows.searchAnimeResult,
-            userRates = userRates,
-            onAnimeClick = onAnimeClick
-        )
+    val animePagingItems = pagingFlows.animeSearchResult.collectAsLazyPagingItems()
+    val mangaPagingItems = pagingFlows.mangaSearchResult.collectAsLazyPagingItems()
+    val ranobePagingItems = pagingFlows.ranobeSearchResult.collectAsLazyPagingItems()
 
-        SearchType.Manga, SearchType.Ranobe -> SearchMangaResult(
-            searchMangaResult = pagingFlows.searchMangaResult,
-            userRates = userRates,
-            onMangaClick = onMangaClick
-        )
+    PagingBox(
+        pagingItems = when (searchType) {
+            SearchType.Anime -> animePagingItems
+            SearchType.Manga -> mangaPagingItems
+            SearchType.Ranobe -> ranobePagingItems
+        },
+        emptyContent = { EmptySearchResult() }
+    ) {
+        EntryGrid {
+            when (searchType) {
+                SearchType.Anime -> animeGridItems(
+                    items = animePagingItems,
+                    onItemClick = onAnimeClick,
+                    userRateStatus = { userRates[it.id] ?: UserRateStatus.None }
+                )
+
+                SearchType.Manga -> mangaGridItems(
+                    items = mangaPagingItems,
+                    onItemClick = onMangaClick,
+                    userRateStatus = { userRates[it.id] ?: UserRateStatus.None }
+                )
+
+                SearchType.Ranobe -> mangaGridItems(
+                    items = ranobePagingItems,
+                    onItemClick = onMangaClick,
+                    userRateStatus = { userRates[it.id] ?: UserRateStatus.None })
+            }
+        }
     }
 }
 
 @Composable
-private fun SearchAnimeResult(
-    searchAnimeResult: Flow<PagingData<Anime>>,
-    userRates: Map<Long, UserRateStatus>,
-    onAnimeClick: (Anime) -> Unit
-) {
-    val items = searchAnimeResult.collectAsLazyPagingItems()
-
-    AnimeWithUserRateStatusGrid(
-        items = items,
-        onEntryClick = { onAnimeClick(it) },
-        userRateStatus = { userRates[it.id] ?: UserRateStatus.None },
-        modifier = Modifier.fillMaxSize()
-    )
-}
-
-@Composable
-private fun SearchMangaResult(
-    searchMangaResult: Flow<PagingData<Manga>>,
-    userRates: Map<Long, UserRateStatus>,
-    onMangaClick: (Manga) -> Unit
-) {
-    val items = searchMangaResult.collectAsLazyPagingItems()
-
-    MangaWithUserRateStatusGrid(
-        items = items,
-        onEntryClick = { onMangaClick(it) },
-        userRateStatus = { userRates[it.id] ?: UserRateStatus.None },
-        modifier = Modifier.fillMaxSize()
+private fun EmptySearchResult() {
+    SeanimeInformation(
+        header = { Text(text = stringResource(id = R.string.feature_search_empty_result_header)) },
+        description = { Text(text = stringResource(id = R.string.feature_search_empty_result_description)) }
     )
 }
 

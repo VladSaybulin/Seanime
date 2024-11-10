@@ -31,7 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.entry.EntryGridItem
+import ru.vladsaybulin.core.ui.entry.grid.EntryGridItem
 import ru.vladsaybulin.feature.title.characters.navigation.TitleCharactersNavEvents
 import ru.vladsaybulin.model.character.Character
 

@@ -1,7 +1,6 @@
-package ru.vladsaybulin.core.ui.entry
+package ru.vladsaybulin.core.ui.entry.grid
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
@@ -54,7 +52,7 @@ fun EntryGridItem(
     name: String,
     imageUrl: String?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
     nameTextStyle: TextStyle = EntryGridItemDefaults.nameTextStyle,
     bodyTextStyle: TextStyle = EntryGridItemDefaults.bodyTextStyle,

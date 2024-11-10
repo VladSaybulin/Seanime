@@ -13,10 +13,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
-import ru.vladsaybulin.core.ui.anime.AnimeInfoKindAndYearText
-import ru.vladsaybulin.core.ui.entry.EntryInfoScore
-import ru.vladsaybulin.core.ui.entry.EntryListItem
-import ru.vladsaybulin.core.ui.manga.MangaInfoKindAndYearText
+import ru.vladsaybulin.core.ui.entry.list.EntryListItem
+import ru.vladsaybulin.core.ui.entry.metadata.AnimeMetadataDefaultComponents
+import ru.vladsaybulin.core.ui.entry.metadata.MangaMetadataComponents
+import ru.vladsaybulin.core.ui.entry.metadata.TitleMetadataComponents
 import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
@@ -65,7 +65,7 @@ private fun RelatedAnimeItem(
             imageWidth = 72.dp,
             imageIgnoresPadding = true,
             metadata = {
-                AnimeInfoKindAndYearText(kind = anime.kind, year = anime.airedOn?.year)
+                AnimeMetadataDefaultComponents.KindAndYear(anime)
 
                 Row {
                     if (anime.status != EntryStatus.None) {
@@ -84,7 +84,7 @@ private fun RelatedAnimeItem(
                     }
                 }
 
-                EntryInfoScore(score = anime.score ?: 0f)
+                TitleMetadataComponents.Score(score = anime.score)
             }
         )
     }
@@ -106,7 +106,7 @@ private fun RelatedMangaItem(
             imageWidth = 72.dp,
             imageIgnoresPadding = true,
             metadata = {
-                MangaInfoKindAndYearText(kind = manga.kind, year = manga.airedOn?.year)
+                MangaMetadataComponents.KindAndYearLine(manga)
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (manga.status != EntryStatus.None) {
@@ -129,7 +129,7 @@ private fun RelatedMangaItem(
                     }
                 }
 
-                EntryInfoScore(score = manga.score ?: 0f)
+                TitleMetadataComponents.Score(score = manga.score)
             }
         )
     }

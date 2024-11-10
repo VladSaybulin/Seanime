@@ -7,7 +7,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.entry.EntryListItem
+import ru.vladsaybulin.core.ui.entry.list.EntryListItem
 import ru.vladsaybulin.core.ui.strings.personRoleString
 import ru.vladsaybulin.model.person.Person
 import ru.vladsaybulin.model.person.PersonWithRoles

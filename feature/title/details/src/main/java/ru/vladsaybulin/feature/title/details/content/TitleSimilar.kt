@@ -10,9 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.anime.AnimeGridItem
-import ru.vladsaybulin.core.ui.entry.EntryGridItem
-import ru.vladsaybulin.core.ui.manga.MangaGridItem
+import ru.vladsaybulin.core.ui.entry.grid.EntryGridItem
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.manga.Manga
 

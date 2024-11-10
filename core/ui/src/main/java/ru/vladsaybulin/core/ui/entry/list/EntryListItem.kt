@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.entry
+package ru.vladsaybulin.core.ui.entry.list
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -62,7 +62,7 @@ fun EntryListItem(
     border: BorderStroke? = null,
     containerShape: Shape = SeanimeTheme.shapes.large,
     imageIgnoresPadding: Boolean = false,
-    imageWidth: Dp = EntryListDefaults.ImageWidth,
+    imageWidth: Dp = EntryListItemDefaults.ImageWidth,
     imageShape: CornerBasedShape = SeanimeTheme.shapes.medium,
     metadata: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
@@ -218,7 +218,7 @@ class EntryListItemMeasurePolicy(
     }
 }
 
-object EntryListDefaults {
+object EntryListItemDefaults {
     val ImageWidth = 128.dp
     val ContentPadding = PaddingValues(8.dp)
 }

@@ -13,4 +13,6 @@
     <string name="feature_search_title_status_paused">Приостановленное</string>
     <string name="feature_search_title_status_discontonued">Не вышедшее</string>
     <string name="feature_search_title_publisher">Издатель %1$s</string>
+    <string name="feature_search_empty_result_header">Ничего не найдено</string>
+    <string name="feature_search_empty_result_description">К сожалению по твоему запросу ничего не найдено. Попробуй изменить запрос</string>
 </resources>

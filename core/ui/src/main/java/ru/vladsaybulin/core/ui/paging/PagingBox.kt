@@ -1,0 +1,61 @@
+package ru.vladsaybulin.core.ui.paging
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import ru.vladsaybulin.core.ui.ErrorMessage
+import ru.vladsaybulin.core.ui.R
+import java.io.IOException
+
+@Composable
+fun PagingBox(
+    pagingItems: LazyPagingItems<out Any>,
+    modifier: Modifier = Modifier,
+    refreshingContent: (@Composable () -> Unit)? = { PagingBoxDefaults.RefreshingContent() },
+    errorRefreshContent: (@Composable (throwable: Throwable) -> Unit)? = { PagingBoxDefaults.ErrorRefreshContent(it) },
+    emptyContent: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit
+) {
+    Box(modifier = modifier) {
+        when (val refreshState = pagingItems.loadState.refresh) {
+            LoadState.Loading -> (refreshingContent ?: content).invoke()
+            is LoadState.Error -> errorRefreshContent?.run { invoke(refreshState.error) } ?: content()
+            is LoadState.NotLoading -> {
+                if (pagingItems.itemCount == 0 && emptyContent != null) {
+                    emptyContent()
+                } else {
+                    content()
+                }
+            }
+        }
+    }
+}
+
+object PagingBoxDefaults {
+
+    @Composable
+    fun RefreshingContent() {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+
+    @Composable
+    fun ErrorRefreshContent(throwable: Throwable) {
+        ErrorMessage(throwable = throwable)
+    }
+
+}

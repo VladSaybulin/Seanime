@@ -1,4 +1,4 @@
-package ru.vladsaybulin.core.ui.anime
+package ru.vladsaybulin.core.ui.entry.preview
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import ru.vladsaybulin.model.anime.Anime

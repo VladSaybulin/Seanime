@@ -48,10 +48,12 @@ import ru.vladsaybulin.core.domain.calendar.CalendarDay
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
-import ru.vladsaybulin.core.ui.anime.AnimeCarousel
 import ru.vladsaybulin.core.ui.colors.entryStatusColor
+import ru.vladsaybulin.core.ui.entry.carousel.EntryCarousel
+import ru.vladsaybulin.core.ui.entry.grid.anime.AnimeGridItem
 import ru.vladsaybulin.core.ui.R as uiR
 import ru.vladsaybulin.feature.calendar.navigation.CalendarNavEvents
+import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
 import ru.vladsaybulin.model.common.EntryStatus
@@ -122,7 +124,7 @@ private fun CalendarContent(
         CalendarUiState.Loading -> CalendarLoadingBody(modifier = Modifier.fillMaxSize())
         is CalendarUiState.Success -> CalendarBody(
             calendarDays = state.calendarDays,
-            onCalendarItemClick = { navigateToAnimeDetails(it.anime.id) },
+            onAnimeClick = { navigateToAnimeDetails(it.id) },
             onRefresh = onRefresh
         )
     }
@@ -133,7 +135,7 @@ private fun CalendarContent(
 fun CalendarBody(
     modifier: Modifier = Modifier,
     calendarDays: List<CalendarDay>,
-    onCalendarItemClick: (CalendarItem) -> Unit,
+    onAnimeClick: (Anime) -> Unit,
     onRefresh: suspend () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -160,7 +162,7 @@ fun CalendarBody(
             items(calendarDays) { calendarDay ->
                 CalendarSection(
                     calendarDay = calendarDay,
-                    onCalendarItemClick = onCalendarItemClick
+                    onAnimeClick = onAnimeClick
                 )
             }
         }
@@ -181,24 +183,31 @@ private fun CalendarLoadingBody(modifier: Modifier) {
 private fun CalendarSection(
     calendarDay: CalendarDay,
     modifier: Modifier = Modifier,
-    onCalendarItemClick: (CalendarItem) -> Unit
+    onAnimeClick: (Anime) -> Unit
 ) {
     Column(modifier = modifier) {
         CalendarSectionHeader(date = calendarDay.date)
         Spacer(modifier = Modifier.height(4.dp))
 
-        AnimeCarousel(
-            items = calendarDay.items,
-            mapAnime = { it.anime },
-            onClick = onCalendarItemClick,
-            metadata = {
-                CalendarItemDetails(
-                    nextEpisodeAt = it.nextEpisodeAt,
-                    wasOnAir = calendarDay.date == null,
-                    nextEpisode = it.nextEpisode
+        EntryCarousel {
+            items(
+                items = calendarDay.items,
+                key = { it.anime.id }
+            ) { calendarItem ->
+                AnimeGridItem(
+                    anime = calendarItem.anime,
+                    onClick = { onAnimeClick(calendarItem.anime) },
+                    modifier = Modifier.width(150.dp),
+                    metadata = {
+                        CalendarItemDetails(
+                            nextEpisodeAt = calendarItem.nextEpisodeAt,
+                            wasOnAir = calendarDay.date == null,
+                            nextEpisode = calendarItem.nextEpisode
+                        )
+                    }
                 )
             }
-        )
+        }
     }
 }
 
@@ -281,7 +290,7 @@ fun CalendarSectionPreview() {
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                         .date
                 ),
-                onCalendarItemClick = { }
+                onAnimeClick = { }
             )
         }
     }

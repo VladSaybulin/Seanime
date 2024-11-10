@@ -1,6 +1,5 @@
 package ru.vladsaybulin.feature.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,13 +13,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -30,25 +26,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.rememberAsyncImagePainter
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
-import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
-import ru.vladsaybulin.core.ui.anime.AnimeCarousel
+import ru.vladsaybulin.core.ui.entry.carousel.EntryCarousel
+import ru.vladsaybulin.core.ui.entry.carousel.anime.animeCarouselItems
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.feature.home.navigation.HomeNavEvents
@@ -228,10 +219,12 @@ private fun LazyListScope.animeOngoingCarousel(
             ) {
                 Text(text = stringResource(id = R.string.feature_home_on_air_now))
             }
-            AnimeCarousel(
-                anime = ongoingAnime,
-                onClick = onAnimeClick
-            )
+            EntryCarousel {
+                animeCarouselItems(
+                    items = ongoingAnime,
+                    onItemClick = onAnimeClick
+                )
+            }
         }
     }
 }

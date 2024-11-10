@@ -42,11 +42,12 @@ import kotlinx.datetime.Clock
 import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.anime.AnimeCarousel
+import ru.vladsaybulin.core.ui.entry.carousel.EntryCarousel
+import ru.vladsaybulin.core.ui.entry.carousel.anime.animeCarouselItems
+import ru.vladsaybulin.core.ui.entry.carousel.magna.mangaCarouselItems
 import ru.vladsaybulin.core.ui.text.SeanimeExpandableText
 import ru.vladsaybulin.core.ui.text.onSeanimeTextLinkClickAdapter
-import ru.vladsaybulin.core.ui.entry.EntryGridItem
-import ru.vladsaybulin.core.ui.manga.MangaCarousel
+import ru.vladsaybulin.core.ui.entry.grid.EntryGridItem
 import ru.vladsaybulin.feature.character.navigation.CharacterDetailsNavEvents
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterDetails
@@ -173,10 +174,12 @@ fun CharacterDetailsContent(
                         style = SeanimeTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
-                    AnimeCarousel(
-                        anime = details.animes,
-                        onClick = { onAnimeClick(it.id) }
-                    )
+                    EntryCarousel {
+                        animeCarouselItems(
+                            items = details.animes,
+                            onItemClick = { onAnimeClick(it.id) }
+                        )
+                    }
                 }
             }
         }
@@ -189,10 +192,12 @@ fun CharacterDetailsContent(
                         style = SeanimeTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
-                    MangaCarousel(
-                        manga = details.mangas,
-                        onClick = { onMangaClick(it.id) }
-                    )
+                    EntryCarousel {
+                        mangaCarouselItems(
+                            items = details.mangas,
+                            onClick = { onMangaClick(it.id) }
+                        )
+                    }
                 }
             }
         }
