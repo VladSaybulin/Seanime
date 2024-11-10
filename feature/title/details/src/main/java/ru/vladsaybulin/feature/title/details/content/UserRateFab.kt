@@ -19,7 +19,6 @@ import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.feature.title.details.R
 import ru.vladsaybulin.feature.title.details.UserRateState
-import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
@@ -29,36 +28,41 @@ internal fun UserRateFab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val transition = updateTransition(targetState = userRateState, label = "UserRateStatus")
+    val userRateStatus = when (userRateState) {
+        is UserRateState.Loading -> null
+        is UserRateState.NoUserRate, is UserRateState.NotAuthorized -> UserRateStatus.None
+        is UserRateState.Success -> userRateState.userRate.status
+    }
+    val transition = updateTransition(targetState = userRateStatus, label = "UserRateStatus")
 
-    val animatedContainerColor by transition.animateColor(label = "ContainerColor") { state ->
-        if (state is UserRateState.Success) {
-            userRateStatusContainerColor(userRateStatus = state.userRate.status)
+    val animatedContainerColor by transition.animateColor(label = "ContainerColor") { status ->
+        if (status != null && status != UserRateStatus.None) {
+            userRateStatusContainerColor(userRateStatus = status)
         } else SeanimeTheme.colorScheme.primaryContainer
     }
 
-    val animatedContentColor by transition.animateColor(label = "ContentColor") { state ->
-        if (state is UserRateState.Success) {
-            onUserRateStatusContainerColor(userRateStatus = state.userRate.status)
+    val animatedContentColor by transition.animateColor(label = "ContentColor") { status ->
+        if (status != null && status != UserRateStatus.None) {
+            onUserRateStatusContainerColor(userRateStatus = status)
         } else SeanimeTheme.colorScheme.onPrimaryContainer
     }
 
     ExtendedFloatingActionButton(
         text = {
-            transition.AnimatedContent { state ->
-                when (state) {
-                    UserRateState.Loading -> Text(stringResource(id = R.string.feature_title_details_user_rate_loading))
-                    is UserRateState.Success -> Text(text = userRateStatusString(state.userRate.status))
-                    else -> Text(stringResource(id = R.string.feature_title_details_user_rate_add))
+            transition.AnimatedContent { status ->
+                when (status) {
+                    null -> Text(stringResource(id = R.string.feature_title_details_user_rate_loading))
+                    UserRateStatus.None -> Text(stringResource(id = R.string.feature_title_details_user_rate_add))
+                    else -> Text(text = userRateStatusString(status))
                 }
             }
         },
         icon = {
-            transition.AnimatedContent { state ->
-                when (state) {
-                    UserRateState.Loading -> CircularProgressIndicator()
-                    is UserRateState.Success -> UserRateStatusIcon(status = state.userRate.status)
-                    else -> AddIcon()
+            transition.AnimatedContent { status ->
+                when (status) {
+                    null -> CircularProgressIndicator()
+                    UserRateStatus.None -> AddIcon()
+                    else -> UserRateStatusIcon(status = status)
                 }
             }
         },
