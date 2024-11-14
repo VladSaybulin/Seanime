@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
@@ -46,18 +47,30 @@ class ShikimoriAuthorization @Inject internal constructor(
         appScope.launch { readAuthState() }
     }
 
-    suspend fun getFreshAccessToken(): String? = if (appAuthState?.isAuthorized == true) {
-        suspendCoroutine { cont ->
-            appAuthState?.performActionWithFreshTokens(service.get()) { freshAccessToken, _, exception ->
-                if (exception != null) {
-                    refreshTokenFailed(exception)
-                    cont.resumeWithException(exception)
-                } else {
-                    cont.resume(freshAccessToken)
+    private val refreshAccessTokenMutex = Mutex(false)
+
+    suspend fun getFreshAccessToken(): String? = try {
+        if (refreshAccessTokenMutex.tryLock()) {
+            suspendCoroutine { cont ->
+                appAuthState?.performActionWithFreshTokens(
+                    service.get(),
+                    client.get()
+                ) { freshAccessToken, _, exception ->
+                    if (exception != null) {
+                        refreshTokenFailed(exception)
+                        cont.resumeWithException(exception)
+                    } else {
+                        cont.resume(freshAccessToken)
+                    }
                 }
             }
+        } else {
+            refreshAccessTokenMutex.lock()
+            appAuthState?.accessToken
         }
-    } else null
+    } finally {
+        refreshAccessTokenMutex.unlock()
+    }
 
     fun login() {
         checkNotNull(loginLauncher) { "Login action not registered" }.launch(Unit)
