@@ -15,7 +15,7 @@ room {
 }
 
 dependencies {
-    implementation(project(":core:model"))
+    implementation(projects.core.model)
 
     implementation(libs.kotlinx.datetime)
     implementation(libs.paging.runtime)

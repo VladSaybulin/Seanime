@@ -9,9 +9,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:navigation"))
-    implementation(project(":core:ui"))
+    implementation(projects.core.model)
+    implementation(projects.core.navigation)
+    implementation(projects.core.ui)
 
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)

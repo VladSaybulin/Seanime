@@ -8,9 +8,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:model"))
-    implementation(project(":core:datastore-proto"))
+    implementation(projects.core.common)
+    implementation(projects.core.model)
+    implementation(projects.core.datastoreProto)
 
     implementation(libs.androidx.dataStore.core)
     implementation(libs.kotlinx.datetime)

@@ -8,10 +8,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:auth"))
-    implementation(project(":core:model"))
-    implementation(project(":core:data"))
-    implementation(project(":core:common"))
+    implementation(projects.core.auth)
+    implementation(projects.core.model)
+    implementation(projects.core.data)
+    implementation(projects.core.common)
 
     implementation(libs.kotlinx.datetime)
     implementation(libs.paging.runtime)

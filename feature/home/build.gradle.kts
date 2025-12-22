@@ -10,9 +10,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:data"))
-    implementation(project(":core:navigation"))
-    implementation(project(":feature:userrate"))
+    implementation(projects.core.data)
+    implementation(projects.core.navigation)
+    implementation(projects.feature.userrate)
 
 
     implementation(libs.coil.kt.compose)

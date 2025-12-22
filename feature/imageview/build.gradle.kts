@@ -9,7 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:navigation"))
+    implementation(projects.core.navigation)
 
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.zoomable)

@@ -20,11 +20,11 @@ secrets {
 
 dependencies {
 
-    api(project(":core:network-graphql"))
+    api(projects.core.networkGraphql)
 
-    implementation(project(":core:auth"))
-    implementation(project(":core:model"))
-    implementation(project(":core:common"))
+    implementation(projects.core.auth)
+    implementation(projects.core.model)
+    implementation(projects.core.common)
 
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.retrofit.core)

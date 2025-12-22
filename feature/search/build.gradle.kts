@@ -10,8 +10,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:navigation"))
-    implementation(project(":core:data"))
+    implementation(projects.core.navigation)
+    implementation(projects.core.data)
 
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)

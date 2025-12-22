@@ -10,7 +10,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:data"))
+    implementation(projects.core.data)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.kt.compose)
     implementation(libs.google.oss.licenses)

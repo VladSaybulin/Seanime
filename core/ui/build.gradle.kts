@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:designsystem"))
+    implementation(projects.core.model)
+    implementation(projects.core.designsystem)
 
     implementation(libs.kotlinx.datetime)
     implementation(libs.coil.kt)

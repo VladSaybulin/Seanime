@@ -9,7 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:model"))
+    implementation(projects.core.model)
 
     api(libs.primeTransformer)
     implementation(libs.kotlinx.serialization.json)
