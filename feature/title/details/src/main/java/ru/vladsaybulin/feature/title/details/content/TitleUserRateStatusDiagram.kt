@@ -31,7 +31,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMaxBy
 import androidx.compose.ui.util.fastSumBy
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.colors.getColor
+import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -43,7 +43,7 @@ internal fun TitleUserRateStatusDiagram(
 ) {
     val diagramState = rememberUserRateStatusDiagramState(stats)
 
-    val userRateColors = SeanimeTheme.userRateColors
+    val seanimeColors = SeanimeTheme.seanimeColors
 
     Column(
         modifier = Modifier.padding(horizontal = 16.dp)
@@ -57,7 +57,7 @@ internal fun TitleUserRateStatusDiagram(
             var start = 0f
             UserRateStatusOrder.fastForEach { status ->
                 val fraction = diagramState[status]?.second ?: return@fastForEach
-                drawLinearDiagramSection(start, fraction, userRateColors.getColor(status))
+                drawLinearDiagramSection(start, fraction, seanimeColors[status].color)
                 start += fraction
             }
         }
@@ -71,7 +71,7 @@ internal fun TitleUserRateStatusDiagram(
             UserRateStatusOrder.fastForEach { status ->
                 val count = diagramState[status]?.first ?: return@fastForEach
                 StatusLegend(
-                    color = userRateColors.getColor(status),
+                    color = seanimeColors[status].color,
                     status = status,
                     count = count
                 )

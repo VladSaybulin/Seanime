@@ -17,7 +17,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-val LightDefaultColorScheme = lightColorScheme(
+val LightColorScheme = lightColorScheme(
     primary = Purple40,
     onPrimary = Color.White,
     primaryContainer = Purple90,
@@ -45,7 +45,7 @@ val LightDefaultColorScheme = lightColorScheme(
     outline = PurpleGray50
 )
 
-val DarkDefaultColorScheme = darkColorScheme(
+val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     onPrimary = Purple20,
     primaryContainer = Purple30,
@@ -73,68 +73,6 @@ val DarkDefaultColorScheme = darkColorScheme(
     outline = PurpleGray60
 )
 
-val LightRateStatusColors = UserRateColors(
-    planned = Orange40,
-    onPlanned = White,
-    plannedContainer = Orange90,
-    onPlannedContainer = Orange10,
-    watching = Blue40,
-    onWatching = White,
-    watchingContainer = Blue90,
-    onWatchingContainer = Blue10,
-    completed = Green40,
-    onCompleted = White,
-    completedContainer = Green95,
-    onCompletedContainer = Green10,
-    onHold = Violet40,
-    onOnHold = White,
-    onHoldContainer = Violet90,
-    onOnHoldContainer = Violet10,
-    dropped = Red40,
-    onDropped = White,
-    droppedContainer = Red90,
-    onDroppedContainer = Red10,
-)
-
-val DarkRateStatusColors = UserRateColors(
-    planned = Orange80,
-    onPlanned = Orange20,
-    plannedContainer = Orange30,
-    onPlannedContainer = Orange90,
-    watching = Blue80,
-    onWatching = Blue20,
-    watchingContainer = Blue30,
-    onWatchingContainer = Blue90,
-    completed = Green80,
-    onCompleted = Green20,
-    completedContainer = Green30,
-    onCompletedContainer = Green90,
-    onHold = Violet80,
-    onOnHold = Violet20,
-    onHoldContainer = Violet30,
-    onOnHoldContainer = Violet90,
-    dropped = Red80,
-    onDropped = Red20,
-    droppedContainer = Red30,
-    onDroppedContainer = Red90,
-)
-
-val LightEntryStatusColors = EntryStatusColors(
-    anons = Orange40,
-    ongoing = Blue40,
-    released = Green40,
-    paused = Violet40,
-    discontinued = Red40,
-)
-
-val DarkEntryStatusColor = EntryStatusColors(
-    anons = Orange80,
-    ongoing = Blue80,
-    released = Green80,
-    paused = Violet80,
-    discontinued = Red80,
-)
-
 @Composable
 fun SeanimeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -147,16 +85,30 @@ fun SeanimeTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkDefaultColorScheme
-        else -> LightDefaultColorScheme
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
 
-    val userRateColors = if (darkTheme) DarkRateStatusColors else LightRateStatusColors
-    val entryStatusColors = if (darkTheme) DarkEntryStatusColor else LightEntryStatusColors
+    val darkColorScheme = when {
+        dynamicColor && supportsDynamicTheming() -> {
+            val context = LocalContext.current
+            dynamicDarkColorScheme(context)
+        }
+
+        else -> DarkColorScheme
+    }
+    val userRateColors = if (darkTheme) {
+        darkSeanimeColors(
+            posterScrim = darkColorScheme.surface,
+            onPosterScrim = darkColorScheme.onSurface
+        )
+    } else lightSeanimeColors(
+        posterScrim = darkColorScheme.surface,
+        onPosterScrim = darkColorScheme.onSurface
+    )
 
     CompositionLocalProvider(
-        LocalUserRateColors provides userRateColors,
-        LocalEntryStatusColors provides entryStatusColors
+        LocalSeanimeColors provides userRateColors
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -182,15 +134,10 @@ object SeanimeTheme {
         @ReadOnlyComposable
         get() = MaterialTheme.shapes
 
-    val userRateColors: UserRateColors
+    val seanimeColors: SeanimeColors
         @Composable
         @ReadOnlyComposable
-        get() = LocalUserRateColors.current
-
-    val entryStatusColors: EntryStatusColors
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalEntryStatusColors.current
+        get() = LocalSeanimeColors.current
 }
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)

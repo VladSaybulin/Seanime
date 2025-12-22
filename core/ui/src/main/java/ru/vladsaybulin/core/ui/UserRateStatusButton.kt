@@ -28,8 +28,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.colors.onUserRateStatusContainerColor
-import ru.vladsaybulin.core.ui.colors.userRateStatusContainerColor
+import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
@@ -92,8 +91,8 @@ object UserRateStatusButtonDefaults {
     @Composable
     fun userRateStatusButtonColors(userRateStatus: UserRateStatus) =
         UserRateStatusButtonColors(
-            containerColor = userRateStatusContainerColor(userRateStatus),
-            contentColor = onUserRateStatusContainerColor(userRateStatus)
+            containerColor = SeanimeTheme.seanimeColors[userRateStatus].container,
+            contentColor = SeanimeTheme.seanimeColors[userRateStatus].onContainer
         )
 }
 

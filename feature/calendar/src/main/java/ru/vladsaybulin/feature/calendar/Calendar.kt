@@ -44,11 +44,11 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
+import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.domain.calendar.CalendarDay
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
-import ru.vladsaybulin.core.ui.colors.entryStatusColor
 import ru.vladsaybulin.core.ui.entry.carousel.EntryCarousel
 import ru.vladsaybulin.core.ui.entry.grid.anime.AnimeGridItem
 import ru.vladsaybulin.core.ui.R as uiR
@@ -262,7 +262,7 @@ private fun CalendarItemDetails(
         else -> stringResource(id = R.string.feature_calendar_episode, nextEpisode)
     }
 
-    val anonsColor = entryStatusColor(entryStatus = EntryStatus.Anons)
+    val anonsColor = SeanimeTheme.seanimeColors[EntryStatus.Anons]
 
     val text = buildAnnotatedString {
         val index = if (isAnons) {

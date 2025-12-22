@@ -67,7 +67,8 @@ fun EntryGridItem(
             onClick = onClick,
             shape = shape,
             shadowElevation = 2.dp,
-            modifier = modifier
+            modifier = modifier,
+            contentColor = SeanimeTheme.seanimeColors.onPosterScrim
         ) {
             Layout(
                 measurePolicy = measurePolicy,
@@ -126,7 +127,7 @@ private fun EntryGridItemImage(imageUrl: String?) {
         modifier = Modifier
             .fillMaxSize()
             .drawForegroundGradientScrim(
-                bottomColor = SeanimeTheme.colorScheme.surface.copy(alpha = GradientScrimAlpha),
+                bottomColor = SeanimeTheme.seanimeColors.posterScrim.copy(alpha = GradientScrimAlpha),
                 decay = 2f
             )
             .layoutId(EntryGridItemLayoutId.Image)

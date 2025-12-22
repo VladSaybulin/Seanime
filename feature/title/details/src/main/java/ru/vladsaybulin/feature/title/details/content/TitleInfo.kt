@@ -44,7 +44,7 @@ import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaZoneId
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.colors.entryStatusColor
+import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.animeKindString
 import ru.vladsaybulin.core.ui.strings.animeRatingString
@@ -184,7 +184,7 @@ private fun StatusPanel(status: EntryStatus) {
     ) {
         Text(
             text = entryStatusString(status = status),
-            color = entryStatusColor(entryStatus = status)
+            color = SeanimeTheme.seanimeColors[status]
         )
     }
 }

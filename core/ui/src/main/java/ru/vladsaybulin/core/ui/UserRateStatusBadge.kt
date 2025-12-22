@@ -14,8 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.colors.onUserRateStatusColor
-import ru.vladsaybulin.core.ui.colors.userRateStatusColor
+import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
@@ -24,8 +23,8 @@ fun UserRateStatusBadge(
     userRateStatus: UserRateStatus,
     shape: Shape = UserRateStatusBadgeDefaults.topEndShape(),
 ) {
-    val userRateStatusColor = userRateStatusColor(userRateStatus)
-    val userRateIconColor = onUserRateStatusColor(userRateStatus)
+    val userRateStatusColor = SeanimeTheme.seanimeColors[userRateStatus].color
+    val userRateIconColor = SeanimeTheme.seanimeColors[userRateStatus].onColor
 
     val icon = userRateStatusIcon(userRateStatus = userRateStatus) ?: return
 
