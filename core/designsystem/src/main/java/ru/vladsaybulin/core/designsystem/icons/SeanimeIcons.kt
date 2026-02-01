@@ -37,7 +37,10 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.vector.ImageVector
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 object SeanimeIcons {
     val AccountCircle = Icons.Filled.AccountCircle
@@ -75,4 +78,16 @@ object SeanimeIcons {
     val Tv = Icons.Default.Tv
     val Schedule = Icons.Default.Schedule
     val ArrowForwardIos = Icons.AutoMirrored.Filled.ArrowForwardIos
+}
+
+@Composable
+@ReadOnlyComposable
+fun userRateStatusIcon(userRateStatus: UserRateStatus) = when (userRateStatus) {
+    UserRateStatus.Planned -> SeanimeIcons.Add
+    UserRateStatus.Watching -> SeanimeIcons.Visibility
+    UserRateStatus.Rewatching -> SeanimeIcons.Replay
+    UserRateStatus.Completed -> SeanimeIcons.Done
+    UserRateStatus.Dropped -> SeanimeIcons.Clear
+    UserRateStatus.OnHold -> SeanimeIcons.Pause
+    else -> error("UserRateStatus.None not supported")
 }
