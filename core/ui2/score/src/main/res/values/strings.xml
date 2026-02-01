@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_ui2_score_description_terribly">Ужасно</string>
+    <string name="core_ui2_score_description_badly">Плохо</string>
+    <string name="core_ui2_score_description_normally">Нормально</string>
+    <string name="core_ui2_score_description_good">Хорошо</string>
+    <string name="core_ui2_score_description_great">Великолепно</string>
+    <string name="core_ui2_score_description_impossible">Невозможно</string>
+</resources>
