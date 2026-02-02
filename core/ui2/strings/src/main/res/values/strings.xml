@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_ui2_strings_none">Неизветно</string>
+
+    <!-- Anime strings -->
+
+    <!--Status -->
+    <string name="core_ui2_strings_anime_status_ongoing">Онгоинг</string>
+    <string name="core_ui2_strings_anime_status_released">Вышло</string>
+    <string name="core_ui2_strings_anime_status_anons">Анонс</string>
+    <string name="core_ui2_strings_anime_status_paused">Приостановлено</string>
+    <string name="core_ui2_strings_anime_status_discontinued">Прекращено</string>
+    <!-- User status -->
+    <string name="core_ui2_strings_anime_user_status_status_planned">Запланировано</string>
+    <string name="core_ui2_strings_anime_user_status_watching">Смотрю</string>
+    <string name="core_ui2_strings_anime_user_status_rewatching">Пересматриваю</string>
+    <string name="core_ui2_strings_anime_user_status_completed">Просмотрено</string>
+    <string name="core_ui2_strings_anime_user_status_on_hold">Отложено</string>
+    <string name="core_ui2_strings_anime_user_status_dropped">Брошено</string>
+    <!-- Kind -->
+    <string name="core_ui2_strings_anime_kind_tv">TV-сериал</string>
+    <string name="core_ui2_strings_anime_kind_movie">Фильм</string>
+    <string name="core_ui2_strings_anime_kind_ona">ONA</string>
+    <string name="core_ui2_strings_anime_kind_ova">OVA</string>
+    <string name="core_ui2_strings_anime_kind_music">Клип</string>
+    <string name="core_ui2_strings_anime_kind_special">Спешл</string>
+    <string name="core_ui2_strings_anime_kind_pv">Промо</string>
+    <string name="core_ui2_strings_anime_kind_cm">Реклама</string>
+    <string name="core_ui2_strings_anime_kind_tv_special">ТВ-спешл</string>
+    <!-- Rating -->
+    <string name="core_ui2_strings_anime_rating_g">G</string>
+    <string name="core_ui2_strings_anime_rating_pg">PG</string>
+    <string name="core_ui2_strings_anime_rating_pg13">PG-13</string>
+    <string name="core_ui2_strings_anime_rating_r">R</string>
+    <string name="core_ui2_strings_anime_rating_r_plus">R+</string>
+    <string name="core_ui2_strings_anime_rating_rx">RX</string>
+
+</resources>
