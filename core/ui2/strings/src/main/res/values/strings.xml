@@ -35,4 +35,29 @@
     <string name="core_ui2_strings_anime_rating_r_plus">R+</string>
     <string name="core_ui2_strings_anime_rating_rx">RX</string>
 
+
+    <!-- Manga strings -->
+
+    <!-- Status -->
+    <string name="core_ui2_strings_manga_status_anons">Анонс</string>
+    <string name="core_ui2_strings_manga_status_ongoing">Издаётся</string>
+    <string name="core_ui2_strings_manga_status_released">Издано</string>
+    <string name="core_ui2_strings_manga_status_paused">Приостановлено</string>
+    <string name="core_ui2_strings_manga_status_discontinued">Прекращено</string>
+    <!-- User status -->
+    <string name="core_ui2_strings_manga_user_status_planned">Запланировано</string>
+    <string name="core_ui2_strings_manga_user_status_watching">Читаю</string>
+    <string name="core_ui2_strings_manga_user_status_rewatching">Перечитываю</string>
+    <string name="core_ui2_strings_manga_user_status_completed">Прочитано</string>
+    <string name="core_ui2_strings_manga_user_status_on_hold">Отложено</string>
+    <string name="core_ui2_strings_manga_user_status_dropped">Брошено</string>
+    <!-- Kind -->
+    <string name="core_ui2_strings_manga_kind_manga">Манга</string>
+    <string name="core_ui2_strings_manga_kind_manhwa">Манхва</string>
+    <string name="core_ui2_strings_manga_kind_manhua">Маньхуа</string>
+    <string name="core_ui2_strings_manga_kind_oneshot">Ваншот</string>
+    <string name="core_ui2_strings_manga_kind_doujin">Додзинси</string>
+    <string name="core_ui2_strings_manga_kind_light_novel">Ранобэ</string>
+    <string name="core_ui2_strings_manga_kind_novel">Новелла</string>
+
 </resources>
