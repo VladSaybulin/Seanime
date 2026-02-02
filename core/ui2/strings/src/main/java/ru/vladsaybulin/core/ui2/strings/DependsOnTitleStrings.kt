@@ -7,29 +7,28 @@ import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
-interface TitleRelatedStrings {
-    fun titleStatus(status: EntryStatus): Int
+interface DependsOnTitleStrings {
+    fun titleStatusId(status: EntryStatus): Int
 
-    fun userStatus(status: UserRateStatus): Int
+    fun userStatusId(status: UserRateStatus): Int
 }
 
-val LocalTitleRelatedStrings = compositionLocalOf<TitleRelatedStrings> {
+val LocalTitleStrings = compositionLocalOf<DependsOnTitleStrings> {
     error("LocalTitleRelatedStrings not provided")
 }
 
 @Composable
-fun ProvideTitleRelatedStringsByType(
+fun ProvideTitleStringsByType(
     titleType: EntryType,
     content: @Composable () -> Unit
 ) {
-    val strings: TitleRelatedStrings = when (titleType) {
+    val strings: DependsOnTitleStrings = when (titleType) {
         EntryType.Anime -> AnimeStrings
         EntryType.Manga -> MangaStrings
     }
 
     CompositionLocalProvider(
-        value = LocalTitleRelatedStrings provides strings,
+        value = LocalTitleStrings provides strings,
         content = content
     )
 }
-        
