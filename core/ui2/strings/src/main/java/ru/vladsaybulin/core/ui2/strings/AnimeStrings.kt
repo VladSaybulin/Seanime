@@ -51,3 +51,12 @@ object AnimeStrings : DependsOnTitleStrings {
         AnimeRating.None -> R.string.core_ui2_strings_none
     }
 }
+
+@Composable
+@ReadOnlyComposable
+fun AnimeKind.asString() = stringResource(id = AnimeStrings.kindId(this))
+
+@Composable
+@ReadOnlyComposable
+fun AnimeRating.asString() = stringResource(id = AnimeStrings.ratingId(this))
+
