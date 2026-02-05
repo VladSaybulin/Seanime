@@ -39,7 +39,3 @@ object MangaStrings : DependsOnTitleStrings {
         MangaKind.None -> error("MangaKind.None is not supported")
     }
 }
-
-@Composable
-@ReadOnlyComposable
-fun MangaKind.asString() = stringResource(id = MangaStrings.kindId(this))

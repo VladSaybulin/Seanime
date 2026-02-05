@@ -1,8 +1,5 @@
 package ru.vladsaybulin.core.ui2.strings
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.common.EntryStatus
@@ -51,12 +48,4 @@ object AnimeStrings : DependsOnTitleStrings {
         AnimeRating.None -> R.string.core_ui2_strings_none
     }
 }
-
-@Composable
-@ReadOnlyComposable
-fun AnimeKind.asString() = stringResource(id = AnimeStrings.kindId(this))
-
-@Composable
-@ReadOnlyComposable
-fun AnimeRating.asString() = stringResource(id = AnimeStrings.ratingId(this))
 
