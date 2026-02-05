@@ -24,3 +24,25 @@ fun AnimeKind.asStringOrNull(): String? {
 @ReadOnlyComposable
 fun AnimeRating.asString() =
     stringResource(id = AnimeStrings.ratingId(this))
+
+@Composable
+@ReadOnlyComposable
+fun AnimeStrings.ProgressFormat.asString(): String {
+    return when (this) {
+        is AnimeStrings.ProgressFormat.AiredOfTotal -> stringResource(
+            R.string.core_ui2_strings_anime_progress_aired_of_total,
+            aired,
+            total
+        )
+
+        is AnimeStrings.ProgressFormat.AiredOfUnknown -> stringResource(
+            R.string.core_ui2_strings_anime_progress_aired_of_unknown,
+            aired
+        )
+
+        is AnimeStrings.ProgressFormat.TotalOnly -> stringResource(
+            R.string.core_ui2_strings_anime_progress_total_only,
+            total
+        )
+    }
+}

@@ -47,5 +47,22 @@ object AnimeStrings : DependsOnTitleStrings {
         AnimeRating.RX -> R.string.core_ui2_strings_anime_rating_rx
         AnimeRating.None -> R.string.core_ui2_strings_none
     }
+
+    sealed class ProgressFormat {
+        data class TotalOnly(val total: Int) : ProgressFormat()
+        data class AiredOfUnknown(val aired: Int) : ProgressFormat()
+        data class AiredOfTotal(val aired: Int, val total: Int) : ProgressFormat()
+    }
+
+    fun getProgressFormat(aired: Int, total: Int, isOngoing: Boolean, isMovie: Boolean): ProgressFormat? {
+        if (isMovie && total <= 1) return null
+        return if (total > 1 || (total == 0 && aired > 0)) {
+            when {
+                isOngoing && total > 0 -> ProgressFormat.AiredOfTotal(aired, total)
+                isOngoing -> ProgressFormat.AiredOfUnknown(aired)
+                else -> ProgressFormat.TotalOnly(total)
+            }
+        } else null
+    }
 }
 
