@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui2.strings.AnimeStrings
 import ru.vladsaybulin.core.ui2.strings.DependsOnTitleStrings
@@ -36,7 +37,7 @@ fun UserRateStatus.asStringOrNull(): String? {
     return asString()
 }
 
-val LocalTitleStrings = compositionLocalOf<DependsOnTitleStrings> {
+val LocalTitleStrings = staticCompositionLocalOf<DependsOnTitleStrings> {
     error("LocalTitleRelatedStrings not provided")
 }
 
