@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
+import ru.vladsaybulin.core.designsystem.components.SeanimeTag
 import ru.vladsaybulin.core.ui.entry.list.EntryListItem
 import ru.vladsaybulin.core.ui.entry.metadata.AnimeMetadataDefaultComponents
 import ru.vladsaybulin.core.ui.entry.metadata.MangaMetadataComponents
@@ -79,7 +79,7 @@ private fun RelatedAnimeItem(
                         )
                     }
 
-                    ShikimoriTextBadge {
+                    SeanimeTag {
                         Text(relationTypeString(relationType))
                     }
                 }
@@ -120,7 +120,7 @@ private fun RelatedMangaItem(
                         )
                     }
 
-                    ShikimoriTextBadge {
+                    SeanimeTag {
                         Text(
                             text = relationTypeString(relationType),
                             maxLines = 1,

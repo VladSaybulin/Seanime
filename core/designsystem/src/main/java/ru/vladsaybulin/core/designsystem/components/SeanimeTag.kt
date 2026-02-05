@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 
 @Composable
-fun ShikimoriTextBadge(
+fun SeanimeTag(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),
-    border: BorderStroke = TextBadgeDefaults.border(),
+    border: BorderStroke = TagDefaults.border(),
     shape: Shape = MaterialTheme.shapes.extraSmall,
     content: @Composable () -> Unit
 ) {
@@ -40,7 +40,7 @@ fun ShikimoriTextBadge(
     }
 }
 
-object TextBadgeDefaults {
+object TagDefaults {
 
     @Composable
     fun border(
@@ -51,10 +51,10 @@ object TextBadgeDefaults {
 
 @Composable
 @Preview
-fun ShikimoriTextBadgePreview() {
+fun SeanimeTagPreview() {
     SeanimeTheme {
         Surface {
-            ShikimoriTextBadge(modifier = Modifier.padding(8.dp)) {
+            SeanimeTag(modifier = Modifier.padding(8.dp)) {
                 Text(text = "Badge")
             }
         }
