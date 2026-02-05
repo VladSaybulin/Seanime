@@ -48,6 +48,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.RelatedTitleItem
 import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
 import ru.vladsaybulin.feature.title.details.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.content.PreviewUserRateStatusStatistics
@@ -195,204 +196,256 @@ private fun DetailsContent(
     }
 
     CompositionLocalProvider(value = LocalTitleStrings provides detailsState.entryType) {
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = {
-                coroutineScope.launch {
-                    isRefreshing = true
-                    refresh()
-                    isRefreshing = false
+        ProvideTitleStringsByType(detailsState.entryType) {
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    coroutineScope.launch {
+                        isRefreshing = true
+                        refresh()
+                        isRefreshing = false
+                    }
                 }
-            }
-        ) {
-            Scaffold(
-                modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
-                topBar = {
-                    DetailsTopBar(
-                        visibleTopBar = visibleTopBar,
-                        title = detailsState.run { russianName ?: name },
-                        onBackClick = navEvents.navigateUp,
-                        scrollBehavior = topAppBarScrollBehavior
-                    )
-                },
-                floatingActionButton = {
-                    val userRate = (userRateState as? UserRateState.Success)?.userRate
-                    UserRateFab(
-                        userRateState = userRateState,
-                        expanded = expandedFab,
-                        onClick = {
-                            when (userRateState) {
-                                is UserRateState.NotAuthorized -> setShowRequireAuthDialog(true)
-                                is UserRateState.Success -> navEvents.showUserRateEditor(
-                                    createEditableUserRate(detailsState, userRateState)
+            ) {
+                Scaffold(
+                    modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+                    topBar = {
+                        DetailsTopBar(
+                            visibleTopBar = visibleTopBar,
+                            title = detailsState.run { russianName ?: name },
+                            onBackClick = navEvents.navigateUp,
+                            scrollBehavior = topAppBarScrollBehavior
+                        )
+                    },
+                    floatingActionButton = {
+                        val userRate = (userRateState as? UserRateState.Success)?.userRate
+                        UserRateFab(
+                            userRateState = userRateState,
+                            expanded = expandedFab,
+                            onClick = {
+                                when (userRateState) {
+                                    is UserRateState.NotAuthorized -> setShowRequireAuthDialog(true)
+                                    is UserRateState.Success -> navEvents.showUserRateEditor(
+                                        createEditableUserRate(detailsState, userRateState)
+                                    )
+
+                                    is UserRateState.NoUserRate -> if (detailsState.status == Anons) {
+                                        onCreateUserRate(UserRateStatus.Planned)
+                                    } else showUserRateStatusSelection = true
+
+                                    else -> {}
+                                }
+                            }
+                        )
+                    }
+                ) { scaffoldPadding ->
+                    val uriHandler = LocalUriHandler.current
+
+                    LazyColumn(
+                        state = listState,
+                        //FAB padding
+                        contentPadding = PaddingValues(bottom = 56.dp + 32.dp)
+                    ) {
+
+                        titlePoster(
+                            posterUrl = detailsState.poster?.originalUrl,
+                            topSpace = scaffoldPadding.calculateTopPadding(),
+                            onClick = {
+                                detailsState.poster?.let {
+                                    navEvents.showFullScreenImage(
+                                        listOf(it),
+                                        0
+                                    )
+                                }
+                            }
+                        )
+
+                        gutterSpacer()
+                        titleName(
+                            name = detailsState.name,
+                            russianName = detailsState.russianName
+                        )
+
+                        gutterSpacer()
+                        titleInfo(
+                            animeKind = detailsState.animeKind,
+                            mangaKind = detailsState.mangaKind,
+                            status = detailsState.status,
+                            episodes = detailsState.episodes,
+                            episodesAired = detailsState.episodesAired,
+                            episodeDuration = detailsState.episodeDuration,
+                            chapters = detailsState.chapters,
+                            volumes = detailsState.volumes,
+                            nextEpisodeAt = detailsState.nextEpisodeAt,
+                            airedOn = detailsState.airedOn,
+                            releasedOn = detailsState.releasedOn,
+                            timePeriodAiring = detailsState.season,
+                            rating = detailsState.rating,
+                            studios = detailsState.studios,
+                            publishers = detailsState.publishers,
+                            genres = detailsState.genres,
+                            onStudioClick = {
+                                navEvents.navigateToSearchByStudio(
+                                    detailsState.searchType(),
+                                    it.id
                                 )
-
-                                is UserRateState.NoUserRate -> if (detailsState.status == Anons) {
-                                    onCreateUserRate(UserRateStatus.Planned)
-                                } else showUserRateStatusSelection = true
-
-                                else -> {}
-                            }
-                        }
-                    )
-                }
-            ) { scaffoldPadding ->
-                val uriHandler = LocalUriHandler.current
-
-                LazyColumn(
-                    state = listState,
-                    //FAB padding
-                    contentPadding = PaddingValues(bottom = 56.dp + 32.dp)
-                ) {
-
-                    titlePoster(
-                        posterUrl = detailsState.poster?.originalUrl,
-                        topSpace = scaffoldPadding.calculateTopPadding(),
-                        onClick = {
-                            detailsState.poster?.let { navEvents.showFullScreenImage(listOf(it), 0) }
-                        }
-                    )
-
-                    gutterSpacer()
-                    titleName(
-                        name = detailsState.name,
-                        russianName = detailsState.russianName
-                    )
-
-                    gutterSpacer()
-                    titleInfo(
-                        animeKind = detailsState.animeKind,
-                        mangaKind = detailsState.mangaKind,
-                        status = detailsState.status,
-                        episodes = detailsState.episodes,
-                        episodesAired = detailsState.episodesAired,
-                        episodeDuration = detailsState.episodeDuration,
-                        chapters = detailsState.chapters,
-                        volumes = detailsState.volumes,
-                        nextEpisodeAt = detailsState.nextEpisodeAt,
-                        airedOn = detailsState.airedOn,
-                        releasedOn = detailsState.releasedOn,
-                        timePeriodAiring = detailsState.season,
-                        rating = detailsState.rating,
-                        studios = detailsState.studios,
-                        publishers = detailsState.publishers,
-                        genres = detailsState.genres,
-                        onStudioClick = { navEvents.navigateToSearchByStudio(detailsState.searchType(), it.id) },
-                        onPublisherClick = { navEvents.navigateToSearchByPublisher(detailsState.searchType(), it.id) },
-                        onGenreClick = { navEvents.navigateToSearchByGenre(detailsState.searchType(), it.kind, it.id) }
-                    )
-
-                    detailsState.description?.takeIf { it.text.isNotEmpty() }?.let { description ->
-                        gutterSpacer()
-                        titleDescription(
-                            description = description,
-                            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it) },
-                            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it) },
-                            onCharacterClick = navEvents.navigateToCharacterDetails,
-                            onPersonClick = navEvents.navigateToPersonDetails,
-                            onUrlClick = uriHandler::openUri
-                        )
-                    }
-
-                    (rolesState as? RolesState.Success)?.mainAuthors?.takeIf { it.isNotEmpty() }?.let { authors ->
-                        gutterSpacer()
-                        titleAuthors(
-                            authors = authors,
-                            onAuthorClick = { navEvents.navigateToPersonDetails(it.id) },
-                            onMoreClick = {
-                                navEvents.navigateToTitleAuthors(detailsState.entryType, detailsState.entryId)
-                            }
-                        )
-                    }
-
-                    if (detailsState.score > 0f) {
-                        gutterSpacer()
-                        titleScore(
-                            score = detailsState.score,
-                            stats = detailsState.scoreStatisticsItems
-                        )
-                    }
-
-                    if (!detailsState.userRateStatusStatisticItems.isNullOrEmpty()) {
-                        gutterSpacer()
-                        titleUserRateStatusDiagram(detailsState.userRateStatusStatisticItems)
-                    }
-
-                    detailsState.relatedSlice?.let { dataSlice ->
-                        gutterSpacer()
-                        titleRelated(
-                            relatedEntriesSlice = dataSlice,
-                            onTitleClick = navEvents.navigateToTitleDetails,
-                            onMoreClick = {
-                                navEvents.navigateToTitleRelated(
-                                    detailsState.entryType,
-                                    detailsState.entryId
-                                )
-                            }
-                        )
-                    }
-
-                    (rolesState as? RolesState.Success)?.mainCharacters?.takeIf { it.isNotEmpty() }?.let { characters ->
-                        gutterSpacer()
-                        titleCharacters(
-                            characters = characters,
-                            onCharacterClick = { navEvents.navigateToCharacterDetails(it.id) },
-                            onMoreClick = {
-                                navEvents.navigateToTitleCharacters(
-                                    detailsState.entryType,
-                                    detailsState.entryId
-                                )
-                            }
-                        )
-                    }
-
-                    detailsState.screenshotsSlice?.let { dataSlice ->
-                        gutterSpacer()
-                        titleScreenshots(
-                            screenshotsSlice = dataSlice,
-                            onScreenshotClick = { initialIndex ->
-                                navEvents.showFullScreenImage(detailsState.allScreenshots, initialIndex)
                             },
-                            onMoreClick = {
-                                navEvents.navigateToTitleScreenshots(
-                                    detailsState.entryType,
-                                    detailsState.entryId
+                            onPublisherClick = {
+                                navEvents.navigateToSearchByPublisher(
+                                    detailsState.searchType(),
+                                    it.id
+                                )
+                            },
+                            onGenreClick = {
+                                navEvents.navigateToSearchByGenre(
+                                    detailsState.searchType(),
+                                    it.kind,
+                                    it.id
                                 )
                             }
                         )
-                    }
 
-                    detailsState.videosSlice?.let { videosSlice ->
-                        gutterSpacer()
-                        titleVideos(
-                            videosSlice = videosSlice,
-                            onVideoClick = { uriHandler.openUri(it.videoUrl) },
-                            onMoreClick = {
-                                navEvents.navigateToTitleVideos(
-                                    detailsState.entryType,
-                                    detailsState.entryId
+                        detailsState.description?.takeIf { it.text.isNotEmpty() }
+                            ?.let { description ->
+                                gutterSpacer()
+                                titleDescription(
+                                    description = description,
+                                    onAnimeClick = {
+                                        navEvents.navigateToTitleDetails(
+                                            EntryType.Anime,
+                                            it
+                                        )
+                                    },
+                                    onMangaClick = {
+                                        navEvents.navigateToTitleDetails(
+                                            EntryType.Manga,
+                                            it
+                                        )
+                                    },
+                                    onCharacterClick = navEvents.navigateToCharacterDetails,
+                                    onPersonClick = navEvents.navigateToPersonDetails,
+                                    onUrlClick = uriHandler::openUri
                                 )
                             }
-                        )
-                    }
 
-                    when (similarState) {
-                        SimilarState.Empty -> Unit
-                        SimilarState.Loading -> Unit
-                        is SimilarState.Animes -> {
+                        (rolesState as? RolesState.Success)?.mainAuthors?.takeIf { it.isNotEmpty() }
+                            ?.let { authors ->
+                                gutterSpacer()
+                                titleAuthors(
+                                    authors = authors,
+                                    onAuthorClick = { navEvents.navigateToPersonDetails(it.id) },
+                                    onMoreClick = {
+                                        navEvents.navigateToTitleAuthors(
+                                            detailsState.entryType,
+                                            detailsState.entryId
+                                        )
+                                    }
+                                )
+                            }
+
+                        if (detailsState.score > 0f) {
                             gutterSpacer()
-                            titleSimilarAnimes(
-                                similarAnimes = similarState.animes,
-                                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) }
+                            titleScore(
+                                score = detailsState.score,
+                                stats = detailsState.scoreStatisticsItems
                             )
                         }
 
-                        is SimilarState.Mangas -> {
+                        if (!detailsState.userRateStatusStatisticItems.isNullOrEmpty()) {
                             gutterSpacer()
-                            titleSimilarMangas(
-                                similarMangas = similarState.mangas,
-                                onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) }
+                            titleUserRateStatusDiagram(detailsState.userRateStatusStatisticItems)
+                        }
+
+                        detailsState.relatedSlice?.let { dataSlice ->
+                            gutterSpacer()
+                            titleRelated(
+                                relatedEntriesSlice = dataSlice,
+                                onTitleClick = navEvents.navigateToTitleDetails,
+                                onMoreClick = {
+                                    navEvents.navigateToTitleRelated(
+                                        detailsState.entryType,
+                                        detailsState.entryId
+                                    )
+                                }
                             )
+                        }
+
+                        (rolesState as? RolesState.Success)?.mainCharacters?.takeIf { it.isNotEmpty() }
+                            ?.let { characters ->
+                                gutterSpacer()
+                                titleCharacters(
+                                    characters = characters,
+                                    onCharacterClick = { navEvents.navigateToCharacterDetails(it.id) },
+                                    onMoreClick = {
+                                        navEvents.navigateToTitleCharacters(
+                                            detailsState.entryType,
+                                            detailsState.entryId
+                                        )
+                                    }
+                                )
+                            }
+
+                        detailsState.screenshotsSlice?.let { dataSlice ->
+                            gutterSpacer()
+                            titleScreenshots(
+                                screenshotsSlice = dataSlice,
+                                onScreenshotClick = { initialIndex ->
+                                    navEvents.showFullScreenImage(
+                                        detailsState.allScreenshots,
+                                        initialIndex
+                                    )
+                                },
+                                onMoreClick = {
+                                    navEvents.navigateToTitleScreenshots(
+                                        detailsState.entryType,
+                                        detailsState.entryId
+                                    )
+                                }
+                            )
+                        }
+
+                        detailsState.videosSlice?.let { videosSlice ->
+                            gutterSpacer()
+                            titleVideos(
+                                videosSlice = videosSlice,
+                                onVideoClick = { uriHandler.openUri(it.videoUrl) },
+                                onMoreClick = {
+                                    navEvents.navigateToTitleVideos(
+                                        detailsState.entryType,
+                                        detailsState.entryId
+                                    )
+                                }
+                            )
+                        }
+
+                        when (similarState) {
+                            SimilarState.Empty -> Unit
+                            SimilarState.Loading -> Unit
+                            is SimilarState.Animes -> {
+                                gutterSpacer()
+                                titleSimilarAnimes(
+                                    similarAnimes = similarState.animes,
+                                    onAnimeClick = {
+                                        navEvents.navigateToTitleDetails(
+                                            EntryType.Anime,
+                                            it.id
+                                        )
+                                    }
+                                )
+                            }
+
+                            is SimilarState.Mangas -> {
+                                gutterSpacer()
+                                titleSimilarMangas(
+                                    similarMangas = similarState.mangas,
+                                    onMangaClick = {
+                                        navEvents.navigateToTitleDetails(
+                                            EntryType.Manga,
+                                            it.id
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }

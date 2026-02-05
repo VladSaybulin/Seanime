@@ -36,8 +36,6 @@ fun UserRateStatus.asStringOrNull(): String? {
     return asString()
 }
 
-
-
 val LocalTitleStrings = compositionLocalOf<DependsOnTitleStrings> {
     error("LocalTitleRelatedStrings not provided")
 }

@@ -1,8 +1,5 @@
 package ru.vladsaybulin.core.ui2.strings
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.userrate.UserRateStatus
