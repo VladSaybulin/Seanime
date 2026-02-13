@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_ui2_entry_duration_hour_and_min">%1$d ч %2$d мин</string>
+    <string name="core_ui2_entry_duration_hour">%1$d ч</string>
+    <string name="core_ui2_entry_duration_min">%1$d мин</string>
+    <string name="core_ui2_entry_anime_item_additional_content_episodes_and_duration">%1$s по %2$s</string>
+</resources>
