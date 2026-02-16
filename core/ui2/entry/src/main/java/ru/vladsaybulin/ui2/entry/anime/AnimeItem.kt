@@ -1,6 +1,8 @@
-package ru.vladsaybulin.ui2.entry
+package ru.vladsaybulin.ui2.entry.anime
 
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
@@ -20,6 +22,12 @@ import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.ui2.entry.EntryGridItem
+import ru.vladsaybulin.ui2.entry.EntryItemDefaults
+import ru.vladsaybulin.ui2.entry.EntryItemStyle
+import ru.vladsaybulin.ui2.entry.EntryListItem
+import ru.vladsaybulin.ui2.entry.TitleGridItemAdditionalContent
+import ru.vladsaybulin.ui2.entry.TitleListItemDefaultAdditionalContent
 import ru.vladsaybulin.ui2.entry.preview.AnimeItemPreviewParameterProvider
 
 @Composable
@@ -64,6 +72,17 @@ fun AnimeListItem(
         style = style,
         additionalContent = additionalContent
     )
+}
+
+fun LazyListScope.animeItems(
+    animes: List<Anime>,
+    onItemClick: (Anime) -> Unit,
+    itemModifier: Modifier = Modifier,
+    userRateStatus: (Anime) -> UserRateStatus,
+    style: EntryItemStyle? = null,
+    additionalContent: (@Composable (Anime) -> Unit)? = { AnimeGridItemDefaultAdditionalContent(it) },
+) {
+
 }
 
 @Composable
