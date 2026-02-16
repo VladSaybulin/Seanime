@@ -16,7 +16,7 @@ inline fun LazyListScope.animeItems(
     itemModifier: Modifier = Modifier,
     style: EntryItemStyle? = null,
     crossinline userRateStatus: (Anime) -> UserRateStatus = { UserRateStatus.None },
-    noinline additionalContent: (@Composable (Anime) -> Unit)? = { AnimeGridItemDefaultAdditionalContent(it) },
+    noinline additionalContent: (@Composable (Anime) -> Unit)? = { AnimeListItemDefaultAdditionalContent(it) },
 ) {
     items(
         count = animes.size,
@@ -45,7 +45,7 @@ inline fun LazyListScope.animeCarouselItems(
     itemModifier: Modifier = Modifier,
     style: EntryItemStyle? = null,
     crossinline userRateStatus: (Anime) -> UserRateStatus = { UserRateStatus.None },
-    noinline additionalContent: (@Composable (Anime) -> Unit)? = { AnimeGridItemDefaultAdditionalContent(it) },
+    noinline additionalContent: (@Composable (Anime) -> Unit)? = null,
 ) {
     items(
         count = animes.size,

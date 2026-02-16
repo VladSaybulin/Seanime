@@ -45,7 +45,7 @@ inline fun LazyListScope.mangaCarouselItems(
     itemModifier: Modifier = Modifier,
     style: EntryItemStyle? = null,
     crossinline userRateStatus: (Manga) -> UserRateStatus = { UserRateStatus.None },
-    noinline additionalContent: (@Composable (Manga) -> Unit)? = { MangaGridItemDefaultAdditionalContent(it) },
+    noinline additionalContent: (@Composable (Manga) -> Unit)? = null,
 ) {
     items(
         count = mangas.size,
