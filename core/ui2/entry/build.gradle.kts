@@ -10,7 +10,7 @@ android {
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.designsystem)
-    implementation(projects.core.ui2.strings)
+    api(projects.core.ui2.strings)
     implementation(projects.core.ui2.score)
 
     implementation(libs.coil.kt.compose)
