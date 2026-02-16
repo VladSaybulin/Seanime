@@ -1,8 +1,6 @@
 package ru.vladsaybulin.ui2.entry.anime
 
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
@@ -72,17 +70,6 @@ fun AnimeListItem(
         style = style,
         additionalContent = additionalContent
     )
-}
-
-fun LazyListScope.animeItems(
-    animes: List<Anime>,
-    onItemClick: (Anime) -> Unit,
-    itemModifier: Modifier = Modifier,
-    userRateStatus: (Anime) -> UserRateStatus,
-    style: EntryItemStyle? = null,
-    additionalContent: (@Composable (Anime) -> Unit)? = { AnimeGridItemDefaultAdditionalContent(it) },
-) {
-
 }
 
 @Composable
