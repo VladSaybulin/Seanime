@@ -61,7 +61,7 @@ object EntryCarouselDefaults {
 private val DefaultVerticalPadding = 16.dp
 private val DefaultHorizontalPadding = 8.dp
 
-private val DefaultArrangeSpace = 4.dp
+private val DefaultArrangeSpace = 8.dp
 
 @Preview
 @Composable
