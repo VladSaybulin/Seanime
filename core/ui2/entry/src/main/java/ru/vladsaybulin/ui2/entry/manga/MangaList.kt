@@ -11,7 +11,7 @@ import ru.vladsaybulin.ui2.entry.EntryItemStyle
 inline fun LazyListScope.mangaItems(
     mangas: List<Manga>,
     crossinline onItemClick: (Manga) -> Unit,
-    noinline key: ((Manga) -> Any)? = null,
+    noinline key: ((Manga) -> Any)? = { it.id },
     noinline contentType: (Manga) -> Any? = { null },
     itemModifier: Modifier = Modifier,
     style: EntryItemStyle? = null,
