@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.pager.HorizontalPager
@@ -38,10 +39,9 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
-import ru.vladsaybulin.core.ui.entry.carousel.EntryCarousel
-import ru.vladsaybulin.core.ui.entry.carousel.anime.animeCarouselItems
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.home.navigation.HomeNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
@@ -49,6 +49,8 @@ import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
+import ru.vladsaybulin.ui2.entry.EntryCarousel
+import ru.vladsaybulin.ui2.entry.anime.animeCarouselItems
 
 @Composable
 fun HomeScreen(
@@ -219,11 +221,14 @@ private fun LazyListScope.animeOngoingCarousel(
             ) {
                 Text(text = stringResource(id = R.string.feature_home_on_air_now))
             }
-            EntryCarousel {
-                animeCarouselItems(
-                    items = ongoingAnime,
-                    onItemClick = onAnimeClick
-                )
+            ProvideTitleStringsByType(EntryType.Anime) {
+                EntryCarousel {
+                    animeCarouselItems(
+                        animes = ongoingAnime,
+                        onItemClick = onAnimeClick,
+                        itemModifier = Modifier.width(OngoingAnimeWidth)
+                    )
+                }
             }
         }
     }
@@ -265,3 +270,5 @@ private const val NewsHeaderKey = "news_header"
 private const val NewsTopicKeyPrefix = "news"
 
 private const val SHIKIMORI_NEWS_URL = "https://shikimori.one/forum/news"
+
+private val OngoingAnimeWidth = 128.dp
