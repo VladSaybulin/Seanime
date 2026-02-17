@@ -100,7 +100,9 @@ data class EntryItemStyle(
     val infoPadding: PaddingValues,
     val badgeSize: Dp,
     val shape: Shape,
-    val surfaceColorByStatus: Boolean
+    val containerColor: Color,
+    val contentColor: Color,
+    val colorsByUserRateStatus: Boolean
 )
 
 object EntryItemDefaults {
@@ -115,7 +117,9 @@ object EntryItemDefaults {
         infoPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         badgeSize: Dp = 32.dp,
         shape: Shape = RoundedCornerShape(16.dp),
-        surfaceColorByStatus: Boolean = true
+        containerColor: Color = SeanimeTheme.colorScheme.surfaceContainer,
+        contentColor: Color = SeanimeTheme.colorScheme.onSurface,
+        colorsByUserRateStatus: Boolean = true
     ): EntryItemStyle = EntryItemStyle(
         nameStyle = nameStyle,
         nameMaxLines = nameMaxLines,
@@ -123,7 +127,9 @@ object EntryItemDefaults {
         infoPadding = infoPadding,
         badgeSize = badgeSize,
         shape = shape,
-        surfaceColorByStatus = surfaceColorByStatus
+        containerColor = containerColor,
+        contentColor = contentColor,
+        colorsByUserRateStatus = colorsByUserRateStatus
     )
 
     @Composable
@@ -134,7 +140,9 @@ object EntryItemDefaults {
         infoPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         badgeSize: Dp = 32.dp,
         shape: Shape = RoundedCornerShape(16.dp),
-        surfaceColorByStatus: Boolean = true
+        containerColor: Color = SeanimeTheme.colorScheme.surfaceContainer,
+        contentColor: Color = SeanimeTheme.colorScheme.onSurface,
+        colorsByUserRateStatus: Boolean = true
     ): EntryItemStyle = EntryItemStyle(
         nameStyle = nameStyle,
         nameMaxLines = nameMaxLines,
@@ -142,7 +150,9 @@ object EntryItemDefaults {
         infoPadding = infoPadding,
         badgeSize = badgeSize,
         shape = shape,
-        surfaceColorByStatus = surfaceColorByStatus
+        containerColor = containerColor,
+        contentColor = contentColor,
+        colorsByUserRateStatus = colorsByUserRateStatus
     )
 }
 
@@ -302,19 +312,19 @@ private fun isRussianName(): Boolean {
 
 @Composable
 fun EntryItemStyle.containerColor(userRateStatus: UserRateStatus): Color {
-    return if (surfaceColorByStatus && userRateStatus != UserRateStatus.None) {
+    return if (colorsByUserRateStatus && userRateStatus != UserRateStatus.None) {
         SeanimeTheme.seanimeColors[userRateStatus].container
     } else {
-        SeanimeTheme.colorScheme.surfaceContainer
+        containerColor
     }
 }
 
 @Composable
 fun EntryItemStyle.contentColor(userRateStatus: UserRateStatus): Color {
-    return if (surfaceColorByStatus && userRateStatus != UserRateStatus.None) {
+    return if (colorsByUserRateStatus && userRateStatus != UserRateStatus.None) {
         SeanimeTheme.seanimeColors[userRateStatus].onContainer
     } else {
-        SeanimeTheme.colorScheme.onSurface
+        contentColor
     }
 }
 
