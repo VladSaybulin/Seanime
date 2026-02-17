@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.navigation)
     implementation(projects.core.ui2.strings)
+    implementation(projects.core.ui2.entry)
 
     implementation(libs.primeTransformer)
     implementation(libs.kotlinx.datetime)
