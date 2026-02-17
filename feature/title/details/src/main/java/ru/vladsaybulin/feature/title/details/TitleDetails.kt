@@ -46,7 +46,6 @@ import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.RelatedTitleItem
 import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
@@ -99,6 +98,7 @@ import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.search.SeasonOfYear
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.ui2.entry.related.RelatedTitleItem
 import java.security.KeyStore.Entry
 
 @Composable
