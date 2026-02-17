@@ -1,4 +1,4 @@
-package ru.vladsaybulin.ui2.entry
+package ru.vladsaybulin.ui2.entry.additional
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,13 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.components.SeanimeTag
-import ru.vladsaybulin.core.designsystem.components.TagDefaults
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.ui2.score.Score
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
-import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 
@@ -27,8 +23,7 @@ fun TitleGridItemAdditionalContent(
     kindStr: String?,
     year: Int?
 ) {
-    val finalText = listOfNotNull(kindStr, year?.toString()).joinToString(separator = " • ")
-    Text(finalText)
+    AdditionalContentKindAndYear(kindStr, year)
 }
 
 @Composable
@@ -41,7 +36,10 @@ fun TitleListItemDefaultAdditionalContent(
 
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            StatusTag(status)
+            AdditionalContentStatusTag(
+                status = status,
+                modifier = Modifier.padding(StatusTagPadding)
+            )
             if (year != null) {
                 Text(text = year.toString())
             }
@@ -55,20 +53,6 @@ fun TitleListItemDefaultAdditionalContent(
                 iconSize = 16.dp,
                 numberStyle = LocalTextStyle.current
             )
-        }
-    }
-}
-
-@Composable
-private fun StatusTag(status: EntryStatus) {
-    if (status != EntryStatus.None) {
-        val color = SeanimeTheme.seanimeColors[status]
-        SeanimeTag(
-            border = TagDefaults.border(color = color),
-            contentColor = color,
-            modifier = Modifier.padding(StatusTagPadding)
-        ) {
-            Text(status.asString())
         }
     }
 }
