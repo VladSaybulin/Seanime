@@ -11,7 +11,7 @@ import ru.vladsaybulin.ui2.entry.EntryItemStyle
 inline fun LazyGridScope.animeItems(
     animes: List<Anime>,
     crossinline onItemClick: (Anime) -> Unit,
-    noinline key: ((Anime) -> Any)? = null,
+    noinline key: ((Anime) -> Any)? = { it.id },
     noinline contentType: (item: Anime) -> Any? = { null },
     itemModifier: Modifier = Modifier,
     style: EntryItemStyle? = null,
