@@ -14,4 +14,5 @@ dependencies {
     implementation(projects.core.ui2.score)
 
     implementation(libs.coil.kt.compose)
+    implementation(libs.paging.compose)
 }
