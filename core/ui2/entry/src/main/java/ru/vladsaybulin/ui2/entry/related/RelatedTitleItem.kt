@@ -25,7 +25,6 @@ import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.ui2.entry.EntryItemDefaults
-import ru.vladsaybulin.ui2.entry.EntryItemStyle
 import ru.vladsaybulin.ui2.entry.EntryListItem
 import ru.vladsaybulin.ui2.entry.additional.AdditionalContentKindAndYear
 import ru.vladsaybulin.ui2.entry.additional.AdditionalContentStatusTag
