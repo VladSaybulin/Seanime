@@ -1,8 +1,6 @@
 package ru.vladsaybulin.feature.title.characters
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,7 +9,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,9 +28,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.entry.grid.EntryGridItem
 import ru.vladsaybulin.feature.title.characters.navigation.TitleCharactersNavEvents
 import ru.vladsaybulin.model.character.Character
+import ru.vladsaybulin.ui2.entry.EntryGrid
+import ru.vladsaybulin.ui2.entry.EntryGridItem
 
 @Composable
 fun TitleCharactersRoute(
@@ -101,15 +99,11 @@ private fun TitleCharactersContent(
     state: TitleCharactersUiState.Success,
     onCharacterClick: (Long) -> Unit
 ) {
-
     val characters = state.characters
     val firstMinorCharacter = characters.indexOfFirst { !it.isMain }
 
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(96.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(16.dp)
+    EntryGrid(
+        columns = GridCells.Adaptive(CharacterCardMinWidth),
     ) {
         if (characters.first().isMain) {
             header {
@@ -156,8 +150,9 @@ private fun TitleCharactersContent(
 @Composable
 private fun CharacterCard(character: Character, onClick: () -> Unit) {
     EntryGridItem(
-        name = character.run { russianName ?: originalName },
-        imageUrl = character.poster?.originalUrl,
+        name = character.originalName,
+        russianName = character.russianName,
+        poster = character.poster,
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
     )
@@ -168,3 +163,5 @@ fun LazyGridScope.header(
 ) {
     item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
 }
+
+private val CharacterCardMinWidth = 96.dp
