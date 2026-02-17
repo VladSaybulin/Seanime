@@ -24,8 +24,8 @@ import ru.vladsaybulin.ui2.entry.EntryGridItem
 import ru.vladsaybulin.ui2.entry.EntryItemDefaults
 import ru.vladsaybulin.ui2.entry.EntryItemStyle
 import ru.vladsaybulin.ui2.entry.EntryListItem
-import ru.vladsaybulin.ui2.entry.TitleGridItemAdditionalContent
-import ru.vladsaybulin.ui2.entry.TitleListItemDefaultAdditionalContent
+import ru.vladsaybulin.ui2.entry.additional.TitleGridItemAdditionalContent
+import ru.vladsaybulin.ui2.entry.additional.TitleListItemDefaultAdditionalContent
 import ru.vladsaybulin.ui2.entry.preview.AnimeItemPreviewParameterProvider
 
 @Composable
