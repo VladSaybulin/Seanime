@@ -7,10 +7,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.entry.list.EntryListItem
 import ru.vladsaybulin.core.ui.strings.personRoleString
 import ru.vladsaybulin.model.person.Person
 import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.ui2.entry.EntryItemDefaults
+import ru.vladsaybulin.ui2.entry.EntryListItem
 
 @Composable
 fun AuthorItem(
@@ -19,21 +20,29 @@ fun AuthorItem(
     modifier: Modifier = Modifier
 ) {
     EntryListItem(
-        name = author.person.run { russianName ?: originalName },
-        imageUrl = author.person.poster?.originalUrl,
+        name = author.person.originalName,
+        russianName = author.person.russianName,
+        poster = author.person.poster,
         onClick = onClick,
-        imageWidth = 72.dp,
-        modifier = modifier
+        posterWidth = PersonPosterWidth,
+        modifier = modifier,
+        style = EntryItemDefaults.regularListStyle(
+            colorsByUserRateStatus = false,
+            containerColor = SeanimeTheme.colorScheme.surface
+        )
     ) {
         Text(
-            text = author.roles
-                // Can't move map in joinToString because no Composable context
-                .map { personRoleString(personRole = it) }
-                .joinToString(separator = ", "),
+            text = localizedRoles(author.roles),
             modifier = Modifier.alpha(0.5f)
         )
     }
 }
+
+@Composable
+private fun localizedRoles(rolesEn: List<String>): String = rolesEn
+        // Can't move map in joinToString because no Composable context
+        .map { personRoleString(personRole = it) }
+        .joinToString(separator = ", ")
 
 @Preview
 @Composable
@@ -57,3 +66,5 @@ fun AuthorItemPreview() {
         )
     }
 }
+
+private val PersonPosterWidth = 72.dp

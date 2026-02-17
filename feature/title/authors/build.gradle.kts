@@ -12,6 +12,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.navigation)
     implementation(projects.core.ui)
+    implementation(projects.core.ui2.entry)
 
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
