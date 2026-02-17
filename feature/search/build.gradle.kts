@@ -12,6 +12,7 @@ android {
 dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.data)
+    implementation(projects.core.ui2.entry)
 
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
