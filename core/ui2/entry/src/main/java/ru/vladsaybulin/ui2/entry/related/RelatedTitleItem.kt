@@ -119,7 +119,7 @@ private fun animeData(related: RelatedAnime): RelatedData {
 private fun mangaData(related: RelatedManga): RelatedData {
     val manga = related.manga
     return RelatedData(
-        type = EntryType.Anime,
+        type = EntryType.Manga,
         id = manga.id,
         name = manga.name,
         russianName = manga.russianName,
