@@ -11,5 +11,6 @@ android {
 
 dependencies {
     implementation(projects.core.data)
+    implementation(projects.core.ui2.entry)
     implementation(libs.kotlinx.serialization.json)
 }
