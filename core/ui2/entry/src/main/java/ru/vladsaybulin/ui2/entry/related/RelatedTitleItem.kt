@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.components.SeanimeTag
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui2.entry.R
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
@@ -41,28 +42,30 @@ fun RelatedTitleItem(
         is RelatedManga -> mangaData(relatedTitle)
     }
 
-    EntryListItem(
-        name = data.name,
-        russianName = data.russianName,
-        poster = data.poster,
-        posterWidth = PosterWidth,
-        onClick = { onClick(data.type, data.id) },
-        modifier = modifier,
-        userRateStatus = userRateStatus,
-        style = EntryItemDefaults.regularListStyle(
-            containerColor = SeanimeTheme.colorScheme.surface,
-            colorsByUserRateStatus = false,
-            shape = RoundedCornerShape(ShapeRadius)
-        ),
-        additionalContent = {
-            RelatedTitleDetails(
-                data.kindStr,
-                data.year,
-                data.status,
-                data.relatedType
-            )
-        }
-    )
+    ProvideTitleStringsByType(data.type) {
+        EntryListItem(
+            name = data.name,
+            russianName = data.russianName,
+            poster = data.poster,
+            posterWidth = PosterWidth,
+            onClick = { onClick(data.type, data.id) },
+            modifier = modifier,
+            userRateStatus = userRateStatus,
+            style = EntryItemDefaults.regularListStyle(
+                containerColor = SeanimeTheme.colorScheme.surface,
+                colorsByUserRateStatus = false,
+                shape = RoundedCornerShape(ShapeRadius)
+            ),
+            additionalContent = {
+                RelatedTitleDetails(
+                    data.kindStr,
+                    data.year,
+                    data.status,
+                    data.relatedType
+                )
+            }
+        )
+    }
 }
 
 @Composable
