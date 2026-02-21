@@ -621,7 +621,7 @@ private fun LazyListScope.titleRelated(
         RelatedTitleItem(
             relatedTitle = it,
             onClick = onTitleClick,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
         )
     }
 }
