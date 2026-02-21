@@ -59,6 +59,7 @@ import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.ui2.entry.EntryGrid
+import ru.vladsaybulin.ui2.entry.EntryList
 import ru.vladsaybulin.ui2.entry.anime.animeItems
 import ru.vladsaybulin.ui2.entry.manga.mangaItems
 import kotlin.math.max
