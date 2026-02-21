@@ -50,6 +50,7 @@ import ru.vladsaybulin.core.ui.filters.rememberFiltersState
 import ru.vladsaybulin.core.ui.paging.PagingBox
 import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.orderString
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
@@ -59,6 +60,7 @@ import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.ui2.entry.EntryGrid
+import ru.vladsaybulin.ui2.entry.EntryList
 import ru.vladsaybulin.ui2.entry.anime.animeItems
 import ru.vladsaybulin.ui2.entry.manga.mangaItems
 import kotlin.math.max
@@ -106,53 +108,55 @@ private fun SearchScreen(
         else -> EntryType.Anime
     }
     CompositionLocalProvider(value = LocalTitleStrings provides titleType) {
-        Box(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .padding(LocalScreenContentPadding.current)
-                .fillMaxSize()
-        ) {
+        ProvideTitleStringsByType(titleType) {
+            Box(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(LocalScreenContentPadding.current)
+                    .fillMaxSize()
+            ) {
 
-            var showFilters by remember { mutableStateOf(false) }
+                var showFilters by remember { mutableStateOf(false) }
 
-            val filtersLoadingState = uiState.filtersLoadingState
-            val filtersState = if (filtersLoadingState is FiltersLoadingState.Success) {
-                rememberFiltersState(
-                    filters = filtersLoadingState.filters,
-                    appliedFilters = uiState.appliedFilters
-                )
-            } else null
+                val filtersLoadingState = uiState.filtersLoadingState
+                val filtersState = if (filtersLoadingState is FiltersLoadingState.Success) {
+                    rememberFiltersState(
+                        filters = filtersLoadingState.filters,
+                        appliedFilters = uiState.appliedFilters
+                    )
+                } else null
 
-            Column(modifier = Modifier.fillMaxSize()) {
-                SearchTopBar(
-                    searchQuery = searchQuery,
-                    title = uiState.title,
-                    availableSearchTypes = uiState.availableSearchTypes,
-                    selectedSearchType = uiState.selectedSearchType,
-                    availableOrders = uiState.availableOrders,
-                    selectedOrder = uiState.selectedOrder,
-                    appliedFiltersCount = uiState.countActiveFilter(),
-                    onSearchQueryChange = onSearchQueryChanged,
-                    onSearchTypeChanged = onSearchTypeChanged,
-                    onOrderChanged = onOrderChanged,
-                    onFiltersClick = { showFilters = true }
-                )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    SearchTopBar(
+                        searchQuery = searchQuery,
+                        title = uiState.title,
+                        availableSearchTypes = uiState.availableSearchTypes,
+                        selectedSearchType = uiState.selectedSearchType,
+                        availableOrders = uiState.availableOrders,
+                        selectedOrder = uiState.selectedOrder,
+                        appliedFiltersCount = uiState.countActiveFilter(),
+                        onSearchQueryChange = onSearchQueryChanged,
+                        onSearchTypeChanged = onSearchTypeChanged,
+                        onOrderChanged = onOrderChanged,
+                        onFiltersClick = { showFilters = true }
+                    )
 
-                SearchResult(
-                    searchType = uiState.selectedSearchType,
-                    pagingFlows = searchResultFlows,
-                    onAnimeClick = onAnimeClick,
-                    onMangaClick = onMangaClick,
-                    userRates = userRates
-                )
-            }
+                    SearchResult(
+                        searchType = uiState.selectedSearchType,
+                        pagingFlows = searchResultFlows,
+                        onAnimeClick = onAnimeClick,
+                        onMangaClick = onMangaClick,
+                        userRates = userRates
+                    )
+                }
 
-            if (filtersState != null && showFilters) {
-                FiltersBottomSheet(
-                    filtersState = filtersState,
-                    onDismissRequest = { showFilters = false },
-                    onApplyFilters = onApplyFilters
-                )
+                if (filtersState != null && showFilters) {
+                    FiltersBottomSheet(
+                        filtersState = filtersState,
+                        onDismissRequest = { showFilters = false },
+                        onApplyFilters = onApplyFilters
+                    )
+                }
             }
         }
     }
