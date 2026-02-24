@@ -8,7 +8,7 @@ fun AdditionalContentKindAndYear(
     kindStr: String?,
     year: Int?
 ) {
-    val finalText = listOfNotNull(kindStr, year?.toString()).joinToString(separator = " • ")
+    val finalText = listOfNotNull(kindStr, year?.toString()).joinToString(separator = "\u30FB")
     if (finalText.isNotEmpty()) {
         Text(finalText)
     }

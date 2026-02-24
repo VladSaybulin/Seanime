@@ -8,8 +8,7 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.ui2.entry.EntryItemDefaults
-import ru.vladsaybulin.ui2.entry.EntryItemStyle
+import ru.vladsaybulin.ui2.entry.EntryItemColorsProducer
 
 inline fun LazyGridScope.animeItems(
     animes: List<Anime>,
@@ -17,7 +16,7 @@ inline fun LazyGridScope.animeItems(
     noinline key: ((Anime) -> Any)? = { it.id },
     noinline contentType: (item: Anime) -> Any? = { null },
     itemModifier: Modifier = Modifier,
-    style: EntryItemStyle? = null,
+    colorsProducer: EntryItemColorsProducer = EntryItemColorsProducer.BasedOnUserRateStatus,
     crossinline userRateStatus: (Anime) -> UserRateStatus = { UserRateStatus.None },
     noinline additionalContent: (@Composable (Anime) -> Unit)? = { AnimeGridItemDefaultAdditionalContent(it) },
 ) {
@@ -29,12 +28,13 @@ inline fun LazyGridScope.animeItems(
         contentType = { index -> contentType(animes[index]) }
     ) { index ->
         val anime = animes[index]
+        val status = userRateStatus(anime)
         AnimeGridItem(
             anime = anime,
             onClick = { onItemClick(anime) },
             modifier = itemModifier,
-            userRateStatus = userRateStatus(anime),
-            style = style ?: EntryItemDefaults.regularGridStyle(),
+            userRateStatus = status,
+            colors = colorsProducer.invoke(status),
             additionalContent = { additionalContent?.invoke(anime) }
         )
     }
@@ -46,7 +46,7 @@ inline fun LazyGridScope.animeItems(
     noinline key: ((Anime) -> Any)? = { it.id },
     noinline contentType: (item: Anime) -> Any? = { null },
     itemModifier: Modifier = Modifier,
-    style: EntryItemStyle? = null,
+    colorsProducer: EntryItemColorsProducer = EntryItemColorsProducer.BasedOnUserRateStatus,
     crossinline userRateStatus: (Anime) -> UserRateStatus = { UserRateStatus.None },
     noinline additionalContent: (@Composable (Anime) -> Unit)? = { AnimeGridItemDefaultAdditionalContent(it) },
 ) {
@@ -57,12 +57,13 @@ inline fun LazyGridScope.animeItems(
     ) {
         val anime = animes[it]
         if (anime != null) {
+            val status = userRateStatus(anime)
             AnimeGridItem(
                 anime = anime,
                 onClick = { onItemClick(anime) },
                 modifier = itemModifier,
-                userRateStatus = userRateStatus(anime),
-                style = style ?: EntryItemDefaults.regularGridStyle(),
+                userRateStatus = status,
+                colors = colorsProducer.invoke(status),
                 additionalContent = { additionalContent?.invoke(anime) }
             )
         }

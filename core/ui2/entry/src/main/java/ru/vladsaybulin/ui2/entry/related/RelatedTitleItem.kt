@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -51,11 +51,7 @@ fun RelatedTitleItem(
             onClick = { onClick(data.type, data.id) },
             modifier = modifier,
             userRateStatus = userRateStatus,
-            style = EntryItemDefaults.regularListStyle(
-                containerColor = SeanimeTheme.colorScheme.surface,
-                colorsByUserRateStatus = false,
-                shape = RoundedCornerShape(ShapeRadius)
-            ),
+            colors = EntryItemDefaults.SurfaceColors,
             additionalContent = {
                 RelatedTitleDetails(
                     data.kindStr,
@@ -70,14 +66,15 @@ fun RelatedTitleItem(
 
 @Composable
 fun RelatedTitleDetails(kindStr: String?, year: Int?, status: EntryStatus, relationType: RelationType) {
-
-    Column {
-        AdditionalContentKindAndYear(kindStr, year)
-        Spacer(Modifier.height(TagSpace))
-        Row(horizontalArrangement = Arrangement.spacedBy(TagSpace)) {
-            AdditionalContentStatusTag(status)
-            SeanimeTag {
-                Text(relationTypeString(relationType))
+    ProvideTextStyle(SeanimeTheme.typography.labelSmall) {
+        Column {
+            AdditionalContentKindAndYear(kindStr, year)
+            Spacer(Modifier.height(TagSpace))
+            Row(horizontalArrangement = Arrangement.spacedBy(TagSpace)) {
+                AdditionalContentStatusTag(status)
+                SeanimeTag {
+                    Text(relationTypeString(relationType))
+                }
             }
         }
     }
@@ -146,6 +143,5 @@ private class RelatedData(
     val relatedType: RelationType
 )
 
-private val PosterWidth = 72.dp
+private val PosterWidth = 80.dp
 private val TagSpace = 4.dp
-private val ShapeRadius = 8.dp

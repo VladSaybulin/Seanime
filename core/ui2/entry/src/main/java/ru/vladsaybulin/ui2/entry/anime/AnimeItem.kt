@@ -1,10 +1,14 @@
 package ru.vladsaybulin.ui2.entry.anime
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
@@ -20,21 +24,28 @@ import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.ui2.entry.EntryCarouselItem
 import ru.vladsaybulin.ui2.entry.EntryGridItem
+import ru.vladsaybulin.ui2.entry.EntryItemColors
 import ru.vladsaybulin.ui2.entry.EntryItemDefaults
-import ru.vladsaybulin.ui2.entry.EntryItemStyle
 import ru.vladsaybulin.ui2.entry.EntryListItem
 import ru.vladsaybulin.ui2.entry.additional.TitleGridItemAdditionalContent
 import ru.vladsaybulin.ui2.entry.additional.TitleListItemDefaultAdditionalContent
 import ru.vladsaybulin.ui2.entry.preview.AnimeItemPreviewParameterProvider
+import ru.vladsaybulin.ui2.entry.preview.ListOfAnimesPreviewParameterProvider
 
 @Composable
+@NonRestartableComposable
 fun AnimeGridItem(
     anime: Anime,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
-    style: EntryItemStyle = EntryItemDefaults.regularGridStyle(),
+    colors: EntryItemColors = EntryItemDefaults.basedOnUserRateStatusColors(userRateStatus),
+    nameStyle: TextStyle = EntryItemDefaults.GridNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.GridPadding,
+    badgeSize: Dp = EntryItemDefaults.GridBadgeSize,
+    shape: Shape = EntryItemDefaults.GridShape,
     additionalContent: (@Composable () -> Unit)? = { AnimeGridItemDefaultAdditionalContent(anime) },
 ) {
     EntryGridItem(
@@ -44,19 +55,28 @@ fun AnimeGridItem(
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
-        style = style,
+        colors = colors,
+        nameStyle = nameStyle,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
         additionalContent = additionalContent
     )
 }
 
 @Composable
+@NonRestartableComposable
 fun AnimeListItem(
     anime: Anime,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
-    posterWidth: Dp = EntryItemDefaults.listItemPosterWidth,
-    style: EntryItemStyle = EntryItemDefaults.regularListStyle(),
+    colors: EntryItemColors = EntryItemDefaults.SurfaceContainerColors,
+    posterWidth: Dp = EntryItemDefaults.ListItemPosterWidth,
+    nameStyle: TextStyle = EntryItemDefaults.ListNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.ListPadding,
+    badgeSize: Dp = EntryItemDefaults.ListBadgeSize,
+    shape: Shape = EntryItemDefaults.ListShape,
     additionalContent: (@Composable () -> Unit)? = { AnimeListItemDefaultAdditionalContent(anime) },
 ) {
     EntryListItem(
@@ -66,8 +86,42 @@ fun AnimeListItem(
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
+        colors = colors,
         posterWidth = posterWidth,
-        style = style,
+        nameStyle = nameStyle,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
+        additionalContent = additionalContent
+    )
+}
+
+@Composable
+@NonRestartableComposable
+fun AnimeCarouselItem(
+    anime: Anime,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    userRateStatus: UserRateStatus = UserRateStatus.None,
+    colors: EntryItemColors = EntryItemDefaults.SurfaceColors,
+    nameStyle: TextStyle = EntryItemDefaults.CarouselNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.CarouselPadding,
+    badgeSize: Dp = EntryItemDefaults.CarouselBadgeSize,
+    shape: Shape = EntryItemDefaults.CarouselShape,
+    additionalContent: (@Composable () -> Unit)? = null,
+) {
+    EntryCarouselItem(
+        name = anime.name,
+        russianName = anime.russianName,
+        poster = anime.poster,
+        onClick = onClick,
+        modifier = modifier,
+        userRateStatus = userRateStatus,
+        colors = colors,
+        nameStyle = nameStyle,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
         additionalContent = additionalContent
     )
 }
@@ -147,6 +201,69 @@ fun AnimeGridItemPreview(@PreviewParameter(AnimeItemPreviewParameterProvider::cl
                 modifier = Modifier.width(150.dp),
                 anime = anime,
                 onClick = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+fun AnimeCarouselItemPreview(@PreviewParameter(AnimeItemPreviewParameterProvider::class) anime: Anime) {
+    SeanimeTheme {
+        ProvideTitleStringsByType(EntryType.Anime) {
+            AnimeGridItem(
+                modifier = Modifier.width(150.dp),
+                anime = anime,
+                onClick = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun AnimeGridItemPreview_WithUserRateStatus(
+    @PreviewParameter(ListOfAnimesPreviewParameterProvider::class) animes: List<Anime>
+) {
+    SeanimeTheme {
+        ProvideTitleStringsByType(EntryType.Anime) {
+            AnimeGridItem(
+                anime = animes[0],
+                onClick = {},
+                modifier = Modifier.width(150.dp),
+                userRateStatus = UserRateStatus.Watching
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun AnimeListItemPreview_WithUserRateStatus(
+    @PreviewParameter(ListOfAnimesPreviewParameterProvider::class) animes: List<Anime>
+) {
+    SeanimeTheme {
+        ProvideTitleStringsByType(EntryType.Anime) {
+            AnimeListItem(
+                anime = animes[0],
+                onClick = {},
+                userRateStatus = UserRateStatus.Watching
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun AnimeCarouselItemPreview_WithUserRateStatus(
+    @PreviewParameter(ListOfAnimesPreviewParameterProvider::class) animes: List<Anime>
+) {
+    SeanimeTheme {
+        ProvideTitleStringsByType(EntryType.Anime) {
+            AnimeCarouselItem(
+                anime = animes[0],
+                onClick = {},
+                userRateStatus = UserRateStatus.Watching
             )
         }
     }

@@ -1,11 +1,14 @@
 package ru.vladsaybulin.ui2.entry.manga
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
@@ -17,9 +20,10 @@ import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.ui2.entry.EntryCarouselItem
 import ru.vladsaybulin.ui2.entry.EntryGridItem
+import ru.vladsaybulin.ui2.entry.EntryItemColors
 import ru.vladsaybulin.ui2.entry.EntryItemDefaults
-import ru.vladsaybulin.ui2.entry.EntryItemStyle
 import ru.vladsaybulin.ui2.entry.EntryListItem
 import ru.vladsaybulin.ui2.entry.additional.TitleGridItemAdditionalContent
 import ru.vladsaybulin.ui2.entry.additional.TitleListItemDefaultAdditionalContent
@@ -31,7 +35,11 @@ fun MangaGridItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
-    style: EntryItemStyle = EntryItemDefaults.regularGridStyle(),
+    colors: EntryItemColors = EntryItemDefaults.SurfaceContainerColors,
+    nameStyle: TextStyle = EntryItemDefaults.GridNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.GridPadding,
+    badgeSize: Dp = EntryItemDefaults.GridBadgeSize,
+    shape: Shape = EntryItemDefaults.GridShape,
     additionalContent: (@Composable () -> Unit)? = { MangaGridItemDefaultAdditionalContent(manga) },
 ) {
     EntryGridItem(
@@ -41,7 +49,11 @@ fun MangaGridItem(
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
-        style = style,
+        colors = colors,
+        nameStyle = nameStyle,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
         additionalContent = additionalContent
     )
 }
@@ -52,8 +64,12 @@ fun MangaListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
-    posterWidth: Dp = EntryItemDefaults.listItemPosterWidth,
-    style: EntryItemStyle = EntryItemDefaults.regularListStyle(),
+    colors: EntryItemColors = EntryItemDefaults.SurfaceContainerColors,
+    posterWidth: Dp = EntryItemDefaults.ListItemPosterWidth,
+    nameStyle: TextStyle = EntryItemDefaults.ListNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.ListPadding,
+    badgeSize: Dp = EntryItemDefaults.ListBadgeSize,
+    shape: Shape = EntryItemDefaults.ListShape,
     additionalContent: (@Composable () -> Unit)? = { MangaListItemDefaultAdditionalContent(manga) },
 ) {
     EntryListItem(
@@ -63,8 +79,41 @@ fun MangaListItem(
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
+        colors = colors,
         posterWidth = posterWidth,
-        style = style,
+        nameStyle = nameStyle,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
+        additionalContent = additionalContent
+    )
+}
+
+@Composable
+fun MangaCarouselItem(
+    manga: Manga,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    userRateStatus: UserRateStatus = UserRateStatus.None,
+    colors: EntryItemColors = EntryItemDefaults.SurfaceContainerColors,
+    nameStyle: TextStyle = EntryItemDefaults.CarouselNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.CarouselPadding,
+    badgeSize: Dp = EntryItemDefaults.CarouselBadgeSize,
+    shape: Shape = EntryItemDefaults.CarouselShape,
+    additionalContent: (@Composable () -> Unit)? = null,
+) {
+    EntryCarouselItem(
+        name = manga.name,
+        russianName = manga.russianName,
+        poster = manga.poster,
+        onClick = onClick,
+        modifier = modifier,
+        userRateStatus = userRateStatus,
+        colors = colors,
+        nameStyle = nameStyle,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
         additionalContent = additionalContent
     )
 }
@@ -106,9 +155,7 @@ private fun chaptersAndVolumesFormatted(
 
 @Preview
 @Composable
-fun MangaListItemPreview(
-    @PreviewParameter(MangaItemPreviewParameterProvider ::class) manga: Manga
-) {
+fun MangaListItemPreview(@PreviewParameter(MangaItemPreviewParameterProvider::class) manga: Manga) {
     SeanimeTheme {
         ProvideTitleStringsByType(EntryType.Manga) {
             MangaListItem(
@@ -121,12 +168,24 @@ fun MangaListItemPreview(
 
 @Composable
 @Preview
-fun MangaGridItemPreview(
-    @PreviewParameter(MangaItemPreviewParameterProvider ::class) manga: Manga
-) {
+fun MangaGridItemPreview(@PreviewParameter(MangaItemPreviewParameterProvider::class) manga: Manga) {
     SeanimeTheme {
         ProvideTitleStringsByType(EntryType.Manga) {
             MangaGridItem(
+                modifier = Modifier.width(150.dp),
+                manga = manga,
+                onClick = {}
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+fun MangaCarouselItemPreview(@PreviewParameter(MangaItemPreviewParameterProvider::class) manga: Manga) {
+    SeanimeTheme {
+        ProvideTitleStringsByType(EntryType.Manga) {
+            MangaCarouselItem(
                 modifier = Modifier.width(150.dp),
                 manga = manga,
                 onClick = {}
