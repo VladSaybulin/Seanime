@@ -3,9 +3,7 @@ package ru.vladsaybulin.ui2.entry
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -241,29 +239,6 @@ internal fun EntryItem(
     shape: Shape,
     additionalContent: (@Composable () -> Unit)?,
 ) {
-    val posterContent = @Composable { m: Modifier ->
-        EntryItemPosterWithStatusBadge(
-            poster = poster,
-            userRateStatus = userRateStatus,
-            containerShape = shape,
-            badgeSize = badgeSize,
-            modifier = m
-        )
-    }
-
-    val infoContent = @Composable { m: Modifier ->
-        Column(modifier = m.padding(infoPadding)) {
-            EntryItemName(
-                name = name,
-                russianName = russianName,
-                style = nameStyle,
-                maxLines = nameMaxLines
-            )
-
-            additionalContent?.invoke()
-        }
-    }
-
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
@@ -271,24 +246,30 @@ internal fun EntryItem(
         contentColor = colors.contentColor,
         shape = shape
     ) {
-        if (horizontal) {
-            Row(
-                modifier = Modifier.height(IntrinsicSize.Min),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                posterContent(posterModifier.fillMaxHeight())
-                infoContent(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
+        EntryItemLayout(
+            poster = @Composable { m: Modifier ->
+                EntryItemPosterWithStatusBadge(
+                    poster = poster,
+                    userRateStatus = userRateStatus,
+                    containerShape = shape,
+                    badgeSize = badgeSize,
+                    modifier = posterModifier.then(m)
                 )
-            }
-        } else {
-            Column {
-                posterContent(posterModifier)
-                infoContent(Modifier.fillMaxWidth())
-            }
-        }
+            },
+            info = @Composable { m: Modifier ->
+                Column(modifier = m.padding(infoPadding)) {
+                    EntryItemName(
+                        name = name,
+                        russianName = russianName,
+                        style = nameStyle,
+                        maxLines = nameMaxLines
+                    )
+
+                    additionalContent?.invoke()
+                }
+            },
+            horizontal = horizontal
+        )
     }
 }
 
