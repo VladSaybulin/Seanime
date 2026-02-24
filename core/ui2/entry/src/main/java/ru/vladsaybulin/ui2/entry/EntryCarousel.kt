@@ -58,8 +58,8 @@ object EntryCarouselDefaults {
         )
 }
 
-private val DefaultVerticalPadding = 16.dp
-private val DefaultHorizontalPadding = 8.dp
+private val DefaultVerticalPadding = 8.dp
+private val DefaultHorizontalPadding = 16.dp
 
 private val DefaultArrangeSpace = 8.dp
 

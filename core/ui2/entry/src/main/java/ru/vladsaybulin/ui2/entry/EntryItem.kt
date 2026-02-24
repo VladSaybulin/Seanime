@@ -18,10 +18,10 @@ import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +43,7 @@ import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
+@NonRestartableComposable
 fun EntryGridItem(
     name: String,
     russianName: String?,
@@ -50,7 +51,11 @@ fun EntryGridItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
-    style: EntryItemStyle = EntryItemDefaults.regularGridStyle(),
+    colors: EntryItemColors = EntryItemDefaults.basedOnUserRateStatusColors(userRateStatus),
+    nameStyle: TextStyle = EntryItemDefaults.GridNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.GridPadding,
+    badgeSize: Dp = EntryItemDefaults.GridBadgeSize,
+    shape: Shape = EntryItemDefaults.GridShape,
     additionalContent: (@Composable () -> Unit)? = null,
 ) {
     EntryItem(
@@ -59,15 +64,21 @@ fun EntryGridItem(
         name = name,
         russianName = russianName,
         poster = poster,
-        style = style,
-        onClick = onClick,
         userRateStatus = userRateStatus,
-        additionalContent = additionalContent,
-        horizontal = false
+        onClick = onClick,
+        horizontal = false,
+        colors = colors,
+        nameStyle = nameStyle,
+        nameMaxLines = ENTRY_GRID_ITEM_NAME_MAX_LINES,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
+        additionalContent = additionalContent
     )
 }
 
 @Composable
+@NonRestartableComposable
 fun EntryListItem(
     name: String,
     russianName: String?,
@@ -75,8 +86,12 @@ fun EntryListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None,
-    posterWidth: Dp = EntryItemDefaults.listItemPosterWidth,
-    style: EntryItemStyle = EntryItemDefaults.regularListStyle(),
+    colors: EntryItemColors = EntryItemDefaults.SurfaceContainerColors,
+    posterWidth: Dp = EntryItemDefaults.ListItemPosterWidth,
+    nameStyle: TextStyle = EntryItemDefaults.ListNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.ListPadding,
+    badgeSize: Dp = EntryItemDefaults.ListBadgeSize,
+    shape: Shape = EntryItemDefaults.ListShape,
     additionalContent: (@Composable () -> Unit)? = null,
 ) {
     EntryItem(
@@ -85,75 +100,127 @@ fun EntryListItem(
         name = name,
         russianName = russianName,
         poster = poster,
-        style = style,
-        onClick = onClick,
         userRateStatus = userRateStatus,
-        additionalContent = additionalContent,
-        horizontal = true
+        onClick = onClick,
+        horizontal = true,
+        colors = colors,
+        nameStyle = nameStyle,
+        nameMaxLines = ENTRY_LIST_ITEM_NAME_MAX_LINES,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
+        additionalContent = additionalContent
     )
 }
 
-data class EntryItemStyle(
-    val nameStyle: TextStyle,
-    val nameMaxLines: Int,
-    val additionalContentStyle: TextStyle,
-    val infoPadding: PaddingValues,
-    val badgeSize: Dp,
-    val shape: Shape,
+@Composable
+@NonRestartableComposable
+fun EntryCarouselItem(
+    name: String,
+    russianName: String?,
+    poster: Image?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    userRateStatus: UserRateStatus = UserRateStatus.None,
+    colors: EntryItemColors = EntryItemDefaults.SurfaceColors,
+    nameStyle: TextStyle = EntryItemDefaults.CarouselNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.CarouselPadding,
+    badgeSize: Dp = EntryItemDefaults.CarouselBadgeSize,
+    shape: Shape = EntryItemDefaults.CarouselShape,
+    additionalContent: (@Composable () -> Unit)? = null,
+) {
+    EntryItem(
+        modifier = modifier,
+        posterModifier = Modifier,
+        name = name,
+        russianName = russianName,
+        poster = poster,
+        userRateStatus = userRateStatus,
+        onClick = onClick,
+        horizontal = false,
+        colors = colors,
+        nameStyle = nameStyle,
+        nameMaxLines = ENTRY_CAROUSEL_ITEM_NAME_MAX_LINES,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
+        additionalContent = additionalContent
+    )
+}
+
+data class EntryItemColors(
     val containerColor: Color,
-    val contentColor: Color,
-    val colorsByUserRateStatus: Boolean
+    val contentColor: Color
 )
 
 object EntryItemDefaults {
 
-    val listItemPosterWidth = 96.dp
+    private var cachedSurfaceColors: EntryItemColors? = null
+    private var cachedSurfaceContainerColors: EntryItemColors? = null
+    private val cachedUserRateStatusColors = mutableMapOf<UserRateStatus, EntryItemColors>()
+
+    val SurfaceColors: EntryItemColors
+        @Composable @ReadOnlyComposable get() = cachedSurfaceColors
+            ?: EntryItemColors(
+                containerColor = SeanimeTheme.colorScheme.surface,
+                contentColor = SeanimeTheme.colorScheme.onSurface
+            ).also {
+                cachedSurfaceColors = it
+            }
+
+    val SurfaceContainerColors: EntryItemColors
+        @Composable @ReadOnlyComposable get() = cachedSurfaceContainerColors
+            ?: EntryItemColors(
+                containerColor = SeanimeTheme.colorScheme.surfaceContainer,
+                contentColor = SeanimeTheme.colorScheme.onSurface
+            ).also {
+                cachedSurfaceContainerColors = it
+            }
 
     @Composable
-    fun regularGridStyle(
-        nameStyle: TextStyle = SeanimeTheme.typography.titleSmall,
-        nameMaxLines: Int = 2,
-        additionalContentStyle: TextStyle = SeanimeTheme.typography.labelSmall,
-        infoPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-        badgeSize: Dp = 32.dp,
-        shape: Shape = RoundedCornerShape(16.dp),
-        containerColor: Color = SeanimeTheme.colorScheme.surfaceContainer,
-        contentColor: Color = SeanimeTheme.colorScheme.onSurface,
-        colorsByUserRateStatus: Boolean = true
-    ): EntryItemStyle = EntryItemStyle(
-        nameStyle = nameStyle,
-        nameMaxLines = nameMaxLines,
-        additionalContentStyle = additionalContentStyle,
-        infoPadding = infoPadding,
-        badgeSize = badgeSize,
-        shape = shape,
-        containerColor = containerColor,
-        contentColor = contentColor,
-        colorsByUserRateStatus = colorsByUserRateStatus
-    )
+    @ReadOnlyComposable
+    fun basedOnUserRateStatusColors(userRateStatus: UserRateStatus): EntryItemColors =
+        cachedUserRateStatusColors.fastComputeIfAbsent(userRateStatus) {
+            val colors = if (userRateStatus != UserRateStatus.None) {
+                SeanimeTheme.seanimeColors[userRateStatus]
+            } else {
+                return@fastComputeIfAbsent SurfaceContainerColors
+            }
+            EntryItemColors(
+                containerColor = colors.container,
+                contentColor = colors.onContainer
+            )
+        }
 
-    @Composable
-    fun regularListStyle(
-        nameStyle: TextStyle = SeanimeTheme.typography.titleSmall,
-        nameMaxLines: Int = 2,
-        additionalContentStyle: TextStyle = SeanimeTheme.typography.labelSmall,
-        infoPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-        badgeSize: Dp = 32.dp,
-        shape: Shape = RoundedCornerShape(16.dp),
-        containerColor: Color = SeanimeTheme.colorScheme.surfaceContainer,
-        contentColor: Color = SeanimeTheme.colorScheme.onSurface,
-        colorsByUserRateStatus: Boolean = true
-    ): EntryItemStyle = EntryItemStyle(
-        nameStyle = nameStyle,
-        nameMaxLines = nameMaxLines,
-        additionalContentStyle = additionalContentStyle,
-        infoPadding = infoPadding,
-        badgeSize = badgeSize,
-        shape = shape,
-        containerColor = containerColor,
-        contentColor = contentColor,
-        colorsByUserRateStatus = colorsByUserRateStatus
-    )
+    val GridNameStyle: TextStyle
+        @Composable @ReadOnlyComposable get() = SeanimeTheme.typography.labelSmall
+
+    val GridPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+
+    val GridBadgeSize: Dp = 32.dp
+
+    val GridShape: Shape = RoundedCornerShape(16.dp)
+
+
+    val ListNameStyle: TextStyle
+        @Composable @ReadOnlyComposable get() = SeanimeTheme.typography.titleSmall
+
+    val ListPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+
+    val ListBadgeSize: Dp = 28.dp
+
+    val ListShape: Shape = RoundedCornerShape(16.dp)
+
+    val ListItemPosterWidth = 100.dp
+
+    val CarouselNameStyle: TextStyle
+        @Composable @ReadOnlyComposable get() = SeanimeTheme.typography.labelSmall
+
+    val CarouselPadding: PaddingValues = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+
+    val CarouselBadgeSize: Dp = 24.dp
+
+    val CarouselShape: Shape = RoundedCornerShape(8.dp)
 }
 
 @Composable
@@ -163,46 +230,46 @@ internal fun EntryItem(
     name: String,
     russianName: String?,
     poster: Image?,
-    style: EntryItemStyle,
-    onClick: () -> Unit,
     userRateStatus: UserRateStatus,
-    additionalContent: (@Composable () -> Unit)?,
+    onClick: () -> Unit,
     horizontal: Boolean = false,
+    colors: EntryItemColors,
+    nameStyle: TextStyle,
+    nameMaxLines: Int,
+    infoPadding: PaddingValues,
+    badgeSize: Dp,
+    shape: Shape,
+    additionalContent: (@Composable () -> Unit)?,
 ) {
     val posterContent = @Composable { m: Modifier ->
         EntryItemPosterWithStatusBadge(
             poster = poster,
             userRateStatus = userRateStatus,
-            containerShape = style.shape,
-            badgeSize = style.badgeSize,
+            containerShape = shape,
+            badgeSize = badgeSize,
             modifier = m
         )
     }
 
     val infoContent = @Composable { m: Modifier ->
-        Column(modifier = m.padding(style.infoPadding)) {
+        Column(modifier = m.padding(infoPadding)) {
             EntryItemName(
                 name = name,
                 russianName = russianName,
-                style = style.nameStyle,
-                maxLines = style.nameMaxLines
+                style = nameStyle,
+                maxLines = nameMaxLines
             )
 
-            if (additionalContent != null) {
-                ProvideTextStyle(
-                    value = style.additionalContentStyle,
-                    content = additionalContent
-                )
-            }
+            additionalContent?.invoke()
         }
     }
 
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        color = style.containerColor(userRateStatus),
-        contentColor = style.contentColor(userRateStatus),
-        shape = style.shape
+        color = colors.containerColor,
+        contentColor = colors.contentColor,
+        shape = shape
     ) {
         if (horizontal) {
             Row(
@@ -310,23 +377,14 @@ private fun isRussianName(): Boolean {
     return isRussian
 }
 
-@Composable
-fun EntryItemStyle.containerColor(userRateStatus: UserRateStatus): Color {
-    return if (colorsByUserRateStatus && userRateStatus != UserRateStatus.None) {
-        SeanimeTheme.seanimeColors[userRateStatus].container
-    } else {
-        containerColor
-    }
+private inline fun <K, V> MutableMap<K, V>.fastComputeIfAbsent(key: K, mapping: (K) -> V): V {
+    val value = get(key)
+    return value ?: mapping(key).also { put(key, it) }
 }
 
-@Composable
-fun EntryItemStyle.contentColor(userRateStatus: UserRateStatus): Color {
-    return if (colorsByUserRateStatus && userRateStatus != UserRateStatus.None) {
-        SeanimeTheme.seanimeColors[userRateStatus].onContainer
-    } else {
-        contentColor
-    }
-}
+private const val ENTRY_GRID_ITEM_NAME_MAX_LINES = 1
+private const val ENTRY_LIST_ITEM_NAME_MAX_LINES = 2
+private const val ENTRY_CAROUSEL_ITEM_NAME_MAX_LINES = 1
 
 class EntryItemBadgePreviewParameterProvider : PreviewParameterProvider<UserRateStatus> {
     override val values: Sequence<UserRateStatus> = UserRateStatus.entries
@@ -360,7 +418,12 @@ fun EntryListItemWithMaxHeightAdditionalContentPreview() {
             onClick = {},
             modifier = Modifier,
             additionalContent = {
-                Box(modifier = Modifier.width(32.dp).fillMaxHeight().background(Color.Magenta))
+                Box(
+                    modifier = Modifier
+                        .width(32.dp)
+                        .fillMaxHeight()
+                        .background(Color.Magenta)
+                )
             }
         )
     }
@@ -377,7 +440,12 @@ fun EntryListItemWithOverflowByHeightAdditionalContentPreview() {
             onClick = {},
             modifier = Modifier,
             additionalContent = {
-                Box(modifier = Modifier.width(32.dp).height(320.dp).background(Color.Magenta))
+                Box(
+                    modifier = Modifier
+                        .width(32.dp)
+                        .height(320.dp)
+                        .background(Color.Magenta)
+                )
             }
         )
     }

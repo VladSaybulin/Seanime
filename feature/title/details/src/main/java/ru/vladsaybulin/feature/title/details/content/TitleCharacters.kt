@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.ui2.entry.EntryCarousel
 import ru.vladsaybulin.ui2.entry.EntryGridItem
+import ru.vladsaybulin.ui2.entry.character.CharacterItem
 
 @Composable
 internal fun TitleCharacters(
@@ -27,7 +28,11 @@ internal fun TitleCharacters(
         )
     ) {
         items(items = characters) { character ->
-            CharacterCard(character, { onCharacterClick(character) })
+            CharacterItem(
+                character = character,
+                onClick = { onCharacterClick(character) },
+                modifier = Modifier.width(CharacterCardWidth)
+            )
         }
     }
 }

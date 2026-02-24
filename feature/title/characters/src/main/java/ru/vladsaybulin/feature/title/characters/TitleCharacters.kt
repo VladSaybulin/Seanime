@@ -32,6 +32,7 @@ import ru.vladsaybulin.feature.title.characters.navigation.TitleCharactersNavEve
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.ui2.entry.EntryGrid
 import ru.vladsaybulin.ui2.entry.EntryGridItem
+import ru.vladsaybulin.ui2.entry.character.CharacterItem
 
 @Composable
 fun TitleCharactersRoute(
@@ -116,7 +117,7 @@ private fun TitleCharactersContent(
 
             items(count = firstMinorCharacter) { index ->
                 val character = characters[index].character
-                CharacterCard(
+                CharacterItem(
                     character = character,
                     onClick = { onCharacterClick(character.id) }
                 )
@@ -138,7 +139,7 @@ private fun TitleCharactersContent(
 
             items(count = characters.size - firstMinorCharacter) { index ->
                 val character = characters[firstMinorCharacter + index].character
-                CharacterCard(
+                CharacterItem(
                     character = character,
                     onClick = { onCharacterClick(character.id) }
                 )

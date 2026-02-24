@@ -26,10 +26,7 @@ fun AuthorItem(
         onClick = onClick,
         posterWidth = PersonPosterWidth,
         modifier = modifier,
-        style = EntryItemDefaults.regularListStyle(
-            colorsByUserRateStatus = false,
-            containerColor = SeanimeTheme.colorScheme.surface
-        )
+        colors = EntryItemDefaults.SurfaceColors
     ) {
         Text(
             text = localizedRoles(author.roles),
