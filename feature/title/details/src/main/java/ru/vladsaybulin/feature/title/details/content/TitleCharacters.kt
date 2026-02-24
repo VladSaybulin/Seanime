@@ -9,9 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.model.character.Character
-import ru.vladsaybulin.ui2.entry.EntryCarousel
-import ru.vladsaybulin.ui2.entry.EntryGridItem
-import ru.vladsaybulin.ui2.entry.character.CharacterItem
+import ru.vladsaybulin.core.ui2.entry.EntryCarousel
+import ru.vladsaybulin.core.ui2.entry.EntryGridItem
+import ru.vladsaybulin.core.ui2.entry.character.CharacterItem
 
 @Composable
 internal fun TitleCharacters(

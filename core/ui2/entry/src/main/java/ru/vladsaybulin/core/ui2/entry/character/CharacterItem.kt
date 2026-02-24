@@ -1,12 +1,12 @@
-package ru.vladsaybulin.ui2.entry.character
+package ru.vladsaybulin.core.ui2.entry.character
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.model.character.Character
-import ru.vladsaybulin.ui2.entry.EntryCarouselItem
-import ru.vladsaybulin.ui2.entry.EntryItemDefaults
+import ru.vladsaybulin.core.ui2.entry.EntryCarouselItem
+import ru.vladsaybulin.core.ui2.entry.EntryItemDefaults
 
 @Composable
 fun CharacterItem(

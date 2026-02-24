@@ -1,4 +1,4 @@
-package ru.vladsaybulin.ui2.entry.anime
+package ru.vladsaybulin.core.ui2.entry.anime
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.width
@@ -24,15 +24,15 @@ import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.ui2.entry.EntryCarouselItem
-import ru.vladsaybulin.ui2.entry.EntryGridItem
-import ru.vladsaybulin.ui2.entry.EntryItemColors
-import ru.vladsaybulin.ui2.entry.EntryItemDefaults
-import ru.vladsaybulin.ui2.entry.EntryListItem
-import ru.vladsaybulin.ui2.entry.additional.TitleGridItemAdditionalContent
-import ru.vladsaybulin.ui2.entry.additional.TitleListItemDefaultAdditionalContent
-import ru.vladsaybulin.ui2.entry.preview.AnimeItemPreviewParameterProvider
-import ru.vladsaybulin.ui2.entry.preview.ListOfAnimesPreviewParameterProvider
+import ru.vladsaybulin.core.ui2.entry.EntryCarouselItem
+import ru.vladsaybulin.core.ui2.entry.EntryGridItem
+import ru.vladsaybulin.core.ui2.entry.EntryItemColors
+import ru.vladsaybulin.core.ui2.entry.EntryItemDefaults
+import ru.vladsaybulin.core.ui2.entry.EntryListItem
+import ru.vladsaybulin.core.ui2.entry.additional.TitleGridItemAdditionalContent
+import ru.vladsaybulin.core.ui2.entry.additional.TitleListItemDefaultAdditionalContent
+import ru.vladsaybulin.core.ui2.entry.preview.AnimeItemPreviewParameterProvider
+import ru.vladsaybulin.core.ui2.entry.preview.ListOfAnimesPreviewParameterProvider
 
 @Composable
 @NonRestartableComposable
@@ -77,7 +77,11 @@ fun AnimeListItem(
     infoPadding: PaddingValues = EntryItemDefaults.ListPadding,
     badgeSize: Dp = EntryItemDefaults.ListBadgeSize,
     shape: Shape = EntryItemDefaults.ListShape,
-    additionalContent: (@Composable () -> Unit)? = { AnimeListItemDefaultAdditionalContent(anime) },
+    additionalContent: (@Composable () -> Unit)? = {
+        AnimeListItemDefaultAdditionalContent(
+            anime
+        )
+    },
 ) {
     EntryListItem(
         name = anime.name,

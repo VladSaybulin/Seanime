@@ -1,4 +1,4 @@
-package ru.vladsaybulin.ui2.entry.related
+package ru.vladsaybulin.core.ui2.entry.related
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,10 +25,10 @@ import ru.vladsaybulin.model.related.RelatedManga
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.ui2.entry.EntryItemDefaults
-import ru.vladsaybulin.ui2.entry.EntryListItem
-import ru.vladsaybulin.ui2.entry.additional.AdditionalContentKindAndYear
-import ru.vladsaybulin.ui2.entry.additional.AdditionalContentStatusTag
+import ru.vladsaybulin.core.ui2.entry.EntryItemDefaults
+import ru.vladsaybulin.core.ui2.entry.EntryListItem
+import ru.vladsaybulin.core.ui2.entry.additional.AdditionalContentKindAndYear
+import ru.vladsaybulin.core.ui2.entry.additional.AdditionalContentStatusTag
 
 @Composable
 fun RelatedTitleItem(

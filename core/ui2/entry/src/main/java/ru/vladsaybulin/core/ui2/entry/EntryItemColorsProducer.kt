@@ -1,4 +1,4 @@
-package ru.vladsaybulin.ui2.entry
+package ru.vladsaybulin.core.ui2.entry
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable

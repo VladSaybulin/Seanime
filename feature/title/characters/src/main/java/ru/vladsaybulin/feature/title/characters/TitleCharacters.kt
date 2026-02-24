@@ -30,9 +30,9 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.feature.title.characters.navigation.TitleCharactersNavEvents
 import ru.vladsaybulin.model.character.Character
-import ru.vladsaybulin.ui2.entry.EntryGrid
-import ru.vladsaybulin.ui2.entry.EntryGridItem
-import ru.vladsaybulin.ui2.entry.character.CharacterItem
+import ru.vladsaybulin.core.ui2.entry.EntryGrid
+import ru.vladsaybulin.core.ui2.entry.EntryGridItem
+import ru.vladsaybulin.core.ui2.entry.character.CharacterItem
 
 @Composable
 fun TitleCharactersRoute(

@@ -98,7 +98,7 @@ import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.search.SeasonOfYear
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.ui2.entry.related.RelatedTitleItem
+import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 import java.security.KeyStore.Entry
 
 @Composable

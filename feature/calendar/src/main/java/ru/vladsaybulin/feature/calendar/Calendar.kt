@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -57,9 +56,8 @@ import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.user.BriefUser
-import ru.vladsaybulin.ui2.entry.EntryCarousel
-import ru.vladsaybulin.ui2.entry.anime.AnimeGridItem
-import ru.vladsaybulin.ui2.entry.preview.ListOfAnimesPreviewParameterProvider
+import ru.vladsaybulin.core.ui2.entry.EntryCarousel
+import ru.vladsaybulin.core.ui2.entry.anime.AnimeGridItem
 import java.time.format.DateTimeFormatter
 
 @Composable

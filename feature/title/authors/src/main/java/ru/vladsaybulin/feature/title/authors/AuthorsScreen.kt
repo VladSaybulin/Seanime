@@ -28,7 +28,7 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.feature.title.authors.R
 import ru.vladsaybulin.feature.title.authors.navigation.TitleAuthorsNavEvents
 import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.ui2.entry.EntryList
+import ru.vladsaybulin.core.ui2.entry.EntryList
 
 @Composable
 fun AuthorsScreen(

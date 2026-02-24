@@ -1,4 +1,4 @@
-package ru.vladsaybulin.ui2.entry
+package ru.vladsaybulin.core.ui2.entry
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
