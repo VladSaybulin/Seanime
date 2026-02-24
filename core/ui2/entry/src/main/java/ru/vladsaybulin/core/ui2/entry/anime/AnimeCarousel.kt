@@ -1,11 +1,11 @@
-package ru.vladsaybulin.ui2.entry.anime
+package ru.vladsaybulin.core.ui2.entry.anime
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.ui2.entry.EntryItemColorsProducer
+import ru.vladsaybulin.core.ui2.entry.EntryItemColorsProducer
 
 inline fun LazyListScope.animeCarouselItems(
     animes: List<Anime>,

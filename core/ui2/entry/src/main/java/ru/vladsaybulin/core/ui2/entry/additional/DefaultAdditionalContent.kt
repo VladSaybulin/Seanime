@@ -1,4 +1,4 @@
-package ru.vladsaybulin.ui2.entry.additional
+package ru.vladsaybulin.core.ui2.entry.additional
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues

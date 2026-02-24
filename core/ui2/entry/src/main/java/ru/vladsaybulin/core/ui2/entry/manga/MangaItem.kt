@@ -1,4 +1,4 @@
-package ru.vladsaybulin.ui2.entry.manga
+package ru.vladsaybulin.core.ui2.entry.manga
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.width
@@ -20,14 +20,14 @@ import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.ui2.entry.EntryCarouselItem
-import ru.vladsaybulin.ui2.entry.EntryGridItem
-import ru.vladsaybulin.ui2.entry.EntryItemColors
-import ru.vladsaybulin.ui2.entry.EntryItemDefaults
-import ru.vladsaybulin.ui2.entry.EntryListItem
-import ru.vladsaybulin.ui2.entry.additional.TitleGridItemAdditionalContent
-import ru.vladsaybulin.ui2.entry.additional.TitleListItemDefaultAdditionalContent
-import ru.vladsaybulin.ui2.entry.preview.MangaItemPreviewParameterProvider
+import ru.vladsaybulin.core.ui2.entry.EntryCarouselItem
+import ru.vladsaybulin.core.ui2.entry.EntryGridItem
+import ru.vladsaybulin.core.ui2.entry.EntryItemColors
+import ru.vladsaybulin.core.ui2.entry.EntryItemDefaults
+import ru.vladsaybulin.core.ui2.entry.EntryListItem
+import ru.vladsaybulin.core.ui2.entry.additional.TitleGridItemAdditionalContent
+import ru.vladsaybulin.core.ui2.entry.additional.TitleListItemDefaultAdditionalContent
+import ru.vladsaybulin.core.ui2.entry.preview.MangaItemPreviewParameterProvider
 
 @Composable
 fun MangaGridItem(

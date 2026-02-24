@@ -1,4 +1,4 @@
-package ru.vladsaybulin.ui2.entry
+package ru.vladsaybulin.core.ui2.entry
 
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.ui2.entry.manga.mangaItems
-import ru.vladsaybulin.ui2.entry.preview.ListOfMangaPreviewParameterProvider
+import ru.vladsaybulin.core.ui2.entry.manga.mangaItems
+import ru.vladsaybulin.core.ui2.entry.preview.ListOfMangaPreviewParameterProvider
 
 @Composable
 fun EntryGrid(

@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.ui2.entry.EntryCarousel
-import ru.vladsaybulin.ui2.entry.anime.animeCarouselItems
-import ru.vladsaybulin.ui2.entry.manga.mangaCarouselItems
+import ru.vladsaybulin.core.ui2.entry.EntryCarousel
+import ru.vladsaybulin.core.ui2.entry.anime.animeCarouselItems
+import ru.vladsaybulin.core.ui2.entry.manga.mangaCarouselItems
 
 @Composable
 internal fun TitleSimilarAnimes(animes: List<Anime>, onAnimeClick: (Anime) -> Unit) {

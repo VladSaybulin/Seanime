@@ -1,6 +1,6 @@
-package ru.vladsaybulin.ui2.entry.manga
+package ru.vladsaybulin.core.ui2.entry.manga
 
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
@@ -8,17 +8,17 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.ui2.entry.EntryItemColorsProducer
+import ru.vladsaybulin.core.ui2.entry.EntryItemColorsProducer
 
-inline fun LazyListScope.mangaItems(
+inline fun LazyGridScope.mangaItems(
     mangas: List<Manga>,
     crossinline onItemClick: (Manga) -> Unit,
     noinline key: ((Manga) -> Any)? = { it.id },
     noinline contentType: (Manga) -> Any? = { null },
     itemModifier: Modifier = Modifier,
-    colorsProducer: EntryItemColorsProducer = EntryItemColorsProducer.SurfaceContainer,
+    colorsProducer: EntryItemColorsProducer = EntryItemColorsProducer.BasedOnUserRateStatus,
     crossinline userRateStatus: (Manga) -> UserRateStatus = { UserRateStatus.None },
-    noinline additionalContent: (@Composable (Manga) -> Unit)? = { MangaListItemDefaultAdditionalContent(it) },
+    noinline additionalContent: (@Composable (Manga) -> Unit)? = { MangaGridItemDefaultAdditionalContent(it) },
 ) {
     items(
         count = mangas.size,
@@ -29,7 +29,7 @@ inline fun LazyListScope.mangaItems(
     ) { index ->
         val manga = mangas[index]
         val status = userRateStatus(manga)
-        MangaListItem(
+        MangaGridItem(
             manga = manga,
             onClick = { onItemClick(manga) },
             modifier = itemModifier,
@@ -40,15 +40,15 @@ inline fun LazyListScope.mangaItems(
     }
 }
 
-inline fun LazyListScope.mangaItems(
+inline fun LazyGridScope.mangaItems(
     mangas: LazyPagingItems<Manga>,
     crossinline onItemClick: (Manga) -> Unit,
     noinline key: ((Manga) -> Any)? = { it.id },
     noinline contentType: (item: Manga) -> Any? = { null },
     itemModifier: Modifier = Modifier,
-    colorsProducer: EntryItemColorsProducer = EntryItemColorsProducer.SurfaceContainer,
+    colorsProducer: EntryItemColorsProducer = EntryItemColorsProducer.BasedOnUserRateStatus,
     crossinline userRateStatus: (Manga) -> UserRateStatus = { UserRateStatus.None },
-    noinline additionalContent: (@Composable (Manga) -> Unit)? = { MangaListItemDefaultAdditionalContent(it) },
+    noinline additionalContent: (@Composable (Manga) -> Unit)? = { MangaGridItemDefaultAdditionalContent(it) },
 ) {
     items(
         count = mangas.itemCount,
@@ -58,7 +58,7 @@ inline fun LazyListScope.mangaItems(
         val manga = mangas[it]
         if (manga != null) {
             val status = userRateStatus(manga)
-            MangaListItem(
+            MangaGridItem(
                 manga = manga,
                 onClick = { onItemClick(manga) },
                 modifier = itemModifier,

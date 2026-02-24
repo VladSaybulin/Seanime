@@ -49,8 +49,8 @@ import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
-import ru.vladsaybulin.ui2.entry.EntryCarousel
-import ru.vladsaybulin.ui2.entry.anime.animeCarouselItems
+import ru.vladsaybulin.core.ui2.entry.EntryCarousel
+import ru.vladsaybulin.core.ui2.entry.anime.animeCarouselItems
 
 @Composable
 fun HomeScreen(

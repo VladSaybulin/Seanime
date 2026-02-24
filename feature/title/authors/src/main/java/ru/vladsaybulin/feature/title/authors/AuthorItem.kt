@@ -10,8 +10,8 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.strings.personRoleString
 import ru.vladsaybulin.model.person.Person
 import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.ui2.entry.EntryItemDefaults
-import ru.vladsaybulin.ui2.entry.EntryListItem
+import ru.vladsaybulin.core.ui2.entry.EntryItemDefaults
+import ru.vladsaybulin.core.ui2.entry.EntryListItem
 
 @Composable
 fun AuthorItem(
