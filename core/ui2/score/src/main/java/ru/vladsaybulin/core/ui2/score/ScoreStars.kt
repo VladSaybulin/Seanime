@@ -1,7 +1,8 @@
 package ru.vladsaybulin.core.ui2.score
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -36,7 +37,7 @@ fun ScoreStars(
     val outlineStarColor = SeanimeTheme.colorScheme.outline
 
     Canvas(
-        modifier = modifier.sizeIn(minWidth = iconSize * STARS_AMOUNT, minHeight = iconSize)
+        modifier = modifier.defaultMinSize(minWidth = iconSize * STARS_AMOUNT, minHeight = iconSize).aspectRatio(STARS_AMOUNT.toFloat())
     ) {
         val filledColorFilter = ColorFilter.tint(tint)
         val outlineColorFilter = ColorFilter.tint(outlineStarColor)
