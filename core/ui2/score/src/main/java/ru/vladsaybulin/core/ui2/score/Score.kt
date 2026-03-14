@@ -1,73 +1,101 @@
 package ru.vladsaybulin.core.ui2.score
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
+import java.text.DecimalFormat
+
+enum class ScoreFormat {
+    Integer, Real
+}
 
 @Composable
 fun Score(
-    value: Float,
+    score: Float,
     modifier: Modifier = Modifier,
-    formatStyle: ScoreFormatStyle = ScoreFormatStyle.Real,
-    iconSize: Dp = DefaultScoreIconSize,
-    showDescription: Boolean = false,
-    numberStyle: TextStyle = SeanimeTheme.typography.headlineSmall,
-    descriptionStyle: TextStyle = SeanimeTheme.typography.labelSmall
+    format: ScoreFormat = ScoreFormat.Real,
+    style: TextStyle = ScoreDefaults.NumberStyle,
+    leading: (@Composable () -> Unit)? = { ScoreDefaults.StarIcon() }
 ) {
-    Column(
+    Row(
         modifier = modifier,
-        horizontalAlignment = Alignment.End
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Icon(
-                imageVector = SeanimeIcons.Star,
-                contentDescription = null,
-                modifier = Modifier.size(iconSize),
-                tint = SeanimeTheme.colorScheme.primary
-            )
-
-            ScoreValue(value, formatStyle, numberStyle)
-        }
-
-        if (showDescription) {
-            ScoreDescription(value, descriptionStyle)
-        }
+        leading?.invoke()
+        ScoreValue(score, format = format, style = style)
     }
+}
+
+object ScoreDefaults {
+    val StarSize = 40.dp
+
+    val StarTintColor: Color
+        @Composable get() = SeanimeTheme.colorScheme.primary
+
+    val NumberStyle: TextStyle
+        @Composable get() = SeanimeTheme.typography.headlineSmall
+
+    val DescriptionStyle: TextStyle
+        @Composable get() = SeanimeTheme.typography.labelSmall
+
+    val DescriptionAlignment: Alignment.Horizontal = Alignment.CenterHorizontally
+
+    @Composable
+    fun StarIcon(
+        tint: Color = StarTintColor
+    ) {
+        Icon(
+            imageVector = SeanimeIcons.Star,
+            contentDescription = null,
+            tint = tint
+        )
+    }
+}
+
+@Composable
+private fun ScoreValue(
+    score: Float,
+    modifier: Modifier = Modifier,
+    format: ScoreFormat = ScoreFormat.Real,
+    style: TextStyle = LocalTextStyle.current
+) {
+    Text(
+        modifier = modifier,
+        text = scoreFormatted(score, format),
+        style = style
+    )
+}
+
+private fun scoreFormatted(value: Float, style: ScoreFormat): String {
+    val formatter = when (style) {
+        ScoreFormat.Integer -> IntegerFormatter
+        ScoreFormat.Real -> RealFormatter
+    }
+
+    return formatter.format(value)
 }
 
 @Preview
 @Composable
 fun ScorePreview() {
     SeanimeTheme {
-        Surface {
-            Score(6.87f)
-        }
+        Score(score = 8.5f)
     }
 }
 
-@Preview
-@Composable
-fun ScorePreview_WithDescription() {
-    SeanimeTheme {
-        Surface {
-            Score(6.87f, showDescription = true)
-        }
-    }
-}
-
-private val DefaultScoreIconSize = 24.dp
+private val IntegerFormatter = DecimalFormat("#")
+private val RealFormatter = DecimalFormat("#.##")
