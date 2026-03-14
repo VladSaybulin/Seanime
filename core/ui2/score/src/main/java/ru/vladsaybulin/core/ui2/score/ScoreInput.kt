@@ -21,9 +21,10 @@ import kotlin.math.roundToInt
  *
  * The callback is invoked only when calculated score changes.
  */
+@SuppressLint("UnnecessaryComposedModifier")
 fun Modifier.starsInput(
     onScoreChanged: (newScore: Int) -> Unit
-): Modifier = @SuppressLint("UnnecessaryComposedModifier") composed {
+): Modifier = composed {
     // TODO: After upgrading Compose, remove composed and read layout direction in Node API.
     val layoutDirection = LocalLayoutDirection.current
     this then StarsInputElement(onScoreChanged, layoutDirection)
