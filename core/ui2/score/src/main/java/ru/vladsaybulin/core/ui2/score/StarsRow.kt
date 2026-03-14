@@ -25,7 +25,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import kotlin.math.min
 
 @Composable
-fun ScoreStars(
+fun StarsRow(
     score: Float,
     modifier: Modifier = Modifier,
     iconSize: Dp = ScoreStarsDefaults.Size,
@@ -121,24 +121,24 @@ class ScorePreviewParameterProvider : PreviewParameterProvider<Float> {
 
 @Composable
 @Preview
-fun ScoreStarsLtrPreview(
+fun StarsRowLtrPreview(
     @PreviewParameter(ScorePreviewParameterProvider::class) score: Float
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         SeanimeTheme {
-            ScoreStars(score = score)
+            StarsRow(score = score)
         }
     }
 }
 
 @Composable
 @Preview
-fun ScoreStarsRtlPreview(
+fun StarsRowRtlPreview(
     @PreviewParameter(ScorePreviewParameterProvider::class) score: Float
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         SeanimeTheme {
-            ScoreStars(score = score)
+            StarsRow(score = score)
         }
     }
 }
