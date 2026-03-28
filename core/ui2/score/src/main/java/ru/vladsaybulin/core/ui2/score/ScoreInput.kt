@@ -1,54 +1,39 @@
 package ru.vladsaybulin.core.ui2.score
 
-import android.annotation.SuppressLint
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerId
+import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.PointerInputModifierNode
+import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import kotlin.math.roundToInt
 
 /**
- * Adds star-based drag input and exposes accessibility semantics for score editing.
+ * Applies a pointer input listener to handle score selection via stars.
+ * Supports tap and drag gestures.
  *
- * [currentScore] is the source of truth for semantics and deduplication.
- *
- * Reports score changes in the [0..[MAX_SCORE_POINTS]] range via [onScoreChanged].
- * The callback is invoked only when calculated score differs from the latest known score.
- *
- * Semantics contract:
- * - `progressBarRangeInfo` is set to `0f..[MAX_SCORE_POINTS]`.
- * - `stateDescription` is exposed as `"x/[MAX_SCORE_POINTS]"`.
- * - `setProgress` maps to integer score updates and forwards them to [onScoreChanged].
+ * @param currentScore The current score value (0..10).
+ * @param onScoreChanged Callback for when a new score is selected.
  */
-@SuppressLint("UnnecessaryComposedModifier")
-fun Modifier.starsInput(
+internal fun Modifier.starsInput(
     currentScore: Int,
     onScoreChanged: (newScore: Int) -> Unit
-): Modifier = composed {
-    // TODO: After upgrading Compose, remove composed and read layout direction in Node API.
-    val layoutDirection = LocalLayoutDirection.current
-    val clampedScore = currentScore.coerceIn(0, MAX_SCORE_POINTS)
-    this
+): Modifier {
+    val clampedScore = currentScore.coerceIn(0, MAX_SCORE.toInt())
+    return this
         .semantics {
-            val range = 0f..MAX_SCORE_POINTS.toFloat()
-            progressBarRangeInfo = ProgressBarRangeInfo(current = clampedScore.toFloat(), range = range)
-            stateDescription = "$clampedScore/$MAX_SCORE_POINTS"
             setProgress { targetValue ->
-                val newScore = targetValue.roundToInt().coerceIn(0, MAX_SCORE_POINTS)
+                val newScore = targetValue.roundToInt().coerceIn(0, MAX_SCORE.toInt())
                 if (newScore == clampedScore) {
                     false
                 } else {
@@ -61,23 +46,18 @@ fun Modifier.starsInput(
             StarsInputElement(
                 currentScore = clampedScore,
                 onScoreChanged = onScoreChanged,
-                layoutDirection = layoutDirection
             )
         )
 }
 
-/**
- * Modifier element that keeps score/callback/layout direction and updates [StarsInputNode] efficiently.
- */
-class StarsInputElement @SuppressLint("ModifierFactoryReturnType") constructor(
+private class StarsInputElement constructor(
     private val currentScore: Int,
     private val onScoreChanged: (newScore: Int) -> Unit,
-    private val layoutDirection: LayoutDirection
 ) : ModifierNodeElement<StarsInputNode>() {
-    override fun create(): StarsInputNode = StarsInputNode(currentScore, onScoreChanged, layoutDirection)
+    override fun create(): StarsInputNode = StarsInputNode(currentScore, onScoreChanged)
 
     override fun update(node: StarsInputNode) {
-        node.update(currentScore, onScoreChanged, layoutDirection)
+        node.update(currentScore, onScoreChanged)
     }
 
     override fun InspectorInfo.inspectableProperties() {
@@ -89,7 +69,6 @@ class StarsInputElement @SuppressLint("ModifierFactoryReturnType") constructor(
     override fun hashCode(): Int {
         var result = currentScore
         result = 31 * result + onScoreChanged.hashCode()
-        result = 31 * result + layoutDirection.hashCode()
         return result
     }
 
@@ -101,8 +80,7 @@ class StarsInputElement @SuppressLint("ModifierFactoryReturnType") constructor(
         other as StarsInputElement
 
         return currentScore == other.currentScore &&
-            onScoreChanged === other.onScoreChanged &&
-            layoutDirection == other.layoutDirection
+                onScoreChanged === other.onScoreChanged
     }
 }
 
@@ -112,23 +90,20 @@ class StarsInputElement @SuppressLint("ModifierFactoryReturnType") constructor(
  * It tracks a single active pointer during press-drag-release, supports RTL coordinate mapping,
  * ignores secondary presses while a drag is active, and deduplicates score emissions.
  */
-class StarsInputNode(
-    currentScore: Int,
+private class StarsInputNode(
+    initialScore: Int,
     private var onScoreChanged: (newScore: Int) -> Unit,
-    private var layoutDirection: LayoutDirection
-) : Modifier.Node(), PointerInputModifierNode {
-
+) : Modifier.Node(), PointerInputModifierNode, CompositionLocalConsumerModifierNode {
     private var isPressed = false
     private var activePointerId: PointerId? = null
-    private var currentScore: Int = currentScore.coerceIn(0, MAX_SCORE_POINTS)
+    private var currentScore: Int = initialScore
 
-    fun update(currentScore: Int, onScoreChanged: (newScore: Int) -> Unit, layoutDirection: LayoutDirection) {
-        val coercedScore = currentScore.coerceIn(0, MAX_SCORE_POINTS)
+    fun update(currentScore: Int, onScoreChanged: (newScore: Int) -> Unit) {
+        val coercedScore = currentScore.coerceIn(0, MAX_SCORE.toInt())
         if (this.currentScore != coercedScore) {
             this.currentScore = coercedScore
         }
         this.onScoreChanged = onScoreChanged
-        this.layoutDirection = layoutDirection
     }
 
     override fun onCancelPointerInput() {
@@ -182,25 +157,22 @@ class StarsInputNode(
         activePointerId = null
     }
 
-    /** Maps pointer position to a clamped score value. */
     private fun updateScore(position: Offset, bounds: IntSize): Int? {
+        val layoutDirection = currentValueOf(LocalLayoutDirection)
+
         if (bounds.width <= 0) return null
         val relativeX = if (layoutDirection == LayoutDirection.Rtl) {
             bounds.width - position.x
         } else {
             position.x
         }
-        return ((relativeX / bounds.width) * MAX_SCORE_POINTS).roundToInt()
-            .coerceIn(0, MAX_SCORE_POINTS)
+        return ((relativeX / bounds.width) * MAX_SCORE).roundToInt()
+            .coerceIn(0, MAX_SCORE.toInt())
     }
 
-    /** Emits score only when it differs from the previously emitted value. */
     private fun emitScoreIfChanged(score: Int) {
         if (currentScore == score) return
         currentScore = score
         onScoreChanged(score)
     }
 }
-
-/** Max editable score value for stars input. */
-private const val MAX_SCORE_POINTS: Int = 10

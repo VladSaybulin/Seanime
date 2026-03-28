@@ -1,3 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="core_ui2_score_stars_row_content_description">Рейтинг: %1$.1f из 10</string>
 </resources>

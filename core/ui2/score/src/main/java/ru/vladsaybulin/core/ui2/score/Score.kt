@@ -2,6 +2,7 @@ package ru.vladsaybulin.core.ui2.score
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
@@ -11,15 +12,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import java.text.DecimalFormat
 
+/**
+ * Format options for displaying score values.
+ */
 enum class ScoreFormat {
-    Integer, Real
+    /** Displays the score as an integer (e.g., 8). */
+    Integer,
+    /** Displays the score as a decimal (e.g., 8.5). */
+    Real
 }
 
+/**
+ * A basic score display component that shows a numeric value with an optional icon.
+ *
+ * @param score The numeric score value to display.
+ * @param modifier The modifier to be applied to the layout.
+ * @param format The format style for the score text.
+ * @param style The text style to be applied to the score.
+ * @param leading An optional leading composable, defaults to a star icon.
+ */
 @Composable
 fun Score(
     score: Float,
@@ -38,26 +55,37 @@ fun Score(
     }
 }
 
+/**
+ * Default values and components for score-related UI.
+ */
 object ScoreDefaults {
-    val StarTintColor: Color
+    /** Default tint color for score icons. */
+    val IconTintColor: Color
         @Composable get() = SeanimeTheme.colorScheme.primary
 
+    /** Default text style for score numbers. */
     val NumberStyle: TextStyle
         @Composable get() = SeanimeTheme.typography.headlineSmall
 
-    val DescriptionStyle: TextStyle
-        @Composable get() = SeanimeTheme.typography.labelSmall
+    /** Default size for score icons. */
+    val IconSize = 48.dp
 
-    val DescriptionAlignment: Alignment.Horizontal = Alignment.CenterHorizontally
-
+    /**
+     * A standard star icon used for score displays.
+     *
+     * @param tint The color of the icon.
+     * @param size The size of the icon.
+     */
     @Composable
     fun StarIcon(
-        tint: Color = StarTintColor
+        tint: Color = IconTintColor,
+        size: Dp = IconSize
     ) {
         Icon(
             imageVector = SeanimeIcons.Star,
             contentDescription = null,
-            tint = tint
+            tint = tint,
+            modifier = Modifier.size(size)
         )
     }
 }
@@ -94,4 +122,4 @@ fun ScorePreview() {
 }
 
 private val IntegerFormatter = DecimalFormat("#")
-private val RealFormatter = DecimalFormat("#.##")
+private val RealFormatter = DecimalFormat("0.##")

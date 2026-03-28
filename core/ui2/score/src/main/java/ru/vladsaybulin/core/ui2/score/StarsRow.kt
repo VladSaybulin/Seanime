@@ -14,36 +14,60 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import kotlin.math.min
 
+/**
+ * A row of stars representing a score.
+ *
+ * @param score The score to display, usually in range 0..10.
+ * @param modifier The modifier to be applied to the layout.
+ * @param iconSize The size of each star icon.
+ * @param tint The color of the filled stars.
+ */
 @Composable
 fun StarsRow(
     score: Float,
     modifier: Modifier = Modifier,
-    iconSize: Dp = ScoreStarsDefaults.Size,
-    tint: Color = ScoreStarsDefaults.Tint
+    iconSize: Dp = ScoreDefaults.IconSize,
+    tint: Color = ScoreDefaults.IconTintColor
 ) {
+    val clampedScore = score.coerceIn(0f, MAX_SCORE)
+
     val filledStar = rememberVectorPainter(image = SeanimeIcons.Star)
     val outlineStar = rememberVectorPainter(image = SeanimeIcons.StarOutline)
 
     val outlineStarColor = SeanimeTheme.colorScheme.outline
+    val contentDescription = stringResource(R.string.core_ui2_score_stars_row_content_description, clampedScore)
 
     Canvas(
-        modifier = modifier.defaultMinSize(minWidth = iconSize * STARS_AMOUNT, minHeight = iconSize).aspectRatio(STARS_AMOUNT.toFloat())
+        modifier = modifier
+            .semantics {
+                progressBarRangeInfo = ProgressBarRangeInfo(
+                    current = clampedScore,
+                    range = 0f..MAX_SCORE
+                )
+                stateDescription = contentDescription
+            }
+            .defaultMinSize(minWidth = iconSize * STARS_AMOUNT, minHeight = iconSize)
+            .aspectRatio(STARS_AMOUNT.toFloat())
     ) {
         val filledColorFilter = ColorFilter.tint(tint)
         val outlineColorFilter = ColorFilter.tint(outlineStarColor)
 
         drawStars(
-            score = score,
+            score = clampedScore,
             drawFilled = {
                 with(filledStar) { draw(size = size, colorFilter = filledColorFilter) }
             },
@@ -54,13 +78,38 @@ fun StarsRow(
     }
 }
 
-object ScoreStarsDefaults {
-    val Size = 40.dp
-
-    val Tint: Color
-        @Composable get() = SeanimeTheme.colorScheme.primary
+/**
+ * An interactive version of [StarsRow] that allows users to change the score by clicking or dragging.
+ *
+ * @param score The current integer score (0..10).
+ * @param onChanged Callback invoked when the user selects a new score.
+ * @param modifier The modifier to be applied to the layout.
+ * @param iconSize The size of each star icon.
+ * @param tint The color of the filled stars.
+ */
+@Composable
+fun StarsRowInput(
+    score: Int,
+    onChanged: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    iconSize: Dp = ScoreDefaults.IconSize,
+    tint: Color = ScoreDefaults.IconTintColor
+) {
+    StarsRow(
+        score = score.toFloat(),
+        modifier = modifier.starsInput(score, onChanged),
+        iconSize = iconSize,
+        tint = tint
+    )
 }
 
+/**
+ * Extension function for [DrawScope] to draw a row of stars.
+ *
+ * @param score The score value to draw.
+ * @param drawFilled A block to draw a filled star.
+ * @param drawOutline A block to draw an outlined star.
+ */
 fun DrawScope.drawStars(
     score: Float,
     drawFilled: DrawScope.() -> Unit,
@@ -144,5 +193,5 @@ fun StarsRowRtlPreview(
 }
 
 private const val STARS_AMOUNT: Int = 5
-private const val MAX_SCORE: Float = 10f
+internal const val MAX_SCORE: Float = 10f
 private const val SCORE_POINTS_PER_STAR: Float = MAX_SCORE / STARS_AMOUNT
