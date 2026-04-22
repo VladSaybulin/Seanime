@@ -200,13 +200,8 @@ private fun UserRatesPaging(
             val userRateWithEntry = userRates[it] ?: return@items
             UserRateItem(
                 userRateWithEntry = userRateWithEntry,
-                onTitleClick = {
-                    if (userRateWithEntry.anime != null) {
-                        onAnimeClick(userRateWithEntry.anime!!)
-                    } else {
-                        onMangaClick(userRateWithEntry.manga!!)
-                    }
-                },
+                onAnimeClick = onAnimeClick,
+                onMangaClick = onMangaClick,
                 onEditClick = { }
             )
         }

@@ -51,6 +51,7 @@ import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.core.ui2.entry.EntryCarousel
 import ru.vladsaybulin.core.ui2.entry.anime.animeCarouselItems
+import ru.vladsaybulin.core.ui2.entry.userrate.UserRateItem
 
 @Composable
 fun HomeScreen(
@@ -252,6 +253,12 @@ private fun LazyListScope.inProgressUserRatesPager(
                 key = { userRates[it].userRate.id },
                 modifier = modifier.let { if (userRates.isNotEmpty()) it.padding(bottom = 24.dp) else it }
             ) {
+                UserRateItem(
+                    userRateWithEntry = userRates[it],
+                    onAnimeClick = onAnimeClick,
+                    onMangaClick = onMangaClick,
+                    onEditClick = {}
+                )
                 UserRateEntryCard(
                     userRateWithEntry = userRates[it],
                     onAnimeClick = onAnimeClick,
