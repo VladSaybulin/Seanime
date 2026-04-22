@@ -30,4 +30,10 @@
     <string name="core_ui2_entry_error_show_details">Подробнее</string>
     <string name="core_ui2_entry_manga_metadata_chapters">%d гл.</string>
     <string name="core_ui2_entry_manga_metadata_volumes">%d т.</string>
+    <string name="core_ui2_entry_user_rate_item_limited_episodes">%1$d из %2$d эп.</string>
+    <string name="core_ui2_entry_user_rate_item_limited_chapters">%1$d из %2$d гл.</string>
+    <string name="core_ui2_entry_user_rate_item_limited_volumes">%1$d из %2$d т.</string>\
+    <string name="core_ui2_entry_user_rate_item_unlimited_episodes">Просмотрено %1$d эп.</string>
+    <string name="core_ui2_entry_user_rate_item_unlimited_chapters">Прочитано %1$d гл.</string>
+    <string name="core_ui2_entry_user_rate_item_unlimited_volumes">Прочитано %1$d т.</string>
 </resources>
