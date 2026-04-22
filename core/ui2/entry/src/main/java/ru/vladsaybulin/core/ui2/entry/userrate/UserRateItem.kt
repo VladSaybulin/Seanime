@@ -40,6 +40,7 @@ import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
+import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.RatedTitle
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
@@ -49,7 +50,8 @@ import kotlin.math.max
 @Composable
 fun UserRateItem(
     userRateWithEntry: UserRateWithEntry,
-    onTitleClick: () -> Unit,
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit,
     onEditClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -67,7 +69,8 @@ fun UserRateItem(
                 )
             }
         },
-        onTitleClick = onTitleClick,
+        onAnimeClick = onAnimeClick,
+        onMangaClick = onMangaClick,
         onEditClick = onEditClick,
         modifier = modifier
     )
@@ -76,7 +79,8 @@ fun UserRateItem(
 @Composable
 fun UserRateItem(
     ratedTitle: RatedTitle,
-    onTitleClick: () -> Unit,
+    onAnimeClick: (Anime) -> Unit,
+    onMangaClick: (Manga) -> Unit,
     onEditClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -93,7 +97,7 @@ fun UserRateItem(
                 status = ratedTitle.userRate.status,
                 score = ratedTitle.userRate.score,
                 progression = rememberAnimeProgression(ratedTitle),
-                onTitleClick = onTitleClick,
+                onTitleClick = { onAnimeClick(anime) },
                 onEditClick = onEditClick
             )
         }
@@ -110,7 +114,7 @@ fun UserRateItem(
                 status = ratedTitle.userRate.status,
                 score = ratedTitle.userRate.score,
                 progression = rememberMangaProgression(ratedTitle),
-                onTitleClick = onTitleClick,
+                onTitleClick = { onMangaClick(manga) },
                 onEditClick = onEditClick
             )
         }
@@ -381,7 +385,8 @@ fun UserRateDataPreview(
                 anime = anime[2],
                 userRate = anime[2].userRate!!
             ),
-            onTitleClick = {},
+            onAnimeClick = {},
+            onMangaClick = {},
             onEditClick = {}
         )
     }
