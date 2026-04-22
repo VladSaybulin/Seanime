@@ -24,6 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
@@ -33,6 +35,8 @@ import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.entryTypeString
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
+import ru.vladsaybulin.core.ui2.entry.EntryList
+import ru.vladsaybulin.core.ui2.entry.userrate.UserRateItem
 import ru.vladsaybulin.feature.list.navigation.ListNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
@@ -187,20 +191,25 @@ private fun UserRatesPaging(
     onMangaClick: (Manga) -> Unit,
     onEditClick: (EditableUserRate) -> Unit
 ) {
-    LazyPagingColumn(
-        lazyPagingItems = userRates,
-        itemKey = { it.userRate.id },
-        verticalArrangement = Arrangement.spacedBy(space = 8.dp),
-        contentPadding = PaddingValues(16.dp)
-    ) {
-        UserRateEntryCard(
-            userRateWithEntry = it,
-            onAnimeClick = onAnimeClick,
-            onMangaClick = onMangaClick,
-            showUserRateBadge = false,
-            onEditClick = onEditClick,
-            modifier = Modifier.animateItem()
-        )
+    EntryList {
+        items(
+            count = userRates.itemCount,
+            key = userRates.itemKey { it.userRate.id },
+            contentType = userRates.itemContentType()
+        ) {
+            val userRateWithEntry = userRates[it] ?: return@items
+            UserRateItem(
+                userRateWithEntry = userRateWithEntry,
+                onTitleClick = {
+                    if (userRateWithEntry.anime != null) {
+                        onAnimeClick(userRateWithEntry.anime!!)
+                    } else {
+                        onMangaClick(userRateWithEntry.manga!!)
+                    }
+                },
+                onEditClick = { }
+            )
+        }
     }
 }
 
