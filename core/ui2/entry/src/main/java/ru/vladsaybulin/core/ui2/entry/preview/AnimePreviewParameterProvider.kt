@@ -1,11 +1,14 @@
 package ru.vladsaybulin.core.ui2.entry.preview
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import kotlinx.datetime.Clock
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
+import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 class AnimeItemPreviewParameterProvider : PreviewParameterProvider<Anime> {
     override val values: Sequence<Anime> = animes.asSequence()
@@ -29,7 +32,18 @@ private val animes = listOf(
         episodesAired = 0,
         airedOn = IncompleteDate(22, 12, 1998),
         releasedOn = IncompleteDate(25, 3, 1999),
-        userRate = null
+        userRate = UserRate(
+            id = 124,
+            score = 8,
+            status = UserRateStatus.Watching,
+            episodes = 2,
+            volumes = 0,
+            chapters = 0,
+            createdAt = Clock.System.now(),
+            updatedAt = Clock.System.now(),
+            rewatches = 0,
+            text = ""
+        )
     ),
     Anime(
         id = 35575,
@@ -53,11 +67,22 @@ private val animes = listOf(
         kind = AnimeKind.None,
         score = 7.16f,
         status = EntryStatus.Ongoing,
-        episodes = 1,
-        episodesAired = 2,
+        episodes = 5,
+        episodesAired = 3,
         airedOn = IncompleteDate(16, 8, 2020),
         releasedOn = null,
-        userRate = null
+        userRate = UserRate(
+            id = 124,
+            score = 8,
+            status = UserRateStatus.Watching,
+            episodes = 2,
+            volumes = 0,
+            chapters = 0,
+            createdAt = Clock.System.now(),
+            updatedAt = Clock.System.now(),
+            rewatches = 0,
+            text = ""
+        )
     ),
     Anime(
         id = 35921,
