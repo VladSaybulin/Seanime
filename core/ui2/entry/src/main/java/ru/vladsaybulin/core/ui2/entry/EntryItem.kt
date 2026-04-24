@@ -153,38 +153,27 @@ data class EntryItemColors(
 
 object EntryItemDefaults {
 
-    private var cachedSurfaceColors: EntryItemColors? = null
-    private var cachedSurfaceContainerColors: EntryItemColors? = null
-    private val cachedUserRateStatusColors = mutableMapOf<UserRateStatus, EntryItemColors>()
-
     val SurfaceColors: EntryItemColors
-        @Composable @ReadOnlyComposable get() = cachedSurfaceColors
-            ?: EntryItemColors(
-                containerColor = SeanimeTheme.colorScheme.surface,
-                contentColor = SeanimeTheme.colorScheme.onSurface
-            ).also {
-                cachedSurfaceColors = it
-            }
+        @Composable @ReadOnlyComposable get() = EntryItemColors(
+            containerColor = SeanimeTheme.colorScheme.surface,
+            contentColor = SeanimeTheme.colorScheme.onSurface
+        )
 
     val SurfaceContainerColors: EntryItemColors
-        @Composable @ReadOnlyComposable get() = cachedSurfaceContainerColors
-            ?: EntryItemColors(
-                containerColor = SeanimeTheme.colorScheme.surfaceContainer,
-                contentColor = SeanimeTheme.colorScheme.onSurface
-            ).also {
-                cachedSurfaceContainerColors = it
-            }
+        @Composable @ReadOnlyComposable get() = EntryItemColors(
+            containerColor = SeanimeTheme.colorScheme.surfaceContainer,
+            contentColor = SeanimeTheme.colorScheme.onSurface
+        )
 
     @Composable
     @ReadOnlyComposable
-    fun basedOnUserRateStatusColors(userRateStatus: UserRateStatus): EntryItemColors =
-        cachedUserRateStatusColors.fastComputeIfAbsent(userRateStatus) {
+    fun basedOnUserRateStatusColors(userRateStatus: UserRateStatus): EntryItemColors {
             val colors = if (userRateStatus != UserRateStatus.None) {
                 SeanimeTheme.seanimeColors[userRateStatus]
             } else {
-                return@fastComputeIfAbsent SurfaceContainerColors
+                return SurfaceContainerColors
             }
-            EntryItemColors(
+            return EntryItemColors(
                 containerColor = colors.container,
                 contentColor = colors.onContainer
             )
