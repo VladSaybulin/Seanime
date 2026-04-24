@@ -6,7 +6,7 @@
     <string name="core_ui2_entry_anime_item_additional_content_episodes_and_duration">%1$s по %2$s</string>
     <string name="core_ui2_entry_manga_item_additional_content_chapters">%1$d гл.</string>
     <plurals name="core_ui2_entry_manga_item_additional_content_volumes">
-        <item quantity="one">%1%d том</item>
+        <item quantity="one">%1$d том</item>
         <item quantity="few">%1$d тома</item>
         <item quantity="many">%1$d томов</item>
         <item quantity="other">%1$d тома</item>
@@ -32,7 +32,7 @@
     <string name="core_ui2_entry_manga_metadata_volumes">%d т.</string>
     <string name="core_ui2_entry_user_rate_item_limited_episodes">%1$d из %2$d эп.</string>
     <string name="core_ui2_entry_user_rate_item_limited_chapters">%1$d из %2$d гл.</string>
-    <string name="core_ui2_entry_user_rate_item_limited_volumes">%1$d из %2$d т.</string>\
+    <string name="core_ui2_entry_user_rate_item_limited_volumes">%1$d из %2$d т.</string>
     <string name="core_ui2_entry_user_rate_item_unlimited_episodes">Просмотрено %1$d эп.</string>
     <string name="core_ui2_entry_user_rate_item_unlimited_chapters">Прочитано %1$d гл.</string>
     <string name="core_ui2_entry_user_rate_item_unlimited_volumes">Прочитано %1$d т.</string>
