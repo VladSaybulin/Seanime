@@ -25,7 +25,7 @@
     <string name="core_ui2_entry_relation_type_other">Другое</string>
     <string name="core_ui2_entry_error_title">Ошибка</string>
     <string name="core_ui2_entry_error_description">При загрузке возникла ошибка</string>
-    <string name="core_ui2_entry_internal_error_description">Произошла ошибка а работе приложения</string>
+    <string name="core_ui2_entry_internal_error_description">Произошла ошибка в работе приложения</string>
     <string name="core_ui2_entry_error_hide_details">Скрыть подробности</string>
     <string name="core_ui2_entry_error_show_details">Подробнее</string>
     <string name="core_ui2_entry_manga_metadata_chapters">%d гл.</string>
