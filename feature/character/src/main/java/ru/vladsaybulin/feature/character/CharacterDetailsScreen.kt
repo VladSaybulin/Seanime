@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,15 +40,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.datetime.Clock
-import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.entry.carousel.EntryCarousel
-import ru.vladsaybulin.core.ui.entry.carousel.anime.animeCarouselItems
-import ru.vladsaybulin.core.ui.entry.carousel.magna.mangaCarouselItems
 import ru.vladsaybulin.core.ui.text.SeanimeExpandableText
 import ru.vladsaybulin.core.ui.text.onSeanimeTextLinkClickAdapter
-import ru.vladsaybulin.core.ui.entry.grid.EntryGridItem
+import ru.vladsaybulin.core.ui2.entry.EntryCarousel
+import ru.vladsaybulin.core.ui2.entry.EntryCarouselItem
+import ru.vladsaybulin.core.ui2.entry.anime.animeCarouselItems
+import ru.vladsaybulin.core.ui2.entry.manga.mangaCarouselItems
 import ru.vladsaybulin.feature.character.navigation.CharacterDetailsNavEvents
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterDetails
@@ -154,13 +154,15 @@ fun CharacterDetailsContent(
                         style = SeanimeTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
-                    ShikimoriCarousel(items = details.seyu) {
-                        EntryGridItem(
-                            name = it.russianName ?: it.originalName,
-                            imageUrl = it.poster?.originalUrl,
-                            onClick = { },
-                            modifier = Modifier.width(128.dp)
-                        )
+                    EntryCarousel {
+                        items(details.seyu) {
+                            EntryCarouselItem(
+                                name = it.originalName,
+                                russianName = it.russianName,
+                                poster = it.poster,
+                                onClick = { onPersonClick(it.id) },
+                            )
+                        }
                     }
                 }
             }
@@ -176,7 +178,7 @@ fun CharacterDetailsContent(
                     )
                     EntryCarousel {
                         animeCarouselItems(
-                            items = details.animes,
+                            animes = details.animes,
                             onItemClick = { onAnimeClick(it.id) }
                         )
                     }
@@ -194,8 +196,8 @@ fun CharacterDetailsContent(
                     )
                     EntryCarousel {
                         mangaCarouselItems(
-                            items = details.mangas,
-                            onClick = { onMangaClick(it.id) }
+                            mangas = details.mangas,
+                            onItemClick = { onMangaClick(it.id) }
                         )
                     }
                 }
