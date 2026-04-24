@@ -347,11 +347,6 @@ private fun isRussianName(): Boolean {
     return isRussian
 }
 
-private inline fun <K, V> MutableMap<K, V>.fastComputeIfAbsent(key: K, mapping: (K) -> V): V {
-    val value = get(key)
-    return value ?: mapping(key).also { put(key, it) }
-}
-
 private const val ENTRY_GRID_ITEM_NAME_MAX_LINES = 1
 private const val ENTRY_LIST_ITEM_NAME_MAX_LINES = 2
 private const val ENTRY_CAROUSEL_ITEM_NAME_MAX_LINES = 1
