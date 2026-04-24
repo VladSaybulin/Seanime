@@ -259,13 +259,6 @@ private fun LazyListScope.inProgressUserRatesPager(
                     onMangaClick = onMangaClick,
                     onEditClick = {}
                 )
-                UserRateEntryCard(
-                    userRateWithEntry = userRates[it],
-                    onAnimeClick = onAnimeClick,
-                    onMangaClick = onMangaClick,
-                    showUserRateBadge = true,
-                    onEditClick = onEditClick
-                )
             }
         }
     }
