@@ -40,7 +40,6 @@ import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
-import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.home.navigation.HomeNavEvents
 import ru.vladsaybulin.model.anime.Anime
