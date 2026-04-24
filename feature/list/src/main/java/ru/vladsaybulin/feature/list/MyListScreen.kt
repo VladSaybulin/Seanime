@@ -3,7 +3,6 @@ package ru.vladsaybulin.feature.list
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,12 +28,10 @@ import androidx.paging.compose.itemKey
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
-import ru.vladsaybulin.core.ui.LazyPagingColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.entryTypeString
 import ru.vladsaybulin.core.ui.strings.userRateStatusString
-import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.core.ui2.entry.EntryList
 import ru.vladsaybulin.core.ui2.entry.userrate.UserRateItem
 import ru.vladsaybulin.feature.list.navigation.ListNavEvents
