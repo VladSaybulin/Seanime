@@ -212,7 +212,8 @@ private fun UserRateItem(
             poster = poster,
             onClick = onTitleClick,
             modifier = modifier,
-            userRateStatus = status
+            userRateStatus = status,
+            posterWidth = UserRatePosterWidth
         ) {
             Row{
                 Column(modifier = Modifier.weight(1f)) {
@@ -394,3 +395,4 @@ fun UserRateDataPreview(
 
 private val LinearIndicatorHeight = 6.dp
 private const val AVAILABLE_COLOR_OPACITY = 0.3f
+private val UserRatePosterWidth = 120.dp
