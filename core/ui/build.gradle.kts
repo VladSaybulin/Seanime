@@ -11,6 +11,7 @@ android {
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.designsystem)
+    implementation(projects.core.ui2.strings)
 
     implementation(libs.kotlinx.datetime)
     implementation(libs.coil.kt)

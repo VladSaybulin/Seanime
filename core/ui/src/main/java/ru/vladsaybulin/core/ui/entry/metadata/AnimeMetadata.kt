@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.strings.animeKindString
-import ru.vladsaybulin.core.ui.strings.animeKindStringResId
+import ru.vladsaybulin.core.ui2.strings.AnimeStrings
+import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
@@ -35,7 +35,7 @@ object AnimeMetadataDefaultComponents {
     @Composable
     fun KindAndYear(anime: Anime) {
         TitleMetadataComponents.KindAndYearLine(
-            kindStringId = animeKindStringResId(kind = anime.kind),
+            kindStringId = AnimeStrings.kindId(kind = anime.kind),
             year = anime.airedOn?.year ?: anime.releasedOn?.year
         )
     }
@@ -111,7 +111,7 @@ object AnimeMetadataDefaultComponents {
             }
         } else null
 
-        val kindText = if (kind != AnimeKind.None) animeKindString(kind) else null
+        val kindText = kind.asStringOrNull()
 
         if (kindText != null || episodesText != null || durationText != null) {
             val separator = stringResource(id = R.string.core_ui_info_separator)

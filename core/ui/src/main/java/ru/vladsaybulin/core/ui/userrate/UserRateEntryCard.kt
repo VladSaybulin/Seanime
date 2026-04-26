@@ -25,8 +25,8 @@ import ru.vladsaybulin.core.ui.entry.EntryInfoKindAndYear
 import ru.vladsaybulin.core.ui.entry.list.EntryListItem
 import ru.vladsaybulin.core.ui.score.ScoreStars
 import ru.vladsaybulin.core.ui.score.SmallStarSize
-import ru.vladsaybulin.core.ui.strings.animeKindStringResId
-import ru.vladsaybulin.core.ui.strings.mangaKindStringResId
+import ru.vladsaybulin.core.ui2.strings.AnimeStrings
+import ru.vladsaybulin.core.ui2.strings.MangaStrings
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
@@ -204,7 +204,7 @@ private fun createAnimeUserRateEntryCardState(
         } else null,
         volumesState = null,
         chaptersState = null,
-        kindStringId = animeKindStringResId(anime.kind),
+        kindStringId = AnimeStrings.kindId(anime.kind),
         airedInYear = anime.airedOn?.year
     )
 }
@@ -235,7 +235,7 @@ private fun createMangaUserRateEntryCardState(
                 total = manga.chapters
             )
         } else null,
-        kindStringId = mangaKindStringResId(manga.kind),
+        kindStringId = MangaStrings.kindId(manga.kind),
         airedInYear = manga.airedOn?.year
     )
 }

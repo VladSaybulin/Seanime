@@ -1,6 +1,5 @@
 package ru.vladsaybulin.feature.title.details.content
 
-import android.icu.text.CaseMap.Title
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,11 +27,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.util.fastMaxBy
 import androidx.compose.ui.util.fastSumBy
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
-import ru.vladsaybulin.core.ui.strings.userRateStatusString
+import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
@@ -94,7 +92,7 @@ private fun StatusLegend(
         }
 
         Text(
-            text = userRateStatusString(userRateStatus = status),
+            text = status.asString(),
             style = SeanimeTheme.typography.labelLarge,
             modifier = Modifier.padding(start = 4.dp)
         )

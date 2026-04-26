@@ -52,6 +52,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.UserRateStatusButton
 import ru.vladsaybulin.core.ui.UserRateStatusButtonDefaults
 import ru.vladsaybulin.core.ui.score.ScoreInput
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.userrate.CounterState.Companion.UNLIMITED_LIMIT
 import ru.vladsaybulin.feature.userrate.ProgressCounterType.Chapters
 import ru.vladsaybulin.feature.userrate.ProgressCounterType.Episodes
@@ -82,24 +83,26 @@ fun UserRateBottomSheet(
         }.invokeOnCompletion { onDismissRequest() }
     }
 
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        modifier = modifier,
-        content = {
-            UserRateContent(
-                state = userRateState,
-                onSave = {
-                    viewModel.save(editableUserRate.userRate.id, userRateState.toUserRateValues())
-                    closeSheet()
-                },
-                onDelete = {
-                    viewModel.delete(editableUserRate.userRate.id)
-                    closeSheet()
-                }
-            )
-        }
-    )
+    ProvideTitleStringsByType(editableUserRate.titleType) {
+        ModalBottomSheet(
+            onDismissRequest = onDismissRequest,
+            sheetState = sheetState,
+            modifier = modifier,
+            content = {
+                UserRateContent(
+                    state = userRateState,
+                    onSave = {
+                        viewModel.save(editableUserRate.userRate.id, userRateState.toUserRateValues())
+                        closeSheet()
+                    },
+                    onDelete = {
+                        viewModel.delete(editableUserRate.userRate.id)
+                        closeSheet()
+                    }
+                )
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)

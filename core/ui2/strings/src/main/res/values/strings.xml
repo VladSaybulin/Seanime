@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_ui2_strings_none">Неизвестно</string>
+
+    <!-- Anime strings -->
+
+    <!--Status -->
+    <string name="core_ui2_strings_anime_status_ongoing">Онгоинг</string>
+    <string name="core_ui2_strings_anime_status_released">Вышло</string>
+    <string name="core_ui2_strings_anime_status_anons">Анонс</string>
+    <string name="core_ui2_strings_anime_status_paused">Приостановлено</string>
+    <string name="core_ui2_strings_anime_status_discontinued">Прекращено</string>
+    <!-- User status -->
+    <string name="core_ui2_strings_anime_user_status_planned">Запланировано</string>
+    <string name="core_ui2_strings_anime_user_status_watching">Смотрю</string>
+    <string name="core_ui2_strings_anime_user_status_rewatching">Пересматриваю</string>
+    <string name="core_ui2_strings_anime_user_status_completed">Просмотрено</string>
+    <string name="core_ui2_strings_anime_user_status_on_hold">Отложено</string>
+    <string name="core_ui2_strings_anime_user_status_dropped">Брошено</string>
+    <!-- Kind -->
+    <string name="core_ui2_strings_anime_kind_tv">TV-сериал</string>
+    <string name="core_ui2_strings_anime_kind_movie">Фильм</string>
+    <string name="core_ui2_strings_anime_kind_ona">ONA</string>
+    <string name="core_ui2_strings_anime_kind_ova">OVA</string>
+    <string name="core_ui2_strings_anime_kind_music">Клип</string>
+    <string name="core_ui2_strings_anime_kind_special">Спешл</string>
+    <string name="core_ui2_strings_anime_kind_pv">Промо</string>
+    <string name="core_ui2_strings_anime_kind_cm">Реклама</string>
+    <string name="core_ui2_strings_anime_kind_tv_special">ТВ-спешл</string>
+    <!-- Rating -->
+    <string name="core_ui2_strings_anime_rating_g">G</string>
+    <string name="core_ui2_strings_anime_rating_pg">PG</string>
+    <string name="core_ui2_strings_anime_rating_pg13">PG-13</string>
+    <string name="core_ui2_strings_anime_rating_r">R</string>
+    <string name="core_ui2_strings_anime_rating_r_plus">R+</string>
+    <string name="core_ui2_strings_anime_rating_rx">RX</string>
+    <!-- Episodes -->
+    <string name="core_ui2_strings_anime_progress_aired_of_total">%1$d/%2$d эп.</string>
+    <string name="core_ui2_strings_anime_progress_aired_of_unknown">%1$d/- эп</string>
+    <string name="core_ui2_strings_anime_progress_total_only">%1$d эп.</string>
+
+
+
+    <!-- Manga strings -->
+
+    <!-- Status -->
+    <string name="core_ui2_strings_manga_status_anons">Анонс</string>
+    <string name="core_ui2_strings_manga_status_ongoing">Издаётся</string>
+    <string name="core_ui2_strings_manga_status_released">Издано</string>
+    <string name="core_ui2_strings_manga_status_paused">Приостановлено</string>
+    <string name="core_ui2_strings_manga_status_discontinued">Прекращено</string>
+    <!-- User status -->
+    <string name="core_ui2_strings_manga_user_status_planned">Запланировано</string>
+    <string name="core_ui2_strings_manga_user_status_watching">Читаю</string>
+    <string name="core_ui2_strings_manga_user_status_rewatching">Перечитываю</string>
+    <string name="core_ui2_strings_manga_user_status_completed">Прочитано</string>
+    <string name="core_ui2_strings_manga_user_status_on_hold">Отложено</string>
+    <string name="core_ui2_strings_manga_user_status_dropped">Брошено</string>
+    <!-- Kind -->
+    <string name="core_ui2_strings_manga_kind_manga">Манга</string>
+    <string name="core_ui2_strings_manga_kind_manhwa">Манхва</string>
+    <string name="core_ui2_strings_manga_kind_manhua">Маньхуа</string>
+    <string name="core_ui2_strings_manga_kind_oneshot">Ваншот</string>
+    <string name="core_ui2_strings_manga_kind_doujin">Додзинси</string>
+    <string name="core_ui2_strings_manga_kind_light_novel">Ранобэ</string>
+    <string name="core_ui2_strings_manga_kind_novel">Новелла</string>
+
+    <!-- App strings -->
+
+    <!-- Title type -->
+    <string name="core_ui2_strings_title_type_anime">Аниме</string>
+    <string name="core_ui2_strings_title_type_manga">Манга</string>
+
+</resources>

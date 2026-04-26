@@ -13,7 +13,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,10 +28,9 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LazyPagingColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
-import ru.vladsaybulin.core.ui.strings.entryTypeString
-import ru.vladsaybulin.core.ui.strings.userRateStatusString
 import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
+import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.feature.list.navigation.ListNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
@@ -105,7 +103,7 @@ private fun ListContent(
     onMangaClick: (Manga) -> Unit,
     onEditClick: (EditableUserRate) -> Unit
 ) {
-    CompositionLocalProvider(value = LocalTitleStrings provides state.controlPanelState.entryType) {
+    ProvideTitleStringsByType(titleType = state.controlPanelState.entryType) {
         Column {
             ControlPanel(
                 entryType = state.controlPanelState.entryType,
@@ -166,16 +164,16 @@ private fun ControlPanel(
             items = listOf(EntryType.Anime, EntryType.Manga),
             onItemClick = onEntryTypeChange,
             selected = true,
-            selectedLabel = { Text(entryTypeString(entryType = entryType)) },
-            itemLabel = { Text(entryTypeString(entryType = it)) }
+            selectedLabel = { Text(entryType.asString()) },
+            itemLabel = { Text(it.asString()) }
         )
 
         ShikimoriDropdownChip(
             items = UserRateStatus.entries.filter { it != UserRateStatus.None },
             onItemClick = onUserRateStatusChange,
             selected = true,
-            selectedLabel = { Text(userRateStatusString(userRateStatus)) },
-            itemLabel = { Text(userRateStatusString(it)) }
+            selectedLabel = { Text(userRateStatus.asString()) },
+            itemLabel = { Text(it.asString()) }
         )
     }
 }

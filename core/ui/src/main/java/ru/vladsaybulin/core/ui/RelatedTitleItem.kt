@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +16,7 @@ import ru.vladsaybulin.core.ui.entry.list.EntryListItem
 import ru.vladsaybulin.core.ui.entry.metadata.AnimeMetadataDefaultComponents
 import ru.vladsaybulin.core.ui.entry.metadata.MangaMetadataComponents
 import ru.vladsaybulin.core.ui.entry.metadata.TitleMetadataComponents
-import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
@@ -40,6 +39,7 @@ fun RelatedTitleItem(
             onClick = { onClick(EntryType.Anime, relatedTitle.anime.id) },
             modifier = modifier
         )
+
         is RelatedManga -> RelatedMangaItem(
             manga = relatedTitle.manga,
             relationType = relatedTitle.relationType,
@@ -56,7 +56,7 @@ private fun RelatedAnimeItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    CompositionLocalProvider(value = LocalTitleStrings provides EntryType.Anime) {
+    ProvideTitleStringsByType(EntryType.Anime) {
         EntryListItem(
             name = anime.run { russianName ?: name },
             imageUrl = anime.poster?.previewUrl,
@@ -97,7 +97,7 @@ private fun RelatedMangaItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    CompositionLocalProvider(value = LocalTitleStrings provides EntryType.Manga) {
+    ProvideTitleStringsByType(EntryType.Manga) {
         EntryListItem(
             name = manga.run { russianName ?: name },
             imageUrl = manga.poster?.previewUrl,

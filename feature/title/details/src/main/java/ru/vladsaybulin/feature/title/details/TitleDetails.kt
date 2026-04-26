@@ -47,7 +47,7 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.RelatedTitleItem
-import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
 import ru.vladsaybulin.feature.title.details.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.content.PreviewUserRateStatusStatistics
@@ -194,7 +194,7 @@ private fun DetailsContent(
         derivedStateOf { listState.firstVisibleItemIndex == 0 }
     }
 
-    CompositionLocalProvider(value = LocalTitleStrings provides detailsState.entryType) {
+    ProvideTitleStringsByType(detailsState.entryType) {
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = {
@@ -249,7 +249,12 @@ private fun DetailsContent(
                         posterUrl = detailsState.poster?.originalUrl,
                         topSpace = scaffoldPadding.calculateTopPadding(),
                         onClick = {
-                            detailsState.poster?.let { navEvents.showFullScreenImage(listOf(it), 0) }
+                            detailsState.poster?.let {
+                                navEvents.showFullScreenImage(
+                                    listOf(it),
+                                    0
+                                )
+                            }
                         }
                     )
 
@@ -277,33 +282,64 @@ private fun DetailsContent(
                         studios = detailsState.studios,
                         publishers = detailsState.publishers,
                         genres = detailsState.genres,
-                        onStudioClick = { navEvents.navigateToSearchByStudio(detailsState.searchType(), it.id) },
-                        onPublisherClick = { navEvents.navigateToSearchByPublisher(detailsState.searchType(), it.id) },
-                        onGenreClick = { navEvents.navigateToSearchByGenre(detailsState.searchType(), it.kind, it.id) }
+                        onStudioClick = {
+                            navEvents.navigateToSearchByStudio(
+                                detailsState.searchType(),
+                                it.id
+                            )
+                        },
+                        onPublisherClick = {
+                            navEvents.navigateToSearchByPublisher(
+                                detailsState.searchType(),
+                                it.id
+                            )
+                        },
+                        onGenreClick = {
+                            navEvents.navigateToSearchByGenre(
+                                detailsState.searchType(),
+                                it.kind,
+                                it.id
+                            )
+                        }
                     )
 
-                    detailsState.description?.takeIf { it.text.isNotEmpty() }?.let { description ->
-                        gutterSpacer()
-                        titleDescription(
-                            description = description,
-                            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it) },
-                            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it) },
-                            onCharacterClick = navEvents.navigateToCharacterDetails,
-                            onPersonClick = navEvents.navigateToPersonDetails,
-                            onUrlClick = uriHandler::openUri
-                        )
-                    }
+                    detailsState.description?.takeIf { it.text.isNotEmpty() }
+                        ?.let { description ->
+                            gutterSpacer()
+                            titleDescription(
+                                description = description,
+                                onAnimeClick = {
+                                    navEvents.navigateToTitleDetails(
+                                        EntryType.Anime,
+                                        it
+                                    )
+                                },
+                                onMangaClick = {
+                                    navEvents.navigateToTitleDetails(
+                                        EntryType.Manga,
+                                        it
+                                    )
+                                },
+                                onCharacterClick = navEvents.navigateToCharacterDetails,
+                                onPersonClick = navEvents.navigateToPersonDetails,
+                                onUrlClick = uriHandler::openUri
+                            )
+                        }
 
-                    (rolesState as? RolesState.Success)?.mainAuthors?.takeIf { it.isNotEmpty() }?.let { authors ->
-                        gutterSpacer()
-                        titleAuthors(
-                            authors = authors,
-                            onAuthorClick = { navEvents.navigateToPersonDetails(it.id) },
-                            onMoreClick = {
-                                navEvents.navigateToTitleAuthors(detailsState.entryType, detailsState.entryId)
-                            }
-                        )
-                    }
+                    (rolesState as? RolesState.Success)?.mainAuthors?.takeIf { it.isNotEmpty() }
+                        ?.let { authors ->
+                            gutterSpacer()
+                            titleAuthors(
+                                authors = authors,
+                                onAuthorClick = { navEvents.navigateToPersonDetails(it.id) },
+                                onMoreClick = {
+                                    navEvents.navigateToTitleAuthors(
+                                        detailsState.entryType,
+                                        detailsState.entryId
+                                    )
+                                }
+                            )
+                        }
 
                     if (detailsState.score > 0f) {
                         gutterSpacer()
@@ -332,26 +368,30 @@ private fun DetailsContent(
                         )
                     }
 
-                    (rolesState as? RolesState.Success)?.mainCharacters?.takeIf { it.isNotEmpty() }?.let { characters ->
-                        gutterSpacer()
-                        titleCharacters(
-                            characters = characters,
-                            onCharacterClick = { navEvents.navigateToCharacterDetails(it.id) },
-                            onMoreClick = {
-                                navEvents.navigateToTitleCharacters(
-                                    detailsState.entryType,
-                                    detailsState.entryId
-                                )
-                            }
-                        )
-                    }
+                    (rolesState as? RolesState.Success)?.mainCharacters?.takeIf { it.isNotEmpty() }
+                        ?.let { characters ->
+                            gutterSpacer()
+                            titleCharacters(
+                                characters = characters,
+                                onCharacterClick = { navEvents.navigateToCharacterDetails(it.id) },
+                                onMoreClick = {
+                                    navEvents.navigateToTitleCharacters(
+                                        detailsState.entryType,
+                                        detailsState.entryId
+                                    )
+                                }
+                            )
+                        }
 
                     detailsState.screenshotsSlice?.let { dataSlice ->
                         gutterSpacer()
                         titleScreenshots(
                             screenshotsSlice = dataSlice,
                             onScreenshotClick = { initialIndex ->
-                                navEvents.showFullScreenImage(detailsState.allScreenshots, initialIndex)
+                                navEvents.showFullScreenImage(
+                                    detailsState.allScreenshots,
+                                    initialIndex
+                                )
                             },
                             onMoreClick = {
                                 navEvents.navigateToTitleScreenshots(
@@ -383,7 +423,12 @@ private fun DetailsContent(
                             gutterSpacer()
                             titleSimilarAnimes(
                                 similarAnimes = similarState.animes,
-                                onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) }
+                                onAnimeClick = {
+                                    navEvents.navigateToTitleDetails(
+                                        EntryType.Anime,
+                                        it.id
+                                    )
+                                }
                             )
                         }
 
@@ -391,24 +436,17 @@ private fun DetailsContent(
                             gutterSpacer()
                             titleSimilarMangas(
                                 similarMangas = similarState.mangas,
-                                onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) }
+                                onMangaClick = {
+                                    navEvents.navigateToTitleDetails(
+                                        EntryType.Manga,
+                                        it.id
+                                    )
+                                }
                             )
                         }
                     }
                 }
             }
-        }
-
-        if (showRequireAuthDialog) {
-            RequireAuthDialog(
-                authWithShikimori = {
-                    navEvents.authWithShikimori()
-                    setShowRequireAuthDialog(false)
-                },
-                onDismissRequest = {
-                    setShowRequireAuthDialog(false)
-                }
-            )
         }
 
         if (showUserRateStatusSelection) {
@@ -421,6 +459,18 @@ private fun DetailsContent(
                 },
                 onDismissRequest = {
                     showUserRateStatusSelection = false
+                }
+            )
+        }
+
+        if (showRequireAuthDialog) {
+            RequireAuthDialog(
+                authWithShikimori = {
+                    navEvents.authWithShikimori()
+                    setShowRequireAuthDialog(false)
+                },
+                onDismissRequest = {
+                    setShowRequireAuthDialog(false)
                 }
             )
         }

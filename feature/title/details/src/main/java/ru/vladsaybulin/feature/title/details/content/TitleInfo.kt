@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
@@ -45,11 +44,10 @@ import kotlinx.datetime.toJavaZoneId
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
-import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
-import ru.vladsaybulin.core.ui.strings.animeKindString
-import ru.vladsaybulin.core.ui.strings.animeRatingString
-import ru.vladsaybulin.core.ui.strings.entryStatusString
-import ru.vladsaybulin.core.ui.strings.mangaKindString
+import ru.vladsaybulin.core.ui2.strings.AnimeStrings
+import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
+import ru.vladsaybulin.core.ui2.strings.compose.asString
+import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.feature.title.details.R
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
@@ -95,26 +93,33 @@ fun TitleInfo(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (animeKind != AnimeKind.None) {
-                AnimeKindPanel(animeKind = animeKind)
+            animeKind.asStringOrNull()?.let {
+                KindPanel(kindString = it)
             }
 
-            if (mangaKind != MangaKind.None) {
-                MangaKindPanel(mangaKind = mangaKind)
+            mangaKind.asStringOrNull()?.let {
+                KindPanel(kindString = it)
             }
 
-            if (status != EntryStatus.None) {
+            status.asStringOrNull()?.let {
                 StatusPanel(status = status)
             }
 
-            if (episodes != 0 || episodesAired != 0) {
-                EpisodesPanel(episodes = episodes, episodesAired = episodesAired)
+            val episodesFormat = AnimeStrings.getProgressFormat(
+                aired = episodesAired,
+                total = episodes,
+                isOngoing = status == EntryStatus.Ongoing,
+                isMovie = animeKind == AnimeKind.Movie
+            )
+
+            episodesFormat?.let {
+                EpisodesPanel(it)
             }
 
             if (episodeDuration != 0) {
                 EpisodeDurationPanel(
                     duration = episodeDuration,
-                    isSingleEpisode = episodes == 1 || (episodes == 0 && episodesAired == 1)
+                    isSingleEpisode = episodesFormat == null
                 )
             }
 
@@ -128,7 +133,12 @@ fun TitleInfo(
 
             when {
                 status == EntryStatus.Anons && airedOn != null -> AirDatePanel(airedOn)
-                season != null -> SeasonPanel(timePeriodAiring = season, airedOn = airedOn, releasedOn = releasedOn)
+                season != null -> SeasonPanel(
+                    timePeriodAiring = season,
+                    airedOn = airedOn,
+                    releasedOn = releasedOn
+                )
+
                 airedOn?.year != null || releasedOn?.year != null -> AirYearPanel(
                     airedOn = airedOn,
                     releasedOn = releasedOn
@@ -160,20 +170,11 @@ fun TitleInfo(
 }
 
 @Composable
-private fun AnimeKindPanel(animeKind: AnimeKind) {
+private fun KindPanel(kindString: String) {
     InfoPanel(
         label = { Text(stringResource(id = R.string.feature_details_info_label_kind)) }
     ) {
-        Text(text = animeKindString(animeKind = animeKind))
-    }
-}
-
-@Composable
-private fun MangaKindPanel(mangaKind: MangaKind) {
-    InfoPanel(
-        label = { Text(stringResource(id = R.string.feature_details_info_label_kind)) }
-    ) {
-        Text(text = mangaKindString(mangaKind = mangaKind))
+        Text(text = kindString)
     }
 }
 
@@ -183,33 +184,18 @@ private fun StatusPanel(status: EntryStatus) {
         label = { Text(stringResource(id = R.string.feature_details_info_label_status)) }
     ) {
         Text(
-            text = entryStatusString(status = status),
+            text = status.asString(),
             color = SeanimeTheme.seanimeColors[status]
         )
     }
 }
 
 @Composable
-private fun EpisodesPanel(episodes: Int, episodesAired: Int) {
+private fun EpisodesPanel(format: AnimeStrings.ProgressFormat) {
     InfoPanel(
         label = { Text(stringResource(id = R.string.feature_details_info_label_episodes)) }
     ) {
-        Text(
-            text = when {
-                episodes == episodesAired || episodesAired == 0 -> episodes.toString()
-
-                episodes == 0 -> stringResource(
-                    id = R.string.feature_details_info_episodes_aired_of_unknown,
-                    episodesAired
-                )
-
-                else -> stringResource(
-                    id = R.string.feature_details_info_episodes_aired_of_episodes,
-                    episodesAired,
-                    episodes
-                )
-            }
-        )
+        Text(text = format.asString())
     }
 }
 
@@ -237,7 +223,8 @@ private fun EpisodeDurationPanel(duration: Int, isSingleEpisode: Boolean) {
         }
 
         val minutes = duration % 60
-        val minutesText = stringResource(id = R.string.feature_details_info_duration_minutes, minutes)
+        val minutesText =
+            stringResource(id = R.string.feature_details_info_duration_minutes, minutes)
 
         Text(
             text = when {
@@ -287,7 +274,7 @@ private fun VolumesPanel(volumes: Int) {
 
 @Composable
 fun AirDatePanel(airedOn: IncompleteDate) {
-    val labelId = when (LocalTitleStrings.current) {
+    val labelId = when (LocalTitleStrings.current.titleType) {
         EntryType.Anime -> R.string.feature_title_details_info_label_anime_anons_date
         EntryType.Manga -> R.string.feature_title_details_info_label_manga_anons_data
     }
@@ -427,7 +414,7 @@ private fun RatingPanel(rating: AnimeRating) {
             label = { WithInfoIconLabel { Text(stringResource(id = R.string.feature_details_info_label_rating)) } },
             modifier = Modifier.clickable { scope.launch { tooltipState.show() } }
         ) {
-            Text(text = animeRatingString(animeRating = rating))
+            Text(text = rating.asString())
         }
     }
 
@@ -549,7 +536,10 @@ private fun WithInfoIconLabel(label: @Composable () -> Unit) {
 
 @Composable
 @ReadOnlyComposable
-private fun incompleteDateFormatted(incompleteDate: IncompleteDate, monthCase: MonthCase = MonthCase.Auto): String {
+private fun incompleteDateFormatted(
+    incompleteDate: IncompleteDate,
+    monthCase: MonthCase = MonthCase.Auto
+): String {
     val monthNames = MonthNames(
         stringArrayResource(
             id = when {
