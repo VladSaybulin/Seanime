@@ -34,18 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
-import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.score.ScoreInput
-import ru.vladsaybulin.core.ui.strings.animeKindString
-import ru.vladsaybulin.core.ui.strings.animeRatingString
 import ru.vladsaybulin.core.ui.strings.durationString
-import ru.vladsaybulin.core.ui.strings.entryStatusString
-import ru.vladsaybulin.core.ui.strings.mangaKindString
 import ru.vladsaybulin.core.ui.strings.seasonFilterString
-import ru.vladsaybulin.core.ui.strings.userRateStatusString
+import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.search.FilterOption
@@ -115,7 +110,7 @@ fun FiltersContent(
                 regularFilter(
                     options = filtersState.animeKindOptions,
                     label = {
-                        Text(text = animeKindString(it.value))
+                        Text(text = it.value.asString())
                     }
                 )
             }
@@ -127,7 +122,7 @@ fun FiltersContent(
                 regularFilter(
                     options = filtersState.mangaKindOptions,
                     label = {
-                        Text(text = mangaKindString(it.value))
+                        Text(text = it.value.asString())
                     }
                 )
             }
@@ -138,7 +133,7 @@ fun FiltersContent(
                 regularFilter(
                     options = filtersState.statusOptions,
                     label = {
-                        Text(text = entryStatusString(it.value))
+                        Text(text = it.value.asString())
                     }
                 )
             }
@@ -150,7 +145,7 @@ fun FiltersContent(
                 regularFilter(
                     options = filtersState.myListStatusOptions,
                     label = {
-                        Text(text = userRateStatusString(it.value))
+                        Text(text = it.value.asString())
                     }
                 )
             }
@@ -183,7 +178,7 @@ fun FiltersContent(
                 regularFilter(
                     options = filtersState.ratingOptions,
                     label = {
-                        Text(text = animeRatingString(it.value))
+                        Text(text = it.value.asString())
                     }
                 )
             }
