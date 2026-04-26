@@ -462,18 +462,18 @@ private fun DetailsContent(
                 }
             )
         }
-    }
 
-    if (showRequireAuthDialog) {
-        RequireAuthDialog(
-            authWithShikimori = {
-                navEvents.authWithShikimori()
-                setShowRequireAuthDialog(false)
-            },
-            onDismissRequest = {
-                setShowRequireAuthDialog(false)
-            }
-        )
+        if (showRequireAuthDialog) {
+            RequireAuthDialog(
+                authWithShikimori = {
+                    navEvents.authWithShikimori()
+                    setShowRequireAuthDialog(false)
+                },
+                onDismissRequest = {
+                    setShowRequireAuthDialog(false)
+                }
+            )
+        }
     }
 }
 
