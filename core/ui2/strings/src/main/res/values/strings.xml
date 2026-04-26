@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="core_ui2_strings_none">Неизвеcтно</string>
+    <string name="core_ui2_strings_none">Неизвестно</string>
 
     <!-- Anime strings -->
 
@@ -11,7 +11,7 @@
     <string name="core_ui2_strings_anime_status_paused">Приостановлено</string>
     <string name="core_ui2_strings_anime_status_discontinued">Прекращено</string>
     <!-- User status -->
-    <string name="core_ui2_strings_anime_user_status_status_planned">Запланировано</string>
+    <string name="core_ui2_strings_anime_user_status_planned">Запланировано</string>
     <string name="core_ui2_strings_anime_user_status_watching">Смотрю</string>
     <string name="core_ui2_strings_anime_user_status_rewatching">Пересматриваю</string>
     <string name="core_ui2_strings_anime_user_status_completed">Просмотрено</string>

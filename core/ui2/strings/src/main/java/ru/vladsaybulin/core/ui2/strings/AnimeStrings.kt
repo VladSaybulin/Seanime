@@ -19,7 +19,7 @@ object AnimeStrings : DependsOnTitleStrings {
     }
 
     override fun userStatusId(status: UserRateStatus): Int = when (status) {
-        UserRateStatus.Planned -> R.string.core_ui2_strings_anime_user_status_status_planned
+        UserRateStatus.Planned -> R.string.core_ui2_strings_anime_user_status_planned
         UserRateStatus.Watching -> R.string.core_ui2_strings_anime_user_status_watching
         UserRateStatus.Rewatching -> R.string.core_ui2_strings_anime_user_status_rewatching
         UserRateStatus.Completed -> R.string.core_ui2_strings_anime_user_status_completed
