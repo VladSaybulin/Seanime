@@ -290,7 +290,7 @@ private fun CalendarItemDetails(
         append(timeText)
     }
 
-    Text(text = text)
+    Text(text = text, style = SeanimeTheme.typography.bodySmall)
 }
 
 @Preview
