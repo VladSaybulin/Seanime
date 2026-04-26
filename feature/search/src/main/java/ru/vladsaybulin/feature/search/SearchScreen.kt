@@ -51,8 +51,10 @@ import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
 import ru.vladsaybulin.core.ui.entry.grid.manga.mangaGridItems
 import ru.vladsaybulin.core.ui.paging.PagingBox
-import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui.strings.orderString
+import ru.vladsaybulin.core.ui2.strings.MangaStrings
+import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
@@ -105,7 +107,7 @@ private fun SearchScreen(
         SearchType.Manga, SearchType.Ranobe -> EntryType.Manga
         else -> EntryType.Anime
     }
-    CompositionLocalProvider(value = LocalTitleStrings provides titleType) {
+    ProvideTitleStringsByType(titleType) {
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
@@ -368,17 +370,32 @@ private fun searchTitleText(title: SearchTitle) = when (title) {
 @ReadOnlyComposable
 private fun statusTitleText(entryStatus: EntryStatus) = stringResource(
     when (entryStatus) {
-        EntryStatus.Anons -> R.string.feature_search_title_status_anonses
-        EntryStatus.Ongoing -> R.string.feature_search_title_status_ongoings
-        EntryStatus.Released -> if (LocalTitleStrings.current == EntryType.Anime) {
-            R.string.feature_search_title_status_anime_releases
-        } else {
-            R.string.feature_search_title_status_manga_releases
+        EntryStatus.Anons -> {
+            R.string.feature_search_title_status_anonses
         }
 
-        EntryStatus.Paused -> R.string.feature_search_title_status_paused
-        EntryStatus.Discontinued -> R.string.feature_search_title_status_discontonued
-        EntryStatus.None -> R.string.feature_search_title
+        EntryStatus.Ongoing -> {
+            R.string.feature_search_title_status_ongoings
+        }
+
+        EntryStatus.Released -> {
+            when (LocalTitleStrings.current.titleType) {
+                EntryType.Manga -> R.string.feature_search_title_status_anime_releases
+                else -> R.string.feature_search_title_status_manga_releases
+            }
+        }
+
+        EntryStatus.Paused -> {
+            R.string.feature_search_title_status_paused
+        }
+
+        EntryStatus.Discontinued -> {
+            R.string.feature_search_title_status_discontonued
+        }
+
+        EntryStatus.None -> {
+            R.string.feature_search_title
+        }
     }
 )
 
