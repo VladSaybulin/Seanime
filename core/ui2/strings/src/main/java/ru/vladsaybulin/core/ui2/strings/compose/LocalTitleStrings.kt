@@ -3,7 +3,6 @@ package ru.vladsaybulin.core.ui2.strings.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui2.strings.AnimeStrings
