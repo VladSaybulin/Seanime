@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.ui2.entry)
     implementation(projects.core.data)
     implementation(projects.core.navigation)
     implementation(libs.coil.kt.compose)

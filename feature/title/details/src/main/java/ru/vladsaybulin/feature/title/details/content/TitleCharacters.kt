@@ -3,14 +3,15 @@ package ru.vladsaybulin.feature.title.details.content
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.core.designsystem.components.ShikimoriCarousel
-import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.entry.grid.EntryGridItem
 import ru.vladsaybulin.model.character.Character
+import ru.vladsaybulin.core.ui2.entry.EntryCarousel
+import ru.vladsaybulin.core.ui2.entry.EntryGridItem
+import ru.vladsaybulin.core.ui2.entry.character.CharacterItem
 
 @Composable
 internal fun TitleCharacters(
@@ -19,18 +20,20 @@ internal fun TitleCharacters(
 ) {
     val listState = rememberLazyListState()
 
-    ShikimoriCarousel(
-        items = characters,
-        listState = listState,
+    EntryCarousel(
+        state = listState,
         flingBehavior = rememberSnapFlingBehavior(
             lazyListState = listState,
             snapPosition = SnapPosition.Start
         )
-    ) { character ->
-        CharacterCard(
-            character = character,
-            onClick = { onCharacterClick(character) }
-        )
+    ) {
+        items(items = characters) { character ->
+            CharacterItem(
+                character = character,
+                onClick = { onCharacterClick(character) },
+                modifier = Modifier.width(CharacterCardWidth)
+            )
+        }
     }
 }
 
@@ -40,11 +43,11 @@ private fun CharacterCard(
     onClick: () -> Unit
 ) {
     EntryGridItem(
-        name = character.run { russianName ?: originalName },
-        imageUrl = character.poster?.originalUrl,
+        name = character.originalName,
+        russianName = character.russianName,
+        poster = character.poster,
         onClick = onClick,
-        modifier = Modifier.width(CharacterCardWidth),
-        nameTextStyle = SeanimeTheme.typography.labelSmall
+        modifier = Modifier.width(CharacterCardWidth)
     )
 }
 

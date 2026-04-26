@@ -49,8 +49,6 @@ import ru.vladsaybulin.core.domain.calendar.CalendarDay
 import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
-import ru.vladsaybulin.core.ui.entry.carousel.EntryCarousel
-import ru.vladsaybulin.core.ui.entry.grid.anime.AnimeGridItem
 import ru.vladsaybulin.core.ui.R as uiR
 import ru.vladsaybulin.feature.calendar.navigation.CalendarNavEvents
 import ru.vladsaybulin.model.anime.Anime
@@ -58,6 +56,8 @@ import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.user.BriefUser
+import ru.vladsaybulin.core.ui2.entry.EntryCarousel
+import ru.vladsaybulin.core.ui2.entry.anime.AnimeGridItem
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -197,8 +197,8 @@ private fun CalendarSection(
                 AnimeGridItem(
                     anime = calendarItem.anime,
                     onClick = { onAnimeClick(calendarItem.anime) },
-                    modifier = Modifier.width(150.dp),
-                    metadata = {
+                    modifier = Modifier.width(CalendarItemWidth),
+                    additionalContent = {
                         CalendarItemDetails(
                             nextEpisodeAt = calendarItem.nextEpisodeAt,
                             wasOnAir = calendarDay.date == null,
@@ -305,3 +305,5 @@ fun CalendarLoadingPreview() {
         }
     }
 }
+
+private val CalendarItemWidth = 128.dp

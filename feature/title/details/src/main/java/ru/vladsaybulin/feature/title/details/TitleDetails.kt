@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +45,7 @@ import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.RelatedTitleItem
+import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
 import ru.vladsaybulin.feature.title.details.content.PreviewScoreStatistics
@@ -98,7 +97,6 @@ import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.search.SeasonOfYear
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import java.security.KeyStore.Entry
 
 @Composable
 fun TitleDetailsScreen(
@@ -620,7 +618,7 @@ private fun LazyListScope.titleRelated(
         RelatedTitleItem(
             relatedTitle = it,
             onClick = onTitleClick,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
         )
     }
 }

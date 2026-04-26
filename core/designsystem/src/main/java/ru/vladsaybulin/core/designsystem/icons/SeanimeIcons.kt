@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CalendarToday
@@ -25,6 +24,7 @@ import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Schedule
@@ -37,7 +37,10 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.vector.ImageVector
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
 object SeanimeIcons {
     val AccountCircle = Icons.Filled.AccountCircle
@@ -75,4 +78,17 @@ object SeanimeIcons {
     val Tv = Icons.Default.Tv
     val Schedule = Icons.Default.Schedule
     val ArrowForwardIos = Icons.AutoMirrored.Filled.ArrowForwardIos
+    val QuestionMark = Icons.Default.QuestionMark
+}
+
+@Composable
+@ReadOnlyComposable
+fun userRateStatusIcon(userRateStatus: UserRateStatus) = when (userRateStatus) {
+    UserRateStatus.Planned -> SeanimeIcons.Add
+    UserRateStatus.Watching -> SeanimeIcons.Visibility
+    UserRateStatus.Rewatching -> SeanimeIcons.Replay
+    UserRateStatus.Completed -> SeanimeIcons.Done
+    UserRateStatus.Dropped -> SeanimeIcons.Clear
+    UserRateStatus.OnHold -> SeanimeIcons.Pause
+    UserRateStatus.None -> SeanimeIcons.QuestionMark
 }

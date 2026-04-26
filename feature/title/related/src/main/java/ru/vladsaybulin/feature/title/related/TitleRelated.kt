@@ -1,10 +1,7 @@
 package ru.vladsaybulin.feature.title.related
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,15 +15,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.RelatedTitleItem
-import ru.vladsaybulin.feature.titlerelated.R
 import ru.vladsaybulin.feature.title.related.navigation.TitleRelatedNavEvents
+import ru.vladsaybulin.feature.titlerelated.R
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.core.ui2.entry.EntryList
+import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 
 @Composable
 fun TitleRelatedRoute(
@@ -83,10 +80,7 @@ private fun TitleRelatedContent(
     state: TitleRelatedUiState.Success,
     onTitleClick: (EntryType, Long) -> Unit
 ) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        contentPadding = PaddingValues(16.dp)
-    ) {
+    EntryList {
         items(items = state.relatedTitles) { relatedTitle ->
             RelatedTitleItem(
                 relatedTitle = relatedTitle,

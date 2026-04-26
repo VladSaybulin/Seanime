@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_ui2_entry_duration_hour_and_min">%1$d ч %2$d мин</string>
+    <string name="core_ui2_entry_duration_hour">%1$d ч</string>
+    <string name="core_ui2_entry_duration_min">%1$d мин</string>
+    <string name="core_ui2_entry_anime_item_additional_content_episodes_and_duration">%1$s по %2$s</string>
+    <string name="core_ui2_entry_manga_item_additional_content_chapters">%1$d гл.</string>
+    <plurals name="core_ui2_entry_manga_item_additional_content_volumes">
+        <item quantity="one">%1$d том</item>
+        <item quantity="few">%1$d тома</item>
+        <item quantity="many">%1$d томов</item>
+        <item quantity="other">%1$d тома</item>
+    </plurals>
+    <string name="core_ui2_entry_relation_type_adaptation">Адаптация</string>
+    <string name="core_ui2_entry_relation_type_alt_setting">Альтернативный сеттинг</string>
+    <string name="core_ui2_entry_relation_type_alt_history">Альтернативная история</string>
+    <string name="core_ui2_entry_relation_type_side_story">Другая история</string>
+    <string name="core_ui2_entry_relation_type_full_story">Полная история</string>
+    <string name="core_ui2_entry_relation_type_parent_history">Изначальная история</string>
+    <string name="core_ui2_entry_relation_type_spin_off">Ответвление от оригинала</string>
+    <string name="core_ui2_entry_relation_type_sequel">Продолжение</string>
+    <string name="core_ui2_entry_relation_type_prequel">Предыстория</string>
+    <string name="core_ui2_entry_relation_type_summary">Обобщение</string>
+    <string name="core_ui2_entry_relation_type_character">Общий персонаж</string>
+    <string name="core_ui2_entry_relation_type_other">Другое</string>
+    <string name="core_ui2_entry_error_title">Ошибка</string>
+    <string name="core_ui2_entry_error_description">При загрузке возникла ошибка</string>
+    <string name="core_ui2_entry_internal_error_description">Произошла ошибка в работе приложения</string>
+    <string name="core_ui2_entry_error_hide_details">Скрыть подробности</string>
+    <string name="core_ui2_entry_error_show_details">Подробнее</string>
+    <string name="core_ui2_entry_manga_metadata_chapters">%d гл.</string>
+    <string name="core_ui2_entry_manga_metadata_volumes">%d т.</string>
+    <string name="core_ui2_entry_user_rate_item_limited_episodes">%1$d из %2$d эп.</string>
+    <string name="core_ui2_entry_user_rate_item_limited_chapters">%1$d из %2$d гл.</string>
+    <string name="core_ui2_entry_user_rate_item_limited_volumes">%1$d из %2$d т.</string>
+    <string name="core_ui2_entry_user_rate_item_unlimited_episodes">Просмотрено %1$d эп.</string>
+    <string name="core_ui2_entry_user_rate_item_unlimited_chapters">Прочитано %1$d гл.</string>
+    <string name="core_ui2_entry_user_rate_item_unlimited_volumes">Прочитано %1$d т.</string>
+</resources>

@@ -42,9 +42,6 @@ import ru.vladsaybulin.core.designsystem.components.SeanimeSearchField
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.entry.grid.EntryGrid
-import ru.vladsaybulin.core.ui.entry.grid.anime.animeGridItems
-import ru.vladsaybulin.core.ui.entry.grid.manga.mangaGridItems
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
 import ru.vladsaybulin.core.ui.filters.OptionValue
@@ -61,6 +58,10 @@ import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.core.ui2.entry.EntryGrid
+import ru.vladsaybulin.core.ui2.entry.EntryList
+import ru.vladsaybulin.core.ui2.entry.anime.animeItems
+import ru.vladsaybulin.core.ui2.entry.manga.mangaItems
 import kotlin.math.max
 import kotlin.math.min
 
@@ -316,22 +317,21 @@ private fun SearchResult(
     ) {
         EntryGrid {
             when (searchType) {
-                SearchType.Anime -> animeGridItems(
-                    items = animePagingItems,
+                SearchType.Anime -> animeItems(
+                    animes = animePagingItems,
                     onItemClick = onAnimeClick,
                     userRateStatus = { userRates[it.id] ?: UserRateStatus.None }
                 )
-
-                SearchType.Manga -> mangaGridItems(
-                    items = mangaPagingItems,
+                SearchType.Manga -> mangaItems(
+                    mangas = mangaPagingItems,
                     onItemClick = onMangaClick,
                     userRateStatus = { userRates[it.id] ?: UserRateStatus.None }
                 )
-
-                SearchType.Ranobe -> mangaGridItems(
-                    items = ranobePagingItems,
+                SearchType.Ranobe -> mangaItems(
+                    mangas = ranobePagingItems,
                     onItemClick = onMangaClick,
-                    userRateStatus = { userRates[it.id] ?: UserRateStatus.None })
+                    userRateStatus = { userRates[it.id] ?: UserRateStatus.None }
+                )
             }
         }
     }
@@ -368,32 +368,20 @@ private fun searchTitleText(title: SearchTitle) = when (title) {
 @ReadOnlyComposable
 private fun statusTitleText(entryStatus: EntryStatus) = stringResource(
     when (entryStatus) {
-        EntryStatus.Anons -> {
-            R.string.feature_search_title_status_anonses
+        EntryStatus.Anons -> R.string.feature_search_title_status_anonses
+
+        EntryStatus.Ongoing -> R.string.feature_search_title_status_ongoings
+
+        EntryStatus.Released -> when (LocalTitleStrings.current.titleType) {
+            EntryType.Anime -> R.string.feature_search_title_status_anime_releases
+            EntryType.Manga -> R.string.feature_search_title_status_manga_releases
         }
 
-        EntryStatus.Ongoing -> {
-            R.string.feature_search_title_status_ongoings
-        }
+        EntryStatus.Paused -> R.string.feature_search_title_status_paused
 
-        EntryStatus.Released -> {
-            when (LocalTitleStrings.current.titleType) {
-                EntryType.Manga -> R.string.feature_search_title_status_anime_releases
-                else -> R.string.feature_search_title_status_manga_releases
-            }
-        }
+        EntryStatus.Discontinued -> R.string.feature_search_title_status_discontonued
 
-        EntryStatus.Paused -> {
-            R.string.feature_search_title_status_paused
-        }
-
-        EntryStatus.Discontinued -> {
-            R.string.feature_search_title_status_discontonued
-        }
-
-        EntryStatus.None -> {
-            R.string.feature_search_title
-        }
+        EntryStatus.None -> R.string.feature_search_title
     }
 )
 

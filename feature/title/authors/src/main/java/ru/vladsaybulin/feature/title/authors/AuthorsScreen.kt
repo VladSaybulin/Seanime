@@ -28,6 +28,7 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.feature.title.authors.R
 import ru.vladsaybulin.feature.title.authors.navigation.TitleAuthorsNavEvents
 import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.core.ui2.entry.EntryList
 
 @Composable
 fun AuthorsScreen(
@@ -108,9 +109,7 @@ private fun AuthorsContent(
     uiState: AuthorsUiState.Success,
     onAuthorClick: (PersonWithRoles) -> Unit
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
-    ) {
+    EntryList {
         authors(
             authors = uiState.authors,
             onAuthorClick = onAuthorClick
