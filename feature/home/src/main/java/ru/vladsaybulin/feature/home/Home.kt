@@ -284,6 +284,6 @@ private const val OngoingAnimesKey = "ongoing"
 private const val NewsHeaderKey = "news_header"
 private const val NewsTopicKeyPrefix = "news"
 
-private const val SHIKIMORI_NEWS_URL = "https://shikimori.io/forum/news"
+private const val SHIKIMORI_NEWS_URL = "${BuildConfig.BASE_URL}/forum/news"
 
 private val OngoingAnimeWidth = 128.dp

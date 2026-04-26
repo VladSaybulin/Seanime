@@ -19,10 +19,19 @@ plugins {
     alias(libs.plugins.seanime.android.library.compose)
     alias(libs.plugins.seanime.android.hilt)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.secrets)
 }
 
 android {
     namespace = "ru.vladsaybulin.feature.home"
+
+    buildFeatures {
+        buildConfig = true
+    }
+}
+
+secrets {
+    defaultPropertiesFileName = "secrets.default.properties"
 }
 
 dependencies {
