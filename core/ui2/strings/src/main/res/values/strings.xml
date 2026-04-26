@@ -64,4 +64,11 @@
     <string name="core_ui2_strings_manga_kind_doujin">Додзинси</string>
     <string name="core_ui2_strings_manga_kind_light_novel">Ранобэ</string>
     <string name="core_ui2_strings_manga_kind_novel">Новелла</string>
+
+    <!-- App strings -->
+
+    <!-- Title type -->
+    <string name="core_ui2_strings_title_type_anime">Аниме</string>
+    <string name="core_ui2_strings_title_type_manga">Манга</string>
+
 </resources>
