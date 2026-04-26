@@ -3,9 +3,12 @@ package ru.vladsaybulin.core.ui2.strings
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 object AnimeStrings : DependsOnTitleStrings {
+    override val titleType: EntryType = EntryType.Anime
+
     override fun titleStatusId(status: EntryStatus): Int = when(status) {
         EntryStatus.Anons -> R.string.core_ui2_strings_anime_status_anons
         EntryStatus.Ongoing -> R.string.core_ui2_strings_anime_status_ongoing

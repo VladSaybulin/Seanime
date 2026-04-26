@@ -1,10 +1,12 @@
 package ru.vladsaybulin.core.ui2.strings
 
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 object MangaStrings : DependsOnTitleStrings {
+    override val titleType: EntryType = EntryType.Manga
 
     override fun titleStatusId(status: EntryStatus): Int = when (status) {
         EntryStatus.Anons -> R.string.core_ui2_strings_manga_status_anons
