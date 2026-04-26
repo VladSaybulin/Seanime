@@ -13,4 +13,5 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.model)
     implementation(projects.core.navigation)
+    implementation(projects.core.ui2.strings)
 }
