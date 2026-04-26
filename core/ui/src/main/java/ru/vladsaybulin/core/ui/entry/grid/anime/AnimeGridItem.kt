@@ -8,11 +8,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui.entry.preview.AnimePreviewProvider
 import ru.vladsaybulin.core.ui.entry.grid.EntryGridItem
-import ru.vladsaybulin.core.ui.entry.metadata.AnimeMetadataDefaultComponents
 import ru.vladsaybulin.core.ui.entry.metadata.DefaultAnimeGridItemMetadata
-import ru.vladsaybulin.core.ui.strings.animeKindStringResId
+import ru.vladsaybulin.core.ui.entry.preview.AnimePreviewProvider
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
