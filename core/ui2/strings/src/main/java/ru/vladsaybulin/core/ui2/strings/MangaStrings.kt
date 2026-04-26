@@ -14,7 +14,7 @@ object MangaStrings : DependsOnTitleStrings {
         EntryStatus.Released -> R.string.core_ui2_strings_manga_status_released
         EntryStatus.Paused -> R.string.core_ui2_strings_manga_status_paused
         EntryStatus.Discontinued -> R.string.core_ui2_strings_manga_status_discontinued
-        EntryStatus.None -> error("EntryStatus.None is not supported")
+        EntryStatus.None -> R.string.core_ui2_strings_none
     }
 
     override fun userStatusId(status: UserRateStatus): Int = when (status) {
@@ -24,7 +24,7 @@ object MangaStrings : DependsOnTitleStrings {
         UserRateStatus.Completed -> R.string.core_ui2_strings_manga_user_status_completed
         UserRateStatus.OnHold -> R.string.core_ui2_strings_manga_user_status_on_hold
         UserRateStatus.Dropped -> R.string.core_ui2_strings_manga_user_status_dropped
-        UserRateStatus.None -> error("UserRateStatus.None is not supported")
+        UserRateStatus.None -> R.string.core_ui2_strings_none
     }
 
     fun kindId(kind: MangaKind): Int = when (kind) {
@@ -35,6 +35,6 @@ object MangaStrings : DependsOnTitleStrings {
         MangaKind.Doujin -> R.string.core_ui2_strings_manga_kind_doujin
         MangaKind.LightNovel -> R.string.core_ui2_strings_manga_kind_light_novel
         MangaKind.Novel -> R.string.core_ui2_strings_manga_kind_novel
-        MangaKind.None -> error("MangaKind.None is not supported")
+        MangaKind.None -> R.string.core_ui2_strings_none
     }
 }
