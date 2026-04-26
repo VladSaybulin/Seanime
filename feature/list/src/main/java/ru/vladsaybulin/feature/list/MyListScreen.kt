@@ -28,7 +28,6 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.userrate.UserRateEntryCard
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.core.ui2.entry.EntryList
