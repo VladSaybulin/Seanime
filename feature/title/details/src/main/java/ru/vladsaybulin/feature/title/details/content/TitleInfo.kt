@@ -44,8 +44,8 @@ import kotlinx.datetime.toJavaZoneId
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
-import ru.vladsaybulin.core.ui.strings.LocalTitleStrings
 import ru.vladsaybulin.core.ui2.strings.AnimeStrings
+import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.feature.title.details.R
@@ -274,7 +274,7 @@ private fun VolumesPanel(volumes: Int) {
 
 @Composable
 fun AirDatePanel(airedOn: IncompleteDate) {
-    val labelId = when (LocalTitleStrings.current) {
+    val labelId = when (LocalTitleStrings.current.titleType) {
         EntryType.Anime -> R.string.feature_title_details_info_label_anime_anons_date
         EntryType.Manga -> R.string.feature_title_details_info_label_manga_anons_data
     }

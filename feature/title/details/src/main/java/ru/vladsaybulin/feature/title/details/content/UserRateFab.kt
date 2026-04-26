@@ -15,7 +15,7 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
-import ru.vladsaybulin.core.ui.strings.userRateStatusString
+import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.feature.title.details.R
 import ru.vladsaybulin.feature.title.details.UserRateState
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -52,7 +52,7 @@ internal fun UserRateFab(
                 when (status) {
                     null -> Text(stringResource(id = R.string.feature_title_details_user_rate_loading))
                     UserRateStatus.None -> Text(stringResource(id = R.string.feature_title_details_user_rate_add))
-                    else -> Text(text = userRateStatusString(status))
+                    else -> Text(text = status.asString())
                 }
             }
         },
@@ -85,6 +85,6 @@ private fun AddIcon() {
 private fun UserRateStatusIcon(status: UserRateStatus) {
     Icon(
         imageVector = notNoneUserRateStatusIcon(userRateStatus = status),
-        contentDescription = userRateStatusString(userRateStatus = status)
+        contentDescription = status.asString()
     )
 }
