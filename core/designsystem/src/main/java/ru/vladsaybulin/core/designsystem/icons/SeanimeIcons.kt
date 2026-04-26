@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CalendarToday
@@ -25,6 +24,7 @@ import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Schedule
@@ -78,6 +78,7 @@ object SeanimeIcons {
     val Tv = Icons.Default.Tv
     val Schedule = Icons.Default.Schedule
     val ArrowForwardIos = Icons.AutoMirrored.Filled.ArrowForwardIos
+    val QuestionMark = Icons.Default.QuestionMark
 }
 
 @Composable
@@ -89,5 +90,5 @@ fun userRateStatusIcon(userRateStatus: UserRateStatus) = when (userRateStatus) {
     UserRateStatus.Completed -> SeanimeIcons.Done
     UserRateStatus.Dropped -> SeanimeIcons.Clear
     UserRateStatus.OnHold -> SeanimeIcons.Pause
-    else -> error("UserRateStatus.None not supported")
+    UserRateStatus.None -> SeanimeIcons.QuestionMark
 }
