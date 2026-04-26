@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -29,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
-import ru.vladsaybulin.core.ui.strings.userRateStatusString
+import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
@@ -62,7 +60,7 @@ fun UserRateStatusButton(
             .padding(ContentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val userRateText = userRateStatusString(userRateStatus)
+        val userRateText = userRateStatus.asString()
         Icon(
             imageVector = icon,
             contentDescription = userRateText,

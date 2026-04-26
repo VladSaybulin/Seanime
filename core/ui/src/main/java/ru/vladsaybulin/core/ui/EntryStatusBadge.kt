@@ -7,7 +7,7 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriTextBadge
 import ru.vladsaybulin.core.designsystem.components.TextBadgeDefaults
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
-import ru.vladsaybulin.core.ui.strings.entryStatusString
+import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.common.EntryStatus
 
 @Composable
@@ -21,6 +21,6 @@ fun EntryStatusBadge(
         contentColor = statusColor,
         modifier = modifier
     ) {
-        Text(text = entryStatusString(status))
+        Text(text = status.asString())
     }
 }

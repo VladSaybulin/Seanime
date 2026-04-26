@@ -5,7 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.strings.mangaKindStringResId
+import ru.vladsaybulin.core.ui2.strings.MangaStrings
+import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaKind
 
@@ -38,7 +39,7 @@ object MangaMetadataComponents {
     @Composable
     fun KindAndYearLine(manga: Manga) {
         TitleMetadataComponents.KindAndYearLine(
-            kindStringId = mangaKindStringResId(mangaKind = manga.kind),
+            kindStringId = MangaStrings.kindId(manga.kind),
             year = manga.airedOn?.year ?: manga.releasedOn?.year
         )
     }
@@ -54,7 +55,7 @@ object MangaMetadataComponents {
             else -> null
         }
 
-        val kindStr = mangaKindStringResId(mangaKind = kind)?.let { stringResource(id = it) }
+        val kindStr = kind.asStringOrNull()
 
         if (kindStr != null && chaptersVolumesStr != null) {
             Text(text = "$kindStr, $chaptersVolumesStr")
