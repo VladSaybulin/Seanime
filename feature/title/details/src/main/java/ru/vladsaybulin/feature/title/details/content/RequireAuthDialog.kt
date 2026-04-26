@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.core.ui2.strings.AnimeStrings
 import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
 import ru.vladsaybulin.feature.title.details.R
 import ru.vladsaybulin.model.common.EntryType

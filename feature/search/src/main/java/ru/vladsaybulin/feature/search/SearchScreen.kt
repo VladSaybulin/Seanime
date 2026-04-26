@@ -22,7 +22,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,16 +42,15 @@ import ru.vladsaybulin.core.designsystem.components.SeanimeSearchField
 import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui.entry.grid.anime.animeGridItems
 import ru.vladsaybulin.core.ui.entry.grid.EntryGrid
+import ru.vladsaybulin.core.ui.entry.grid.anime.animeGridItems
+import ru.vladsaybulin.core.ui.entry.grid.manga.mangaGridItems
 import ru.vladsaybulin.core.ui.filters.AppliedFilters
 import ru.vladsaybulin.core.ui.filters.FiltersBottomSheet
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
-import ru.vladsaybulin.core.ui.entry.grid.manga.mangaGridItems
 import ru.vladsaybulin.core.ui.paging.PagingBox
 import ru.vladsaybulin.core.ui.strings.orderString
-import ru.vladsaybulin.core.ui2.strings.MangaStrings
 import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
