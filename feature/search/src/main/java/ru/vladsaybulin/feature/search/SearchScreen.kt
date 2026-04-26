@@ -369,20 +369,19 @@ private fun searchTitleText(title: SearchTitle) = when (title) {
 private fun statusTitleText(entryStatus: EntryStatus) = stringResource(
     when (entryStatus) {
         EntryStatus.Anons -> R.string.feature_search_title_status_anonses
+
         EntryStatus.Ongoing -> R.string.feature_search_title_status_ongoings
-        EntryStatus.Released -> if (LocalTitleStrings.current == EntryType.Anime) {
-            R.string.feature_search_title_status_anime_releases
-        } else {
-            R.string.feature_search_title_status_manga_releases
+
+        EntryStatus.Released -> when (LocalTitleStrings.current.titleType) {
+            EntryType.Anime -> R.string.feature_search_title_status_anime_releases
+            EntryType.Manga -> R.string.feature_search_title_status_manga_releases
         }
 
-        EntryStatus.Discontinued -> {
-            R.string.feature_search_title_status_discontonued
-        }
+        EntryStatus.Paused -> R.string.feature_search_title_status_paused
 
-        EntryStatus.None -> {
-            R.string.feature_search_title
-        }
+        EntryStatus.Discontinued -> R.string.feature_search_title_status_discontonued
+
+        EntryStatus.None -> R.string.feature_search_title
     }
 )
 
