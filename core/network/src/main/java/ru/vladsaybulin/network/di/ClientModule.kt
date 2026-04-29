@@ -24,6 +24,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.vladsaybulin.network.util.ShikimoriAuthenticator
 import ru.vladsaybulin.network.util.interceptors.AuthorizationInterceptor
+import ru.vladsaybulin.network.util.interceptors.ShikimoriApiLimiterInterceptor
 import ru.vladsaybulin.network.util.interceptors.UserAgentInterceptor
 import javax.inject.Singleton
 
@@ -42,11 +43,13 @@ class ClientModule {
         userAgentInterceptor: UserAgentInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
         authorizationInterceptor: AuthorizationInterceptor,
+        apiLimiterInterceptor: ShikimoriApiLimiterInterceptor,
         authenticator: ShikimoriAuthenticator
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(userAgentInterceptor)
             .addInterceptor(authorizationInterceptor)
+            .addInterceptor(apiLimiterInterceptor)
             .addInterceptor(loggingInterceptor)
             .authenticator(authenticator)
             .build()
