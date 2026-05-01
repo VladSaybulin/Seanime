@@ -7,19 +7,19 @@
 ## 📸 Скриншоты
 
 ### Главная
-![home](docs/screenshots/home.png)
+<img src="docs/screenshots/home.png" width="270" alt="home">
 
 ### Поиск
-![search](docs/screenshots/search.png)
+<img src="docs/screenshots/search.png" width="270" alt="search">
 
 ### Детали произведения
-![title](docs/screenshots/title_details.png)
+<img src="docs/screenshots/title_details.png" width="270" alt="title details">
 
 ### Пользовательский список
-![list](docs/screenshots/list.png)
+<img src="docs/screenshots/list.png" width="270" alt="list">
 
 ### Календарь выходов
-![calendar](docs/screenshots/calendar.png)
+<img src="docs/screenshots/calendar.png" width="270" alt="calendar">
 
 ---
 
