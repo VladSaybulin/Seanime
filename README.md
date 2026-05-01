@@ -6,13 +6,7 @@
 
 ## 📸 Скриншоты
 
-### Главная
-<img src="docs/screenshots/home.png" width="270" alt="home">
-<img src="docs/screenshots/search.png" width="270" alt="search">
-<img src="docs/screenshots/title_details.png" width="270" alt="title details">
-<img src="docs/screenshots/list.png" width="270" alt="list">
-<img src="docs/screenshots/user_rate.png" width="270" alt="rate editor">
-<img src="docs/screenshots/calendar.png" width="270" alt="calendar">
+<img src="docs/screenshots/home.png" width="270" alt="home"><img src="docs/screenshots/search.png" width="270" alt="search"><img src="docs/screenshots/title_details.png" width="270" alt="title details"><img src="docs/screenshots/list.png" width="270" alt="list"><img src="docs/screenshots/user_rate.png" width="270" alt="rate editor"><img src="docs/screenshots/calendar.png" width="270" alt="calendar">
 
 ---
 
