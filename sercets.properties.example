@@ -14,6 +14,5 @@
 # limitations under the License.
 #
 
-BASE_URL = "https://shikimori.io"
-SHIKIMORI_AUTH_REDIRECT_URI=ru.vladsaybulin.seanime:/oauth2redirect
-SHIKIMORI_USER_AGENT=Seanime
+SHIKIMORI_CLIENT_ID=your_client_id
+SHIKIMORI_CLIENT_SECRET=your_client_secret
