@@ -8,17 +8,10 @@
 
 ### Главная
 <img src="docs/screenshots/home.png" width="270" alt="home">
-
-### Поиск
 <img src="docs/screenshots/search.png" width="270" alt="search">
-
-### Детали произведения
 <img src="docs/screenshots/title_details.png" width="270" alt="title details">
-
-### Пользовательский список
 <img src="docs/screenshots/list.png" width="270" alt="list">
-
-### Календарь выходов
+<img src="docs/screenshots/user_rate.png" width="270" alt="rate editor">
 <img src="docs/screenshots/calendar.png" width="270" alt="calendar">
 
 ---
