@@ -39,7 +39,7 @@ android {
         }
 
         val secretsProperties = Properties().apply {
-            file("../secrets.properties").inputStream().use { fis ->
+            file("../secrets.default.properties").inputStream().use { fis ->
                 load(fis)
             }
         }
