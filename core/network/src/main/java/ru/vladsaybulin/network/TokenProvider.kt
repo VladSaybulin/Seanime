@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.network.util.interceptors
+package ru.vladsaybulin.network
 
-import okhttp3.Interceptor
-import okhttp3.Response
-import ru.vladsaybulin.network.common.BuildConfig
-import javax.inject.Inject
+/**
+ * Provides token for authorization
+ */
+interface TokenProvider {
 
-class UserAgentInterceptor @Inject constructor() : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response =
-        chain.request().newBuilder()
-            .addHeader("User-Agent", BuildConfig.SHIKIMORI_USER_AGENT)
-            .build()
-            .let { chain.proceed(it) }
+    /**
+     * Get actual access token
+     */
+    suspend fun getAccessToken(): String?
+
+    /**
+     * Logout if provided actual access token is invalid
+     */
+    suspend fun logout()
 }

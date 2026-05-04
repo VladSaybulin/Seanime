@@ -19,21 +19,30 @@ package ru.vladsaybulin.network.util.interceptors
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
-import ru.vladsaybulin.network.util.addAuthorizationHeader
+import ru.vladsaybulin.network.TokenProvider
+import ru.vladsaybulin.network.util.setAuthorizationBearer
 import javax.inject.Inject
 
-class AuthorizationInterceptor @Inject constructor(
-    private val authorization: ShikimoriAuthorization
-) : Interceptor {
+/**
+ * OkHttp interceptor that adds `Authorization: Bearer <token>` to outgoing requests.
+ *
+ * If [TokenProvider.getAccessToken] returns `null`, the request is sent without
+ * an Authorization header.
+ *
+ * @property tokenProvider Source of the current access token.
+ */
+class AuthorizationInterceptor @Inject constructor(private val tokenProvider: TokenProvider) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        return runBlocking {
-            val accessToken = authorization.getFreshAccessToken()
-                ?: return@runBlocking chain.proceed(chain.request())
-            val request = chain.request().newBuilder()
-                .addAuthorizationHeader(accessToken)
+        val token = runBlocking { tokenProvider.getAccessToken() }
+
+        val request = if (token != null) {
+            chain.request().newBuilder()
+                .setAuthorizationBearer(token)
                 .build()
-            chain.proceed(request)
+        } else {
+            chain.request()
         }
+
+        return chain.proceed(request)
     }
 }
