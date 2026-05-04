@@ -38,7 +38,7 @@ class ShikimoriAuthConnectionBuilder @Inject constructor(
         val conn = URL(uri.toString()).openConnection() as HttpURLConnection
         conn.setConnectTimeout(CONNECTION_TIMEOUT_MS)
         conn.setReadTimeout(READ_TIMEOUT_MS)
-        conn.addRequestProperty(HEADER_USER_AGENT, userAgent)
+        conn.addRequestProperty(BuildConfig.SHIKIMORI_USER_AGENT, userAgent)
         conn.instanceFollowRedirects = false
         return conn
     }
