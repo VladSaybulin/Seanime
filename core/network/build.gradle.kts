@@ -38,7 +38,6 @@ dependencies {
 
     api(projects.core.networkGraphql)
 
-    implementation(projects.core.auth)
     implementation(projects.core.model)
     implementation(projects.core.common)
 
@@ -47,4 +46,9 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
+
+    testImplementation(libs.junit)
+
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }
