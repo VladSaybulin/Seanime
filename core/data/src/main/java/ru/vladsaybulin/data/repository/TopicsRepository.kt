@@ -20,11 +20,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.json.Json
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.domain.repository.TopicsRepository as DomainTopicsRepository
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.linkedAnimeEntityShell
 import ru.vladsaybulin.data.model.linkedMangaEntityShell
@@ -39,6 +37,7 @@ import ru.vladsaybulin.database.models.topic.asExternalModel
 import ru.vladsaybulin.model.topic.Topic
 import ru.vladsaybulin.network.datasource.TopicsDataSource
 import javax.inject.Inject
+import ru.vladsaybulin.core.domain.repository.TopicsRepository as DomainTopicsRepository
 
 class TopicsRepository @Inject constructor(
     private val topicsDataSource: TopicsDataSource,

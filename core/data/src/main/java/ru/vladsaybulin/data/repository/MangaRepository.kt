@@ -16,21 +16,14 @@
 
 package ru.vladsaybulin.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.PagingSource.LoadResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.domain.repository.MangaRepository as DomainMangaRepository
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.data.model.asMangaDetailsEntity
 import ru.vladsaybulin.data.model.asMangaEntity
 import ru.vladsaybulin.data.model.characterEntityShells
@@ -45,8 +38,6 @@ import ru.vladsaybulin.data.model.publisherEntityShells
 import ru.vladsaybulin.data.model.relatedAnimeEntityShells
 import ru.vladsaybulin.data.model.relatedMangaEntityShells
 import ru.vladsaybulin.data.model.userRateEntityShell
-import ru.vladsaybulin.data.util.AbstractShikimoriPagingSource
-import ru.vladsaybulin.data.util.DefaultSearchPagingConfig
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CharacterDao
@@ -66,12 +57,12 @@ import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
-import ru.vladsaybulin.model.manga.MangaWithUserRate
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.datasource.MangaDataSource
 import javax.inject.Inject
+import ru.vladsaybulin.core.domain.repository.MangaRepository as DomainMangaRepository
 
 class MangaRepository @Inject constructor(
     private val mangaDataSource: MangaDataSource,
