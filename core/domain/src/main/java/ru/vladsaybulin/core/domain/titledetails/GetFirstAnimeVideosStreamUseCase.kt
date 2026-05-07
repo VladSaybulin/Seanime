@@ -18,7 +18,7 @@ package ru.vladsaybulin.core.domain.titledetails
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.vladsaybulin.data.repository.AnimeRepository
+import ru.vladsaybulin.core.domain.repository.AnimeRepository
 import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.common.DataSlice
 import javax.inject.Inject

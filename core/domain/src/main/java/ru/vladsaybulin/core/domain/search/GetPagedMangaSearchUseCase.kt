@@ -20,7 +20,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
-import ru.vladsaybulin.data.repository.MangaRepository
+import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.mangaKind

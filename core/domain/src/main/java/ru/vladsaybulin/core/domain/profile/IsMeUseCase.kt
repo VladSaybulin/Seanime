@@ -17,7 +17,7 @@
 package ru.vladsaybulin.core.domain.profile
 
 import kotlinx.coroutines.flow.map
-import ru.vladsaybulin.data.repository.UserRepository
+import ru.vladsaybulin.core.domain.repository.UserRepository
 import javax.inject.Inject
 
 class IsMeUseCase @Inject constructor(private val userRepository: UserRepository) {

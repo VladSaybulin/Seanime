@@ -22,7 +22,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import ru.vladsaybulin.data.repository.CalendarRepository
+import ru.vladsaybulin.core.domain.repository.CalendarRepository
 import ru.vladsaybulin.model.calendar.CalendarItem
 import javax.inject.Inject
 

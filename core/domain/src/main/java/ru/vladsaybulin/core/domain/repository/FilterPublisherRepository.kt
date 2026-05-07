@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-plugins {
-    alias(libs.plugins.seanime.android.library)
-    alias(libs.plugins.seanime.android.hilt)
+package ru.vladsaybulin.core.domain.repository
+
+import ru.vladsaybulin.model.manga.Publisher
+
+interface FilterPublisherRepository {
+    suspend fun getFilterPublisherById(publisherId: Long): Publisher?
+
+    suspend fun getFilterPublishers(): List<Publisher>
 }
 
-android {
-    namespace = "ru.vladsaybulin.core.domain"
-}
-
-dependencies {
-    implementation(projects.core.auth)
-    implementation(projects.core.model)
-    implementation(projects.core.common)
-
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.paging.runtime)
-}

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-plugins {
-    alias(libs.plugins.seanime.android.library)
-    alias(libs.plugins.seanime.android.hilt)
+package ru.vladsaybulin.core.domain.repository
+
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import ru.vladsaybulin.model.request.Request
+import kotlin.time.Duration
+
+interface LastRequestRepository {
+    suspend fun isRequestExpired(request: Request, targetId: Long, ttl: Duration): Boolean
+
+    suspend fun updateLastRequest(
+        request: Request,
+        targetId: Long,
+        requestDate: Instant = Clock.System.now()
+    )
 }
 
-android {
-    namespace = "ru.vladsaybulin.core.domain"
-}
-
-dependencies {
-    implementation(projects.core.auth)
-    implementation(projects.core.model)
-    implementation(projects.core.common)
-
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.paging.runtime)
-}

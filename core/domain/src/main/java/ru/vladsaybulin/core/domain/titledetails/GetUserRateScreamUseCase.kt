@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
-import ru.vladsaybulin.data.repository.UserRateRepository
+import ru.vladsaybulin.core.domain.repository.UserRateRepository
 import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRate

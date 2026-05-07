@@ -20,7 +20,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.json.Json
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -38,6 +37,7 @@ import ru.vladsaybulin.database.models.topic.asExternalModel
 import ru.vladsaybulin.model.topic.Topic
 import ru.vladsaybulin.network.datasource.TopicsDataSource
 import javax.inject.Inject
+import ru.vladsaybulin.core.domain.repository.TopicsRepository as DomainTopicsRepository
 
 class TopicsRepository @Inject constructor(
     private val topicsDataSource: TopicsDataSource,
@@ -48,12 +48,12 @@ class TopicsRepository @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
     private val json: Json,
-) {
-    fun getNewsTopicsStream(): Flow<List<Topic>> = topicsDao.getNewsTopic()
+) : DomainTopicsRepository {
+    override fun getNewsTopicsStream(): Flow<List<Topic>> = topicsDao.getNewsTopic()
         .map { topics -> topics.map(PopulatedTopic::asExternalModel) }
         .flowOn(ioDispatcher)
 
-    suspend fun refreshNewsTopics() {
+    override suspend fun refreshNewsTopics() {
         val freshTopics = topicsDataSource.getTopics(
             limit = 10,
             forumPermalink = "news"

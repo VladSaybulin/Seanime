@@ -38,6 +38,7 @@ import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
+import ru.vladsaybulin.core.domain.repository.UserRateRepository as DomainUserRateRepository
 import ru.vladsaybulin.data.model.CreateUserRateRequest
 import ru.vladsaybulin.data.model.animeEntityOrNullShells
 import ru.vladsaybulin.data.model.asDto
@@ -74,16 +75,16 @@ class UserRateRepository @Inject constructor(
     private val userRepository: UserRepository,
     private val auth: ShikimoriAuthorization,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
-) {
-    fun getInProgressUserRatesStream(limit: Int): Flow<List<UserRateWithEntry>> =
+) : DomainUserRateRepository {
+    override fun getInProgressUserRatesStream(limit: Int): Flow<List<UserRateWithEntry>> =
         userRateDao.getFirstInProgressUserRatesStream(limit)
             .map { it.map(PopulatedUserRate::asExternalModel) }
 
-    fun getPagedAnimeUserRates(
+    override fun getPagedAnimeUserRates(
         status: UserRateStatus,
         orderField: UserRateOrderField,
         order: UserRateOrder,
-        config: PagingConfig = DefaultPagingConfig
+        config: PagingConfig
     ) = getPagedUserRates(
         status = status,
         orderField = orderField,
@@ -94,11 +95,11 @@ class UserRateRepository @Inject constructor(
         loadPage = userRateDataSource::getAnimeUserRates
     )
 
-    fun getPagedMangaUserRates(
+    override fun getPagedMangaUserRates(
         status: UserRateStatus,
         orderField: UserRateOrderField,
         order: UserRateOrder,
-        config: PagingConfig = DefaultPagingConfig
+        config: PagingConfig
     ) = getPagedUserRates(
         status = status,
         orderField = orderField,
@@ -109,7 +110,7 @@ class UserRateRepository @Inject constructor(
         loadPage = userRateDataSource::getMangaUserRates
     )
 
-    fun getAnimeUserRateStream(animeId: Long): Flow<UserRate?> =
+    override fun getAnimeUserRateStream(animeId: Long): Flow<UserRate?> =
         auth.shikimoriAuthState.flatMapLatest { authState ->
 
             if (authState == ShikimoriAuthState.LOGGED_IN) {
@@ -124,7 +125,7 @@ class UserRateRepository @Inject constructor(
             } else flowOf(null)
         }
 
-    fun getMangaUserRateStream(mangaId: Long): Flow<UserRate?> =
+    override fun getMangaUserRateStream(mangaId: Long): Flow<UserRate?> =
         auth.shikimoriAuthState.flatMapLatest { authState ->
 
             if (authState == ShikimoriAuthState.LOGGED_IN) {
@@ -139,11 +140,11 @@ class UserRateRepository @Inject constructor(
             } else flowOf(null)
         }
 
-    fun getAllAnimeUserRateStatusesStream() = userRateDao.getAllAnimeUserRateStatusesStream()
+    override fun getAllAnimeUserRateStatusesStream(): Flow<Map<Long, UserRateStatus>> = userRateDao.getAllAnimeUserRateStatusesStream()
 
-    fun getAllMangaUserRateStatusesStream() = userRateDao.getAllMangaUserRateStatusesStream()
+    override fun getAllMangaUserRateStatusesStream(): Flow<Map<Long, UserRateStatus>> = userRateDao.getAllMangaUserRateStatusesStream()
 
-    suspend fun createUserRate(
+    override suspend fun createUserRate(
         entryType: EntryType,
         entryId: Long,
         userRateValues: UserRateValues
@@ -179,7 +180,7 @@ class UserRateRepository @Inject constructor(
         }
     }
 
-    suspend fun updateUserRate(userRateId: Long, userRateValues: UserRateValues) {
+    override suspend fun updateUserRate(userRateId: Long, userRateValues: UserRateValues) {
         withContext(ioDispatcher) {
             val response = userRateDataSource.updateUserRate(userRateId, userRateValues.asDto())
 
@@ -196,14 +197,14 @@ class UserRateRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteUserRate(userRateId: Long) {
+    override suspend fun deleteUserRate(userRateId: Long) {
         withContext(ioDispatcher) {
             userRateDataSource.deleteUSerRate(userRateId)
             userRateDao.deleteUserRate(userRateId)
         }
     }
 
-    suspend fun refreshInProgressUserRates() {
+    override suspend fun refreshInProgressUserRates() {
         withContext(ioDispatcher) {
             val watchingDeferred = async(ioDispatcher) {
                 userRateDataSource.getUserRates(

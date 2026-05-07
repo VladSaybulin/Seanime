@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers
+import ru.vladsaybulin.core.domain.repository.FilterStudioRepository as DomainFilterStudioRepository
 import ru.vladsaybulin.data.model.asFilterEntity
 import ru.vladsaybulin.data.util.sync
 import ru.vladsaybulin.database.dao.FilterStudioDao
@@ -36,14 +37,14 @@ class FilterStudioRepository @Inject constructor(
     private val filtersStudioDao: FilterStudioDao,
     private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
     @Dispatcher(ShikiDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
-) {
+) : DomainFilterStudioRepository {
 
-    suspend fun getFilterStudioById(studioId: Long): Studio? =
+    override suspend fun getFilterStudioById(studioId: Long): Studio? =
         withContext(ioDispatcher) {
             syncStudios()
             filtersStudioDao.getFilterStudioById(studioId)?.asExternalModel()
         }
-    suspend fun getFilterStudios() = withContext(ioDispatcher) {
+    override suspend fun getFilterStudios(): List<Studio> = withContext(ioDispatcher) {
         syncStudios()
         filtersStudioDao.getAllFilterStudios()
             .map(FilterStudioEntity::asExternalModel)

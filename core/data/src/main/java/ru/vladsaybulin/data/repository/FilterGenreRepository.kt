@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.core.domain.repository.FilterGenreRepository as DomainFilterGenreRepository
 import ru.vladsaybulin.data.model.asFilterEntity
 import ru.vladsaybulin.data.util.sync
 import ru.vladsaybulin.database.dao.FilterGenreDao
@@ -38,14 +39,14 @@ class FilterGenreRepository @Inject constructor(
     private val filtersGenreDao: FilterGenreDao,
     private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
-) {
-    suspend fun getGenreById(entryType: EntryType, genreId: Long): Genre? =
+) : DomainFilterGenreRepository {
+    override suspend fun getGenreById(entryType: EntryType, genreId: Long): Genre? =
         withContext(ioDispatcher) {
             syncGenres(entryType)
             filtersGenreDao.getFilterGenreById(genreId)?.asExternalModel()
         }
 
-    suspend fun getGenres(entryType: EntryType, genreKind: GenreKind): List<Genre> =
+    override suspend fun getGenres(entryType: EntryType, genreKind: GenreKind): List<Genre> =
         withContext(ioDispatcher) {
             syncGenres(entryType)
             filtersGenreDao.getFilterGenresByKind(entryType, genreKind)

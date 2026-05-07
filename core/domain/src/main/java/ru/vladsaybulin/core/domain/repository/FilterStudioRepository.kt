@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-plugins {
-    alias(libs.plugins.seanime.android.library)
-    alias(libs.plugins.seanime.android.hilt)
+package ru.vladsaybulin.core.domain.repository
+
+import ru.vladsaybulin.model.anime.Studio
+
+interface FilterStudioRepository {
+    suspend fun getFilterStudioById(studioId: Long): Studio?
+
+    suspend fun getFilterStudios(): List<Studio>
 }
 
-android {
-    namespace = "ru.vladsaybulin.core.domain"
-}
-
-dependencies {
-    implementation(projects.core.auth)
-    implementation(projects.core.model)
-    implementation(projects.core.common)
-
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.paging.runtime)
-}

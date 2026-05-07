@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-plugins {
-    alias(libs.plugins.seanime.android.library)
-    alias(libs.plugins.seanime.android.hilt)
+package ru.vladsaybulin.core.domain.repository
+
+import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.model.character.CharacterDetails
+
+interface CharacterRepository {
+    fun getCharacterDetails(characterId: Long): Flow<CharacterDetails>
+
+    suspend fun refreshCharacterDetails(characterId: Long)
 }
 
-android {
-    namespace = "ru.vladsaybulin.core.domain"
-}
-
-dependencies {
-    implementation(projects.core.auth)
-    implementation(projects.core.model)
-    implementation(projects.core.common)
-
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.paging.runtime)
-}

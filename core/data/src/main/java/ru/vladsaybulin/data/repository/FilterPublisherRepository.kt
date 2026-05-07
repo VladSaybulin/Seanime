@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.core.domain.repository.FilterPublisherRepository as DomainFilterPublisherRepository
 import ru.vladsaybulin.data.model.asFilterEntity
 import ru.vladsaybulin.data.util.sync
 import ru.vladsaybulin.database.dao.FiltersPublisherDao
@@ -36,15 +37,15 @@ class FilterPublisherRepository @Inject constructor(
     private val filtersPublisherDao: FiltersPublisherDao,
     private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
-) {
+) : DomainFilterPublisherRepository {
 
-    suspend fun getFilterPublisherById(publisherId: Long): Publisher? =
+    override suspend fun getFilterPublisherById(publisherId: Long): Publisher? =
         withContext(ioDispatcher) {
             syncPublishers()
             filtersPublisherDao.getFilterPublisherById(publisherId)?.asExternalModel()
         }
 
-    suspend fun getFilterPublishers(): List<Publisher> = withContext(ioDispatcher) {
+    override suspend fun getFilterPublishers(): List<Publisher> = withContext(ioDispatcher) {
         syncPublishers()
         filtersPublisherDao.getAllFilterPublishers()
             .map(FilterPublisherEntity::asExternalModel)

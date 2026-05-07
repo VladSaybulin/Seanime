@@ -18,23 +18,24 @@ package ru.vladsaybulin.data.repository
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import ru.vladsaybulin.core.domain.repository.LastRequestRepository as DomainLastRequestRepository
 import ru.vladsaybulin.database.dao.LastRequestDao
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
 import ru.vladsaybulin.model.request.Request
 import javax.inject.Inject
 import kotlin.time.Duration
 
-class LastRequestRepository @Inject constructor(private val lastRequestDao: LastRequestDao) {
+class LastRequestRepository @Inject constructor(private val lastRequestDao: LastRequestDao) : DomainLastRequestRepository {
 
-    suspend fun isRequestExpired(request: Request, targetId: Long, ttl: Duration): Boolean {
+    override suspend fun isRequestExpired(request: Request, targetId: Long, ttl: Duration): Boolean {
         val lastRequestDate = lastRequestDao.getLastRequestDate(request, targetId) ?: return true
         return (lastRequestDate + ttl) < Clock.System.now()
     }
 
-    suspend fun updateLastRequest(
+    override suspend fun updateLastRequest(
         request: Request,
         targetId: Long,
-        requestDate: Instant = Clock.System.now()
+        requestDate: Instant
     ) {
         lastRequestDao.insertOrReplaceLastRequestDate(
             LastRequestEntity(

@@ -24,6 +24,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.domain)
     api(projects.core.model)
     implementation(projects.core.auth)
     implementation(projects.core.common)

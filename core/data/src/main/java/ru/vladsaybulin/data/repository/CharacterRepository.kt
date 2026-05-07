@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock
+import ru.vladsaybulin.core.domain.repository.CharacterRepository as DomainCharacterRepository
 import ru.vladsaybulin.data.model.animeCrossRefs
 import ru.vladsaybulin.data.model.animeEntityShells
 import ru.vladsaybulin.data.model.asDetailsEntity
@@ -51,13 +52,13 @@ class CharacterRepository @Inject constructor(
     private val personDao: PersonDao,
     private val lastRequestDao: LastRequestDao,
     private val databaseTransactionRunner: DatabaseTransactionRunner
-) {
-    fun getCharacterDetails(characterId: Long): Flow<CharacterDetails> =
+) : DomainCharacterRepository {
+    override fun getCharacterDetails(characterId: Long): Flow<CharacterDetails> =
         characterDao.getCharacterDetails(characterId)
             .onStart { syncCharacterDetails(characterId) }
             .map { it.asExternalModel() }
 
-    suspend fun refreshCharacterDetails(characterId: Long) {
+    override suspend fun refreshCharacterDetails(characterId: Long) {
         val response = characterDataSource.getCharacterDetails(characterId)
 
         val entity = response.asEntity()

@@ -18,8 +18,8 @@ package ru.vladsaybulin.core.domain
 
 import dagger.Lazy
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.data.repository.AnimeRepository
-import ru.vladsaybulin.data.repository.MangaRepository
+import ru.vladsaybulin.core.domain.repository.AnimeRepository
+import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.person.PersonWithRoles
 import javax.inject.Inject

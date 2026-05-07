@@ -16,8 +16,8 @@
 
 package ru.vladsaybulin.core.domain.home
 
-import ru.vladsaybulin.data.repository.AnimeRepository
-import ru.vladsaybulin.data.repository.LastRequestRepository
+import ru.vladsaybulin.core.domain.repository.AnimeRepository
+import ru.vladsaybulin.core.domain.repository.LastRequestRepository
 import ru.vladsaybulin.model.request.Request
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.hours

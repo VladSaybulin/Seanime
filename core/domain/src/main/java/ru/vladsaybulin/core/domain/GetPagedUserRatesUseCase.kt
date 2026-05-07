@@ -18,7 +18,7 @@ package ru.vladsaybulin.core.domain
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.data.repository.UserRateRepository
+import ru.vladsaybulin.core.domain.repository.UserRateRepository
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField

@@ -24,6 +24,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.core.domain.repository.AnimeRepository as DomainAnimeRepository
 import ru.vladsaybulin.data.model.animeCharacterEntities
 import ru.vladsaybulin.data.model.animePersonRolesEntities
 import ru.vladsaybulin.data.model.relatedAnimeEntityShells
@@ -92,54 +93,54 @@ class AnimeRepository @Inject constructor(
     private val genreDao: GenreDao,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
-) {
-    fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime> =
+) : DomainAnimeRepository {
+    override fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime> =
         SearchPagingSource { page, limit -> loadSearchAnimePage(page, limit, queryMap) }
 
-    fun getOngoingAnimesStream(limit: Int): Flow<List<Anime>> =
+    override fun getOngoingAnimesStream(limit: Int): Flow<List<Anime>> =
         ongoingAnimeDao.getOngoingAnime(limit)
             .map { it.map(AnimeEntity::asExternalModel) }
 
-    fun getAnimeDetailsStream(animeId: Long): Flow<AnimeDetails> =
+    override fun getAnimeDetailsStream(animeId: Long): Flow<AnimeDetails> =
         animeDetailsDao.getAnimeDetails(animeId).map { it.asExternalModel() }
 
-    fun getAnimeMainCharactersStream(animeId: Long): Flow<List<Character>> =
+    override fun getAnimeMainCharactersStream(animeId: Long): Flow<List<Character>> =
         animeDetailsDao.getMainAnimeCharacters(animeId).map { mainCharacters ->
             mainCharacters.map { it.asExternalModel().character }
         }
 
-    fun getAnimeMainAuthorsStream(animeId: Long): Flow<List<PersonWithRoles>> =
+    override fun getAnimeMainAuthorsStream(animeId: Long): Flow<List<PersonWithRoles>> =
         animeDetailsDao.getMainAnimeAuthors(animeId).map { it.map(PopulatedAnimeAuthor::asExternalModel) }
 
-    fun getFirstAnimeRelatedStream(animeId: Long, limit: Int): Flow<List<RelatedTitle>> =
+    override fun getFirstAnimeRelatedStream(animeId: Long, limit: Int): Flow<List<RelatedTitle>> =
         animeDetailsDao.getFirstAnimeRelated(animeId, limit).map { it.map(PopulatedAnimeRelated::asExternalModel) }
 
-    fun getAnimeScreenshots(animeId: Long): Flow<List<Image>> =
+    override fun getAnimeScreenshots(animeId: Long): Flow<List<Image>> =
         animeDetailsDao.getAnimeScreenshots(animeId).map { it.map(AnimeScreenshotEntity::asExternalModel) }
 
-    fun getFirstAnimeVideos(animeId: Long, limit: Int): Flow<List<Video>> =
+    override fun getFirstAnimeVideos(animeId: Long, limit: Int): Flow<List<Video>> =
         animeDetailsDao.getFirstAnimeVideos(animeId, limit).map { it.map(AnimeVideoEntity::asExternalModel) }
 
-    fun getSimilarAnimes(animeId: Long): Flow<List<Anime>> =
+    override fun getSimilarAnimes(animeId: Long): Flow<List<Anime>> =
         animeDetailsDao.getSimilarAnimes(animeId).map { it.map(PopulatedSimilarAnime::asExternalModel) }
 
-    fun getAllAnimeAuthors(animeId: Long): Flow<List<PersonWithRoles>> =
+    override fun getAllAnimeAuthors(animeId: Long): Flow<List<PersonWithRoles>> =
         animeDetailsDao.getAllAnimeAuthors(animeId)
             .map { it.map(PopulatedAnimeAuthor::asExternalModel) }
 
-    fun getAllAnimeRelatedTitles(animeId: Long): Flow<List<RelatedTitle>> =
+    override fun getAllAnimeRelatedTitles(animeId: Long): Flow<List<RelatedTitle>> =
         animeDetailsDao.getAllAnimeRelatedTitles(animeId)
             .map { it.map(PopulatedAnimeRelated::asExternalModel) }
 
-    fun getAllAnimeCharacters(animeId: Long): Flow<List<CharacterWithRole>> =
+    override fun getAllAnimeCharacters(animeId: Long): Flow<List<CharacterWithRole>> =
         animeDetailsDao.getAllAnimeCharacters(animeId)
             .map { it.map(PopulatedAnimeCharacter::asExternalModel) }
 
-    fun getAllAnimeVideos(animeId: Long): Flow<List<Video>> =
+    override fun getAllAnimeVideos(animeId: Long): Flow<List<Video>> =
         animeDetailsDao.getAllAnimeVideos(animeId)
             .map { it.map(AnimeVideoEntity::asExternalModel) }
 
-    suspend fun refreshAnimeDetails(animeId: Long) {
+    override suspend fun refreshAnimeDetails(animeId: Long) {
         withContext(ioDispatcher) {
             val response = animeDataSource.getAnimeDetails(animeId)
 
@@ -183,7 +184,7 @@ class AnimeRepository @Inject constructor(
         }
     }
 
-    suspend fun refreshAnimeRoles(animeId: Long) {
+    override suspend fun refreshAnimeRoles(animeId: Long) {
         withContext(ioDispatcher) {
             val response = animeDataSource.getAnimeRoles(animeId)
 
@@ -205,7 +206,7 @@ class AnimeRepository @Inject constructor(
         }
     }
 
-    suspend fun refreshSimilarAnimes(animeId: Long) {
+    override suspend fun refreshSimilarAnimes(animeId: Long) {
         withContext(ioDispatcher) {
             val response = animeDataSource.getSimilarAnimes(animeId)
 
@@ -221,7 +222,7 @@ class AnimeRepository @Inject constructor(
         }
     }
 
-    suspend fun refreshOngoingAnimes(limit: Int) {
+    override suspend fun refreshOngoingAnimes(limit: Int) {
         val response = animeDataSource.getAnime(
             page = 1,
             limit = 50,

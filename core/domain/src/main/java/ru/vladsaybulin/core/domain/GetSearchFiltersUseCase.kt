@@ -16,7 +16,7 @@
 
 package ru.vladsaybulin.core.domain
 
-import ru.vladsaybulin.data.repository.FiltersRepository
+import ru.vladsaybulin.core.domain.repository.FiltersRepository
 import ru.vladsaybulin.model.search.Filters
 import ru.vladsaybulin.model.search.SearchType
 import javax.inject.Inject
