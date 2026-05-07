@@ -27,8 +27,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -38,7 +36,7 @@ import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetFirstAnimeVideosStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetFirstTitleRelatedStreamUseCase
-import ru.vladsaybulin.core.domain.titledetails.GetUserRateScreamUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetUserRateStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Details
@@ -49,7 +47,6 @@ import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.MangaRepository
 import ru.vladsaybulin.data.repository.UserRateRepository
 import ru.vladsaybulin.feature.title.details.navigation.TitleDetailsScreenRoute
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
@@ -65,7 +62,7 @@ class TitleDetailsViewModel @Inject constructor(
     getFirstTitleRelatedStreamUseCase: GetFirstTitleRelatedStreamUseCase,
     getFirstAnimeVideosStreamUseCase: Lazy<GetFirstAnimeVideosStreamUseCase>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
-    getUserRateScreamUseCase: GetUserRateScreamUseCase
+    getUserRateStreamUseCase: GetUserRateStreamUseCase
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<TitleDetailsScreenRoute>()
@@ -152,7 +149,7 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = SimilarState.Loading
         )
 
-    val userRateState = getUserRateScreamUseCase(route.titleType, route.titleId).map {
+    val userRateState = getUserRateStreamUseCase(route.titleType, route.titleId).map {
         when (it) {
             UserRateResult.NotAuthorized -> UserRateState.NotAuthorized
             is UserRateResult.Success -> it.userRate?.let(UserRateState::Success) ?: UserRateState.NoUserRate

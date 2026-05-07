@@ -27,7 +27,7 @@ import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRate
 import javax.inject.Inject
 
-class GetUserRateScreamUseCase @Inject constructor(
+class GetUserRateStreamUseCase @Inject constructor(
     private val auth: ShikimoriAuthorization,
     private val userRateRepository: UserRateRepository
 ) {
