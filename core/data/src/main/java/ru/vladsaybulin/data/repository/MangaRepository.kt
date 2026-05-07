@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.core.domain.repository.MangaRepository as DomainMangaRepository
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.data.model.asMangaDetailsEntity
@@ -83,35 +84,35 @@ class MangaRepository @Inject constructor(
     private val genreDao: GenreDao,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
-) {
+) : DomainMangaRepository {
 
-    fun mangaSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Manga> =
+    override fun mangaSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Manga> =
         SearchPagingSource { page, limit -> loadMangaSearchPage(page, limit, queryMap) }
 
-    fun getMangaDetailsStream(mangaId: Long): Flow<MangaDetails> =
+    override fun getMangaDetailsStream(mangaId: Long): Flow<MangaDetails> =
         mangaDetailsDao.getMangaDetails(mangaId).map { it.asExternalModel() }
 
-    fun getFirstMangaRelatedStream(mangaId: Long, limit: Int): Flow<List<RelatedTitle>> =
+    override fun getFirstMangaRelatedStream(mangaId: Long, limit: Int): Flow<List<RelatedTitle>> =
         mangaDetailsDao.getFirstMangaRelated(mangaId, limit)
             .map { it.map(PopulatedMangaRelated::asExternalModel) }
 
-    fun getMangaMainCharactersStream(mangaId: Long): Flow<List<Character>> =
+    override fun getMangaMainCharactersStream(mangaId: Long): Flow<List<Character>> =
         mangaDetailsDao.getMainMangaCharacters(mangaId)
             .map { entities -> entities.map { it.asExternalModel().character } }
 
-    fun getMangaMainAuthorsStream(mangaId: Long): Flow<List<PersonWithRoles>> =
+    override fun getMangaMainAuthorsStream(mangaId: Long): Flow<List<PersonWithRoles>> =
         mangaDetailsDao.getMainMangaAuthors(mangaId)
             .map { it.map(PopulatedMangaAuthor::asExternalModel) }
 
-    fun getSimilarMangasStream(mangaId: Long): Flow<List<Manga>> =
+    override fun getSimilarMangasStream(mangaId: Long): Flow<List<Manga>> =
         mangaDetailsDao.getSimilarMangas(mangaId)
             .map { it.map(PopulatedSimilarManga::asExternalModel) }
 
-    fun getAllMangaAuthors(mangaId: Long): Flow<List<PersonWithRoles>> =
+    override fun getAllMangaAuthors(mangaId: Long): Flow<List<PersonWithRoles>> =
         mangaDetailsDao.getAllMangaAuthors(mangaId)
             .map { it.map(PopulatedMangaAuthor::asExternalModel) }
 
-    suspend fun refreshMangaDetails(mangaId: Long) {
+    override suspend fun refreshMangaDetails(mangaId: Long) {
         withContext(ioDispatcher) {
             val response = mangaDataSource.getMangaDetails(mangaId)
 
@@ -148,7 +149,7 @@ class MangaRepository @Inject constructor(
         }
     }
 
-    suspend fun refreshMangaRoles(mangaId: Long) {
+    override suspend fun refreshMangaRoles(mangaId: Long) {
         withContext(ioDispatcher) {
             val response = mangaDataSource.getMangaRoles(mangaId)
 
@@ -170,7 +171,7 @@ class MangaRepository @Inject constructor(
         }
     }
 
-    suspend fun refreshSimilarMangas(mangaId: Long) {
+    override suspend fun refreshSimilarMangas(mangaId: Long) {
         withContext(ioDispatcher) {
             val response = mangaDataSource.getSimilarManga(mangaId)
 
@@ -210,11 +211,11 @@ class MangaRepository @Inject constructor(
         return mangaEntities.map(MangaEntity::asExternalModel)
     }
 
-    fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedTitle>> =
+    override fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedTitle>> =
         mangaDetailsDao.getAllMangaRelatedTitles(mangaId)
             .map { it.map(PopulatedMangaRelated::asExternalModel) }
 
-    fun getAllMangaCharacters(mangaId: Long): Flow<List<CharacterWithRole>> =
+    override fun getAllMangaCharacters(mangaId: Long): Flow<List<CharacterWithRole>> =
         mangaDetailsDao.getAllMangaCharacters(mangaId)
             .map { it.map(PopulatedMangaCharacter::asExternalModel) }
 }

@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.core.domain.repository.CalendarRepository as DomainCalendarRepository
 import ru.vladsaybulin.data.model.animeShell
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.util.sync
@@ -43,14 +44,14 @@ class CalendarRepository @Inject constructor(
     private val animeDao: AnimeDao,
     private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
-) {
-    fun getCalendarItems(): Flow<List<CalendarItem>> =
+) : DomainCalendarRepository {
+    override fun getCalendarItems(): Flow<List<CalendarItem>> =
         calendarDao.getAllCalendarItems()
             .onStart { syncCalendarItems() }
             .map { items -> items.map(PopulatedCalendarItem::asExternalModel) }
             .flowOn(ioDispatcher)
 
-    suspend fun refreshCalendarItems() {
+    override suspend fun refreshCalendarItems() {
         val response = calendarDataSource.getAllCalendarItems()
         calendarDao.deleteAllItems()
         animeDao.insertOrIgnoreAnimes(response.map(NetworkCalendarItem::animeShell))

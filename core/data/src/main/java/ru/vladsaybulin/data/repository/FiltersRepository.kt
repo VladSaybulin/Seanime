@@ -16,6 +16,7 @@
 
 package ru.vladsaybulin.data.repository
 
+import ru.vladsaybulin.core.domain.repository.FiltersRepository as DomainFiltersRepository
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.anime.Studio
@@ -41,7 +42,7 @@ class FiltersRepository @Inject constructor(
     private val filterGenreRepository: FilterGenreRepository,
     private val filterStudioRepository: FilterStudioRepository,
     private val filterPublisherRepository: FilterPublisherRepository
-) {
+) : DomainFiltersRepository {
 
     private var cachedAnimeFilters: Filters? = null
 
@@ -49,7 +50,7 @@ class FiltersRepository @Inject constructor(
 
     private var cachedRanobeFilters: Filters? = null
 
-    suspend fun getAnimeFilters() = if (cachedAnimeFilters == null) {
+    override suspend fun getAnimeFilters(): Filters = if (cachedAnimeFilters == null) {
         Filters(
             animeKindOptions = animeKindOptions(),
             statusOptions = animeStatusOptions(),
@@ -64,7 +65,7 @@ class FiltersRepository @Inject constructor(
         ).also { cachedAnimeFilters = it }
     } else cachedAnimeFilters!!
 
-    suspend fun getMangaFilters() = if (cachedMangaFilters == null) {
+    override suspend fun getMangaFilters(): Filters = if (cachedMangaFilters == null) {
         Filters(
             mangaKindOptions = mangaKindOptions(),
             statusOptions = mangaStatusOptions(),
@@ -76,7 +77,7 @@ class FiltersRepository @Inject constructor(
         ).also { cachedMangaFilters = it }
     } else cachedMangaFilters!!
 
-    suspend fun getRanobeFilters() = if (cachedRanobeFilters == null) {
+    override suspend fun getRanobeFilters(): Filters = if (cachedRanobeFilters == null) {
         Filters(
             mangaKindOptions = ranobeKindOptions(),
             statusOptions = mangaStatusOptions(),

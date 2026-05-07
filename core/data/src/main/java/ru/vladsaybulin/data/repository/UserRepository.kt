@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.core.domain.repository.UserRepository as DomainUserRepository
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.database.dao.UsersDao
@@ -45,21 +46,21 @@ class UserRepository @Inject constructor(
     private val prefsDataSource: SeanimePreferencesDataSource,
     private val shikimoriAuthorization: ShikimoriAuthorization,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
-) {
-    suspend fun getMyId(): Long? = getMyIdStream().first()
+) : DomainUserRepository {
+    override suspend fun getMyId(): Long? = getMyIdStream().first()
 
-    fun getMyIdStream(): Flow<Long?> = shikimoriAuthorization.shikimoriAuthState.map {
+    override fun getMyIdStream(): Flow<Long?> = shikimoriAuthorization.shikimoriAuthState.map {
         if (it == ShikimoriAuthState.LOGGED_IN) requireMyId() else null
     }
 
-    fun getMeStream(): Flow<BriefUser?> = getMyIdStream()
+    override fun getMeStream(): Flow<BriefUser?> = getMyIdStream()
         .flatMapLatest { myId ->
             myId?.let { nonNullMyId ->
                 usersDao.getUserById(nonNullMyId).map { it.asExternalModel() }
             } ?: flowOf(null)
         }
 
-    fun getUserStream(id: Long): Flow<BriefUser> =
+    override fun getUserStream(id: Long): Flow<BriefUser> =
         usersDao.getUserById(id).mapNotNull { it.asExternalModel() }
             .onStart { refreshUserBrief(id) }
 
