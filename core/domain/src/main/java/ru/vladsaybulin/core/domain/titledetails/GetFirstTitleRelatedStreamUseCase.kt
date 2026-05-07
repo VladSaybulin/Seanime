@@ -19,8 +19,8 @@ package ru.vladsaybulin.core.domain.titledetails
 import dagger.Lazy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.vladsaybulin.data.repository.AnimeRepository
-import ru.vladsaybulin.data.repository.MangaRepository
+import ru.vladsaybulin.core.domain.repository.AnimeRepository
+import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.model.common.DataSlice
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.related.RelatedTitle

@@ -16,7 +16,7 @@
 
 package ru.vladsaybulin.core.domain.home
 
-import ru.vladsaybulin.data.repository.AnimeRepository
+import ru.vladsaybulin.core.domain.repository.AnimeRepository
 import javax.inject.Inject
 
 class GetOngoingAnimesStreamUseCase @Inject constructor(private val animeRepository: AnimeRepository) {

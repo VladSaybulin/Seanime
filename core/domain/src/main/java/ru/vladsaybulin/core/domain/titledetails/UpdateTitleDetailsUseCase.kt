@@ -22,9 +22,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.data.repository.AnimeRepository
-import ru.vladsaybulin.data.repository.LastRequestRepository
-import ru.vladsaybulin.data.repository.MangaRepository
+import ru.vladsaybulin.core.domain.repository.AnimeRepository
+import ru.vladsaybulin.core.domain.repository.LastRequestRepository
+import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.request.Request
 import javax.inject.Inject

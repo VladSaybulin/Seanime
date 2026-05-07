@@ -17,7 +17,7 @@
 package ru.vladsaybulin.core.domain.home
 
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.data.repository.UserRateRepository
+import ru.vladsaybulin.core.domain.repository.UserRateRepository
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import javax.inject.Inject
 

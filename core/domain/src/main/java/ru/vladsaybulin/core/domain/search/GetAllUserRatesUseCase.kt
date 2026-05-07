@@ -16,7 +16,7 @@
 
 package ru.vladsaybulin.core.domain.search
 
-import ru.vladsaybulin.data.repository.UserRateRepository
+import ru.vladsaybulin.core.domain.repository.UserRateRepository
 import ru.vladsaybulin.model.search.SearchType
 import javax.inject.Inject
 
