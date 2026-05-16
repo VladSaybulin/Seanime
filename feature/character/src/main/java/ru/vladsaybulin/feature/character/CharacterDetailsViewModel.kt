@@ -24,8 +24,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import ru.vladsaybulin.data.repository.CharacterRepository
+import ru.vladsaybulin.common.ui.tryRefresh
+import ru.vladsaybulin.core.domain.character.GetCharacterDetailsStreamUseCase
+import ru.vladsaybulin.core.domain.character.RefreshCharacterDetailsUseCase
 import ru.vladsaybulin.feature.character.navigation.CharacterDetailsScreenRoute
 import ru.vladsaybulin.model.character.CharacterDetails
 import javax.inject.Inject
@@ -33,12 +36,14 @@ import javax.inject.Inject
 @HiltViewModel
 class CharacterDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    characterRepository: CharacterRepository,
+    characterDetailsStream: GetCharacterDetailsStreamUseCase,
+    private val refreshCharacterDetails: RefreshCharacterDetailsUseCase,
 ): ViewModel() {
 
     private val route = savedStateHandle.toRoute<CharacterDetailsScreenRoute>()
 
-    val uiState = characterRepository.getCharacterDetails(route.characterId)
+    val uiState = characterDetailsStream(route.characterId)
+        .onStart { internalRefresh(false) }
         .map<CharacterDetails, CharacterDetailsUiState> { CharacterDetailsUiState.Success(it) }
         .catch {
             emit(CharacterDetailsUiState.Error(it))
@@ -49,4 +54,12 @@ class CharacterDetailsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(),
             initialValue = CharacterDetailsUiState.Loading
         )
+
+    private suspend fun internalRefresh(forceRefresh: Boolean) {
+        tryRefresh(
+            catch = {  }
+        ) {
+            refreshCharacterDetails(route.characterId, forceRefresh)
+        }
+    }
 }

@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-plugins {
-    alias(libs.plugins.seanime.android.feature)
-    alias(libs.plugins.seanime.android.library.compose)
-    alias(libs.plugins.seanime.android.hilt)
-}
+package ru.vladsaybulin.core.domain.character
 
-android {
-    namespace = "ru.vladsaybulin.feature.character"
-}
+import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.core.domain.repository.CharacterRepository
+import ru.vladsaybulin.model.character.CharacterDetails
+import javax.inject.Inject
 
-dependencies {
-    implementation(projects.core.ui2.entry)
-    implementation(projects.core.common)
-    implementation(projects.core.data)
-    implementation(projects.core.navigation)
-    implementation(libs.coil.kt.compose)
+class GetCharacterDetailsStreamUseCase @Inject constructor(
+    private val characterRepository: CharacterRepository
+) {
+    operator fun invoke(characterId: Long): Flow<CharacterDetails> {
+        return characterRepository.getCharacterDetails(characterId)
+    }
 }
