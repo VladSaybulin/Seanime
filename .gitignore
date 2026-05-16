@@ -2,6 +2,7 @@
 .gradle
 /local.properties
 /.idea/*
+!.idea/copyright
 #/.idea/caches
 #/.idea/libraries
 #/.idea/modules.xml
@@ -15,6 +16,7 @@
 .cxx
 local.properties
 secret.properties
+app/google-services.json
 
 # Project exclude paths
 /gradle/build-logic/convention/build/
