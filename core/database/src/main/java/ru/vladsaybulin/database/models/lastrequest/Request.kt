@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.model.request
+package ru.vladsaybulin.database.models.lastrequest
 
-enum class Request {
-    ANIME, MANGA, CHARACTER, ANIME_ONGOINGS, NEWS
-}
+import androidx.room.ColumnInfo
+
+data class Request(
+    @ColumnInfo("type")
+    val type: RequestType,
+
+    @ColumnInfo("target_id")
+    val targetId: Long = 0,
+)

@@ -16,24 +16,16 @@
 
 package ru.vladsaybulin.database.models.lastrequest
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-
-@Entity(
-    tableName = "last_requests",
-    primaryKeys = ["target_id", "type"]
-)
-class LastRequestEntity(
-
-    @ColumnInfo("type")
-    val type: RequestType,
-
-    @ColumnInfo("target_id")
-    val targetId: Long = 0,
-
-    @ColumnInfo("date")
-    val date: Instant = Clock.System.now()
-)
+enum class RequestType(val serializedValue: String) {
+    Anime("anime"),
+    AnimeRoles("anime_roles"),
+    SimilarAnimes("similar_animes"),
+    Manga("manga"),
+    MangaRoles("manga_roles"),
+    SimilarMangas("similar_mangas"),
+    Character("character"),
+    OngoingAnimes("ongoing_animes"),
+    News("news"),
+    Calendar("calendar"),
+    InProgressRates("in_progress_rates"),
+}
