@@ -15,8 +15,8 @@
 .externalNativeBuild
 .cxx
 local.properties
-secret.properties
-app/google-services.json
+/secrets.properties
+/app/google-services.json
 
 # Project exclude paths
 /gradle/build-logic/convention/build/
