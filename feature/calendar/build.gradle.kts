@@ -29,6 +29,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.navigation)
     implementation(projects.core.ui2.entry)
+    implementation(projects.core.common)
 
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)

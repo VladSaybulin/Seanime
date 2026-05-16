@@ -26,12 +26,14 @@ import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.core.domain.repository.CalendarRepository as DomainCalendarRepository
 import ru.vladsaybulin.data.model.animeShell
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.data.util.sync
+import ru.vladsaybulin.data.util.sync.SyncHelper
+import ru.vladsaybulin.data.util.sync.UpdateScope
+import ru.vladsaybulin.data.util.sync.sync
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CalendarDao
 import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
 import ru.vladsaybulin.database.models.calendar.asExternalModel
-import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
+import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.model.calendar.CalendarItem
 import ru.vladsaybulin.network.datasource.CalendarDataSource
 import ru.vladsaybulin.network.models.calendar.NetworkCalendarItem
@@ -42,29 +44,31 @@ class CalendarRepository @Inject constructor(
     private val calendarDataSource: CalendarDataSource,
     private val calendarDao: CalendarDao,
     private val animeDao: AnimeDao,
-    private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
+    private val syncHelper: SyncHelper,
+    @param:Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : DomainCalendarRepository {
     override fun getCalendarItems(): Flow<List<CalendarItem>> =
         calendarDao.getAllCalendarItems()
-            .onStart { syncCalendarItems() }
             .map { items -> items.map(PopulatedCalendarItem::asExternalModel) }
             .flowOn(ioDispatcher)
 
-    override suspend fun refreshCalendarItems() {
-        val response = calendarDataSource.getAllCalendarItems()
-        calendarDao.deleteAllItems()
-        animeDao.insertOrIgnoreAnimes(response.map(NetworkCalendarItem::animeShell))
-        calendarDao.insertCalendarItems(response.map(NetworkCalendarItem::asEntity))
-    }
+    override suspend fun refreshCalendarItems(force: Boolean) = syncHelper.sync(
+        requestType = RequestType.Calendar,
+        forceRefresh = force,
+        update = { updateCalendarItems() }
+    )
 
-    private suspend fun syncCalendarItems() {
-        sync(
-            ttl = CALENDAR_TTL,
-            lastRequestDateFlow = seanimePreferencesDataSource.calendarLastRequestDate,
-            updateLastRequest = seanimePreferencesDataSource::setLastCalendarRequestDate,
-            refresh = ::refreshCalendarItems
-        )
+    private suspend fun UpdateScope.updateCalendarItems() {
+        val response = calendarDataSource.getAllCalendarItems()
+
+        val calendarItems = response.map(NetworkCalendarItem::asEntity)
+        val animes = response.map(NetworkCalendarItem::animeShell)
+
+        write {
+            animeDao.insertOrIgnoreAnimes(animes)
+            calendarDao.deleteAllItems()
+            calendarDao.insertCalendarItems(calendarItems)
+        }
     }
 }
 

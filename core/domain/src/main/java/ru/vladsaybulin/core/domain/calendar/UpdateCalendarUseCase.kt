@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.core.domain.calendar
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.calendar.CalendarItem
+import ru.vladsaybulin.core.domain.repository.CalendarRepository
+import javax.inject.Inject
 
-interface CalendarRepository {
-    fun getCalendarItems(): Flow<List<CalendarItem>>
-
-    suspend fun refreshCalendarItems(force: Boolean)
+class RefreshCalendarUseCase @Inject constructor(private val calendarRepository: CalendarRepository) {
+    suspend operator fun invoke(force: Boolean) {
+        calendarRepository.refreshCalendarItems(force)
+    }
 }
-
