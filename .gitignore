@@ -18,6 +18,12 @@ local.properties
 /secrets.properties
 /app/google-services.json
 
+bin/
+gen/
+out/
+build/
+generated/
+
 # Project exclude paths
 /gradle/build-logic/convention/build/
 /gradle/build-logic/convention/build/classes/kotlin/main/
