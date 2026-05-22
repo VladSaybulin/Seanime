@@ -27,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthState
@@ -41,7 +42,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 class ShikimoriAuthorization @Inject internal constructor(
@@ -67,7 +67,7 @@ class ShikimoriAuthorization @Inject internal constructor(
 
     suspend fun getFreshAccessToken(): String? = try {
         if (refreshAccessTokenMutex.tryLock()) {
-            suspendCoroutine { cont ->
+            suspendCancellableCoroutine { cont ->
                 appAuthState?.performActionWithFreshTokens(
                     service.get(),
                     client.get()
@@ -78,7 +78,7 @@ class ShikimoriAuthorization @Inject internal constructor(
                     } else {
                         cont.resume(freshAccessToken)
                     }
-                }
+                } ?: cont.resume(null)
             }
         } else {
             refreshAccessTokenMutex.lock()
