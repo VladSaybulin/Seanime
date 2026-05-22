@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asMangaDetailsEntity
 import ru.vladsaybulin.data.model.asMangaEntity
@@ -38,7 +39,9 @@ import ru.vladsaybulin.data.model.publisherEntityShells
 import ru.vladsaybulin.data.model.relatedAnimeEntityShells
 import ru.vladsaybulin.data.model.relatedMangaEntityShells
 import ru.vladsaybulin.data.model.userRateEntityShell
-import ru.vladsaybulin.database.DatabaseTransactionRunner
+import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.UpdateScope
+import ru.vladsaybulin.data.request.cachedKey
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CharacterDao
 import ru.vladsaybulin.database.dao.GenreDao
@@ -46,6 +49,7 @@ import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.UserRateDao
+import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
 import ru.vladsaybulin.database.models.manga.PopulatedMangaAuthor
@@ -73,7 +77,7 @@ class MangaRepository @Inject constructor(
     private val characterDao: CharacterDao,
     private val mangaDao: MangaDao,
     private val genreDao: GenreDao,
-    private val databaseTransactionRunner: DatabaseTransactionRunner,
+    private val coordinator: RequestCoordinator,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : DomainMangaRepository {
 
@@ -103,7 +107,28 @@ class MangaRepository @Inject constructor(
         mangaDetailsDao.getAllMangaAuthors(mangaId)
             .map { it.map(PopulatedMangaAuthor::asExternalModel) }
 
-    override suspend fun refreshMangaDetails(mangaId: Long) {
+    override suspend fun refreshMangaDetails(mangaId: Long, force: Boolean) = coordinator.sync(
+        key = cachedKey(RequestType.Manga, mangaId),
+        forceRefresh = force,
+        ttlStrategy = TTLStrategies.TitleDetails,
+        block = { updateMangaDetails(mangaId) }
+    )
+
+    override suspend fun refreshMangaRoles(mangaId: Long, force: Boolean) = coordinator.sync(
+        key = cachedKey(RequestType.MangaRoles, mangaId),
+        forceRefresh = force,
+        ttlStrategy = TTLStrategies.TitleDetails,
+        block = { updateMangaRoles(mangaId) }
+    )
+
+    override suspend fun refreshSimilarMangas(mangaId: Long, force: Boolean) = coordinator.sync(
+        key = cachedKey(RequestType.SimilarMangas, mangaId),
+        forceRefresh = force,
+        ttlStrategy = TTLStrategies.TitleDetails,
+        block = { updateSimilarMangas(mangaId) }
+    )
+
+    private suspend fun UpdateScope.updateMangaDetails(mangaId: Long) {
         withContext(ioDispatcher) {
             val response = mangaDataSource.getMangaDetails(mangaId)
 
@@ -119,7 +144,7 @@ class MangaRepository @Inject constructor(
             val studioCrossRefs = response.mangaPublisherCrossRefs()
             val mangaRelatedEntities = response.mangaRelatedEntities()
 
-            databaseTransactionRunner {
+            write {
                 mangaDao.upsertManga(mangaEntity)
                 mangaDetailsDao.upsertMangaDetails(mangaDetailsEntity)
 
@@ -140,7 +165,7 @@ class MangaRepository @Inject constructor(
         }
     }
 
-    override suspend fun refreshMangaRoles(mangaId: Long) {
+    private suspend fun UpdateScope.updateMangaRoles(mangaId: Long) {
         withContext(ioDispatcher) {
             val response = mangaDataSource.getMangaRoles(mangaId)
 
@@ -150,7 +175,7 @@ class MangaRepository @Inject constructor(
             val characterEntities = response.characterEntityShells()
             val animeCharacterEntities = response.mangaCharacterEntities(mangaId)
 
-            databaseTransactionRunner {
+            write {
                 mangaDetailsDao.deleteMangaPersonRoles(mangaId)
                 mangaDetailsDao.deleteMangaCharacters(mangaId)
 
@@ -162,14 +187,14 @@ class MangaRepository @Inject constructor(
         }
     }
 
-    override suspend fun refreshSimilarMangas(mangaId: Long) {
+    private suspend fun UpdateScope.updateSimilarMangas(mangaId: Long) {
         withContext(ioDispatcher) {
             val response = mangaDataSource.getSimilarManga(mangaId)
 
             val mangas = response.map { it.asEntity() }
             val crossRefs = response.map { MangaSimilarMangaCrossRef(mangaId, it.id) }
 
-            databaseTransactionRunner {
+            write {
                 mangaDetailsDao.deleteMangaSimilarMangaCrossRef(mangaId)
 
                 mangaDao.insertOrIgnoreMangas(mangas)

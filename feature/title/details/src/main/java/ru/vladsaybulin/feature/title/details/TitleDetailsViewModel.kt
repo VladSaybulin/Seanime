@@ -74,7 +74,7 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = false
         )
 
-    private val initialRefreshing = updateTitleDetailsUseCase(route.titleType, route.titleId)
+    private val initialRefreshing = updateTitleDetailsUseCase(route.titleType, route.titleId, false)
         .shareIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily

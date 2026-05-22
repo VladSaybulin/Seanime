@@ -55,12 +55,12 @@ interface AnimeRepository {
 
     fun getAllAnimeVideos(animeId: Long): Flow<List<Video>>
 
-    suspend fun refreshAnimeDetails(animeId: Long)
+    suspend fun refreshAnimeDetails(animeId: Long, force: Boolean)
 
-    suspend fun refreshAnimeRoles(animeId: Long)
+    suspend fun refreshAnimeRoles(animeId: Long, force: Boolean)
 
-    suspend fun refreshSimilarAnimes(animeId: Long)
+    suspend fun refreshSimilarAnimes(animeId: Long, force: Boolean)
 
-    suspend fun refreshOngoingAnimes(limit: Int)
+    suspend fun refreshOngoingAnimes(limit: Int, force: Boolean)
 }
 

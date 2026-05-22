@@ -24,10 +24,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.domain.repository.AnimeRepository as DomainAnimeRepository
+import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.animeCharacterEntities
+import ru.vladsaybulin.data.model.animeGenresCrossReferences
 import ru.vladsaybulin.data.model.animePersonRolesEntities
-import ru.vladsaybulin.data.model.relatedAnimeEntityShells
+import ru.vladsaybulin.data.model.animeRelatedEntities
 import ru.vladsaybulin.data.model.animeScreenshotEntityShells
 import ru.vladsaybulin.data.model.animeStudioCrossRefs
 import ru.vladsaybulin.data.model.animeVideoEntityShells
@@ -37,14 +38,15 @@ import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.data.model.characterEntityShells
 import ru.vladsaybulin.data.model.genreEntityShells
-import ru.vladsaybulin.data.model.animeGenresCrossReferences
 import ru.vladsaybulin.data.model.personEntityShells
-import ru.vladsaybulin.data.model.animeRelatedEntities
+import ru.vladsaybulin.data.model.relatedAnimeEntityShells
 import ru.vladsaybulin.data.model.relatedMangaEntityShells
 import ru.vladsaybulin.data.model.studioEntityShells
 import ru.vladsaybulin.data.model.userRateEntityShell
+import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.UpdateScope
+import ru.vladsaybulin.data.request.cachedKey
 import ru.vladsaybulin.data.util.AbstractShikimoriPagingSource
-import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.AnimeDetailsDao
 import ru.vladsaybulin.database.dao.CharacterDao
@@ -63,6 +65,7 @@ import ru.vladsaybulin.database.models.anime.PopulatedAnimeCharacter
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeRelated
 import ru.vladsaybulin.database.models.anime.PopulatedSimilarAnime
 import ru.vladsaybulin.database.models.anime.asExternalModel
+import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
 import ru.vladsaybulin.model.anime.Video
@@ -79,6 +82,7 @@ import ru.vladsaybulin.network.models.anime.NetworkAnime
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
+import ru.vladsaybulin.core.domain.repository.AnimeRepository as DomainAnimeRepository
 
 @Singleton
 class AnimeRepository @Inject constructor(
@@ -91,8 +95,8 @@ class AnimeRepository @Inject constructor(
     private val characterDao: CharacterDao,
     private val mangaDao: MangaDao,
     private val genreDao: GenreDao,
-    private val databaseTransactionRunner: DatabaseTransactionRunner,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
+    private val coordinator: RequestCoordinator,
+    @param:Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : DomainAnimeRepository {
     override fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime> =
         SearchPagingSource { page, limit -> loadSearchAnimePage(page, limit, queryMap) }
@@ -140,89 +144,116 @@ class AnimeRepository @Inject constructor(
         animeDetailsDao.getAllAnimeVideos(animeId)
             .map { it.map(AnimeVideoEntity::asExternalModel) }
 
-    override suspend fun refreshAnimeDetails(animeId: Long) {
-        withContext(ioDispatcher) {
-            val response = animeDataSource.getAnimeDetails(animeId)
+    override suspend fun refreshAnimeDetails(animeId: Long, force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.Anime, animeId),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.TitleDetails,
+            block = { updateAnimeDetails(animeId) },
+        )
+    }
 
-            val animeEntity = response.asAnimeEntity()
-            val animeDetailsEntity = response.asAnimeDetailsEntity()
+    override suspend fun refreshAnimeRoles(animeId: Long, force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.AnimeRoles, animeId),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.TitleDetails,
+            block = { updateAnimeRoles(animeId) }
+        )
+    }
 
-            val genresEntities = response.genreEntityShells()
-            val studiosEntities = response.studioEntityShells()
-            val relatedAnimesEntities = response.relatedAnimeEntityShells()
-            val relatedMangasEntities = response.relatedMangaEntityShells()
-            val screenshotEntities = response.animeScreenshotEntityShells()
-            val videosEntities = response.animeVideoEntityShells()
+    override suspend fun refreshSimilarAnimes(animeId: Long, force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.SimilarAnimes, animeId),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.TitleDetails,
+            block = { updateSimilarAnimes(animeId) }
+        )
+    }
 
-            val genreCrossRefs = response.animeGenresCrossReferences()
-            val studioCrossRefs = response.animeStudioCrossRefs()
-            val animeRelatedEntities = response.animeRelatedEntities()
+    override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) = syncHelper.sync(
+        request = Request(RequestType.OngoingAnimes),
+        forceRefresh = force,
+        update = { updateOngoingAnimes(limit) }
+    )
 
-            databaseTransactionRunner {
-                animeDao.upsertAnime(animeEntity)
-                animeDetailsDao.upsertAnimeDetails(animeDetailsEntity)
+    private suspend fun UpdateScope.updateAnimeDetails(animeId: Long) {
+        val response = animeDataSource.getAnimeDetails(animeId)
 
-                animeDetailsDao.deleteAnimeGenreCrossReferences(animeId)
-                animeDetailsDao.deleteAnimeStudioCrossReferences(animeId)
-                animeDetailsDao.deleteAnimeRelated(animeId)
-                animeDetailsDao.deleteAnimeScreenshots(animeId)
-                animeDetailsDao.deleteAnimeVideos(animeId)
+        val animeEntity = response.asAnimeEntity()
+        val animeDetailsEntity = response.asAnimeDetailsEntity()
 
-                genresEntities?.let { genreDao.insertOrIgnoreGenres(it) }
-                genreCrossRefs?.let { animeDetailsDao.insertAnimeGenreCrossReferences(it) }
+        val genresEntities = response.genreEntityShells()
+        val studiosEntities = response.studioEntityShells()
+        val relatedAnimesEntities = response.relatedAnimeEntityShells()
+        val relatedMangasEntities = response.relatedMangaEntityShells()
+        val screenshotEntities = response.animeScreenshotEntityShells()
+        val videosEntities = response.animeVideoEntityShells()
 
-                animeDetailsDao.insertOrIgnoreStudios(studiosEntities)
-                animeDetailsDao.insertAnimeStudioCrossReferences(studioCrossRefs)
+        val genreCrossRefs = response.animeGenresCrossReferences()
+        val studioCrossRefs = response.animeStudioCrossRefs()
+        val animeRelatedEntities = response.animeRelatedEntities()
 
-                relatedAnimesEntities?.let { animeDao.upsertAnimes(it) }
-                relatedMangasEntities?.let { mangaDao.upsertMangas(it) }
-                animeRelatedEntities?.let { animeDetailsDao.insertAnimeRelated(it) }
+        write {
+            animeDao.upsertAnime(animeEntity)
+            animeDetailsDao.upsertAnimeDetails(animeDetailsEntity)
 
-                animeDetailsDao.insertAnimeScreenshots(screenshotEntities)
-                videosEntities?.let { animeDetailsDao.insertAnimeVideos(it) }
-            }
+            animeDetailsDao.deleteAnimeGenreCrossReferences(animeId)
+            animeDetailsDao.deleteAnimeStudioCrossReferences(animeId)
+            animeDetailsDao.deleteAnimeRelated(animeId)
+            animeDetailsDao.deleteAnimeScreenshots(animeId)
+            animeDetailsDao.deleteAnimeVideos(animeId)
+
+            genresEntities?.let { genreDao.insertOrIgnoreGenres(it) }
+            genreCrossRefs?.let { animeDetailsDao.insertAnimeGenreCrossReferences(it) }
+
+            animeDetailsDao.insertOrIgnoreStudios(studiosEntities)
+            animeDetailsDao.insertAnimeStudioCrossReferences(studioCrossRefs)
+
+            relatedAnimesEntities?.let { animeDao.upsertAnimes(it) }
+            relatedMangasEntities?.let { mangaDao.upsertMangas(it) }
+            animeRelatedEntities?.let { animeDetailsDao.insertAnimeRelated(it) }
+
+            animeDetailsDao.insertAnimeScreenshots(screenshotEntities)
+            videosEntities?.let { animeDetailsDao.insertAnimeVideos(it) }
         }
     }
 
-    override suspend fun refreshAnimeRoles(animeId: Long) {
-        withContext(ioDispatcher) {
-            val response = animeDataSource.getAnimeRoles(animeId)
+    private suspend fun UpdateScope.updateAnimeRoles(animeId: Long) = withContext(ioDispatcher) {
+        val response = animeDataSource.getAnimeRoles(animeId)
 
-            val personEntities = response.personEntityShells()
-            val authorRolesEntities = response.animePersonRolesEntities(animeId)
+        val personEntities = response.personEntityShells()
+        val authorRolesEntities = response.animePersonRolesEntities(animeId)
 
-            val characterEntities = response.characterEntityShells()
-            val animeCharacterEntities = response.animeCharacterEntities(animeId)
+        val characterEntities = response.characterEntityShells()
+        val animeCharacterEntities = response.animeCharacterEntities(animeId)
 
-            databaseTransactionRunner {
-                animeDetailsDao.deleteAnimePersonRoles(animeId)
-                animeDetailsDao.deleteAnimeCharacters(animeId)
+        write {
+            animeDetailsDao.deleteAnimePersonRoles(animeId)
+            animeDetailsDao.deleteAnimeCharacters(animeId)
 
-                personEntities?.let { personDao.insertOrReplacePersons(it) }
-                authorRolesEntities?.let { animeDetailsDao.insertAnimeAuthors(it) }
-                characterEntities?.let { characterDao.insertOrReplaceCharacters(it) }
-                animeCharacterEntities?.let { animeDetailsDao.insertAnimeCharacters(it) }
-            }
+            personEntities?.let { personDao.insertOrReplacePersons(it) }
+            authorRolesEntities?.let { animeDetailsDao.insertAnimeAuthors(it) }
+            characterEntities?.let { characterDao.insertOrReplaceCharacters(it) }
+            animeCharacterEntities?.let { animeDetailsDao.insertAnimeCharacters(it) }
         }
     }
 
-    override suspend fun refreshSimilarAnimes(animeId: Long) {
-        withContext(ioDispatcher) {
-            val response = animeDataSource.getSimilarAnimes(animeId)
+    private suspend fun UpdateScope.updateSimilarAnimes(animeId: Long) = withContext(ioDispatcher) {
+        val response = animeDataSource.getSimilarAnimes(animeId)
 
-            val animes = response.map { it.asEntity() }
-            val crossRefs = response.map { AnimeSimilarAnimeCrossRef(animeId, it.id) }
+        val animes = response.map { it.asEntity() }
+        val crossRefs = response.map { AnimeSimilarAnimeCrossRef(animeId, it.id) }
 
-            databaseTransactionRunner {
-                animeDetailsDao.deleteAnimeSimilarAnimeCrossRef(animeId)
+        write {
+            animeDetailsDao.deleteAnimeSimilarAnimeCrossRef(animeId)
 
-                animeDao.insertOrIgnoreAnimes(animes)
-                animeDetailsDao.insertAnimeSimilarAnimeCrossReferences(crossRefs)
-            }
+            animeDao.insertOrIgnoreAnimes(animes)
+            animeDetailsDao.insertAnimeSimilarAnimeCrossReferences(crossRefs)
         }
     }
 
-    override suspend fun refreshOngoingAnimes(limit: Int) {
+    private suspend fun UpdateScope.updateOngoingAnimes(limit: Int) {
         val response = animeDataSource.getAnime(
             page = 1,
             limit = 50,
@@ -237,8 +268,8 @@ class AnimeRepository @Inject constructor(
         val animes = response.map(NetworkAnime::asEntity)
         val ongoingAnime = animes.map { OngoingAnimeEntity(animeId = it.id) }
 
-        animeDao.upsertAnimes(animes)
-        databaseTransactionRunner {
+        write {
+            animeDao.upsertAnimes(animes)
             ongoingAnimeDao.deleteAll()
             ongoingAnimeDao.insertAll(ongoingAnime)
         }

@@ -23,17 +23,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import ru.vladsaybulin.core.domain.repository.AnimeRepository
-import ru.vladsaybulin.core.domain.repository.LastRequestRepository
 import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.request.Request
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.hours
 
 class UpdateTitleDetailsUseCase @Inject constructor(
     private val animeRepository: Lazy<AnimeRepository>,
     private val mangaRepository: Lazy<MangaRepository>,
-    private val lastRequestRepository: LastRequestRepository
 ) {
 
     enum class RefreshCompleted {
@@ -43,64 +39,50 @@ class UpdateTitleDetailsUseCase @Inject constructor(
         SkipRefresh
     }
 
-    operator fun invoke(titleType: EntryType, titleId: Long, forceRefresh: Boolean = false): Flow<RefreshCompleted> = channelFlow {
-        when (titleType) {
-            EntryType.Anime -> refreshAnime(titleId, forceRefresh)
-            EntryType.Manga -> refreshManga(titleId, forceRefresh)
+    operator fun invoke(titleType: EntryType, titleId: Long, forceRefresh: Boolean): Flow<RefreshCompleted> =
+        channelFlow {
+            when (titleType) {
+                EntryType.Anime -> refreshAnime(titleId, forceRefresh)
+                EntryType.Manga -> refreshManga(titleId, forceRefresh)
+            }
         }
-    }
 
-    private suspend fun SendChannel<RefreshCompleted>.refreshAnime(animeId: Long, forceRefresh: Boolean) {
-        if (forceRefresh || lastRequestRepository.isRequestExpired(Request.ANIME, animeId, TitleRequestTTL)) {
-            val repository = animeRepository.get()
+    private suspend fun SendChannel<RefreshCompleted>.refreshAnime(animeId: Long, forceRefresh: Boolean) =
+        animeRepository.get().apply {
             coroutineScope {
                 launch {
-                    repository.refreshAnimeDetails(animeId)
+                    refreshAnimeDetails(animeId, forceRefresh)
                     send(RefreshCompleted.Details)
                 }
 
                 launch {
-                    repository.refreshAnimeRoles(animeId)
+                    refreshAnimeRoles(animeId, forceRefresh)
                     send(RefreshCompleted.Roles)
                 }
 
                 launch {
-                    repository.refreshSimilarAnimes(animeId)
+                    refreshSimilarAnimes(animeId, forceRefresh)
                     send(RefreshCompleted.Similar)
                 }
-
-                lastRequestRepository.updateLastRequest(Request.ANIME, animeId)
             }
-        } else {
-            send(RefreshCompleted.SkipRefresh)
         }
-    }
 
-    private suspend fun SendChannel<RefreshCompleted>.refreshManga(mangaId: Long, forceRefresh: Boolean) {
-        if (forceRefresh || lastRequestRepository.isRequestExpired(Request.MANGA, mangaId, TitleRequestTTL)) {
-            val repository = mangaRepository.get()
-            coroutineScope {
-                launch {
-                    repository.refreshMangaDetails(mangaId)
-                    send(RefreshCompleted.Details)
-                }
-
-                launch {
-                    repository.refreshMangaRoles(mangaId)
-                    send(RefreshCompleted.Roles)
-                }
-
-                launch {
-                    repository.refreshSimilarMangas(mangaId)
-                    send(RefreshCompleted.Similar)
-                }
-
-                lastRequestRepository.updateLastRequest(Request.MANGA, mangaId)
+    private suspend fun SendChannel<RefreshCompleted>.refreshManga(mangaId: Long, forceRefresh: Boolean) = mangaRepository.get().apply {
+        coroutineScope {
+            launch {
+                refreshMangaDetails(mangaId, forceRefresh)
+                send(RefreshCompleted.Details)
             }
-        } else send(RefreshCompleted.SkipRefresh)
-    }
 
-    companion object {
-        private val TitleRequestTTL = 24.hours
+            launch {
+                refreshMangaRoles(mangaId, forceRefresh)
+                send(RefreshCompleted.Roles)
+            }
+
+            launch {
+                refreshSimilarMangas(mangaId, forceRefresh)
+                send(RefreshCompleted.Similar)
+            }
+        }
     }
 }
