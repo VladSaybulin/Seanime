@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.data.di
 
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import ru.vladsaybulin.model.request.Request
-import kotlin.time.Duration
 
-interface LastRequestRepository {
-    suspend fun isRequestExpired(request: Request, targetId: Long, ttl: Duration): Boolean
+@Module
+@InstallIn(SingletonComponent::class)
+object ClockModule {
 
-    suspend fun updateLastRequest(
-        request: Request,
-        targetId: Long,
-        requestDate: Instant = Clock.System.now()
-    )
+    @Provides
+    fun provideClock(): Clock = Clock.System
 }
 

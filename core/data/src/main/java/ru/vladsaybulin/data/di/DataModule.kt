@@ -28,7 +28,6 @@ import ru.vladsaybulin.core.domain.repository.FilterGenreRepository
 import ru.vladsaybulin.core.domain.repository.FilterPublisherRepository
 import ru.vladsaybulin.core.domain.repository.FilterStudioRepository
 import ru.vladsaybulin.core.domain.repository.FiltersRepository
-import ru.vladsaybulin.core.domain.repository.LastRequestRepository
 import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.core.domain.repository.TopicsRepository
 import ru.vladsaybulin.core.domain.repository.UserRateRepository
@@ -40,7 +39,6 @@ import ru.vladsaybulin.data.repository.FilterGenreRepository as DataFilterGenreR
 import ru.vladsaybulin.data.repository.FilterPublisherRepository as DataFilterPublisherRepository
 import ru.vladsaybulin.data.repository.FilterStudioRepository as DataFilterStudioRepository
 import ru.vladsaybulin.data.repository.FiltersRepository as DataFiltersRepository
-import ru.vladsaybulin.data.repository.LastRequestRepository as DataLastRequestRepository
 import ru.vladsaybulin.data.repository.MangaRepository as DataMangaRepository
 import ru.vladsaybulin.data.repository.TopicsRepository as DataTopicsRepository
 import ru.vladsaybulin.data.repository.UserRateRepository as DataUserRateRepository
@@ -74,9 +72,6 @@ interface DataModule {
 
     @Binds
     fun bindFiltersRepository(repository: DataFiltersRepository): FiltersRepository
-
-    @Binds
-    fun bindLastRequestRepository(repository: DataLastRequestRepository): LastRequestRepository
 
     @Binds
     fun bindMangaRepository(repository: DataMangaRepository): MangaRepository
