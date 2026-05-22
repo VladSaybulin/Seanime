@@ -20,15 +20,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.core.domain.repository.CalendarRepository as DomainCalendarRepository
 import ru.vladsaybulin.data.model.animeShell
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.data.util.sync.SyncHelper
-import ru.vladsaybulin.data.util.sync.UpdateScope
-import ru.vladsaybulin.data.util.sync.sync
+import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.UpdateScope
+import ru.vladsaybulin.data.request.cachedKey
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CalendarDao
 import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
@@ -44,7 +44,7 @@ class CalendarRepository @Inject constructor(
     private val calendarDataSource: CalendarDataSource,
     private val calendarDao: CalendarDao,
     private val animeDao: AnimeDao,
-    private val syncHelper: SyncHelper,
+    private val coordinator: RequestCoordinator,
     @param:Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : DomainCalendarRepository {
     override fun getCalendarItems(): Flow<List<CalendarItem>> =
@@ -52,10 +52,11 @@ class CalendarRepository @Inject constructor(
             .map { items -> items.map(PopulatedCalendarItem::asExternalModel) }
             .flowOn(ioDispatcher)
 
-    override suspend fun refreshCalendarItems(force: Boolean) = syncHelper.sync(
-        requestType = RequestType.Calendar,
+    override suspend fun refreshCalendarItems(force: Boolean) = coordinator.sync(
+        key = cachedKey(RequestType.Calendar),
         forceRefresh = force,
-        update = { updateCalendarItems() }
+        ttlStrategy = TTLStrategies.Calendar,
+        block = { updateCalendarItems() }
     )
 
     private suspend fun UpdateScope.updateCalendarItems() {

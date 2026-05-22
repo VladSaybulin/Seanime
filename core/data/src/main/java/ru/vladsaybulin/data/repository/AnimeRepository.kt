@@ -171,10 +171,11 @@ class AnimeRepository @Inject constructor(
         )
     }
 
-    override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) = syncHelper.sync(
-        request = Request(RequestType.OngoingAnimes),
+    override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) = coordinator.sync(
+        key = cachedKey(RequestType.OngoingAnimes),
         forceRefresh = force,
-        update = { updateOngoingAnimes(limit) }
+        ttlStrategy = TTLStrategies.OngoingAnimes,
+        block = { updateOngoingAnimes(limit) }
     )
 
     private suspend fun UpdateScope.updateAnimeDetails(animeId: Long) {

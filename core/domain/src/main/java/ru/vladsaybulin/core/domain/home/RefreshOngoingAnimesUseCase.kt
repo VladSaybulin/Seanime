@@ -17,30 +17,15 @@
 package ru.vladsaybulin.core.domain.home
 
 import ru.vladsaybulin.core.domain.repository.AnimeRepository
-import ru.vladsaybulin.core.domain.repository.LastRequestRepository
-import ru.vladsaybulin.model.request.Request
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.hours
 
-class UpdateOngoingAnimesUseCase @Inject constructor(
-    private val animeRepository: AnimeRepository,
-    private val lastRequestRepository: LastRequestRepository,
+class RefreshOngoingAnimesUseCase @Inject constructor(
+    private val animeRepository: AnimeRepository
 ) {
     suspend operator fun invoke(
         forceRefresh: Boolean,
-        limit: Int = DefaultOngoingAnimesLimit
+        limit: Int = HomeDefaults.ONGOING_ANIMES_LIMIT
     ) {
-        if (!forceRefresh && !isExpired()) return
-
-        animeRepository.refreshOngoingAnimes(limit)
-        lastRequestRepository.updateLastRequest(Request.ANIME_ONGOINGS, 0)
+        animeRepository.refreshOngoingAnimes(limit, forceRefresh)
     }
-
-    private suspend fun isExpired() = lastRequestRepository.isRequestExpired(
-        request = Request.ANIME_ONGOINGS,
-        targetId = 0,
-        ttl = OngoingAnimesRequestTTL
-    )
 }
-
-private val OngoingAnimesRequestTTL = 24.hours

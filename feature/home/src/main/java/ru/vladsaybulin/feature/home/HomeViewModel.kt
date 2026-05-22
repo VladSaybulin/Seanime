@@ -33,12 +33,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.core.domain.home.GetInProgressUserRatesUseCase
+import ru.vladsaybulin.common.ui.tryRefresh
+import ru.vladsaybulin.core.domain.home.GetInProgressRatesUseCase
 import ru.vladsaybulin.core.domain.home.GetNewsTopicsStreamUseCase
 import ru.vladsaybulin.core.domain.home.GetOngoingAnimesStreamUseCase
-import ru.vladsaybulin.core.domain.home.UpdateInProgressUserRatesUseCase
-import ru.vladsaybulin.core.domain.home.UpdateNewsTopicsUseCase
-import ru.vladsaybulin.core.domain.home.UpdateOngoingAnimesUseCase
+import ru.vladsaybulin.core.domain.home.RefreshInProgressRatesUseCase
+import ru.vladsaybulin.core.domain.home.RefreshNewsUseCase
+import ru.vladsaybulin.core.domain.home.RefreshOngoingAnimesUseCase
 import ru.vladsaybulin.core.domain.shared.GetAuthStateStreamUseCase
 import ru.vladsaybulin.data.repository.UserRepository
 import ru.vladsaybulin.model.anime.Anime
@@ -51,26 +52,26 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     getOngoingAnimesStreamUseCase: GetOngoingAnimesStreamUseCase,
-    getInProgressUserRatesUseCase: GetInProgressUserRatesUseCase,
-    getNewsTopicsStreamUseCase: GetNewsTopicsStreamUseCase,
+    getInProgressRatesUseCase: GetInProgressRatesUseCase,
+    getNewsStreamUseCase: GetNewsTopicsStreamUseCase,
     userRepository: UserRepository,
     getAuthStateStreamUseCase: GetAuthStateStreamUseCase,
-    private val updateOngoingAnimesUseCase: UpdateOngoingAnimesUseCase,
-    private val updateNewsTopicsUseCase: UpdateNewsTopicsUseCase,
-    private val updateInProgressUserRatesUseCase: UpdateInProgressUserRatesUseCase
+    private val refreshInProgressRates: RefreshInProgressRatesUseCase,
+    private val refreshOngoingAnimes: RefreshOngoingAnimesUseCase,
+    private val refreshNews: RefreshNewsUseCase
 ) : ViewModel() {
 
     private val refreshingUserRate = getAuthStateStreamUseCase()
         .drop(1)
         .filter { it == ShikimoriAuthState.LOGGED_IN }
-        .onEach { updateInProgressUserRatesUseCase() }
+        .onEach { refreshInProgressRates(true) }
 
     private var refreshingUserRatesJob: Job? = null
 
     val uiState = combine<List<UserRateWithEntry>, List<Anime>, List<Topic>, BriefUser?, HomeUiState>(
-        getInProgressUserRatesUseCase(),
+        getInProgressRatesUseCase(),
         getOngoingAnimesStreamUseCase(),
-        getNewsTopicsStreamUseCase(),
+        getNewsStreamUseCase(),
         userRepository.getMeStream()
     ) { userRates, ongoingAnime, newsTopics, me ->
         HomeUiState.Success(
@@ -80,7 +81,7 @@ class HomeViewModel @Inject constructor(
             me = me
         )
     }
-        .onStart { internalRefresh() }
+        .onStart { internalRefresh(false) }
         .onStart { refreshingUserRatesJob = refreshingUserRate.launchIn(viewModelScope) }
         .onCompletion { refreshingUserRatesJob?.cancel() }
         .catch { emit(HomeUiState.Error(it)) }
@@ -90,11 +91,23 @@ class HomeViewModel @Inject constructor(
             initialValue = HomeUiState.Loading
         )
 
-    private suspend fun internalRefresh() {
+    private suspend fun internalRefresh(force: Boolean) {
         coroutineScope {
-            launch { updateOngoingAnimesUseCase(false) }
-            launch { updateNewsTopicsUseCase(false) }
-            launch { updateInProgressUserRatesUseCase() }
+            launch {
+                tryRefresh(catch = {}) {
+                    refreshNews(force)
+                }
+            }
+            launch {
+                tryRefresh(catch = {}) {
+                    refreshInProgressRates(force)
+                }
+            }
+            launch {
+                tryRefresh(catch = {}) {
+                    refreshOngoingAnimes(force)
+                }
+            }
         }
     }
 }

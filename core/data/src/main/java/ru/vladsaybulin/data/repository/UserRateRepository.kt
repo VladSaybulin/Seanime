@@ -38,6 +38,7 @@ import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.core.auth.ShikimoriAuthorization
+import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.core.domain.repository.UserRateRepository as DomainUserRateRepository
 import ru.vladsaybulin.data.model.CreateUserRateRequest
 import ru.vladsaybulin.data.model.animeEntityOrNullShells
@@ -45,10 +46,14 @@ import ru.vladsaybulin.data.model.asDto
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.mangaEntityOrNullShells
 import ru.vladsaybulin.data.model.userRateEntityShell
+import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.UpdateScope
+import ru.vladsaybulin.data.request.cachedKey
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.UserRateDao
+import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.database.models.userrate.InProgressUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
@@ -74,6 +79,7 @@ class UserRateRepository @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val userRepository: UserRepository,
     private val auth: ShikimoriAuthorization,
+    private val coordinator: RequestCoordinator,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : DomainUserRateRepository {
     override fun getInProgressUserRatesStream(limit: Int): Flow<List<UserRateWithEntry>> =
@@ -204,43 +210,48 @@ class UserRateRepository @Inject constructor(
         }
     }
 
-    override suspend fun refreshInProgressUserRates() {
-        withContext(ioDispatcher) {
-            val watchingDeferred = async(ioDispatcher) {
-                userRateDataSource.getUserRates(
-                    page = 1,
-                    limit = 50,
-                    status = UserRateStatus.Watching,
-                    order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
-                )
-            }
+    override suspend fun refreshInProgressRates(force: Boolean) = coordinator.sync(
+        key = cachedKey(RequestType.InProgressRates),
+        forceRefresh = force,
+        ttlStrategy = TTLStrategies.InProgressRates,
+        block = { updateInProgressRates() }
+    )
 
-            val rewatchingDeferred = async(ioDispatcher) {
-                userRateDataSource.getUserRates(
-                    page = 1,
-                    limit = 50,
-                    status = UserRateStatus.Rewatching,
-                    order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
-                )
-            }
+    private suspend fun UpdateScope.updateInProgressRates() = withContext(ioDispatcher) {
+        val watchingDeferred = async(ioDispatcher) {
+            userRateDataSource.getUserRates(
+                page = 1,
+                limit = 50,
+                status = UserRateStatus.Watching,
+                order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
+            )
+        }
 
-            val networkUserRates = watchingDeferred.await() + rewatchingDeferred.await()
+        val rewatchingDeferred = async(ioDispatcher) {
+            userRateDataSource.getUserRates(
+                page = 1,
+                limit = 50,
+                status = UserRateStatus.Rewatching,
+                order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
+            )
+        }
 
-            val userRateEntities = networkUserRates.map { it.asEntity() }
-            val animeEntities = networkUserRates.mapNotNull { it.networkAnime?.asEntity() }
-            val mangasEntities = networkUserRates.mapNotNull { it.networkManga?.asEntity() }
+        val networkUserRates = watchingDeferred.await() + rewatchingDeferred.await()
 
-            val inProgressUserRateEntities = networkUserRates.map {
-                InProgressUserRateEntity(userRateId = it.networkUserRate.id)
-            }
+        val userRateEntities = networkUserRates.map { it.asEntity() }
+        val animeEntities = networkUserRates.mapNotNull { it.networkAnime?.asEntity() }
+        val mangasEntities = networkUserRates.mapNotNull { it.networkManga?.asEntity() }
 
-            databaseTransactionRunner {
-                userRateDao.deleteAllInProgressUserRates()
-                animeDao.upsertAnimes(animeEntities)
-                mangaDao.upsertMangas(mangasEntities)
-                userRateDao.insertOrReplaceUserRates(userRateEntities)
-                userRateDao.insertInProgressUserRates(inProgressUserRateEntities)
-            }
+        val inProgressUserRateEntities = networkUserRates.map {
+            InProgressUserRateEntity(userRateId = it.networkUserRate.id)
+        }
+
+        write {
+            userRateDao.deleteAllInProgressUserRates()
+            animeDao.upsertAnimes(animeEntities)
+            mangaDao.upsertMangas(mangasEntities)
+            userRateDao.insertOrReplaceUserRates(userRateEntities)
+            userRateDao.insertInProgressUserRates(inProgressUserRateEntities)
         }
     }
 

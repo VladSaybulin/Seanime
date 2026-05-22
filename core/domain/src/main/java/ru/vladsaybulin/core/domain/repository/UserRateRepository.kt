@@ -58,7 +58,7 @@ interface UserRateRepository {
 
     suspend fun deleteUserRate(userRateId: Long)
 
-    suspend fun refreshInProgressUserRates()
+    suspend fun refreshInProgressRates(force: Boolean)
 
     companion object {
         val DefaultPagingConfig: PagingConfig

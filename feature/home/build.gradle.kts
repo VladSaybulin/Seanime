@@ -36,6 +36,7 @@ secrets {
 
 dependencies {
     implementation(projects.core.data)
+    implementation(projects.core.common)
     implementation(projects.core.navigation)
     implementation(projects.core.ui2.entry)
     implementation(projects.feature.userrate)

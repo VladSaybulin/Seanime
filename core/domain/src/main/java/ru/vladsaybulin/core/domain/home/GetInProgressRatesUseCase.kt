@@ -21,7 +21,7 @@ import ru.vladsaybulin.core.domain.repository.UserRateRepository
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import javax.inject.Inject
 
-class GetInProgressUserRatesUseCase @Inject constructor(
+class GetInProgressRatesUseCase @Inject constructor(
     private val userRateRepository: UserRateRepository
 ) {
     operator fun invoke(limit: Int = DefaultInProgressUserRatesLimit): Flow<List<UserRateWithEntry>> =

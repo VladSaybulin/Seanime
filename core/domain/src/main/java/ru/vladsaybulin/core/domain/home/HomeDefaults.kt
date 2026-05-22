@@ -16,11 +16,6 @@
 
 package ru.vladsaybulin.core.domain.home
 
-import ru.vladsaybulin.core.domain.repository.UserRateRepository
-import javax.inject.Inject
-
-class UpdateInProgressUserRatesUseCase @Inject constructor(private val userRateRepository: UserRateRepository) {
-    suspend operator fun invoke() {
-        userRateRepository.refreshInProgressUserRates()
-    }
+object HomeDefaults {
+    const val ONGOING_ANIMES_LIMIT = 20
 }
