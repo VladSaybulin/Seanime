@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.database.models.lastrequest
+package ru.vladsaybulin.data.request
 
-import androidx.room.ColumnInfo
+import ru.vladsaybulin.database.models.lastrequest.RequestType
 
-data class Request(
-    @ColumnInfo("type")
-    val type: RequestType,
+sealed interface RequestKey {
+    data class Cached(val type: RequestType, val targetId: Long = 0L) : RequestKey
+}
 
-    @ColumnInfo("target_id")
-    val targetId: Long = 0,
-)
+fun cachedKey(type: RequestType, targetId: Long = 0L): RequestKey.Cached = RequestKey.Cached(type, targetId)
