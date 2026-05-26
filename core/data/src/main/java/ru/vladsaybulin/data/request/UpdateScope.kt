@@ -16,6 +16,15 @@
 
 package ru.vladsaybulin.data.request
 
+/**
+ * Scope exposed to repository refresh blocks.
+ *
+ * Implementations define how writes are executed (for example in a DB transaction)
+ * and may append additional side effects like updating last refresh timestamp.
+ */
 fun interface UpdateScope {
+    /**
+     * Executes write operations inside synchronization-provided context.
+     */
     suspend fun write(block: suspend () -> Unit)
 }

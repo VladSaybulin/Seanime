@@ -21,21 +21,36 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
-import kotlinx.datetime.toDateTimePeriod
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.days
 
+/**
+ * Strategy that decides whether cached data is expired.
+ */
 fun interface TTLStrategy {
+    /**
+     * Returns `true` when cache should be refreshed.
+     */
     fun isExpired(now: Instant, lastRequest: Instant): Boolean
 }
 
+/**
+ * Duration-based TTL implementation.
+ *
+ * Cache is considered stale when the elapsed time since last request is greater than or
+ * equal to [ttl].
+ */
 class DefaultTTLStrategy(private val ttl: Duration) : TTLStrategy {
     override fun isExpired(now: Instant, lastRequest: Instant): Boolean {
         return now - lastRequest >= ttl
     }
 }
 
+/**
+ * Expires cache at midnight of `lastRequest.date + datePeriod` in the current system timezone.
+ *
+ * Useful for data that is expected to refresh on day boundaries.
+ */
 class NextDayMidnightTTLStrategy(
     private val datePeriod: DatePeriod
 ) : TTLStrategy {

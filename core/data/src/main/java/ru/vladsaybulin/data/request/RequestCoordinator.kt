@@ -22,11 +22,21 @@ import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers
 import javax.inject.Inject
 
+/**
+ * Entry point for request synchronization.
+ *
+ * Combines two concerns:
+ * - deduplication of in-flight calls ([RequestDeduplicator]),
+ * - TTL-based cache synchronization ([RequestSyncer]).
+ */
 class RequestCoordinator @Inject constructor(
     private val deduplicator: RequestDeduplicator,
     private val syncer: RequestSyncer,
     @param:Dispatcher(ShikiDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
+    /**
+     * Executes [block] on IO and deduplicates it by [key].
+     */
     suspend fun <T> request(
         key: RequestKey,
         block: suspend () -> T
@@ -34,6 +44,11 @@ class RequestCoordinator @Inject constructor(
         deduplicator.request(key, block)
     }
 
+    /**
+     * Performs cache-aware synchronization for a cached [key].
+     *
+     * The refresh runs only when [forceRefresh] is true or [ttlStrategy] says cached data expired.
+     */
     suspend fun sync(
         key: RequestKey.Cached,
         forceRefresh: Boolean,

@@ -22,11 +22,22 @@ import ru.vladsaybulin.database.dao.LastRequestDao
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
 import javax.inject.Inject
 
+/**
+ * Checks request freshness and applies updates under transaction.
+ *
+ * After a successful [UpdateScope.write], stores the current timestamp in `last_requests`
+ * for the same [RequestKey.Cached].
+ */
 class RequestSyncer @Inject constructor(
     private val lastRequestDao: LastRequestDao,
     private val transaction: DatabaseTransactionRunner,
     private val clock: Clock
 ) {
+    /**
+     * Executes [block] when refresh is required for [key].
+     *
+     * Refresh is required when [forceRefresh] is true or [strategy] reports expired cache.
+     */
     suspend fun sync(
         key: RequestKey.Cached,
         forceRefresh: Boolean,

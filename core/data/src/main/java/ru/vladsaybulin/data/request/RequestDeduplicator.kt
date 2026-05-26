@@ -23,11 +23,20 @@ import ru.vladsaybulin.common.network.di.ApplicationScope
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
+/**
+ * Deduplicates concurrent requests with the same [RequestKey].
+ *
+ * If multiple callers request the same key at the same time, they all await a single
+ * in-flight coroutine instead of starting duplicate work.
+ */
 class RequestDeduplicator @Inject constructor(
     @param:ApplicationScope private val coroutineScope: CoroutineScope
 ) {
     private val deferredRequests = ConcurrentHashMap<RequestKey, Deferred<*>>()
 
+    /**
+     * Runs [block] once per [key] while it is in-flight and shares its result with all callers.
+     */
     suspend fun <T> request(key: RequestKey, block: suspend () -> T): T {
         val deferred = deferredRequests.computeIfAbsent(key) {
             coroutineScope.async { block() }.removeOnCompletion(key)
