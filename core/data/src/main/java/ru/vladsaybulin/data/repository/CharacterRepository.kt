@@ -55,7 +55,7 @@ class CharacterRepository @Inject constructor(
             .map { it.asExternalModel() }
 
     override suspend fun refreshCharacterDetails(characterId: Long, force: Boolean) = requestCoordinator.sync(
-        key = cachedKey(RequestType.Character),
+        key = cachedKey(RequestType.Character, characterId),
         forceRefresh = force,
         ttlStrategy = CharacterTtlStrategy
     ) { updateCharacterDetails(characterId) }
