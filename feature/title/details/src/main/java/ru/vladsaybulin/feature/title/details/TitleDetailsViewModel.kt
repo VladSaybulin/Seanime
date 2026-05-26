@@ -41,6 +41,7 @@ import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Details
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Roles
+import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Similar
 import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.SkipRefresh
 import ru.vladsaybulin.core.domain.titledetails.UserRateResult
 import ru.vladsaybulin.data.repository.AnimeRepository
@@ -142,7 +143,7 @@ class TitleDetailsViewModel @Inject constructor(
             .map { if (it.isEmpty()) SimilarState.Empty else SimilarState.Mangas(it) }
     }
         //Await complete Similar refreshing
-        .onStart { initialRefreshing.first { it.equalsOrSkipped(Roles) } }
+        .onStart { initialRefreshing.first { it.equalsOrSkipped(Similar) } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
