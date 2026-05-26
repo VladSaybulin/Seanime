@@ -16,29 +16,13 @@
 
 package ru.vladsaybulin.core.domain.home
 
-import ru.vladsaybulin.core.domain.repository.LastRequestRepository
 import ru.vladsaybulin.core.domain.repository.TopicsRepository
-import ru.vladsaybulin.model.request.Request
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.hours
 
-class UpdateNewsTopicsUseCase @Inject constructor(
-    private val topicsRepository: TopicsRepository,
-    private val lastRequestRepository: LastRequestRepository
+class RefreshNewsUseCase @Inject constructor(
+    private val topicsRepository: TopicsRepository
 ) {
-    suspend operator fun invoke(forceRefresh: Boolean = true) {
-        if (!forceRefresh && !isExpired()) return
-
-        topicsRepository.refreshNewsTopics()
-        lastRequestRepository.updateLastRequest(Request.NEWS, 0)
+    suspend operator fun invoke(forceRefresh: Boolean) {
+        topicsRepository.refreshNewsTopics(forceRefresh)
     }
-
-    private suspend fun isExpired() = lastRequestRepository.isRequestExpired(
-        request = Request.NEWS,
-        targetId = 0,
-        ttl = NewsTTL
-    )
-
 }
-
-private val NewsTTL = 2.hours

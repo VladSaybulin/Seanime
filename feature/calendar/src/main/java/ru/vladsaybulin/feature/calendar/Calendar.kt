@@ -87,7 +87,7 @@ fun CalendarRoute(
         uiState = uiState,
         me = me,
         navEvents = navEvents,
-        onRefresh = viewModel::forceRefresh
+        onRefresh = viewModel::refresh
     )
 }
 
@@ -135,7 +135,6 @@ private fun CalendarContent(
     onRefresh: suspend () -> Unit
 ) {
     when (state) {
-        is CalendarUiState.Error -> FullScreenErrorMessage(throwable = state.throwable)
         CalendarUiState.Loading -> CalendarLoadingBody(modifier = Modifier.fillMaxSize())
         is CalendarUiState.Success -> CalendarBody(
             calendarDays = state.calendarDays,

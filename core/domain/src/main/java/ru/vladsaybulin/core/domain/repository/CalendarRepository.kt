@@ -22,6 +22,6 @@ import ru.vladsaybulin.model.calendar.CalendarItem
 interface CalendarRepository {
     fun getCalendarItems(): Flow<List<CalendarItem>>
 
-    suspend fun refreshCalendarItems()
+    suspend fun refreshCalendarItems(force: Boolean)
 }
 

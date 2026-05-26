@@ -17,22 +17,23 @@
 package ru.vladsaybulin.database.models.lastrequest
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import ru.vladsaybulin.model.request.Request
 
 @Entity(
     tableName = "last_requests",
-    primaryKeys = ["type", "target_id"]
+    primaryKeys = ["target_id", "type"]
 )
 class LastRequestEntity(
 
     @ColumnInfo("type")
-    val request: Request,
+    val type: RequestType,
 
     @ColumnInfo("target_id")
-    val targetId: Long,
+    val targetId: Long = 0,
 
     @ColumnInfo("date")
-    val requestDate: Instant
+    val date: Instant = Clock.System.now()
 )

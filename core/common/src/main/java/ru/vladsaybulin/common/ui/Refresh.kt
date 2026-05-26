@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.common.ui
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.topic.Topic
+import android.util.Log
+import kotlinx.coroutines.CancellationException
 
-interface TopicsRepository {
-    fun getNewsTopicsStream(): Flow<List<Topic>>
-
-    suspend fun refreshNewsTopics(force: Boolean)
+suspend inline fun tryRefresh(
+    noinline catch: suspend (Throwable) -> Unit = { throw it },
+    block: suspend () -> Unit
+) {
+    try {
+        block()
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Throwable) {
+        Log.e("tryRefresh", "Error during refresh", e)
+        catch(e)
+    }
 }
-

@@ -22,13 +22,13 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
-import ru.vladsaybulin.model.request.Request
+import ru.vladsaybulin.database.models.lastrequest.RequestType
 
 @Dao
 interface LastRequestDao {
 
-    @Query("SELECT date FROM last_requests WHERE target_id = :targetId AND type = :type")
-    suspend fun getLastRequestDate(type: Request, targetId: Long): Instant?
+    @Query("SELECT date FROM last_requests WHERE target_id = :targetId AND type = :requestType")
+    suspend fun getLastRequestDate(requestType: RequestType, targetId: Long): Instant?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplaceLastRequestDate(lastRequest: LastRequestEntity)

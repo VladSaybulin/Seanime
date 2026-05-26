@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.database.models.lastrequest
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import ru.vladsaybulin.model.request.Request
-import kotlin.time.Duration
-
-interface LastRequestRepository {
-    suspend fun isRequestExpired(request: Request, targetId: Long, ttl: Duration): Boolean
-
-    suspend fun updateLastRequest(
-        request: Request,
-        targetId: Long,
-        requestDate: Instant = Clock.System.now()
-    )
+enum class RequestType(val serializedValue: String) {
+    Anime("anime"),
+    AnimeRoles("anime_roles"),
+    SimilarAnimes("similar_animes"),
+    Manga("manga"),
+    MangaRoles("manga_roles"),
+    SimilarMangas("similar_mangas"),
+    Character("character"),
+    OngoingAnimes("ongoing_animes"),
+    News("news"),
+    Calendar("calendar"),
+    InProgressRates("in_progress_rates"),
 }
-

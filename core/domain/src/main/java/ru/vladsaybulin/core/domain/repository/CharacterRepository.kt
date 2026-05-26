@@ -22,6 +22,6 @@ import ru.vladsaybulin.model.character.CharacterDetails
 interface CharacterRepository {
     fun getCharacterDetails(characterId: Long): Flow<CharacterDetails>
 
-    suspend fun refreshCharacterDetails(characterId: Long)
+    suspend fun refreshCharacterDetails(characterId: Long, force: Boolean = false)
 }
 

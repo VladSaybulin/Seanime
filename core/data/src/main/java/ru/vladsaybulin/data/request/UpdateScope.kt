@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.data.request
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.topic.Topic
-
-interface TopicsRepository {
-    fun getNewsTopicsStream(): Flow<List<Topic>>
-
-    suspend fun refreshNewsTopics(force: Boolean)
+/**
+ * Scope exposed to repository refresh blocks.
+ *
+ * Implementations define how writes are executed (for example in a DB transaction)
+ * and may append additional side effects like updating last refresh timestamp.
+ */
+fun interface UpdateScope {
+    /**
+     * Executes write operations inside synchronization-provided context.
+     */
+    suspend fun write(block: suspend () -> Unit)
 }
-

@@ -23,15 +23,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.linkedAnimeEntityShell
 import ru.vladsaybulin.data.model.linkedMangaEntityShell
 import ru.vladsaybulin.data.model.userEntityShell
-import ru.vladsaybulin.database.DatabaseTransactionRunner
+import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.UpdateScope
+import ru.vladsaybulin.data.request.cachedKey
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.TopicsDao
 import ru.vladsaybulin.database.dao.UsersDao
+import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.database.models.topic.PopulatedTopic
 import ru.vladsaybulin.database.models.topic.asExternalModel
 import ru.vladsaybulin.model.topic.Topic
@@ -45,15 +49,24 @@ class TopicsRepository @Inject constructor(
     private val animeDao: AnimeDao,
     private val mangaDao: MangaDao,
     private val userDao: UsersDao,
-    private val databaseTransactionRunner: DatabaseTransactionRunner,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
+    private val coordinator: RequestCoordinator,
+    @param:Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
     private val json: Json,
 ) : DomainTopicsRepository {
     override fun getNewsTopicsStream(): Flow<List<Topic>> = topicsDao.getNewsTopic()
         .map { topics -> topics.map(PopulatedTopic::asExternalModel) }
         .flowOn(ioDispatcher)
 
-    override suspend fun refreshNewsTopics() {
+    override suspend fun refreshNewsTopics(force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.News),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.News,
+            block = { updateNewsTopics() }
+        )
+    }
+
+    private suspend fun UpdateScope.updateNewsTopics() {
         val freshTopics = topicsDataSource.getTopics(
             limit = 10,
             forumPermalink = "news"
@@ -64,8 +77,7 @@ class TopicsRepository @Inject constructor(
         val users = freshTopics.map { it.userEntityShell() }
         val topics = freshTopics.map { it.asEntity() }
 
-
-        databaseTransactionRunner {
+        write {
             if (anime.isNotEmpty()) {
                 animeDao.insertOrIgnoreAnimes(anime)
             }

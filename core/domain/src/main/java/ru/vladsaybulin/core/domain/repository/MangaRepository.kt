@@ -41,11 +41,11 @@ interface MangaRepository {
 
     fun getAllMangaAuthors(mangaId: Long): Flow<List<PersonWithRoles>>
 
-    suspend fun refreshMangaDetails(mangaId: Long)
+    suspend fun refreshMangaDetails(mangaId: Long, force: Boolean)
 
-    suspend fun refreshMangaRoles(mangaId: Long)
+    suspend fun refreshMangaRoles(mangaId: Long, force: Boolean)
 
-    suspend fun refreshSimilarMangas(mangaId: Long)
+    suspend fun refreshSimilarMangas(mangaId: Long, force: Boolean)
 
     fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedTitle>>
 

@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.core.domain.calendar
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.topic.Topic
+import ru.vladsaybulin.core.domain.repository.CalendarRepository
+import javax.inject.Inject
 
-interface TopicsRepository {
-    fun getNewsTopicsStream(): Flow<List<Topic>>
-
-    suspend fun refreshNewsTopics(force: Boolean)
+class RefreshCalendarUseCase @Inject constructor(private val calendarRepository: CalendarRepository) {
+    suspend operator fun invoke(force: Boolean) {
+        calendarRepository.refreshCalendarItems(force)
+    }
 }
-

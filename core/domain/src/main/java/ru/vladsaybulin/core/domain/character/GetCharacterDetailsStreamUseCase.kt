@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.home
+package ru.vladsaybulin.core.domain.character
 
-import ru.vladsaybulin.core.domain.repository.UserRateRepository
+import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.core.domain.repository.CharacterRepository
+import ru.vladsaybulin.model.character.CharacterDetails
 import javax.inject.Inject
 
-class UpdateInProgressUserRatesUseCase @Inject constructor(private val userRateRepository: UserRateRepository) {
-    suspend operator fun invoke() {
-        userRateRepository.refreshInProgressUserRates()
+class GetCharacterDetailsStreamUseCase @Inject constructor(
+    private val characterRepository: CharacterRepository
+) {
+    operator fun invoke(characterId: Long): Flow<CharacterDetails> {
+        return characterRepository.getCharacterDetails(characterId)
     }
 }

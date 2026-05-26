@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.data.di
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.topic.Topic
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import kotlinx.datetime.Clock
 
-interface TopicsRepository {
-    fun getNewsTopicsStream(): Flow<List<Topic>>
+@Module
+@InstallIn(SingletonComponent::class)
+object ClockModule {
 
-    suspend fun refreshNewsTopics(force: Boolean)
+    @Provides
+    fun provideClock(): Clock = Clock.System
 }
 

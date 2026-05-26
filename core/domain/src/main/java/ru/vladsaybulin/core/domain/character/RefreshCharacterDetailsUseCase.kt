@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.core.domain.character
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.topic.Topic
+import ru.vladsaybulin.core.domain.repository.CharacterRepository
+import javax.inject.Inject
 
-interface TopicsRepository {
-    fun getNewsTopicsStream(): Flow<List<Topic>>
-
-    suspend fun refreshNewsTopics(force: Boolean)
+class RefreshCharacterDetailsUseCase @Inject constructor(
+    private val characterRepository: CharacterRepository
+) {
+    suspend operator fun invoke(characterId: Long, force: Boolean) {
+        characterRepository.refreshCharacterDetails(characterId, force)
+    }
 }
-

@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.model.request
+package ru.vladsaybulin.core.domain.home
 
-enum class Request {
-    ANIME, MANGA, CHARACTER, ANIME_ONGOINGS, NEWS
+import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.core.domain.repository.UserRateRepository
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
+import javax.inject.Inject
+
+class GetInProgressRatesUseCase @Inject constructor(
+    private val userRateRepository: UserRateRepository
+) {
+    operator fun invoke(limit: Int = DefaultInProgressUserRatesLimit): Flow<List<UserRateWithEntry>> =
+        userRateRepository.getInProgressUserRatesStream(limit)
 }
+
+private const val DefaultInProgressUserRatesLimit = 10
