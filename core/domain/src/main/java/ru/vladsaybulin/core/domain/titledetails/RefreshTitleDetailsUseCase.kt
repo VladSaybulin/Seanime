@@ -27,7 +27,7 @@ import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.model.common.EntryType
 import javax.inject.Inject
 
-class UpdateTitleDetailsUseCase @Inject constructor(
+class RefreshTitleDetailsUseCase @Inject constructor(
     private val animeRepository: Lazy<AnimeRepository>,
     private val mangaRepository: Lazy<MangaRepository>,
 ) {

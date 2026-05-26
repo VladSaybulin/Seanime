@@ -37,12 +37,12 @@ import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetFirstAnimeVideosStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetFirstTitleRelatedStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetUserRateStreamUseCase
-import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase
-import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted
-import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Details
-import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Roles
-import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.Similar
-import ru.vladsaybulin.core.domain.titledetails.UpdateTitleDetailsUseCase.RefreshCompleted.SkipRefresh
+import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase
+import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted
+import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted.Details
+import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted.Roles
+import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted.Similar
+import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted.SkipRefresh
 import ru.vladsaybulin.core.domain.titledetails.UserRateResult
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.MangaRepository
@@ -59,7 +59,7 @@ class TitleDetailsViewModel @Inject constructor(
     animeRepository: Lazy<AnimeRepository>,
     mangaRepository: Lazy<MangaRepository>,
     private val userRateRepository: UserRateRepository,
-    private val updateTitleDetailsUseCase: UpdateTitleDetailsUseCase,
+    private val refreshTitleDetailsUseCase: RefreshTitleDetailsUseCase,
     getFirstTitleRelatedStreamUseCase: GetFirstTitleRelatedStreamUseCase,
     getFirstAnimeVideosStreamUseCase: Lazy<GetFirstAnimeVideosStreamUseCase>,
     getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
@@ -75,7 +75,7 @@ class TitleDetailsViewModel @Inject constructor(
             initialValue = false
         )
 
-    private val initialRefreshing = updateTitleDetailsUseCase(route.titleType, route.titleId, false)
+    private val initialRefreshing = refreshTitleDetailsUseCase(route.titleType, route.titleId, false)
         .shareIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily
@@ -180,7 +180,7 @@ class TitleDetailsViewModel @Inject constructor(
     }
 
     private fun refreshJob(): Job =
-        updateTitleDetailsUseCase(route.titleType, route.titleId, true).launchIn(viewModelScope)
+        refreshTitleDetailsUseCase(route.titleType, route.titleId, true).launchIn(viewModelScope)
 
 }
 
