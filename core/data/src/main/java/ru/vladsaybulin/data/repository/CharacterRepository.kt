@@ -53,11 +53,13 @@ class CharacterRepository @Inject constructor(
         characterDao.getCharacterDetails(characterId)
             .map { it.asExternalModel() }
 
-    override suspend fun refreshCharacterDetails(characterId: Long, force: Boolean) = requestCoordinator.sync(
-        key = cachedKey(RequestType.Character, characterId),
-        forceRefresh = force,
-        ttlStrategy = TTLStrategies.CharacterDetails
-    ) { updateCharacterDetails(characterId) }
+    override suspend fun refreshCharacterDetails(characterId: Long, force: Boolean){
+        requestCoordinator.sync(
+            key = cachedKey(RequestType.Character, characterId),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.CharacterDetails
+        ) { updateCharacterDetails(characterId) }
+    }
 
     private suspend fun UpdateScope.updateCharacterDetails(characterId: Long) {
         val response = characterDataSource.getCharacterDetails(characterId)

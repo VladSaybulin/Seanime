@@ -37,15 +37,19 @@ class RequestSyncer @Inject constructor(
      * Executes [block] when refresh is required for [key].
      *
      * Refresh is required when [forceRefresh] is true or [strategy] reports expired cache.
+     *
+     * @return the result of [block], or `null` if refresh was not required.
      */
-    suspend fun sync(
+    suspend fun <T> sync(
         key: RequestKey.Cached,
         forceRefresh: Boolean,
         strategy: TTLStrategy,
-        block: suspend UpdateScope.() -> Unit
-    ) {
-        if (forceRefresh || shouldRefresh(key, strategy)) {
+        block: suspend UpdateScope.() -> T
+    ): T? {
+        return if (forceRefresh || shouldRefresh(key, strategy)) {
             UpdateScopeImpl(key).block()
+        } else {
+            null
         }
     }
 

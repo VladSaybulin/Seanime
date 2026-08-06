@@ -171,12 +171,14 @@ class AnimeRepository @Inject constructor(
         )
     }
 
-    override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) = coordinator.sync(
-        key = cachedKey(RequestType.OngoingAnimes),
-        forceRefresh = force,
-        ttlStrategy = TTLStrategies.OngoingAnimes,
-        block = { updateOngoingAnimes(limit) }
-    )
+    override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.OngoingAnimes),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.OngoingAnimes,
+            block = { updateOngoingAnimes(limit) }
+        )
+    }
 
     private suspend fun UpdateScope.updateAnimeDetails(animeId: Long) {
         val response = animeDataSource.getAnimeDetails(animeId)

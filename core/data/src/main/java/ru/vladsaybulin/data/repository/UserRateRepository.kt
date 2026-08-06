@@ -210,12 +210,14 @@ class UserRateRepository @Inject constructor(
         }
     }
 
-    override suspend fun refreshInProgressRates(force: Boolean) = coordinator.sync(
-        key = cachedKey(RequestType.InProgressRates),
-        forceRefresh = force,
-        ttlStrategy = TTLStrategies.InProgressRates,
-        block = { updateInProgressRates() }
-    )
+    override suspend fun refreshInProgressRates(force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.InProgressRates),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.InProgressRates,
+            block = { updateInProgressRates() }
+        )
+    }
 
     private suspend fun UpdateScope.updateInProgressRates() = withContext(ioDispatcher) {
         val watchingDeferred = async(ioDispatcher) {
