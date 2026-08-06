@@ -52,12 +52,14 @@ class CalendarRepository @Inject constructor(
             .map { items -> items.map(PopulatedCalendarItem::asExternalModel) }
             .flowOn(ioDispatcher)
 
-    override suspend fun refreshCalendarItems(force: Boolean) = coordinator.sync(
-        key = cachedKey(RequestType.Calendar),
-        forceRefresh = force,
-        ttlStrategy = TTLStrategies.Calendar,
-        block = { updateCalendarItems() }
-    )
+    override suspend fun refreshCalendarItems(force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.Calendar),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.Calendar,
+            block = { updateCalendarItems() }
+        )
+    }
 
     private suspend fun UpdateScope.updateCalendarItems() {
         val response = calendarDataSource.getAllCalendarItems()

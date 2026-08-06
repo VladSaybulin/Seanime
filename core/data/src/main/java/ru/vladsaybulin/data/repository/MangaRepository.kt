@@ -107,26 +107,32 @@ class MangaRepository @Inject constructor(
         mangaDetailsDao.getAllMangaAuthors(mangaId)
             .map { it.map(PopulatedMangaAuthor::asExternalModel) }
 
-    override suspend fun refreshMangaDetails(mangaId: Long, force: Boolean) = coordinator.sync(
-        key = cachedKey(RequestType.Manga, mangaId),
-        forceRefresh = force,
-        ttlStrategy = TTLStrategies.TitleDetails,
-        block = { updateMangaDetails(mangaId) }
-    )
+    override suspend fun refreshMangaDetails(mangaId: Long, force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.Manga, mangaId),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.TitleDetails,
+            block = { updateMangaDetails(mangaId) }
+        )
+    }
 
-    override suspend fun refreshMangaRoles(mangaId: Long, force: Boolean) = coordinator.sync(
-        key = cachedKey(RequestType.MangaRoles, mangaId),
-        forceRefresh = force,
-        ttlStrategy = TTLStrategies.TitleDetails,
-        block = { updateMangaRoles(mangaId) }
-    )
+    override suspend fun refreshMangaRoles(mangaId: Long, force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.MangaRoles, mangaId),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.TitleDetails,
+            block = { updateMangaRoles(mangaId) }
+        )
+    }
 
-    override suspend fun refreshSimilarMangas(mangaId: Long, force: Boolean) = coordinator.sync(
-        key = cachedKey(RequestType.SimilarMangas, mangaId),
-        forceRefresh = force,
-        ttlStrategy = TTLStrategies.TitleDetails,
-        block = { updateSimilarMangas(mangaId) }
-    )
+    override suspend fun refreshSimilarMangas(mangaId: Long, force: Boolean) {
+        coordinator.sync(
+            key = cachedKey(RequestType.SimilarMangas, mangaId),
+            forceRefresh = force,
+            ttlStrategy = TTLStrategies.TitleDetails,
+            block = { updateSimilarMangas(mangaId) }
+        )
+    }
 
     private suspend fun UpdateScope.updateMangaDetails(mangaId: Long) {
         withContext(ioDispatcher) {

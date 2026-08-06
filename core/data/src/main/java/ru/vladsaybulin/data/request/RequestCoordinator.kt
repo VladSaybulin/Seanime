@@ -48,14 +48,16 @@ class RequestCoordinator @Inject constructor(
      * Performs cache-aware synchronization for a cached [key].
      *
      * The refresh runs only when [forceRefresh] is true or [ttlStrategy] says cached data expired.
+     *
+     * @return the result of [block], or `null` if refresh was not required.
      */
-    suspend fun sync(
+    suspend fun <T> sync(
         key: RequestKey.Cached,
         forceRefresh: Boolean,
         ttlStrategy: TTLStrategy,
-        block: suspend UpdateScope.() -> Unit
-    ) {
-        request(key) {
+        block: suspend UpdateScope.() -> T
+    ): T? {
+        return request(key) {
             syncer.sync(key, forceRefresh, ttlStrategy, block)
         }
     }
