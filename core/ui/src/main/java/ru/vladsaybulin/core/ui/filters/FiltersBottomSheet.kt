@@ -18,7 +18,6 @@ package ru.vladsaybulin.core.ui.filters
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.WindowInsets
@@ -56,9 +55,11 @@ import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.score.ScoreInput
 import ru.vladsaybulin.core.ui.strings.durationString
 import ru.vladsaybulin.core.ui.strings.seasonFilterString
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.search.FilterOption
 import ru.vladsaybulin.model.search.FilterType
 import ru.vladsaybulin.model.search.Filters
@@ -411,22 +412,24 @@ fun ExcludedIcon() {
 @Composable
 @Preview
 fun FiltersContentPreview() {
-    SeanimeTheme {
-        Surface {
-            FiltersContent(
-                filtersState = rememberFiltersState(
-                    filters = Filters(
-                        animeKindOptions = AnimeKind.entries
-                            .filter { it != AnimeKind.None }
-                            .map { FilterOption(it, it.serializedName) },
-                        statusOptions = EntryStatus.entries
-                            .filter { it != EntryStatus.None }
-                            .map { FilterOption(it, it.serializedName) },
+    ProvideTitleStringsByType(titleType = EntryType.Anime) {
+        SeanimeTheme {
+            Surface {
+                FiltersContent(
+                    filtersState = rememberFiltersState(
+                        filters = Filters(
+                            animeKindOptions = AnimeKind.entries
+                                .filter { it != AnimeKind.None }
+                                .map { FilterOption(it, it.serializedName) },
+                            statusOptions = EntryStatus.entries
+                                .filter { it != EntryStatus.None }
+                                .map { FilterOption(it, it.serializedName) },
+                        ),
+                        appliedFilters = mapOf(FilterType.Score to mapOf("7" to OptionValue.Selected))
                     ),
-                    appliedFilters = mapOf(FilterType.Score to mapOf("7" to OptionValue.Selected))
-                ),
-                onDismissRequest = { }
-            )
+                    onDismissRequest = { }
+                )
+            }
         }
     }
 }
