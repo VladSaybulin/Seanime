@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.designsystem)
     implementation(projects.core.ui2.strings)
+    implementation(projects.core.ui2.score)
 
     implementation(libs.kotlinx.datetime)
     implementation(libs.coil.kt)
