@@ -16,16 +16,20 @@
 
 package ru.vladsaybulin.data.util
 
-import ru.vladsaybulin.core.auth.UserIdFetcher
-import ru.vladsaybulin.core.domain.repository.UserRepository
+import ru.vladsaybulin.core.auth.OnLogoutCleaner
+import ru.vladsaybulin.database.dao.UserRateDao
 import javax.inject.Inject
 
 /**
- * Bridges [UserIdFetcher] (auth module) with [UserRepository.whoAmI] (data module).
- * Throws [java.io.IOException] on network errors so the auth layer can classify them.
+ * Local cleanup performed on logout: clears cached user-rates from DB.
+ *
+ * Token clearing and state reset are handled by [SessionManager] before
+ * calling this action, so no auth references are needed here.
  */
-class SessionUserIdFetcher @Inject constructor(
-    private val userRepository: UserRepository
-) : UserIdFetcher {
-    override suspend fun fetchUserId(): Long? = userRepository.whoAmI()?.id
+class ShikimoriOnLogoutCleaner @Inject constructor(
+    private val userRateDao: UserRateDao
+) : OnLogoutCleaner {
+    override suspend fun onLogout() {
+        userRateDao.deleteAllUserRates()
+    }
 }
