@@ -30,7 +30,9 @@ import kotlinx.coroutines.CoroutineScope
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.network.di.ApplicationScope
+import ru.vladsaybulin.core.datastore.proto.AuthTokens
 import ru.vladsaybulin.core.datastore.proto.SeanimePreferences
+import ru.vladsaybulin.datastore.AuthTokensSerializer
 import ru.vladsaybulin.datastore.SeanimePreferencesSerializer
 import javax.inject.Singleton
 
@@ -53,4 +55,18 @@ class DatastoreModule {
             context.dataStoreFile("seanime_preferences.proto.pb")
         }
 
+    @Provides
+    @Singleton
+    internal fun providesAuthTokensDataStore(
+        @ApplicationContext context: Context,
+        @Dispatcher(IO) ioDispatcher: CoroutineDispatcher,
+        @ApplicationScope scope: CoroutineScope,
+        authTokensSerializer: AuthTokensSerializer,
+    ): DataStore<AuthTokens> =
+        DataStoreFactory.create(
+            serializer = authTokensSerializer,
+            scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
+        ) {
+            context.dataStoreFile("auth_tokens.proto.pb")
+        }
 }

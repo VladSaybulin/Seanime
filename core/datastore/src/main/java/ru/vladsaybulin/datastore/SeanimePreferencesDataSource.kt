@@ -26,8 +26,6 @@ import javax.inject.Inject
 class SeanimePreferencesDataSource @Inject constructor(
     private val seanimePreferencesDataStore: DataStore<SeanimePreferences>
 ) {
-    val myId = seanimePreferencesDataStore.data
-        .map { prefs -> prefs.myId.takeIf { it != NULL_MY_ID } }
 
     val calendarLastRequestDate = seanimePreferencesDataStore.data
         .map { Instant.fromEpochMilliseconds(it.lastCalendarRequestDate) }
@@ -73,12 +71,5 @@ class SeanimePreferencesDataSource @Inject constructor(
             it.copy { lastPublishersRequestDate = date.toEpochMilliseconds() }
         }
     }
-
-    suspend fun setMyId(newMyId: Long?) {
-        seanimePreferencesDataStore.updateData {
-            it.copy { myId = newMyId ?: NULL_MY_ID }
-        }
-    }
 }
 
-internal const val NULL_MY_ID = -1L

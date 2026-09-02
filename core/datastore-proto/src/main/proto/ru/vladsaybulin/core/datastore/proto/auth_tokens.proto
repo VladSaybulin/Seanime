@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "ru.vladsaybulin.core.datastore.proto";
+option java_multiple_files = true;
+
+message AuthTokens {
+  bytes iv             = 1; // 12-byte GCM nonce
+  bytes encrypted_blob = 2; // AES-256-GCM ciphertext of "accessToken\nrefreshToken"
+  int64 expires_at_ms  = 3; // Access-token expiry (plain, not sensitive)
+}
+
