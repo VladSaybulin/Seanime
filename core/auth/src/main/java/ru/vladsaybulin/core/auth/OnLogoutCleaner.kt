@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.common.auth
+package ru.vladsaybulin.core.auth
 
-fun interface LogoutAction {
-    suspend fun logout()
+/**
+ * Represents the action of clearing local data.
+ */
+fun interface OnLogoutCleaner {
+    suspend fun onLogout()
 }
