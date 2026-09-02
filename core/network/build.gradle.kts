@@ -41,6 +41,7 @@ dependencies {
     implementation(projects.core.auth)
     implementation(projects.core.model)
     implementation(projects.core.common)
+    implementation(projects.core.auth)
 
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.retrofit.core)

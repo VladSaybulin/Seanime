@@ -21,34 +21,39 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
-import ru.vladsaybulin.network.TokenProvider
+import ru.vladsaybulin.core.auth.SessionManager
 import javax.inject.Inject
 
 /**
- * OkHttp [Authenticator] that handles `401 Unauthorized` responses.
+ * Handles 401 responses by attempting a token refresh via [SessionManager].
  *
- * Behavior:
- * - if response code is not `401`, no retry is requested;
- * - if [TokenProvider] already has a newer token, the request is rebuilt with it;
- * - if the token from the failed request equals the current token,
- *   [TokenProvider.logout] is called and retry is canceled.
- *
- * @property tokenProvider Source and manager of access tokens.
+ * - If a fresh token differs from the one that caused the 401 → retry with new token.
+ * - If tokens are the same → the refresh also failed; trigger logout via [SessionManager].
+ * - Skips the auth endpoint to avoid retry loops.
  */
-class SeanimeAuthenticator @Inject constructor(private val tokenProvider: TokenProvider) : Authenticator {
-    override fun authenticate(route: Route?, response: Response): Request? {
-        if (response.code != 401) return null
+class SeanimeAuthenticator @Inject constructor(
+    private val sessionManager: SessionManager
+) : Authenticator {
+    override fun authenticate(route: Route?, response: Response): Request? = runBlocking {
+        if (response.code != 401) return@runBlocking null
 
-        val tokenFromRequest = response.request.getAuthorizationBearer()
-        val actualToken = runBlocking { tokenProvider.getAccessToken() } ?: return null
+        // Don't retry auth endpoint itself
+        if (response.request.url.pathSegments.contains("oauth")) return@runBlocking null
 
-        if (tokenFromRequest == actualToken) {
-            runBlocking { tokenProvider.logout() }
-            return null
+        val staleToken = response.request.getBearerToken()
+        val freshToken = sessionManager.getFreshToken() ?: run {
+            sessionManager.logout()
+            return@runBlocking null
         }
 
-        return response.request.newBuilder()
-            .setAuthorizationBearer(actualToken)
+        // If token didn't change the refresh failed → logout
+        if (freshToken == staleToken) {
+            sessionManager.logout()
+            return@runBlocking null
+        }
+
+        response.request.newBuilder()
+            .replaceBearerToken(freshToken)
             .build()
     }
 }

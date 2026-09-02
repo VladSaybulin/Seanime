@@ -19,30 +19,28 @@ package ru.vladsaybulin.network.util.interceptors
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import ru.vladsaybulin.network.TokenProvider
-import ru.vladsaybulin.network.util.setAuthorizationBearer
+import ru.vladsaybulin.core.auth.SessionManager
+import ru.vladsaybulin.network.util.addBearerToken
 import javax.inject.Inject
 
-/**
- * OkHttp interceptor that adds `Authorization: Bearer <token>` to outgoing requests.
- *
- * If [TokenProvider.getAccessToken] returns `null`, the request is sent without
- * an Authorization header.
- *
- * @property tokenProvider Source of the current access token.
- */
-class AuthorizationInterceptor @Inject constructor(private val tokenProvider: TokenProvider) : Interceptor {
+class AuthorizationInterceptor @Inject constructor(
+    private val sessionManager: SessionManager
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = runBlocking { tokenProvider.getAccessToken() }
+        val request = chain.request()
 
-        val request = if (token != null) {
-            chain.request().newBuilder()
-                .setAuthorizationBearer(token)
-                .build()
-        } else {
-            chain.request()
+        // Skip auth header for the token-exchange endpoint itself to avoid recursion
+        if (request.url.pathSegments.contains("oauth")) {
+            return chain.proceed(request)
         }
 
-        return chain.proceed(request)
+        val token = runBlocking { sessionManager.getFreshToken() }
+            ?: return chain.proceed(request)
+
+        return chain.proceed(
+            request.newBuilder()
+                .addBearerToken(token)
+                .build()
+        )
     }
 }
