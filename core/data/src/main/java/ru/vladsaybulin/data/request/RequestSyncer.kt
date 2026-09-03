@@ -17,6 +17,7 @@
 package ru.vladsaybulin.data.request
 
 import kotlinx.datetime.Clock
+import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.LastRequestDao
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
@@ -36,17 +37,17 @@ class RequestSyncer @Inject constructor(
     /**
      * Executes [block] when refresh is required for [key].
      *
-     * Refresh is required when [forceRefresh] is true or [strategy] reports expired cache.
+     * Refresh is required when [strategy] reports expired cache.
+     * To force refresh use [ru.vladsaybulin.data.TTLStrategies.ForceRefresh]
      *
      * @return the result of [block], or `null` if refresh was not required.
      */
     suspend fun <T> sync(
         key: RequestKey.Cached,
-        forceRefresh: Boolean,
         strategy: TTLStrategy,
         block: suspend UpdateScope.() -> T
     ): T? {
-        return if (forceRefresh || shouldRefresh(key, strategy)) {
+        return if (strategy == TTLStrategies.ForceRefresh || shouldRefresh(key, strategy)) {
             UpdateScopeImpl(key).block()
         } else {
             null
