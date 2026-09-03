@@ -49,3 +49,9 @@ object TTLStrategies {
     /** Ongoing anime list is refreshed after day rollover. */
     val OngoingAnimes = NextDayMidnightTTLStrategy(DatePeriod(days = 1))
 }
+
+inline fun withForceStrategy(force: Boolean, block: () -> TTLStrategy) = if (force) {
+    TTLStrategies.ForceRefresh
+} else {
+    block()
+}
