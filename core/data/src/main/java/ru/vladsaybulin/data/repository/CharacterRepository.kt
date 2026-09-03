@@ -30,6 +30,7 @@ import ru.vladsaybulin.data.model.seyuCrossRefs
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
+import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CharacterDao
 import ru.vladsaybulin.database.dao.MangaDao
@@ -56,8 +57,7 @@ class CharacterRepository @Inject constructor(
     override suspend fun refreshCharacterDetails(characterId: Long, force: Boolean){
         requestCoordinator.sync(
             key = cachedKey(RequestType.Character, characterId),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.CharacterDetails
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.CharacterDetails }
         ) { updateCharacterDetails(characterId) }
     }
 

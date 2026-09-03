@@ -42,6 +42,7 @@ import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
+import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CharacterDao
 import ru.vladsaybulin.database.dao.GenreDao
@@ -110,8 +111,7 @@ class MangaRepository @Inject constructor(
     override suspend fun refreshMangaDetails(mangaId: Long, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.Manga, mangaId),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.TitleDetails,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
             block = { updateMangaDetails(mangaId) }
         )
     }
@@ -119,8 +119,7 @@ class MangaRepository @Inject constructor(
     override suspend fun refreshMangaRoles(mangaId: Long, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.MangaRoles, mangaId),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.TitleDetails,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
             block = { updateMangaRoles(mangaId) }
         )
     }
@@ -128,8 +127,7 @@ class MangaRepository @Inject constructor(
     override suspend fun refreshSimilarMangas(mangaId: Long, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.SimilarMangas, mangaId),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.TitleDetails,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
             block = { updateSimilarMangas(mangaId) }
         )
     }

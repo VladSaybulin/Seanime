@@ -49,6 +49,7 @@ import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
+import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
@@ -213,8 +214,7 @@ class UserRateRepository @Inject constructor(
     override suspend fun refreshInProgressRates(force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.InProgressRates),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.InProgressRates,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.InProgressRates },
             block = { updateInProgressRates() }
         )
     }
