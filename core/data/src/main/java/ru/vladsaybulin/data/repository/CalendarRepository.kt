@@ -29,6 +29,7 @@ import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
+import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CalendarDao
 import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
@@ -55,8 +56,7 @@ class CalendarRepository @Inject constructor(
     override suspend fun refreshCalendarItems(force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.Calendar),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.Calendar,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.Calendar },
             block = { updateCalendarItems() }
         )
     }

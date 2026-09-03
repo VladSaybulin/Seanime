@@ -47,6 +47,7 @@ import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
 import ru.vladsaybulin.data.util.AbstractShikimoriPagingSource
+import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.AnimeDetailsDao
 import ru.vladsaybulin.database.dao.CharacterDao
@@ -147,8 +148,7 @@ class AnimeRepository @Inject constructor(
     override suspend fun refreshAnimeDetails(animeId: Long, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.Anime, animeId),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.TitleDetails,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
             block = { updateAnimeDetails(animeId) },
         )
     }
@@ -156,8 +156,7 @@ class AnimeRepository @Inject constructor(
     override suspend fun refreshAnimeRoles(animeId: Long, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.AnimeRoles, animeId),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.TitleDetails,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
             block = { updateAnimeRoles(animeId) }
         )
     }
@@ -165,8 +164,7 @@ class AnimeRepository @Inject constructor(
     override suspend fun refreshSimilarAnimes(animeId: Long, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.SimilarAnimes, animeId),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.TitleDetails,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
             block = { updateSimilarAnimes(animeId) }
         )
     }
@@ -174,8 +172,7 @@ class AnimeRepository @Inject constructor(
     override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.OngoingAnimes),
-            forceRefresh = force,
-            ttlStrategy = TTLStrategies.OngoingAnimes,
+            ttlStrategy = withForceStrategy(force) { TTLStrategies.OngoingAnimes },
             block = { updateOngoingAnimes(limit) }
         )
     }
