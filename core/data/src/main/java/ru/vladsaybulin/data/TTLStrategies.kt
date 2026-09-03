@@ -19,6 +19,7 @@ package ru.vladsaybulin.data
 import kotlinx.datetime.DatePeriod
 import ru.vladsaybulin.data.request.DefaultTTLStrategy
 import ru.vladsaybulin.data.request.NextDayMidnightTTLStrategy
+import ru.vladsaybulin.data.request.TTLStrategy
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -27,16 +28,24 @@ import kotlin.time.Duration.Companion.minutes
  * Predefined TTL policies for app data groups.
  */
 object TTLStrategies {
+
+    val ForceRefresh = TTLStrategy { _, _ -> true }
+
     /** Character details are refreshed at most once per day by default. */
     val CharacterDetails = DefaultTTLStrategy(ttl = 1.days)
+
     /** Title details are refreshed hourly by default. */
     val TitleDetails = DefaultTTLStrategy(ttl = 1.hours)
+
     /** Calendar is refreshed after day rollover. */
     val Calendar = NextDayMidnightTTLStrategy(DatePeriod(days = 1))
+
     /** In-progress user rates have a short cache window. */
     val InProgressRates = DefaultTTLStrategy(5.minutes)
+
     /** News topics are refreshed hourly by default. */
     val News = DefaultTTLStrategy(1.hours)
+
     /** Ongoing anime list is refreshed after day rollover. */
     val OngoingAnimes = NextDayMidnightTTLStrategy(DatePeriod(days = 1))
 }
