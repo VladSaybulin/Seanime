@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.shared
+package ru.vladsaybulin.core.domain.app
 
-import ru.vladsaybulin.common.auth.LogoutAction
+import ru.vladsaybulin.core.domain.repository.AuthRepository
 import javax.inject.Inject
 
+/**
+ * Triggers the full logout sequence via [ru.vladsaybulin.core.domain.repository.AuthRepository]:
+ *  1. Clears encrypted token store
+ *  2. Resets SessionState → LoggedOut
+ *  3. Runs local DB cleanup (UserRates)
+ *  4. Best-effort backend revoke
+ */
 class LogoutUseCase @Inject constructor(
-    private val logoutAction: LogoutAction
+    private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke() {
-        logoutAction.logout()
-    }
+    suspend operator fun invoke() = authRepository.logout()
 }
