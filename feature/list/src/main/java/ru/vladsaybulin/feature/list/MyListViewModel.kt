@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.update
 import ru.vladsaybulin.core.domain.GetPagedUserRatesUseCase
 import ru.vladsaybulin.core.domain.shared.GetAuthStateStreamUseCase
 import ru.vladsaybulin.feature.list.navigation.ListScreenRoute
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.model.auth.SessionState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
@@ -61,7 +61,7 @@ class MyListViewModel @Inject constructor(
     )
 
     private val pagedUserRates = authState.flatMapLatest { currentAuthState ->
-        if (currentAuthState == ShikimoriAuthState.LOGGED_OUT) {
+        if (currentAuthState == SessionState.LoggedOut) {
             flowOf(PagingData.empty())
         } else {
             controlPanel.flatMapLatest { (type, status, field, order) ->
@@ -71,7 +71,7 @@ class MyListViewModel @Inject constructor(
     }.cachedIn(viewModelScope)
 
     internal val screenState = authState.flatMapLatest { currentAuthState ->
-        if (currentAuthState == ShikimoriAuthState.LOGGED_OUT) {
+        if (currentAuthState == SessionState.LoggedOut) {
             flowOf<ListScreenState>(ListScreenState.LoggedOut)
         } else {
             controlPanel.map { controlPanelState ->
