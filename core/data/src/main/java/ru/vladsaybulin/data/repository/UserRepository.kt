@@ -18,68 +18,80 @@ package ru.vladsaybulin.data.repository
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.domain.repository.UserRepository as DomainUserRepository
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
+import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.asExternalModel
+import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.RequestKey
+import ru.vladsaybulin.data.request.TTLStrategy
+import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.dao.UsersDao
+import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.database.models.user.asExternalModel
-import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.network.datasource.UserDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
+import ru.vladsaybulin.core.domain.repository.UserRepository as DomainUserRepository
 
 @Singleton
 class UserRepository @Inject constructor(
     private val userDataSource: UserDataSource,
     private val usersDao: UsersDao,
-    private val prefsDataSource: SeanimePreferencesDataSource,
-    private val shikimoriAuthorization: ShikimoriAuthorization,
+    private val requestCoordinator: RequestCoordinator,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : DomainUserRepository {
-    override suspend fun getMyId(): Long? = getMyIdStream().first()
 
-    override fun getMyIdStream(): Flow<Long?> = shikimoriAuthorization.shikimoriAuthState.map {
-        if (it == ShikimoriAuthState.LOGGED_IN) requireMyId() else null
+    /**
+     * Calls whoAmI on the network, caches the result in the local DB and returns
+     * the user. Returns null only when the server returned null (not authenticated).
+     * Throws on network errors — callers are responsible for error handling.
+     */
+    override suspend fun whoAmI(): BriefUser? = withContext(ioDispatcher) {
+        val userEntity = userDataSource.whoAmI()?.asExternalModel() // NetworkBriefUser -> UserEntity
+            ?: return@withContext null
+
+        requestCoordinator.sync(
+            RequestKey.Cached(RequestType.User, userEntity.id),
+            TTLStrategies.ForceRefresh
+        ) {
+            usersDao.insertOrReplaceUser(userEntity)
+            userEntity.asExternalModel() // UserEntity -> BriefUser (domain)
+        }
     }
 
-    override fun getMeStream(): Flow<BriefUser?> = getMyIdStream()
-        .flatMapLatest { myId ->
-            myId?.let { nonNullMyId ->
-                usersDao.getUserById(nonNullMyId).map { it.asExternalModel() }
-            } ?: flowOf(null)
-        }
-
+    /**
+     * Emits the local DB snapshot and refreshes from the network on first subscription.
+     */
     override fun getUserStream(id: Long): Flow<BriefUser> =
-        usersDao.getUserById(id).mapNotNull { it.asExternalModel() }
-            .onStart { refreshUserBrief(id) }
+        usersDao.getUserById(id)
+            .map { it.asExternalModel() }
+            .onStart { refreshUserBrief(id, true) } //TODO: add force flag
 
-    private suspend fun refreshUserBrief(id: Long) {
-        withContext(ioDispatcher) {
-            val response = userDataSource.getUserBriefById(id)
-
-            usersDao.insertOrReplaceUser(response.asExternalModel())
+    private suspend fun refreshUserBrief(id: Long, force: Boolean) = withContext(ioDispatcher) {
+        requestCoordinator.sync(
+            RequestKey.Cached(RequestType.User, id),
+            withForceStrategy(force) { TTLStrategies.UserBrief }
+        ) {
+            val userEntity = userDataSource.getUserBriefById(id).asExternalModel()  // NetworkBriefUser -> UserEntity
+            usersDao.insertOrReplaceUser(userEntity)
+            userEntity.asExternalModel() // UserEntity -> BriefUser (domain)
         }
     }
 
-    private suspend fun requireMyId(): Long =
-        prefsDataSource.myId.first() ?: updateMeAndReturnMyId()
+    class WhoAmIRefreshPolicy : TTLStrategy {
+        private var fetched: Boolean = false
 
-    private suspend fun updateMeAndReturnMyId(): Long = withContext(ioDispatcher) {
-        val user = userDataSource.whoAmI()?.asExternalModel()
-        checkNotNull(user) { "whoAmI returned null" }
-        usersDao.insertOrReplaceUser(user)
-        prefsDataSource.setMyId(user.id)
-        user.id
-    }
+        override fun isExpired(now: kotlinx.datetime.Instant, lastRequest: kotlinx.datetime.Instant): Boolean =
+            if (fetched){
+                TTLStrategies.UserBrief.isExpired(now, lastRequest)
+            } else {
+                fetched = true
+                true
+            }
+        }
 }
