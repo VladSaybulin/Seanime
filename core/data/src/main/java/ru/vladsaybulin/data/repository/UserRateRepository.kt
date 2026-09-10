@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
+import ru.vladsaybulin.core.auth.SessionManager
 import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.CreateUserRateRequest
 import ru.vladsaybulin.data.model.animeEntityOrNullShells
@@ -75,7 +75,7 @@ class UserRateRepository @Inject constructor(
     private val animeDao: AnimeDao,
     private val mangaDao: MangaDao,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager,
     private val coordinator: RequestCoordinator,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : DomainUserRateRepository {
@@ -144,7 +144,7 @@ class UserRateRepository @Inject constructor(
     ) {
         require(userRateValues.status != UserRateStatus.None)
         withContext(ioDispatcher) {
-            val myId = userRepository.getMyId() ?: throw IllegalStateException("Not authorized")
+            val myId = sessionManager.getUserId() ?: throw IllegalStateException("Not authorized")
             val response = try {
                 userRateDataSource.createUserRate(
                     CreateUserRateRequest(
