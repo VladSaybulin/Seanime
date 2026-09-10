@@ -31,6 +31,12 @@ android {
         propertiesFileName = "secrets.properties"
         defaultPropertiesFileName = "secrets.default.properties"
     }
+
+    testOptions {
+        unitTests.all {
+            it.jvmArgs("-Dnet.bytebuddy.experimental=true")
+        }
+    }
 }
 
 dependencies {
@@ -40,4 +46,9 @@ dependencies {
     api(libs.appauth)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
+
+    testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
 }

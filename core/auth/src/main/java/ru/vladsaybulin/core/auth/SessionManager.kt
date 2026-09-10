@@ -18,6 +18,7 @@ package ru.vladsaybulin.core.auth
 
 import dagger.Lazy
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
@@ -40,6 +41,7 @@ import ru.vladsaybulin.common.network.di.ApplicationScope
 import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
 import ru.vladsaybulin.model.auth.SessionState
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,6 +69,10 @@ class SessionManager @Inject constructor(
 
     private val resolveUserIdMutex = Mutex()
     private var ongoingResolveUserId: Deferred<Long?>? = null
+
+    // Guards mutable session writes and marks in-flight results as stale after logout.
+    private val sessionMutationMutex = Mutex()
+    private val sessionEpoch = AtomicLong(0L)
 
     init {
         authorization.codeResults
@@ -107,16 +113,30 @@ class SessionManager @Inject constructor(
 
     suspend fun getFreshToken(): String? {
         startupJob.await()
-        return getOrStartRefresh().await()
+        return try {
+            getOrStartRefresh().await()
+        } catch (_: CancellationException) {
+            null
+        }
     }
 
     suspend fun logout() {
-        tokenStore.clearTokens()
-        preferencesDataSource.setMyId(null)
-        _userId.value = null
-        _sessionState.value = SessionState.LoggedOut
+        sessionMutationMutex.withLock {
+            // Invalidate all in-flight work so stale refresh/resolve cannot write state back.
+            sessionEpoch.incrementAndGet()
 
-        onLogoutCleaner.get().onLogout()
+            ongoingRefresh?.cancel()
+            ongoingRefresh = null
+            ongoingResolveUserId?.cancel()
+            ongoingResolveUserId = null
+
+            tokenStore.clearTokens()
+            preferencesDataSource.setMyId(null)
+            _userId.value = null
+            _sessionState.value = SessionState.LoggedOut
+
+            onLogoutCleaner.get().onLogout()
+        }
     }
 
     private suspend fun restoreSession() {
@@ -163,7 +183,11 @@ class SessionManager @Inject constructor(
             return persistedId
         }
 
-        return getOrStartResolveUserId().await()
+        return try {
+            getOrStartResolveUserId().await()
+        } catch (_: CancellationException) {
+            null
+        }
     }
 
     private suspend fun getOrStartResolveUserId(): Deferred<Long?> =
@@ -174,6 +198,8 @@ class SessionManager @Inject constructor(
         }
 
     private suspend fun doResolveUserId(): Long? {
+        val epochAtStart = sessionEpoch.get()
+
         if (tokenStore.getTokens() == null) {
             _userId.value = null
             _sessionState.value = SessionState.LoggedOut
@@ -195,10 +221,16 @@ class SessionManager @Inject constructor(
             return null
         }
 
-        _userId.value = resolvedUserId
-        preferencesDataSource.setMyId(resolvedUserId)
-        _sessionState.value = SessionState.Authenticated
-        return resolvedUserId
+        return sessionMutationMutex.withLock {
+            if (epochAtStart != sessionEpoch.get() || _sessionState.value == SessionState.LoggedOut) {
+                return@withLock null
+            }
+
+            _userId.value = resolvedUserId
+            preferencesDataSource.setMyId(resolvedUserId)
+            _sessionState.value = SessionState.Authenticated
+            resolvedUserId
+        }
     }
 
     private suspend fun getOrStartRefresh(): Deferred<String?> =
@@ -209,13 +241,28 @@ class SessionManager @Inject constructor(
         }
 
     private suspend fun doRefresh(): String? {
+        val epochAtStart = sessionEpoch.get()
         val tokens = tokenStore.getTokens() ?: return null
-        if (!tokens.isExpired()) return tokens.accessToken
+        if (!tokens.isExpired()) {
+            if (epochAtStart != sessionEpoch.get() || _sessionState.value == SessionState.LoggedOut) {
+                return null
+            }
+            return tokens.accessToken
+        }
 
         return try {
             val refreshed = tokenGateway.get().refresh(tokens.refreshToken)
-            tokenStore.saveTokens(refreshed)
-            refreshed.accessToken
+            sessionMutationMutex.withLock {
+                if (epochAtStart != sessionEpoch.get() || _sessionState.value == SessionState.LoggedOut) {
+                    return@withLock null
+                }
+
+                tokenStore.saveTokens(refreshed)
+                _sessionState.value = SessionState.Authenticated
+                refreshed.accessToken
+            }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: IOException) {
             throw e
         } catch (_: AuthException) {
