@@ -28,4 +28,5 @@ enum class RequestType(val serializedValue: String) {
     News("news"),
     Calendar("calendar"),
     InProgressRates("in_progress_rates"),
+    User("user")
 }
