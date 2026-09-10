@@ -27,6 +27,9 @@ class SeanimePreferencesDataSource @Inject constructor(
     private val seanimePreferencesDataStore: DataStore<SeanimePreferences>
 ) {
 
+    val myId = seanimePreferencesDataStore.data
+        .map { if (it.hasCachedMyId) it.cachedMyId else null }
+
     val calendarLastRequestDate = seanimePreferencesDataStore.data
         .map { Instant.fromEpochMilliseconds(it.lastCalendarRequestDate) }
 
@@ -71,5 +74,20 @@ class SeanimePreferencesDataSource @Inject constructor(
             it.copy { lastPublishersRequestDate = date.toEpochMilliseconds() }
         }
     }
+
+    suspend fun setMyId(id: Long?) {
+        seanimePreferencesDataStore.updateData {
+            it.copy {
+                if (id == null) {
+                    hasCachedMyId = false
+                    cachedMyId = 0L
+                } else {
+                    hasCachedMyId = true
+                    cachedMyId = id
+                }
+            }
+        }
+    }
 }
+
 
