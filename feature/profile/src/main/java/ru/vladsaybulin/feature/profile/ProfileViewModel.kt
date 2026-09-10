@@ -23,8 +23,6 @@ import androidx.navigation.toRoute
 import dagger.Lazy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -32,9 +30,9 @@ import ru.vladsaybulin.core.domain.profile.GetBriefUserStreamUseCase
 import ru.vladsaybulin.core.domain.profile.IsMeUseCase
 import ru.vladsaybulin.core.domain.shared.GetAuthStateStreamUseCase
 import ru.vladsaybulin.core.domain.shared.LoginViaShikimoriUseCase
-import ru.vladsaybulin.core.domain.shared.LogoutUseCase
+import ru.vladsaybulin.core.domain.app.LogoutUseCase
 import ru.vladsaybulin.feature.profile.navigation.ProfileScreenRoute
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.model.auth.SessionState
 import ru.vladsaybulin.model.user.BriefUser
 import javax.inject.Inject
 
@@ -51,7 +49,7 @@ class ProfileViewModel @Inject constructor(
     private val route = savedStateHandle.toRoute<ProfileScreenRoute>()
 
     val isMe = when (route.userId) {
-        null -> getAuthStateStreamUseCase().map { it == ShikimoriAuthState.LOGGED_IN }
+        null -> getAuthStateStreamUseCase().map { it == SessionState.Authenticated }
         else -> isMeUseCase(route.userId)
     }.stateIn(
         scope = viewModelScope,
