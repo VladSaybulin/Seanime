@@ -17,7 +17,7 @@
 package ru.vladsaybulin.core.auth
 
 /**
- * Single backend endpoint (action=exchange|refresh|revoke).
+ * Single backend endpoint (action=exchange|refresh).
  * See docs/auth_backend_contract.md.
  *
  * Throws [java.io.IOException] on network errors,
@@ -26,8 +26,6 @@ package ru.vladsaybulin.core.auth
 interface TokenExchangeGateway {
     suspend fun exchange(code: String): StoredTokens
     suspend fun refresh(refreshToken: String): StoredTokens
-
-    suspend fun revoke(refreshToken: String)
 }
 
 /** Fatal auth error from the backend (e.g. 401 on refresh). */

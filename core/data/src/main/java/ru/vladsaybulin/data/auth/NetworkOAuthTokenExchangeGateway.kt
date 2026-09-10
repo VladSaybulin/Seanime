@@ -56,8 +56,6 @@ class NetworkOAuthTokenExchangeGateway @Inject constructor(
             )
         )
 
-    override suspend fun revoke(refreshToken: String) {
-    }
 
     private suspend fun call(request: OAuthTokenRequest): StoredTokens {
         val response = dataSource.action(request)

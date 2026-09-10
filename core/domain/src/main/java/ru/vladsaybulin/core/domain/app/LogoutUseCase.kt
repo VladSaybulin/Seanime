@@ -24,7 +24,6 @@ import javax.inject.Inject
  *  1. Clears encrypted token store
  *  2. Resets SessionState → LoggedOut
  *  3. Runs local DB cleanup (UserRates)
- *  4. Best-effort backend revoke
  */
 class LogoutUseCase @Inject constructor(
     private val authRepository: AuthRepository

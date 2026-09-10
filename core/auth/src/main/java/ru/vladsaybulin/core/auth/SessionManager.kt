@@ -111,18 +111,12 @@ class SessionManager @Inject constructor(
     }
 
     suspend fun logout() {
-        val refreshToken = tokenStore.getRefreshToken()
-
         tokenStore.clearTokens()
         preferencesDataSource.setMyId(null)
         _userId.value = null
         _sessionState.value = SessionState.LoggedOut
 
         onLogoutCleaner.get().onLogout()
-
-        if (refreshToken != null) {
-            appScope.launch { runCatching { tokenGateway.get().revoke(refreshToken) } }
-        }
     }
 
     private suspend fun restoreSession() {
