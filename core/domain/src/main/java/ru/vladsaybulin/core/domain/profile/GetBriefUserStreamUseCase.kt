@@ -17,17 +17,26 @@
 package ru.vladsaybulin.core.domain.profile
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import ru.vladsaybulin.core.domain.repository.AuthRepository
 import ru.vladsaybulin.core.domain.repository.UserRepository
 import ru.vladsaybulin.model.user.BriefUser
 import javax.inject.Inject
 
 class GetBriefUserStreamUseCase @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository
 ) {
     operator fun invoke(userId: Long?): Flow<BriefUser?> =
         if (userId == null) {
-            userRepository.getMeStream()
+            // Current user: derive from authenticated session
+            authRepository.getUserIdStream().flatMapLatest { myId ->
+                if (myId == null) flowOf(null)
+                else userRepository.getUserStream(myId).map<BriefUser, BriefUser?> { it }
+            }
         } else {
-            userRepository.getUserStream(userId)
+            userRepository.getUserStream(userId).map<BriefUser, BriefUser?> { it }
         }
 }
