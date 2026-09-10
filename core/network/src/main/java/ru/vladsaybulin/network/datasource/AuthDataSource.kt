@@ -42,7 +42,10 @@ class AuthDataSource @Inject constructor(retrofit: Retrofit) {
     suspend fun action(request: OAuthTokenRequest): NetworkResponse<OAuthTokenBody> {
         val response = api.action(request)
         return if (response.isSuccessful) {
-            NetworkResponse.Success(response.body()!!)
+            val body = response.body() ?: return NetworkResponse.Error(
+                IllegalStateException("Response body is null for successful response")
+            )
+            NetworkResponse.Success(body)
         } else {
             NetworkResponse.Error(
                 NetworkError(
