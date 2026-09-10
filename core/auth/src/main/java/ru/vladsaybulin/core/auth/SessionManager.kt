@@ -17,24 +17,20 @@
 package ru.vladsaybulin.core.auth
 
 import dagger.Lazy
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ru.vladsaybulin.common.network.di.ApplicationScope
@@ -140,31 +136,45 @@ class SessionManager @Inject constructor(
     }
 
     private suspend fun restoreSession() {
-        if (tokenStore.getTokens() == null) {
-            _sessionState.value = SessionState.LoggedOut
-            _userId.value = null
-            preferencesDataSource.setMyId(null)
-            return
-        }
+        val epochAtStart = sessionEpoch.get()
+        val storedTokens = tokenStore.getTokens()
+        val persistedId = if (storedTokens != null) preferencesDataSource.myId.first() else null
 
-        _sessionState.value = SessionState.Authenticated
-        _userId.value = preferencesDataSource.myId.first()
+        sessionMutationMutex.withLock {
+            if (epochAtStart != sessionEpoch.get()) return
+
+            if (storedTokens == null) {
+                _sessionState.value = SessionState.LoggedOut
+                _userId.value = null
+                preferencesDataSource.setMyId(null)
+            } else {
+                _sessionState.value = SessionState.Authenticated
+                _userId.value = persistedId
+            }
+        }
     }
 
     private suspend fun handleAuthCodeResult(result: AuthCodeResult) {
         when (result) {
             is AuthCodeResult.Success -> {
+                val epochAtStart = sessionEpoch.get()
                 val tokens = try {
                     tokenGateway.get().exchange(result.code)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (_: Exception) {
                     _sessionState.value = SessionState.LoggedOut
                     return
                 }
 
-                tokenStore.saveTokens(tokens)
-                preferencesDataSource.setMyId(null)
-                _userId.value = null
-                _sessionState.value = SessionState.Authenticated
+                sessionMutationMutex.withLock {
+                    if (epochAtStart != sessionEpoch.get()) return@withLock
+
+                    tokenStore.saveTokens(tokens)
+                    preferencesDataSource.setMyId(null)
+                    _userId.value = null
+                    _sessionState.value = SessionState.Authenticated
+                }
             }
 
             is AuthCodeResult.Failure -> {
