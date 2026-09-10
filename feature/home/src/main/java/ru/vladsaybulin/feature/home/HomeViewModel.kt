@@ -40,10 +40,10 @@ import ru.vladsaybulin.core.domain.home.GetOngoingAnimesStreamUseCase
 import ru.vladsaybulin.core.domain.home.RefreshInProgressRatesUseCase
 import ru.vladsaybulin.core.domain.home.RefreshNewsUseCase
 import ru.vladsaybulin.core.domain.home.RefreshOngoingAnimesUseCase
+import ru.vladsaybulin.core.domain.profile.GetBriefUserStreamUseCase
 import ru.vladsaybulin.core.domain.shared.GetAuthStateStreamUseCase
-import ru.vladsaybulin.data.repository.UserRepository
+import ru.vladsaybulin.model.auth.SessionState
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.topic.Topic
 import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
     getOngoingAnimesStreamUseCase: GetOngoingAnimesStreamUseCase,
     getInProgressRatesUseCase: GetInProgressRatesUseCase,
     getNewsStreamUseCase: GetNewsTopicsStreamUseCase,
-    userRepository: UserRepository,
+    getBriefUserStreamUseCase: GetBriefUserStreamUseCase,
     getAuthStateStreamUseCase: GetAuthStateStreamUseCase,
     private val refreshInProgressRates: RefreshInProgressRatesUseCase,
     private val refreshOngoingAnimes: RefreshOngoingAnimesUseCase,
@@ -63,7 +63,7 @@ class HomeViewModel @Inject constructor(
 
     private val refreshingUserRate = getAuthStateStreamUseCase()
         .drop(1)
-        .filter { it == ShikimoriAuthState.LOGGED_IN }
+        .filter { it == SessionState.Authenticated }
         .onEach { refreshInProgressRates(true) }
 
     private var refreshingUserRatesJob: Job? = null
@@ -72,7 +72,7 @@ class HomeViewModel @Inject constructor(
         getInProgressRatesUseCase(),
         getOngoingAnimesStreamUseCase(),
         getNewsStreamUseCase(),
-        userRepository.getMeStream()
+        getBriefUserStreamUseCase(null)
     ) { userRates, ongoingAnime, newsTopics, me ->
         HomeUiState.Success(
             inProgressUserRates = userRates.toImmutableList(),
