@@ -20,12 +20,9 @@ import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.model.user.BriefUser
 
 interface UserRepository {
-    suspend fun getMyId(): Long?
+    /** Fetches the currently authenticated user from the network. Returns null if not authenticated. */
+    suspend fun whoAmI(): BriefUser?
 
-    fun getMyIdStream(): Flow<Long?>
-
-    fun getMeStream(): Flow<BriefUser?>
-
+    /** Emits the current user profile from the local DB, refreshing from network on first subscription. */
     fun getUserStream(id: Long): Flow<BriefUser>
 }
-
