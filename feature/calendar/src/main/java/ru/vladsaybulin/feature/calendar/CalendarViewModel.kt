@@ -28,17 +28,17 @@ import ru.vladsaybulin.common.ui.tryRefresh
 import ru.vladsaybulin.core.domain.calendar.CalendarDay
 import ru.vladsaybulin.core.domain.calendar.GetCalendarDaysUseCase
 import ru.vladsaybulin.core.domain.calendar.RefreshCalendarUseCase
-import ru.vladsaybulin.data.repository.UserRepository
+import ru.vladsaybulin.core.domain.profile.GetBriefUserStreamUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     getCalendarDaysUseCase: GetCalendarDaysUseCase,
     private val refreshCalendarUseCase: RefreshCalendarUseCase,
-    userRepository: UserRepository,
+    getBriefUserStream: GetBriefUserStreamUseCase,
 ) : ViewModel() {
 
-    val me = userRepository.getMeStream()
+    val me = getBriefUserStream(null)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
