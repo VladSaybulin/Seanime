@@ -137,7 +137,7 @@ class SessionManager @Inject constructor(
 
     private suspend fun restoreSession() {
         val epochAtStart = sessionEpoch.get()
-        val storedTokens = tokenStore.getTokens()
+        val storedTokens = getValidTokensOrLogout()
         val persistedId = if (storedTokens != null) preferencesDataSource.myId.first() else null
 
         sessionMutationMutex.withLock {
@@ -210,7 +210,7 @@ class SessionManager @Inject constructor(
     private suspend fun doResolveUserId(): Long? {
         val epochAtStart = sessionEpoch.get()
 
-        if (tokenStore.getTokens() == null) {
+        if (getValidTokensOrLogout() == null) {
             _userId.value = null
             _sessionState.value = SessionState.LoggedOut
             preferencesDataSource.setMyId(null)
@@ -252,7 +252,7 @@ class SessionManager @Inject constructor(
 
     private suspend fun doRefresh(): String? {
         val epochAtStart = sessionEpoch.get()
-        val tokens = tokenStore.getTokens() ?: return null
+        val tokens = getValidTokensOrLogout() ?: return null
         if (!tokens.isExpired()) {
             if (epochAtStart != sessionEpoch.get() || _sessionState.value == SessionState.LoggedOut) {
                 return null
@@ -282,5 +282,14 @@ class SessionManager @Inject constructor(
             logout()
             null
         }
+    }
+
+    private suspend fun getValidTokensOrLogout(): StoredTokens? {
+        val tokens = tokenStore.getTokens()
+        if (tokens.isFailure) {
+            logout()
+            return null
+        }
+        return tokens.getOrNull()
     }
 }

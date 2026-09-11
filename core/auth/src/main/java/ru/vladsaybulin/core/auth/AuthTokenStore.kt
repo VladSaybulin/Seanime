@@ -47,7 +47,8 @@ class AuthTokenStore @Inject constructor(
 ) {
     private val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE).apply { load(null) }
 
-    @Volatile private var cachedTokens: StoredTokens? = null
+    @Volatile
+    private var cachedTokens: StoredTokens? = null
 
     suspend fun saveTokens(tokens: StoredTokens) {
         val plain = "${tokens.accessToken}\n${tokens.refreshToken}"
@@ -63,10 +64,10 @@ class AuthTokenStore @Inject constructor(
      * Cold-path: decrypts once from DataStore, then caches the result.
      * Returns null if no tokens are stored or if decryption fails.
      */
-    suspend fun getTokens(): StoredTokens? {
-        cachedTokens?.let { return it }  // fast path — no crypto needed
+    suspend fun getTokens(): Result<StoredTokens?> {
+        cachedTokens?.let { return Result.success(it) }  // fast path — no crypto needed
 
-        val (iv, blob, expiresAtMs) = dataSource.getEncrypted() ?: return null
+        val (iv, blob, expiresAtMs) = dataSource.getEncrypted() ?: return Result.success(null)
         return runCatching {
             val plain = decryptCipher(iv).doFinal(blob).toString(Charsets.UTF_8)
             val parts = plain.split("\n", limit = 2)
@@ -75,11 +76,10 @@ class AuthTokenStore @Inject constructor(
                 refreshToken = parts[1],
                 expiresAtMs = expiresAtMs
             )
-        }.getOrNull()   // Treat decryption failure as missing tokens
-            ?.also { cachedTokens = it }
+        }.also {
+            cachedTokens = it.getOrNull()
+        }
     }
-
-    suspend fun getRefreshToken(): String? = getTokens()?.refreshToken
 
     suspend fun clearTokens() {
         cachedTokens = null     // invalidate cache before touching storage

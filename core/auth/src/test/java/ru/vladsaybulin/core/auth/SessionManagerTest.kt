@@ -39,7 +39,7 @@ class SessionManagerTest {
     @Test
     fun `logout during refresh does not restore tokens`() = runTest {
         val tokenStore = mock<AuthTokenStore>()
-        whenever(tokenStore.getTokens()).thenReturn(EXPIRED_TOKENS)
+        whenever(tokenStore.getTokens()).thenReturn(Result.success(EXPIRED_TOKENS))
         whenever(tokenStore.clearTokens()).thenReturn(Unit)
 
         val prefs = mock<SeanimePreferencesDataSource>()
@@ -81,7 +81,7 @@ class SessionManagerTest {
     @Test
     fun `logout during user id resolve keeps logged out state`() = runTest {
         val tokenStore = mock<AuthTokenStore>()
-        whenever(tokenStore.getTokens()).thenReturn(VALID_TOKENS)
+        whenever(tokenStore.getTokens()).thenReturn(Result.success(VALID_TOKENS))
         whenever(tokenStore.clearTokens()).thenReturn(Unit)
 
         val prefs = mock<SeanimePreferencesDataSource>()
