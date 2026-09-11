@@ -34,6 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui2.score.Score
+import ru.vladsaybulin.core.ui2.score.ScoreDefaults
+import ru.vladsaybulin.core.ui2.score.ScoreFormat
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
@@ -73,9 +75,11 @@ fun TitleListItemDefaultAdditionalContent(
             }
             if (score > 0) {
                 Score(
-                    value = score,
-                    iconSize = 16.dp,
-                    numberStyle = LocalTextStyle.current
+                    score = score,
+                    format = ScoreFormat.Real,
+                    style = LocalTextStyle.current,
+                    leading = { ScoreDefaults.SmallStarIcon() }
+                    
                 )
             }
         }

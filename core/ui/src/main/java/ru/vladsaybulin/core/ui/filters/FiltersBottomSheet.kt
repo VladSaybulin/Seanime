@@ -55,6 +55,9 @@ import ru.vladsaybulin.core.ui.R
 import ru.vladsaybulin.core.ui.score.ScoreInput
 import ru.vladsaybulin.core.ui.strings.durationString
 import ru.vladsaybulin.core.ui.strings.seasonFilterString
+import ru.vladsaybulin.core.ui2.score.Score
+import ru.vladsaybulin.core.ui2.score.ScoreFormat
+import ru.vladsaybulin.core.ui2.score.StarsRowInput
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.anime.AnimeKind
@@ -269,11 +272,17 @@ fun FiltersContent(
 
 fun LazyListScope.scoreFilter(selected: IntState, onScoreChange: (Int) -> Unit) {
     item {
-        ScoreInput(
-            score = { selected.intValue },
-            onScoreChange = onScoreChange,
-            showLabel = false,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        Score(
+            score = selected.intValue.toFloat(),
+            format = ScoreFormat.Integer,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            leading = {
+                StarsRowInput(
+                    score = selected.intValue,
+                    onChanged = onScoreChange,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+            }
         )
     }
 }
