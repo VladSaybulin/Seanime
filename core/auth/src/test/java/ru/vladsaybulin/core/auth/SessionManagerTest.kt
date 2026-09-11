@@ -119,6 +119,75 @@ class SessionManagerTest {
         verify(prefs, never()).setMyId(777L)
     }
 
+    @Test
+    fun `corrupted tokens on startup trigger logout and keep session logged out`() = runTest {
+        val tokenStore = mock<AuthTokenStore>()
+        whenever(tokenStore.getTokens()).thenReturn(Result.failure(IllegalStateException("Corrupted tokens")))
+        whenever(tokenStore.clearTokens()).thenReturn(Unit)
+
+        val prefs = mock<SeanimePreferencesDataSource>()
+        whenever(prefs.myId).thenReturn(flowOf(55L))
+        whenever(prefs.setMyId(null)).thenReturn(Unit)
+
+        val auth = mock<ShikimoriAuthorization>()
+        whenever(auth.codeResults).thenReturn(MutableSharedFlow())
+        val logoutCleaner = CountingLogoutCleaner()
+
+        val sessionManager = SessionManager(
+            authorization = auth,
+            tokenGateway = lazyOf(NoOpTokenGateway),
+            tokenStore = tokenStore,
+            preferencesDataSource = prefs,
+            userIdFetcher = lazyOf { 55L },
+            onLogoutCleaner = lazyOf(logoutCleaner),
+            appScope = backgroundScope
+        )
+
+        assertNull(sessionManager.getUserId())
+        assertEquals(SessionState.LoggedOut, sessionManager.sessionState.value)
+        assertEquals(1, logoutCleaner.calls)
+
+        verify(tokenStore).clearTokens()
+        verify(prefs).setMyId(null)
+    }
+
+    @Test
+    fun `corrupted tokens during refresh trigger logout`() = runTest {
+        val tokenStore = mock<AuthTokenStore>()
+        whenever(tokenStore.getTokens()).thenReturn(
+            Result.success(VALID_TOKENS),
+            Result.failure(IllegalStateException("Corrupted tokens"))
+        )
+        whenever(tokenStore.clearTokens()).thenReturn(Unit)
+
+        val prefs = mock<SeanimePreferencesDataSource>()
+        whenever(prefs.myId).thenReturn(flowOf(99L))
+        whenever(prefs.setMyId(null)).thenReturn(Unit)
+
+        val auth = mock<ShikimoriAuthorization>()
+        whenever(auth.codeResults).thenReturn(MutableSharedFlow())
+        val logoutCleaner = CountingLogoutCleaner()
+
+        val sessionManager = SessionManager(
+            authorization = auth,
+            tokenGateway = lazyOf(NoOpTokenGateway),
+            tokenStore = tokenStore,
+            preferencesDataSource = prefs,
+            userIdFetcher = lazyOf { 99L },
+            onLogoutCleaner = lazyOf(logoutCleaner),
+            appScope = backgroundScope
+        )
+
+        val token = sessionManager.getFreshToken()
+
+        assertNull(token)
+        assertEquals(SessionState.LoggedOut, sessionManager.sessionState.value)
+        assertEquals(1, logoutCleaner.calls)
+
+        verify(tokenStore).clearTokens()
+        verify(prefs).setMyId(null)
+    }
+
     private fun <T> lazyOf(value: T): Lazy<T> = Lazy<T> { value }
 
     private fun lazyOf(fetchUserId: suspend () -> Long?): Lazy<UserIdFetcher> =
