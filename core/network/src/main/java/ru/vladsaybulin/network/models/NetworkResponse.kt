@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.auth
+package ru.vladsaybulin.network.models
 
-internal const val HEADER_USER_AGENT = "User-Agent"
+sealed class NetworkResponse<T> {
+    class Success<T>(val body: T?) : NetworkResponse<T>()
+    class Error<T>(val exception: Exception) : NetworkResponse<T>()
+}

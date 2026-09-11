@@ -19,7 +19,7 @@ package ru.vladsaybulin.core.domain.search
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
+import ru.vladsaybulin.core.domain.repository.AuthRepository
 import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaKind
@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 class GetPagedMangaSearchUseCase @Inject constructor(
     private val mangaRepository: MangaRepository,
-    private val shikimoriAuthorization: ShikimoriAuthorization
+    private val authRepository: AuthRepository
 ) {
     operator fun invoke(
         queryMap: Map<QueryMapKey, String>,
@@ -44,7 +44,7 @@ class GetPagedMangaSearchUseCase @Inject constructor(
                 original + (QueryMapKey.Kind to kindValue)
             } else original
         }
-        return pagedSearch(authStateFlow = shikimoriAuthorization.shikimoriAuthState, config = pagingConfig) {
+        return pagedSearch(authStateFlow = authRepository.sessionState, config = pagingConfig) {
             mangaRepository.mangaSearchPagingSource(finalQueryMap)
         }
     }

@@ -18,7 +18,7 @@ package ru.vladsaybulin.network.util.interceptors
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import ru.vladsaybulin.core.auth.BuildConfig
+import ru.vladsaybulin.network.common.BuildConfig
 import javax.inject.Inject
 
 class UserAgentInterceptor @Inject constructor() : Interceptor {

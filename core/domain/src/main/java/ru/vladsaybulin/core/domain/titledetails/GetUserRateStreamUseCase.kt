@@ -20,20 +20,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
+import ru.vladsaybulin.core.domain.repository.AuthRepository
 import ru.vladsaybulin.core.domain.repository.UserRateRepository
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.model.auth.SessionState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRate
 import javax.inject.Inject
 
 class GetUserRateStreamUseCase @Inject constructor(
-    private val auth: ShikimoriAuthorization,
+    private val auth: AuthRepository,
     private val userRateRepository: UserRateRepository
 ) {
     operator fun invoke(titleType: EntryType, titleId: Long): Flow<UserRateResult> =
-        auth.shikimoriAuthState.flatMapLatest {
-            if (it == ShikimoriAuthState.LOGGED_IN) {
+        auth.sessionState.flatMapLatest {
+            if (it == SessionState.Authenticated) {
                 when (titleType) {
                     EntryType.Anime -> userRateRepository.getAnimeUserRateStream(titleId)
                     EntryType.Manga -> userRateRepository.getMangaUserRateStream(titleId)

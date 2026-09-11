@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.network.models
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.user.BriefUser
-
-interface UserRepository {
-    /** Fetches the currently authenticated user from the network. Returns null if not authenticated. */
-    suspend fun whoAmI(): BriefUser?
-
-    /** Emits the current user profile from the local DB, refreshing from network on first subscription. */
-    fun getUserStream(id: Long): Flow<BriefUser>
-}
+class NetworkError(
+    val code: Int,
+    val description: String
+) : Exception("code=$code, message=$description")

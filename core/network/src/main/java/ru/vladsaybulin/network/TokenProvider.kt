@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.network
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.user.BriefUser
+/**
+ * Provides token for authorization
+ */
+interface TokenProvider {
 
-interface UserRepository {
-    /** Fetches the currently authenticated user from the network. Returns null if not authenticated. */
-    suspend fun whoAmI(): BriefUser?
+    /**
+     * Get actual access token
+     */
+    suspend fun getAccessToken(): String?
 
-    /** Emits the current user profile from the local DB, refreshing from network on first subscription. */
-    fun getUserStream(id: Long): Flow<BriefUser>
+    /**
+     * Logout if provided actual access token is invalid
+     */
+    suspend fun logout()
 }

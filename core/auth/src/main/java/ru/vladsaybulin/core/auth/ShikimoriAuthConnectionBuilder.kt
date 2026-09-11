@@ -46,3 +46,4 @@ class ShikimoriAuthConnectionBuilder @Inject constructor(
 
 private val CONNECTION_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(15).toInt()
 private val READ_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(10).toInt()
+internal const val HEADER_USER_AGENT = "User-Agent"

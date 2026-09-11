@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.shared
+package ru.vladsaybulin.data.util
 
-import ru.vladsaybulin.common.auth.LogoutAction
+import ru.vladsaybulin.core.auth.OnLogoutCleaner
+import ru.vladsaybulin.database.dao.UserRateDao
 import javax.inject.Inject
 
-class LogoutUseCase @Inject constructor(
-    private val logoutAction: LogoutAction
-) {
-    suspend operator fun invoke() {
-        logoutAction.logout()
+/**
+ * Local cleanup performed on logout: clears cached user-rates from DB.
+ *
+ * Token clearing and state reset are handled by [SessionManager] before
+ * calling this action, so no auth references are needed here.
+ */
+class ShikimoriOnLogoutCleaner @Inject constructor(
+    private val userRateDao: UserRateDao
+) : OnLogoutCleaner {
+    override suspend fun onLogout() {
+        userRateDao.deleteAllUserRates()
     }
 }

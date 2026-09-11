@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.model.auth
+package ru.vladsaybulin.core.auth
 
-enum class ShikimoriAuthState {
-    LOGGED_OUT, LOGGED_IN
+/** Raw OAuth tokens returned by the backend exchange/refresh endpoint. */
+data class StoredTokens(
+    val accessToken: String,
+    val refreshToken: String,
+    /** Unix epoch ms when the access token expires. */
+    val expiresAtMs: Long
+) {
+    /** True when the token has expired (or will in the next [bufferMs]). */
+    fun isExpired(bufferMs: Long = 60_000L): Boolean =
+        System.currentTimeMillis() >= expiresAtMs - bufferMs
 }
+

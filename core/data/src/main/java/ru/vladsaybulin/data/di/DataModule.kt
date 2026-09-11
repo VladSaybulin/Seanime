@@ -20,7 +20,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ru.vladsaybulin.common.auth.LogoutAction
+import ru.vladsaybulin.core.auth.OnLogoutCleaner
+import ru.vladsaybulin.core.auth.TokenExchangeGateway
+import ru.vladsaybulin.core.auth.UserIdFetcher
+import ru.vladsaybulin.core.domain.repository.AuthRepository
 import ru.vladsaybulin.core.domain.repository.AnimeRepository
 import ru.vladsaybulin.core.domain.repository.CalendarRepository
 import ru.vladsaybulin.core.domain.repository.CharacterRepository
@@ -33,6 +36,8 @@ import ru.vladsaybulin.core.domain.repository.TopicsRepository
 import ru.vladsaybulin.core.domain.repository.UserRateRepository
 import ru.vladsaybulin.core.domain.repository.UserRepository
 import ru.vladsaybulin.data.repository.AnimeRepository as DataAnimeRepository
+import ru.vladsaybulin.data.repository.AuthRepositoryImpl as DataAuthRepository
+import ru.vladsaybulin.data.auth.NetworkOAuthTokenExchangeGateway
 import ru.vladsaybulin.data.repository.CalendarRepository as DataCalendarRepository
 import ru.vladsaybulin.data.repository.CharacterRepository as DataCharacterRepository
 import ru.vladsaybulin.data.repository.FilterGenreRepository as DataFilterGenreRepository
@@ -43,14 +48,24 @@ import ru.vladsaybulin.data.repository.MangaRepository as DataMangaRepository
 import ru.vladsaybulin.data.repository.TopicsRepository as DataTopicsRepository
 import ru.vladsaybulin.data.repository.UserRateRepository as DataUserRateRepository
 import ru.vladsaybulin.data.repository.UserRepository as DataUserRepository
-import ru.vladsaybulin.data.util.ShikimoriLogoutAction
+import ru.vladsaybulin.data.util.ShikimoriOnLogoutCleaner
+import ru.vladsaybulin.data.util.SessionUserIdFetcher
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface DataModule {
 
     @Binds
-    fun bindLogoutAction(logoutAction: ShikimoriLogoutAction): LogoutAction
+    fun bindLogoutAction(logoutAction: ShikimoriOnLogoutCleaner): OnLogoutCleaner
+
+    @Binds
+    fun bindAuthRepository(repository: DataAuthRepository): AuthRepository
+
+    @Binds
+    fun bindUserIdFetcher(fetcher: SessionUserIdFetcher): UserIdFetcher
+
+    @Binds
+    fun bindTokenExchangeGateway(gateway: NetworkOAuthTokenExchangeGateway): TokenExchangeGateway
 
     @Binds
     fun bindAnimeRepository(repository: DataAnimeRepository): AnimeRepository

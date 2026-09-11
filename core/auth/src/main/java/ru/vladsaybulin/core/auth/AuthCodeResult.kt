@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.core.auth
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.user.BriefUser
+import net.openid.appauth.AuthorizationException
 
-interface UserRepository {
-    /** Fetches the currently authenticated user from the network. Returns null if not authenticated. */
-    suspend fun whoAmI(): BriefUser?
+/** Result emitted after the OS browser OAuth redirect is handled. */
+sealed interface AuthCodeResult {
+    data class Success(
+        val code: String
+    ) : AuthCodeResult
 
-    /** Emits the current user profile from the local DB, refreshing from network on first subscription. */
-    fun getUserStream(id: Long): Flow<BriefUser>
+    data class Failure(val cause: AuthorizationException) : AuthCodeResult
 }

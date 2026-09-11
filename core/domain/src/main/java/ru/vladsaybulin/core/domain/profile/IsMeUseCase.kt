@@ -17,9 +17,11 @@
 package ru.vladsaybulin.core.domain.profile
 
 import kotlinx.coroutines.flow.map
-import ru.vladsaybulin.core.domain.repository.UserRepository
+import ru.vladsaybulin.core.domain.repository.AuthRepository
 import javax.inject.Inject
 
-class IsMeUseCase @Inject constructor(private val userRepository: UserRepository) {
-    operator fun invoke(id: Long) = userRepository.getMyIdStream().map { id == it}
+class IsMeUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
+    operator fun invoke(id: Long) = authRepository.getUserIdStream().map { id == it }
 }

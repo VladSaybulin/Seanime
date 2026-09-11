@@ -17,12 +17,14 @@
 package ru.vladsaybulin.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.user.BriefUser
+import kotlinx.coroutines.flow.StateFlow
+import ru.vladsaybulin.model.auth.SessionState
 
-interface UserRepository {
-    /** Fetches the currently authenticated user from the network. Returns null if not authenticated. */
-    suspend fun whoAmI(): BriefUser?
+interface AuthRepository {
 
-    /** Emits the current user profile from the local DB, refreshing from network on first subscription. */
-    fun getUserStream(id: Long): Flow<BriefUser>
+    val sessionState: StateFlow<SessionState>
+
+    fun getUserIdStream(): Flow<Long?>
+
+    suspend fun logout()
 }

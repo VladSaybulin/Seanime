@@ -27,10 +27,10 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.model.auth.SessionState
 
 internal fun <T : Any> pagedSearch(
-    authStateFlow: StateFlow<ShikimoriAuthState>,
+    authStateFlow: StateFlow<SessionState>,
     config: PagingConfig = DefaultSearchPagingConfig,
     pagingSourceFactory: () -> PagingSource<Int, T>
 ) = flow {
@@ -40,7 +40,7 @@ internal fun <T : Any> pagedSearch(
         launch {
             authStateFlow
                 .drop(1) // Drop initial state
-                .filter { it == ShikimoriAuthState.LOGGED_IN }
+                .filter { it == SessionState.Authenticated }
                 .collect { invalidatingPagingSourceFactory.invalidate() }
         }
 

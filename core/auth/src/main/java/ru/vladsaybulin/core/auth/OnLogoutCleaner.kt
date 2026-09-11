@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.core.auth
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.user.BriefUser
-
-interface UserRepository {
-    /** Fetches the currently authenticated user from the network. Returns null if not authenticated. */
-    suspend fun whoAmI(): BriefUser?
-
-    /** Emits the current user profile from the local DB, refreshing from network on first subscription. */
-    fun getUserStream(id: Long): Flow<BriefUser>
+/**
+ * Represents the action of clearing local data.
+ */
+fun interface OnLogoutCleaner {
+    suspend fun onLogout()
 }

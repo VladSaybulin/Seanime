@@ -19,21 +19,28 @@ package ru.vladsaybulin.network.util.interceptors
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
-import ru.vladsaybulin.network.util.addAuthorizationHeader
+import ru.vladsaybulin.core.auth.SessionManager
+import ru.vladsaybulin.network.util.addBearerToken
 import javax.inject.Inject
 
 class AuthorizationInterceptor @Inject constructor(
-    private val authorization: ShikimoriAuthorization
+    private val sessionManager: SessionManager
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        return runBlocking {
-            val accessToken = authorization.getFreshAccessToken()
-                ?: return@runBlocking chain.proceed(chain.request())
-            val request = chain.request().newBuilder()
-                .addAuthorizationHeader(accessToken)
-                .build()
-            chain.proceed(request)
+        val request = chain.request()
+
+        // Skip auth header for the token-exchange endpoint itself to avoid recursion
+        if (request.url.pathSegments.contains("oauth")) {
+            return chain.proceed(request)
         }
+
+        val token = runBlocking { sessionManager.getFreshToken() }
+            ?: return chain.proceed(request)
+
+        return chain.proceed(
+            request.newBuilder()
+                .addBearerToken(token)
+                .build()
+        )
     }
 }

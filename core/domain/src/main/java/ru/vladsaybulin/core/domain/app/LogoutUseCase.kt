@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.core.domain.app
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.user.BriefUser
+import ru.vladsaybulin.core.domain.repository.AuthRepository
+import javax.inject.Inject
 
-interface UserRepository {
-    /** Fetches the currently authenticated user from the network. Returns null if not authenticated. */
-    suspend fun whoAmI(): BriefUser?
-
-    /** Emits the current user profile from the local DB, refreshing from network on first subscription. */
-    fun getUserStream(id: Long): Flow<BriefUser>
+/**
+ * Triggers the full logout sequence via [ru.vladsaybulin.core.domain.repository.AuthRepository]:
+ *  1. Clears encrypted token store
+ *  2. Resets SessionState → LoggedOut
+ *  3. Runs local DB cleanup (UserRates)
+ */
+class LogoutUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
+    suspend operator fun invoke() = authRepository.logout()
 }

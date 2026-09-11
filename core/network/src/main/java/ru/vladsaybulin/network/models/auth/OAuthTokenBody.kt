@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.core.domain.repository
+package ru.vladsaybulin.network.models.auth
 
-import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.user.BriefUser
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-interface UserRepository {
-    /** Fetches the currently authenticated user from the network. Returns null if not authenticated. */
-    suspend fun whoAmI(): BriefUser?
-
-    /** Emits the current user profile from the local DB, refreshing from network on first subscription. */
-    fun getUserStream(id: Long): Flow<BriefUser>
-}
+@Serializable
+class OAuthTokenBody(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("expires_in") val expiresIn: Long,
+    @SerialName("refresh_token") val refreshToken: String,
+    @SerialName("created_at") val createdAt: Long
+)

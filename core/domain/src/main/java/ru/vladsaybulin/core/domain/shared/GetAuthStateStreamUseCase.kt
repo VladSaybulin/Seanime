@@ -17,10 +17,13 @@
 package ru.vladsaybulin.core.domain.shared
 
 import kotlinx.coroutines.flow.StateFlow
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
+import ru.vladsaybulin.core.domain.repository.AuthRepository
+import ru.vladsaybulin.model.auth.SessionState
 import javax.inject.Inject
 
-class GetAuthStateStreamUseCase @Inject constructor(private val auth: ShikimoriAuthorization) {
-    operator fun invoke(): StateFlow<ShikimoriAuthState> = auth.shikimoriAuthState
+/** Returns the reactive [SessionState] stream from [AuthRepository]. */
+class GetAuthStateStreamUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
+    operator fun invoke(): StateFlow<SessionState> = authRepository.sessionState
 }

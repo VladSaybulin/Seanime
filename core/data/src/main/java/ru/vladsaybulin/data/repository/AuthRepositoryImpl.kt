@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.data.util
+package ru.vladsaybulin.data.repository
 
-import ru.vladsaybulin.common.auth.LogoutAction
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
-import ru.vladsaybulin.database.dao.UserRateDao
-import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import ru.vladsaybulin.core.auth.SessionManager
+import ru.vladsaybulin.core.domain.repository.AuthRepository
+import ru.vladsaybulin.model.auth.SessionState
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class ShikimoriLogoutAction @Inject constructor(
-    private val prefsDataSource: SeanimePreferencesDataSource,
-    private val userRateDao: UserRateDao,
-    private val shikimoriAuthorization: ShikimoriAuthorization
-) : LogoutAction {
+@Singleton
+class AuthRepositoryImpl @Inject constructor(
+    private val sessionManager: SessionManager
+) : AuthRepository {
+
+    override val sessionState: StateFlow<SessionState>
+        get() = sessionManager.sessionState
+
+    override fun getUserIdStream(): Flow<Long?> = sessionManager.userIdStream()
+
     override suspend fun logout() {
-        shikimoriAuthorization.logout()
-        prefsDataSource.setMyId(null)
-        userRateDao.deleteAllUserRates()
+        sessionManager.logout()
     }
 }
+

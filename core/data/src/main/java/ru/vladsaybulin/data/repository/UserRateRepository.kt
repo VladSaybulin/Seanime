@@ -29,17 +29,14 @@ import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.core.auth.ShikimoriAuthorization
+import ru.vladsaybulin.core.auth.SessionManager
 import ru.vladsaybulin.data.TTLStrategies
-import ru.vladsaybulin.core.domain.repository.UserRateRepository as DomainUserRateRepository
 import ru.vladsaybulin.data.model.CreateUserRateRequest
 import ru.vladsaybulin.data.model.animeEntityOrNullShells
 import ru.vladsaybulin.data.model.asDto
@@ -60,7 +57,6 @@ import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.asExternalModel
-import ru.vladsaybulin.model.auth.ShikimoriAuthState
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
@@ -71,6 +67,7 @@ import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.network.datasource.UserRateDataSource
 import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitle
 import javax.inject.Inject
+import ru.vladsaybulin.core.domain.repository.UserRateRepository as DomainUserRateRepository
 
 class UserRateRepository @Inject constructor(
     private val userRateDataSource: UserRateDataSource,
@@ -78,8 +75,7 @@ class UserRateRepository @Inject constructor(
     private val animeDao: AnimeDao,
     private val mangaDao: MangaDao,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val userRepository: UserRepository,
-    private val auth: ShikimoriAuthorization,
+    private val sessionManager: SessionManager,
     private val coordinator: RequestCoordinator,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : DomainUserRateRepository {
@@ -118,38 +114,28 @@ class UserRateRepository @Inject constructor(
     )
 
     override fun getAnimeUserRateStream(animeId: Long): Flow<UserRate?> =
-        auth.shikimoriAuthState.flatMapLatest { authState ->
-
-            if (authState == ShikimoriAuthState.LOGGED_IN) {
-
-                userRateDao.getAnimeUserRate(animeId)
-                    .onStart {
-                        userRateDataSource.getAnimeUserRate(animeId)?.run {
-                            userRateDao.insertOrReplaceUserRate(asEntity(animeId = animeId))
-                        }
-                    }
-                    .map { it?.asExternalModel() }
-            } else flowOf(null)
-        }
+        userRateDao.getAnimeUserRate(animeId)
+            .onStart {
+                userRateDataSource.getAnimeUserRate(animeId)?.run {
+                    userRateDao.insertOrReplaceUserRate(asEntity(animeId = animeId))
+                }
+            }
+            .map { it?.asExternalModel() }
 
     override fun getMangaUserRateStream(mangaId: Long): Flow<UserRate?> =
-        auth.shikimoriAuthState.flatMapLatest { authState ->
+        userRateDao.getMangaUserRate(mangaId)
+            .onStart {
+                userRateDataSource.getMangaUserRate(mangaId)?.run {
+                    userRateDao.insertOrReplaceUserRate(asEntity(mangaId = mangaId))
+                }
+            }
+            .map { it?.asExternalModel() }
 
-            if (authState == ShikimoriAuthState.LOGGED_IN) {
+    override fun getAllAnimeUserRateStatusesStream(): Flow<Map<Long, UserRateStatus>> =
+        userRateDao.getAllAnimeUserRateStatusesStream()
 
-                userRateDao.getMangaUserRate(mangaId)
-                    .onStart {
-                        userRateDataSource.getMangaUserRate(mangaId)?.run {
-                            userRateDao.insertOrReplaceUserRate(asEntity(mangaId = mangaId))
-                        }
-                    }
-                    .map { it?.asExternalModel() }
-            } else flowOf(null)
-        }
-
-    override fun getAllAnimeUserRateStatusesStream(): Flow<Map<Long, UserRateStatus>> = userRateDao.getAllAnimeUserRateStatusesStream()
-
-    override fun getAllMangaUserRateStatusesStream(): Flow<Map<Long, UserRateStatus>> = userRateDao.getAllMangaUserRateStatusesStream()
+    override fun getAllMangaUserRateStatusesStream(): Flow<Map<Long, UserRateStatus>> =
+        userRateDao.getAllMangaUserRateStatusesStream()
 
     override suspend fun createUserRate(
         entryType: EntryType,
@@ -158,7 +144,7 @@ class UserRateRepository @Inject constructor(
     ) {
         require(userRateValues.status != UserRateStatus.None)
         withContext(ioDispatcher) {
-            val myId = userRepository.getMyId() ?: throw IllegalStateException("Not authorized")
+            val myId = sessionManager.getUserId() ?: throw IllegalStateException("Not authorized")
             val response = try {
                 userRateDataSource.createUserRate(
                     CreateUserRateRequest(

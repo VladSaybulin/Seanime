@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.common.auth
+package ru.vladsaybulin.data.util
 
-fun interface LogoutAction {
-    suspend fun logout()
+import ru.vladsaybulin.core.auth.UserIdFetcher
+import ru.vladsaybulin.core.domain.repository.UserRepository
+import javax.inject.Inject
+
+/**
+ * Bridges [UserIdFetcher] (auth module) with [UserRepository.whoAmI] (data module).
+ * Throws [java.io.IOException] on network errors so [SessionManager] can classify correctly.
+ */
+class SessionUserIdFetcher @Inject constructor(
+    private val userRepository: UserRepository
+) : UserIdFetcher {
+    override suspend fun fetchUserId(): Long? = userRepository.whoAmI()?.id
 }
