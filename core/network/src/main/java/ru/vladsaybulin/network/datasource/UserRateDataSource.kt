@@ -26,6 +26,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -52,21 +53,26 @@ import ru.vladsaybulin.network.models.userrate.NetworkUserRate
 import ru.vladsaybulin.network.models.userrate.UpdateUserRateRequest
 import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitle
 import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitleLink
+import ru.vladsaybulin.network.util.AUTHORIZED_CALL_HEADER
+import ru.vladsaybulin.network.util.asAuthorizedCall
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private interface UserRateApi {
 
     @POST("/api/v2/user_rates/")
+    @Headers(AUTHORIZED_CALL_HEADER)
     suspend fun createUserRate(@Body userRate: JsonObject): NetworkUserRateWithTitleLink?
 
     @PUT("/api/v2/user_rates/{id}")
+    @Headers(AUTHORIZED_CALL_HEADER)
     suspend fun updateUserRate(
         @Path("id") userRateId: Long,
         @Body userRate: JsonObject
     ): NetworkUserRateWithTitleLink?
 
     @DELETE("/api/v2/user_rates/{id}")
+    @Headers(AUTHORIZED_CALL_HEADER)
     suspend fun deleteUserRate(@Path("id") userRateId: Long): Response<ResponseBody>
 }
 
@@ -97,7 +103,10 @@ class UserRateDataSource @Inject constructor(
                 order = sortOrder.asSortOrderEnum()
             )
         )
-        val response = apolloClient.query(query).execute().dataAssertNoErrors
+        val response = apolloClient.query(query)
+            .asAuthorizedCall()
+            .execute()
+            .dataAssertNoErrors
         return response.userRates.map { it.asNetworkModel() }
     }
 
@@ -119,7 +128,10 @@ class UserRateDataSource @Inject constructor(
                 order = sortOrder.asSortOrderEnum()
             )
         )
-        val response = apolloClient.query(query).execute().dataAssertNoErrors
+        val response = apolloClient.query(query)
+            .asAuthorizedCall()
+            .execute()
+            .dataAssertNoErrors
         return response.userRates.map { it.asNetworkModels() }
     }
 
@@ -139,12 +151,16 @@ class UserRateDataSource @Inject constructor(
             userId = Optional.presentIfNotNull(userId),
             order = Optional.presentIfNotNull(order?.asUserRateOrderInputType())
         )
-        val response = apolloClient.query(query).execute().dataAssertNoErrors
+        val response = apolloClient.query(query)
+            .asAuthorizedCall()
+            .execute()
+            .dataAssertNoErrors
         return response.userRates.map { it.asNetworkModel() }
     }
 
-            suspend fun getAnimeUserRate(animeId: Long): NetworkUserRate? {
+    suspend fun getAnimeUserRate(animeId: Long): NetworkUserRate? {
         val response = apolloClient.query(AnimeUserRateQuery(ids = animeId.toString(), limit = 1))
+            .asAuthorizedCall()
             .execute()
         val anime = response.dataAssertNoErrors.animes.singleOrNull()
             ?: throw ShikimoriException("Not found anime where id = $animeId")
@@ -153,6 +169,7 @@ class UserRateDataSource @Inject constructor(
 
     suspend fun getMangaUserRate(mangaId: Long): NetworkUserRate? {
         val response = apolloClient.query(MangaUserRateQuery(ids = mangaId.toString(), limit = 1))
+            .asAuthorizedCall()
             .execute()
         val manga = response.dataAssertNoErrors.mangas.singleOrNull()
             ?: throw ShikimoriException("Not found manga where id = $mangaId")
@@ -165,14 +182,16 @@ class UserRateDataSource @Inject constructor(
                 ids = animeIds.joinToString(separator = ","),
                 limit = animeIds.size
             )
-        ).execute()
+        ).asAuthorizedCall()
+            .execute()
             .dataAssertNoErrors.animes
             .associate { it.id to it.userRate!!.asNetworkModel() }
 
     suspend fun getMangaUserRatesByMangaIds(mangaIds: List<Long>): Map<Long, NetworkUserRate?> =
         apolloClient.query(
             MangaUserRateQuery(ids = mangaIds.joinToString(separator = ","), limit = mangaIds.size)
-        ).execute()
+        ).asAuthorizedCall()
+            .execute()
             .dataAssertNoErrors.mangas
             .associate { it.id to it.userRate?.asNetworkModel() }
 

@@ -21,6 +21,8 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import ru.vladsaybulin.core.auth.SessionManager
 import ru.vladsaybulin.network.util.addBearerToken
+import ru.vladsaybulin.network.util.isPublicCall
+import ru.vladsaybulin.network.util.removeAuthorizedCall
 import javax.inject.Inject
 
 class AuthorizationInterceptor @Inject constructor(
@@ -29,8 +31,7 @@ class AuthorizationInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
-        // Skip auth header for the token-exchange endpoint itself to avoid recursion
-        if (request.url.pathSegments.contains("oauth")) {
+        if (request.isPublicCall()) {
             return chain.proceed(request)
         }
 
@@ -39,6 +40,7 @@ class AuthorizationInterceptor @Inject constructor(
 
         return chain.proceed(
             request.newBuilder()
+                .removeAuthorizedCall()
                 .addBearerToken(token)
                 .build()
         )

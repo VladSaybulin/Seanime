@@ -28,7 +28,8 @@ class GenreDataSource @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
     suspend fun getGenres(entryType: EntryType): List<NetworkGenre> {
-        val response = apolloClient.query(GenresQuery(entryType.asGenreEntryTypeEnum())).execute()
+        val response = apolloClient.query(GenresQuery(entryType.asGenreEntryTypeEnum()))
+            .execute()
         return response.dataAssertNoErrors.genres.map { it.asNetworkModel(entryType) }
     }
 }
