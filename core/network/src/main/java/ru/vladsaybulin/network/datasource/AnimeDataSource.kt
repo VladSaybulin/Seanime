@@ -32,6 +32,7 @@ import ru.vladsaybulin.network.mapper.queries.asNetworkModels
 import ru.vladsaybulin.network.models.anime.NetworkAnime
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 import ru.vladsaybulin.network.models.common.NetworkTitleRoles
+import ru.vladsaybulin.network.util.asAuthorizedCall
 import ru.vladsaybulin.network.util.getOrderEnum
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -73,7 +74,9 @@ class AnimeDataSource @Inject constructor(
                 excludeIds = presentIfNotNull(queryMap[QueryMapKey.ExcludedIds]),
                 search = presentIfNotNull(queryMap[QueryMapKey.Search])
             )
-        ).execute()
+        )
+            .asAuthorizedCall()
+            .execute()
         return response.dataAssertNoErrors.animes.map { it.asNetworkModels() }
     }
 

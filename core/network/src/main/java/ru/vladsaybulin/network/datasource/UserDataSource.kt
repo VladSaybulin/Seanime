@@ -19,13 +19,16 @@ package ru.vladsaybulin.network.datasource
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.Path
 import ru.vladsaybulin.network.models.user.NetworkBriefUser
+import ru.vladsaybulin.network.util.AUTHORIZED_CALL_HEADER
 import javax.inject.Inject
 
 interface UsersApi {
 
     @GET("/api/users/whoami")
+    @Headers(AUTHORIZED_CALL_HEADER)
     suspend fun whoAmI(): NetworkBriefUser?
 
     @GET("/api/users/{id}/info")

@@ -28,9 +28,10 @@ import ru.vladsaybulin.core.network.graphql.MangaQuery
 import ru.vladsaybulin.core.network.graphql.MangaRolesQuery
 import ru.vladsaybulin.model.search.QueryMapKey
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
-import ru.vladsaybulin.network.models.manga.NetworkManga
 import ru.vladsaybulin.network.models.common.NetworkTitleRoles
+import ru.vladsaybulin.network.models.manga.NetworkManga
 import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
+import ru.vladsaybulin.network.util.asAuthorizedCall
 import ru.vladsaybulin.network.util.getOrderEnum
 import javax.inject.Inject
 
@@ -68,18 +69,24 @@ class MangaDataSource @Inject constructor(
                 excludeIds = presentIfNotNull(queryMap[QueryMapKey.ExcludedIds]),
                 search = presentIfNotNull(queryMap[QueryMapKey.Search])
             )
-        ).execute()
+        )
+            .asAuthorizedCall()
+            .execute()
         return response.dataAssertNoErrors.mangas.map { it.asNetworkModel() }
     }
 
     suspend fun getMangaDetails(mangaId: Long): NetworkMangaDetails {
-        val response = apolloClient.query(MangaDetailsQuery(id = mangaId.toString())).execute()
+        val response = apolloClient.query(MangaDetailsQuery(id = mangaId.toString()))
+            .asAuthorizedCall()
+            .execute()
         return response.dataAssertNoErrors.mangas.singleOrNull()?.asNetworkModel()
             ?: throw ShikimoriException("Not found manga where id = $mangaId")
     }
 
     suspend fun getMangaRoles(animeId: Long): NetworkTitleRoles {
-        val response = apolloClient.query(MangaRolesQuery(id = animeId.toString())).execute()
+        val response = apolloClient.query(MangaRolesQuery(id = animeId.toString()))
+            .asAuthorizedCall()
+            .execute()
         return checkNotNull(response.dataAssertNoErrors.mangas.singleOrNull()) {
             "Not found manga with id = $animeId"
         }.asNetworkModel()
