@@ -16,7 +16,37 @@
 
 package ru.vladsaybulin.network.util
 
+import com.apollographql.apollo3.ApolloCall
+import com.apollographql.apollo3.api.Operation
 import okhttp3.Request
+
+private const val AUTHORIZED_CALL_HEADER_NAME = "X-Authorized-Call"
+private const val AUTHORIZATION_HEADER_NAME = "Authorization"
+private const val AUTHORIZATION_TYPE_BEARER = "Bearer"
+
+/**
+ * Header that is added to Retrofit requests that require authorization.
+ * This header is used to distinguish between public and authorized calls.
+ */
+const val AUTHORIZED_CALL_HEADER = "$AUTHORIZED_CALL_HEADER_NAME: true"
+
+/**
+ * Marks the Apollo call as an authorized call by adding a custom header.
+ * This header is used to distinguish between public and authorized calls.
+ */
+fun <D : Operation.Data> ApolloCall<D>.asAuthorizedCall(): ApolloCall<D> = apply {
+    addHttpHeader(AUTHORIZED_CALL_HEADER_NAME, "true")
+}
+
+/**
+ * Checks if the call is a public call by checking for the presence of a [AUTHORIZED_CALL_HEADER_NAME] header.
+ */
+fun Request.isPublicCall(): Boolean = headers[AUTHORIZED_CALL_HEADER_NAME] == null
+
+/**
+ * Removes the [AUTHORIZED_CALL_HEADER_NAME] header from the request builder.
+ */
+fun Request.Builder.removeAuthorizedCall() = removeHeader(AUTHORIZED_CALL_HEADER_NAME)
 
 fun Request.Builder.replaceBearerToken(accessToken: String): Request.Builder {
     removeHeader(AUTHORIZATION_HEADER_NAME)
@@ -34,6 +64,3 @@ fun Request.getBearerToken(): String? {
     if (!header.startsWith(AUTHORIZATION_TYPE_BEARER)) return null
     return header.substring(startIndex = AUTHORIZATION_TYPE_BEARER.length + 1)
 }
-
-private const val AUTHORIZATION_HEADER_NAME = "Authorization"
-private const val AUTHORIZATION_TYPE_BEARER = "Bearer"
