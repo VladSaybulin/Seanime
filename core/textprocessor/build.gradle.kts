@@ -17,7 +17,7 @@
 plugins {
     alias(libs.plugins.seanime.android.library)
     alias(libs.plugins.seanime.android.hilt)
-    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

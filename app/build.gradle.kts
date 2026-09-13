@@ -22,7 +22,7 @@ plugins {
     alias(libs.plugins.seanime.android.hilt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
-    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.kotlin.serialization)
     id("com.google.android.gms.oss-licenses-plugin")
 }
 

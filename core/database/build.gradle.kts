@@ -19,7 +19,7 @@ plugins {
     alias(libs.plugins.seanime.android.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
-    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
