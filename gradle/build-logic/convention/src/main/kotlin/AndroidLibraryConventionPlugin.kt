@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -30,9 +30,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 34
 
-                //A stub for the AppAuth-Android library. Required to build a specific module
+                // A stub for the AppAuth-Android library. Required to build a specific module.
                 defaultConfig.manifestPlaceholders["appAuthRedirectScheme"] = "stub"
             }
         }
