@@ -27,4 +27,5 @@ dependencies {
     implementation(projects.core.model)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.navigation3.runtime)
 }
