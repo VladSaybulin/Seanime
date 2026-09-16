@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.profile
+package ru.vladsaybulin.feature.profile.impl
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
@@ -117,8 +117,7 @@ private fun ProfileContent(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPaddings ->
         Column(
-            modifier = Modifier
-                .padding(scaffoldPaddings)
+            modifier = padding(scaffoldPaddings)
                 .fillMaxSize()
         ) {
             Box(modifier = Modifier.weight(1f)) {
