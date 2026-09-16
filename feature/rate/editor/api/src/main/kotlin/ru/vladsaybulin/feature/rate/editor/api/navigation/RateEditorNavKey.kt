@@ -17,10 +17,11 @@
 package ru.vladsaybulin.feature.rate.editor.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
 /**
  * Navigation key for the rate editor feature.
  * @param rateId The ID of the rate to be edited.
  */
 @Serializable
-data class RateEditorNavKey(val rateId: Long)
+data class RateEditorNavKey(val rateId: Long) : SeanimeNavKey
