@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.characters.navigation
+plugins {
+    id("seanime.android.feature.api")
+}
 
-class TitleCharactersNavEvents(
-    val navigateToCharacterDetails: (Long) -> Unit,
-    val navigateUp: () -> Unit
-)
+android {
+    namespace = "ru.vladsaybulin.feature.calendar.api"
+}

@@ -67,3 +67,5 @@ include(":feature:profile")
 include(":core:ui2:strings")
 include(":core:ui2:score")
 include(":core:ui2:entry")
+
+include(":feature:calendar:api")
