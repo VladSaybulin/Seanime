@@ -61,6 +61,10 @@ gradlePlugin {
             id = "seanime.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
+        register("androidFeatureApi") {
+            id = "seanime.android.feature.api"
+            implementationClass = "AndroidFeatureApiConventionPlugin"
+        }
         register("androidHilt") {
             id = "seanime.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
