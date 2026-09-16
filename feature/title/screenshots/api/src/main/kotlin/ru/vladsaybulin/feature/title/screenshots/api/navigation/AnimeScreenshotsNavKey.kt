@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-plugins {
-    id("seanime.android.feature.api")
-}
+package ru.vladsaybulin.feature.title.screenshots.api.navigation
 
-android {
-    namespace = "ru.vladsaybulin.feature.search.api"
-}
+import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
-dependencies {
-    implementation(projects.core.model)
+/**
+ * Navigation key for the anime screenshots feature.
+ * @param animeId The ID of the anime.
+ */
+@Serializable
+data class AnimeScreenshotsNavKey(val animeId: Long) : SeanimeNavKey {
 }

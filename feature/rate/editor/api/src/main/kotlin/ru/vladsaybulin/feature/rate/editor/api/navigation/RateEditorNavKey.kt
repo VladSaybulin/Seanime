@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-plugins {
-    id("seanime.android.feature.api")
-}
+package ru.vladsaybulin.feature.rate.editor.api.navigation
 
-android {
-    namespace = "ru.vladsaybulin.feature.search.api"
-}
+import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
-dependencies {
-    implementation(projects.core.model)
-}
+/**
+ * Navigation key for the rate editor feature.
+ * @param rateId The ID of the rate to be edited.
+ */
+@Serializable
+data class RateEditorNavKey(val rateId: Long) : SeanimeNavKey

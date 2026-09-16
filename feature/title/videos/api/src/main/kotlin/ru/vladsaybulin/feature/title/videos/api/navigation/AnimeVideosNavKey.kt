@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-plugins {
-    id("seanime.android.feature.api")
-}
+package ru.vladsaybulin.feature.title.videos.api.navigation
 
-android {
-    namespace = "ru.vladsaybulin.feature.search.api"
-}
+import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
-dependencies {
-    implementation(projects.core.model)
+/**
+ * Navigation key for the anime videos feature.
+ * @param animeId The ID of the anime.
+ */
+@Serializable
+data class AnimeVideosNavKey(val animeId: Long) : SeanimeNavKey {
 }

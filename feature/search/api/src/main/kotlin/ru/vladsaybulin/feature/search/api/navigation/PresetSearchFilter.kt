@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-plugins {
-    id("seanime.android.feature.api")
-}
+package ru.vladsaybulin.feature.search.api.navigation
 
-android {
-    namespace = "ru.vladsaybulin.feature.search.api"
-}
+import kotlinx.serialization.Serializable
 
-dependencies {
-    implementation(projects.core.model)
+/**
+ * Data class representing a preset search filter.
+ * @property field The field to filter by (Genre, Studio, or Publisher).
+ * @property id The ID of the filter by [field].
+ */
+@Serializable
+data class PresetSearchFilter(
+    val field: Field,
+    val id: Int
+) {
+    enum class Field {
+        Genre, Studio, Publisher
+    }
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-plugins {
-    id("seanime.android.feature.api")
-}
+package ru.vladsaybulin.feature.character.api.navigation
 
-android {
-    namespace = "ru.vladsaybulin.feature.search.api"
-}
+import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
-dependencies {
-    implementation(projects.core.model)
-}
+/**
+ * Navigation key for the character feature.
+ * @param characterId The ID of the character.
+ */
+@Serializable
+data class CharacterNavKey(val characterId: Long) : SeanimeNavKey

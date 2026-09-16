@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-plugins {
-    id("seanime.android.feature.api")
-}
+package ru.vladsaybulin.feature.profile.api.navigation
 
-android {
-    namespace = "ru.vladsaybulin.feature.search.api"
-}
+import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
-dependencies {
-    implementation(projects.core.model)
-}
+/**
+ * Navigation key for the profile feature.
+ * @param userId The ID of the user whose profile is to be displayed. Can be null if the profile is for the current user.
+ */
+@Serializable
+data class ProfileNavKey(val userId: Long?) : SeanimeNavKey

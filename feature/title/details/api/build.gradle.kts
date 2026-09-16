@@ -21,3 +21,7 @@ plugins {
 android {
     namespace = "ru.vladsaybulin.feature.title.details.api"
 }
+
+dependencies {
+    implementation(projects.core.model)
+}

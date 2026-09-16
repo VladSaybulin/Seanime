@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-plugins {
-    id("seanime.android.feature.api")
-}
+package ru.vladsaybulin.feature.imageview.api.navigation
 
-android {
-    namespace = "ru.vladsaybulin.feature.search.api"
-}
+import kotlinx.serialization.Serializable
 
-dependencies {
-    implementation(projects.core.model)
+/**
+ * Represents the pointer to source of images to be displayed in the image view feature.
+ * This can be extended to include different types of image sources in the future.
+ */
+@Serializable
+sealed class ImageViewSource {
+
+    /** Represents a source of images that are screenshots of a specific anime. */
+    @Serializable
+    data class AnimeScreenshots(val animeId: Long) : ImageViewSource()
 }
