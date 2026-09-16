@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.list.navigation
+package ru.vladsaybulin.feature.list.impl
 
+import androidx.compose.runtime.Immutable
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.userrate.EditableUserRate
+import ru.vladsaybulin.model.list.UserRateOrder
+import ru.vladsaybulin.model.list.UserRateOrderField
+import ru.vladsaybulin.model.userrate.UserRateStatus
 
-data class ListNavEvents(
-    val navigateToTitleDetails: (type: EntryType, id: Long) -> Unit,
-    val showUserRateEditor: (EditableUserRate) -> Unit,
-    val startAuthorization: () -> Unit,
-    val navigateUp: () -> Unit
+@Immutable
+internal data class ListControlPanelState(
+    val entryType: EntryType,
+    val userRateStatus: UserRateStatus,
+    val orderField: UserRateOrderField,
+    val order: UserRateOrder
 )

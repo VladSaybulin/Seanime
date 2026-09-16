@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.list
+package ru.vladsaybulin.feature.list.impl
 
 import androidx.compose.runtime.Immutable
 import androidx.paging.PagingData
