@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.details.content
+package ru.vladsaybulin.feature.title.details.impl.content
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.material3.ExperimentalMaterial3Api

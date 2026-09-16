@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.details
+package ru.vladsaybulin.feature.title.details.impl
 
 import kotlinx.datetime.Instant
 import ru.vladsaybulin.model.anime.Anime

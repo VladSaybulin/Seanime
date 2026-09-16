@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.details
+package ru.vladsaybulin.feature.title.details.impl
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -63,24 +63,24 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
-import ru.vladsaybulin.feature.title.details.content.DetailsTopBar
-import ru.vladsaybulin.feature.title.details.content.PreviewScoreStatistics
-import ru.vladsaybulin.feature.title.details.content.PreviewUserRateStatusStatistics
-import ru.vladsaybulin.feature.title.details.content.RequireAuthDialog
-import ru.vladsaybulin.feature.title.details.content.TitleAuthors
-import ru.vladsaybulin.feature.title.details.content.TitleCharacters
-import ru.vladsaybulin.feature.title.details.content.TitleDescription
-import ru.vladsaybulin.feature.title.details.content.TitleInfo
-import ru.vladsaybulin.feature.title.details.content.TitleName
-import ru.vladsaybulin.feature.title.details.content.TitlePoster
-import ru.vladsaybulin.feature.title.details.content.TitleScore
-import ru.vladsaybulin.feature.title.details.content.TitleScreenshots
-import ru.vladsaybulin.feature.title.details.content.TitleSimilarAnimes
-import ru.vladsaybulin.feature.title.details.content.TitleSimilarMangas
-import ru.vladsaybulin.feature.title.details.content.TitleUserRateStatusDiagram
-import ru.vladsaybulin.feature.title.details.content.TitleVideos
-import ru.vladsaybulin.feature.title.details.content.UserRateFab
-import ru.vladsaybulin.feature.title.details.content.UserRateStatusSelectionBottomSheet
+import ru.vladsaybulin.feature.title.details.impl.content.DetailsTopBar
+import ru.vladsaybulin.feature.title.details.impl.content.PreviewScoreStatistics
+import ru.vladsaybulin.feature.title.details.impl.content.PreviewUserRateStatusStatistics
+import ru.vladsaybulin.feature.title.details.impl.content.RequireAuthDialog
+import ru.vladsaybulin.feature.title.details.impl.content.TitleAuthors
+import ru.vladsaybulin.feature.title.details.impl.content.TitleCharacters
+import ru.vladsaybulin.feature.title.details.impl.content.TitleDescription
+import ru.vladsaybulin.feature.title.details.impl.content.TitleInfo
+import ru.vladsaybulin.feature.title.details.impl.content.TitleName
+import ru.vladsaybulin.feature.title.details.impl.content.TitlePoster
+import ru.vladsaybulin.feature.title.details.impl.content.TitleScore
+import ru.vladsaybulin.feature.title.details.impl.content.TitleScreenshots
+import ru.vladsaybulin.feature.title.details.impl.content.TitleSimilarAnimes
+import ru.vladsaybulin.feature.title.details.impl.content.TitleSimilarMangas
+import ru.vladsaybulin.feature.title.details.impl.content.TitleUserRateStatusDiagram
+import ru.vladsaybulin.feature.title.details.impl.content.TitleVideos
+import ru.vladsaybulin.feature.title.details.impl.content.UserRateFab
+import ru.vladsaybulin.feature.title.details.impl.content.UserRateStatusSelectionBottomSheet
 import ru.vladsaybulin.feature.title.details.navigation.IdleTitleDetailsNavEvents
 import ru.vladsaybulin.feature.title.details.navigation.TitleDetailsNavEvents
 import ru.vladsaybulin.model.anime.Anime

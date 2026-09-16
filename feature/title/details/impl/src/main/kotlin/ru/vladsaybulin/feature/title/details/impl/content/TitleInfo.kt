@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.details.content
+package ru.vladsaybulin.feature.title.details.impl.content
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -77,6 +77,7 @@ import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -443,7 +444,7 @@ private fun NextEpisodeDatePanel(nextEpisodeAt: Instant) {
     ) {
         Text(
             text = DateTimeFormatter.ofPattern("dd MMM, hh:mm")
-                .withLocale(java.util.Locale.getDefault())
+                .withLocale(Locale.getDefault())
                 .withZone(TimeZone.currentSystemDefault().toJavaZoneId())
                 .format(nextEpisodeAt.toJavaInstant())
         )

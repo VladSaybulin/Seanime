@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.details.content
+package ru.vladsaybulin.feature.title.details.impl.content
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import ru.vladsaybulin.core.designsystem.components.drawForegroundGradientScrim
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
+import ru.vladsaybulin.core.ui.R
 
 @Composable
 fun TitlePoster(
@@ -48,7 +49,7 @@ fun TitlePoster(
     Box(modifier = Modifier.fillMaxWidth()) {
 
         val painter = if (posterUrl == null || LocalInspectionMode.current) {
-            painterResource(id = ru.vladsaybulin.core.ui.R.drawable.no_poster)
+            painterResource(id = R.drawable.no_poster)
         } else {
             rememberAsyncImagePainter(model = posterUrl)
         }

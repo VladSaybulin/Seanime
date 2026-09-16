@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.details.content
+package ru.vladsaybulin.feature.title.details.impl.content
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -174,11 +176,11 @@ private fun ScoreDiagram(
 
 private fun DrawScope.drawScoreStatsBar(
     value: Float,
-    shape: androidx.compose.ui.graphics.Shape,
+    shape: Shape,
     color: Color,
     minHeight: Float
 ) {
-    val barSize = androidx.compose.ui.geometry.Size(
+    val barSize = Size(
         width = size.width,
         height = (size.height * value).coerceAtLeast(minHeight)
     )
