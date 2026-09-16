@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.authors
+package ru.vladsaybulin.feature.title.authors.impl
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,11 +34,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
-import ru.vladsaybulin.feature.title.authors.R
 import ru.vladsaybulin.feature.title.authors.navigation.TitleAuthorsNavEvents
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.core.ui2.entry.EntryList
@@ -82,7 +77,7 @@ private fun AuthorsScreen(
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { padding ->
         Box(
-            modifier = Modifier.padding(padding)
+            modifier = padding(padding)
         ) {
             when (uiState) {
                 AuthorsUiState.Loading -> Unit

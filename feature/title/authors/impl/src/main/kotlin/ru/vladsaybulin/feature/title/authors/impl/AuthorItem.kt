@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.authors
+package ru.vladsaybulin.feature.title.authors.impl
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
