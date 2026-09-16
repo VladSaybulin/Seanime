@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.userrate
+package ru.vladsaybulin.feature.rate.editor.impl
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -63,16 +62,15 @@ import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import ru.vladsaybulin.core.designsystem.components.ShikimoriModalBottomSheet
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.UserRateStatusButton
 import ru.vladsaybulin.core.ui.UserRateStatusButtonDefaults
 import ru.vladsaybulin.core.ui.score.ScoreInput
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
-import ru.vladsaybulin.feature.userrate.CounterState.Companion.UNLIMITED_LIMIT
-import ru.vladsaybulin.feature.userrate.ProgressCounterType.Chapters
-import ru.vladsaybulin.feature.userrate.ProgressCounterType.Episodes
-import ru.vladsaybulin.feature.userrate.ProgressCounterType.Volumes
+import ru.vladsaybulin.feature.rate.editor.impl.CounterState.Companion.UNLIMITED_LIMIT
+import ru.vladsaybulin.feature.rate.editor.impl.ProgressCounterType.Chapters
+import ru.vladsaybulin.feature.rate.editor.impl.ProgressCounterType.Episodes
+import ru.vladsaybulin.feature.rate.editor.impl.ProgressCounterType.Volumes
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.EditableUserRate

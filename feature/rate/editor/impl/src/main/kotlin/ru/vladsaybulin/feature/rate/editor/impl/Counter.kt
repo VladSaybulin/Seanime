@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.userrate
+package ru.vladsaybulin.feature.rate.editor.impl
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.userrate
+package ru.vladsaybulin.feature.rate.editor.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

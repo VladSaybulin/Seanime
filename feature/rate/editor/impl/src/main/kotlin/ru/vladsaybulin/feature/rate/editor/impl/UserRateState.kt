@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.userrate
+package ru.vladsaybulin.feature.rate.editor.impl
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,10 +29,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.vladsaybulin.feature.userrate.CounterState.Companion.UNLIMITED_LIMIT
+import ru.vladsaybulin.feature.rate.editor.impl.CounterState.Companion.UNLIMITED_LIMIT
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryStatus.Anons
 import ru.vladsaybulin.model.userrate.EditableUserRate
