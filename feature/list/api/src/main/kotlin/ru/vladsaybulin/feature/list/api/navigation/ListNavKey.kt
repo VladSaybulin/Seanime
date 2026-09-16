@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.list.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -33,3 +34,17 @@ data class ListNavKey(
     val titleType: EntryType?,
     val status: UserRateStatus?
 ) : SeanimeNavKey
+
+/**
+ * Extension function to navigate to the list feature.
+ * @param userId The ID of the user whose list is to be displayed. Can be null if the list is for the current user.
+ * @param titleType Preset type of the titles in the list (Anime or Manga). If null, the list will default to Anime.
+ * @param status Preset status of the titles in the list (e.g., Watching, Completed etc.). If null, the list will default to Watching.
+ */
+fun Navigator.navigateToList(
+    userId: Long? = null,
+    titleType: EntryType? = null,
+    status: UserRateStatus? = null
+) {
+    navigateTo(ListNavKey(userId, titleType, status))
+}
