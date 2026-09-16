@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.title.screenshots.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
 /**
@@ -24,5 +25,8 @@ import ru.vladsaybulin.core.navigation.SeanimeNavKey
  * @param animeId The ID of the anime.
  */
 @Serializable
-data class AnimeScreenshotsNavKey(val animeId: Long) : SeanimeNavKey {
+data class AnimeScreenshotsNavKey(val animeId: Long) : SeanimeNavKey
+
+fun Navigator.navigateToAnimeScreenshots(animeId: Long) {
+    navigateTo(AnimeScreenshotsNavKey(animeId))
 }

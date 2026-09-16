@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.rate.editor.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
 /**
@@ -25,3 +26,11 @@ import ru.vladsaybulin.core.navigation.SeanimeNavKey
  */
 @Serializable
 data class RateEditorNavKey(val rateId: Long) : SeanimeNavKey
+
+/**
+ * Extension function to navigate to the rate editor feature.
+ * @param rateId The ID of the rate to be edited.
+ */
+fun Navigator.navigateToRateEditor(rateId: Long) {
+    navigateTo(RateEditorNavKey(rateId))
+}

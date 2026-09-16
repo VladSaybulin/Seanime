@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.imageview.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
 /**
@@ -43,4 +44,29 @@ data class ImageViewNavKey(
         require(imageSetSize >= 0) { "imageSetSize must be non-negative" }
         require(startImageIndex >= 0) { "startImageIndex must be non-negative" }
     }
+}
+
+/**
+ * Extension function to navigate to the full screen set of images.
+ * If [startImageUrl] is not null then this image will be displayed before the source loads.
+ * @param source The source of the images to be displayed.
+ * @param startImageIndex The index of the image to start displaying.
+ * @param imageSetSize The size of the image set which source provides. If size unknown then 0.
+ * @param startImageUrl The URL of the image to start displaying
+ */
+fun Navigator.showFullScreenImageSet(
+    source: ImageViewSource,
+    startImageIndex: Int,
+    imageSetSize: Int = 0,
+    startImageUrl: String? = null,
+) {
+    navigateTo(ImageViewNavKey(source, imageSetSize, startImageIndex, startImageUrl))
+}
+
+/**
+ * Extension function to navigate to the full screen single image.
+ * @param imageUrl The URL of the image to display.
+ */
+fun Navigator.showFullScreenImage(imageUrl: String) {
+    navigateTo(ImageViewNavKey(null, 0, 0, imageUrl))
 }

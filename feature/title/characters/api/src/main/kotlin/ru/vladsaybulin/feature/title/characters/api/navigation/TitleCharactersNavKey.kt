@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.title.characters.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.model.common.EntryType
 
@@ -27,3 +28,7 @@ import ru.vladsaybulin.model.common.EntryType
  */
 @Serializable
 data class TitleCharactersNavKey(val titleType: EntryType, val titleId: Long) : SeanimeNavKey
+
+fun Navigator.navigateToTitleCharacters(titleType: EntryType, titleId: Long) {
+    navigateTo(TitleCharactersNavKey(titleType, titleId))
+}

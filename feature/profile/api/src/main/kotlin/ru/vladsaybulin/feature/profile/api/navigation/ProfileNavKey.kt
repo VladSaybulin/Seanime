@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.profile.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
 /**
@@ -25,3 +26,11 @@ import ru.vladsaybulin.core.navigation.SeanimeNavKey
  */
 @Serializable
 data class ProfileNavKey(val userId: Long?) : SeanimeNavKey
+
+/**
+ * Extension function to navigate to the profile feature.
+ * @param userId The ID of the user whose profile is to be displayed. Can be null if the profile is for the current user.
+ */
+fun Navigator.navigateToProfile(userId: Long? = null) {
+    navigateTo(ProfileNavKey(userId))
+}

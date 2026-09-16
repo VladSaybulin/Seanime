@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.title.videos.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
 /**
@@ -24,5 +25,8 @@ import ru.vladsaybulin.core.navigation.SeanimeNavKey
  * @param animeId The ID of the anime.
  */
 @Serializable
-data class AnimeVideosNavKey(val animeId: Long) : SeanimeNavKey {
+data class AnimeVideosNavKey(val animeId: Long) : SeanimeNavKey
+
+fun Navigator.navigateToAnimeVideos(animeId: Long) {
+    navigateTo(AnimeVideosNavKey(animeId))
 }
