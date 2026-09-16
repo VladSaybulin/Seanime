@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.character.navigation
+package ru.vladsaybulin.feature.character.impl
 
-data class CharacterDetailsNavEvents(
-    val navigateToAnimeDetails: (Long) -> Unit,
-    val navigateToMangaDetails: (Long) -> Unit,
-    val navigateToCharacterDetails: (Long) -> Unit,
-    val navigateToPersonDetails: (Long) -> Unit,
-    val navigateUp: () -> Unit
-)
+import ru.vladsaybulin.model.character.CharacterDetails
+
+sealed class CharacterDetailsUiState {
+
+    data object Loading : CharacterDetailsUiState()
+
+    data class Success(val characterDetails: CharacterDetails) : CharacterDetailsUiState()
+
+    data class Error(val throwable: Throwable) : CharacterDetailsUiState()
+
+}
