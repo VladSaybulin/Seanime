@@ -39,51 +39,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.feature.title.characters.navigation.TitleCharactersNavEvents
-import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.core.ui2.entry.EntryGrid
 import ru.vladsaybulin.core.ui2.entry.EntryGridItem
 import ru.vladsaybulin.core.ui2.entry.character.CharacterItem
+import ru.vladsaybulin.model.character.Character
 
 @Composable
 fun TitleCharactersRoute(
-    navEvents: TitleCharactersNavEvents,
-    viewModel: TitleCharacterViewModel = hiltViewModel()
+    viewModel: TitleCharacterViewModel,
+    onCharacterClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    TitleCharactersScreen(state = state, navEvents = navEvents)
+    TitleCharactersScreen(
+        state = state,
+        onCharacterClick = onCharacterClick,
+        onBackClick = onBackClick
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TitleCharactersScreen(
     state: TitleCharactersUiState,
-    navEvents: TitleCharactersNavEvents
+    onCharacterClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
             TitleCharactersTopBar(
-                onBackClick = navEvents.navigateUp,
+                onBackClick = onBackClick,
                 scrollBehavior = topAppBarScrollBehavior
             )
         },
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPadding ->
         Box(
-            modifier = padding(scaffoldPadding)
+            modifier = Modifier.padding(scaffoldPadding)
                 .padding(LocalScreenContentPadding.current)
         ) {
             if (state is TitleCharactersUiState.Success) {
                 TitleCharactersContent(
                     state = state,
-                    onCharacterClick = navEvents.navigateToCharacterDetails
+                    onCharacterClick = onCharacterClick
                 )
             }
         }

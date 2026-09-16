@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,24 +42,24 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.feature.title.screenshots.navigation.AnimeScreenshotsNavEvents
 import ru.vladsaybulin.model.common.Image
 
 @Composable
 fun AnimeScreenshotsRoute(
-    navEvents: AnimeScreenshotsNavEvents,
-    viewModel: AnimeScreenshotsViewModel = hiltViewModel()
+    viewModel: AnimeScreenshotsViewModel,
+    onScreenshotClick: (startIdx: Int, setSize: Int, startUrl: String) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimeScreenshotsScreen(
         state = state,
-        navEvents = navEvents
+        onScreenshotClick = onScreenshotClick,
+        onBackClick = onBackClick
     )
 }
 
@@ -68,26 +67,33 @@ fun AnimeScreenshotsRoute(
 @Composable
 private fun AnimeScreenshotsScreen(
     state: AnimeScreenshotsUiState,
-    navEvents: AnimeScreenshotsNavEvents,
+    onScreenshotClick: (startIdx: Int, setSize: Int, startUrl: String) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
             AnimeScreenshotsTopBar(
-                onBackClick = navEvents.navigateUp,
+                onBackClick = onBackClick,
                 scrollBehavior = topBarScrollBehavior
             )
         },
         modifier = Modifier.nestedScroll(topBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPadding ->
         Box(
-            modifier = padding(scaffoldPadding)
+            modifier = Modifier.padding(scaffoldPadding)
                 .padding(LocalScreenContentPadding.current)
         ) {
             if (state is AnimeScreenshotsUiState.Success) {
                 AnimeScreenshotsContent(
                     state = state,
-                    onScreenshotClick = { navEvents.showFullscreenImage(state.screenshots, it) }
+                    onScreenshotClick = { index ->
+                        onScreenshotClick(
+                            index,
+                            state.screenshots.size,
+                            state.screenshots[index].originalUrl
+                        )
+                    }
                 )
             }
         }

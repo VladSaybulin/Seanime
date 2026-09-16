@@ -50,7 +50,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import ru.vladsaybulin.core.designsystem.components.SeanimeInformation
@@ -64,9 +63,11 @@ import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.core.ui.filters.rememberFiltersState
 import ru.vladsaybulin.core.ui.paging.PagingBox
 import ru.vladsaybulin.core.ui.strings.orderString
+import ru.vladsaybulin.core.ui2.entry.EntryGrid
+import ru.vladsaybulin.core.ui2.entry.anime.animeItems
+import ru.vladsaybulin.core.ui2.entry.manga.mangaItems
 import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
-import ru.vladsaybulin.feature.search.navigation.SearchNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.EntryType
@@ -74,16 +75,14 @@ import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.core.ui2.entry.EntryGrid
-import ru.vladsaybulin.core.ui2.entry.anime.animeItems
-import ru.vladsaybulin.core.ui2.entry.manga.mangaItems
 import kotlin.math.max
 import kotlin.math.min
 
 @Composable
 fun SearchScreen(
-    navEvents: SearchNavEvents,
-    viewModel: SearchViewModel = hiltViewModel()
+    viewModel: SearchViewModel,
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -98,8 +97,8 @@ fun SearchScreen(
         onOrderChanged = viewModel::onOrderChanged,
         onApplyFilters = viewModel::onApplyFilters,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
-        onAnimeClick = { navEvents.navigateToAnime(it.id) },
-        onMangaClick = { navEvents.navigateToManga(it.id) },
+        onAnimeClick = { onAnimeClick(it.id) },
+        onMangaClick = { onMangaClick(it.id) },
         userRates = userRates
     )
 }

@@ -31,25 +31,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.feature.title.related.navigation.TitleRelatedNavEvents
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.core.ui2.entry.EntryList
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 
 @Composable
 fun TitleRelatedRoute(
-    navEvents: TitleRelatedNavEvents,
-    viewModel: TitleRelatedViewModel = hiltViewModel(),
+    viewModel: TitleRelatedViewModel,
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     TitleRelatedScreen(
         state = state,
-        navEvents = navEvents
+        onAnimeClick = onAnimeClick,
+        onMangaClick = onMangaClick,
+        onBackClick = onBackClick
     )
 }
 
@@ -57,7 +59,9 @@ fun TitleRelatedRoute(
 @Composable
 private fun TitleRelatedScreen(
     state: TitleRelatedUiState,
-    navEvents: TitleRelatedNavEvents
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -66,7 +70,7 @@ private fun TitleRelatedScreen(
             TopAppBar(
                 title = { Text(stringResource(id = R.string.feature_titlerelated_screen_title)) },
                 navigationIcon = {
-                    IconButton(onClick = navEvents.navigateUp) {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = SeanimeIcons.ArrowBack,
                             contentDescription = stringResource(id = R.string.feature_titlerelated_back)
@@ -79,11 +83,15 @@ private fun TitleRelatedScreen(
         modifier = Modifier.nestedScroll(topBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPadding ->
         Box(
-            modifier = padding(scaffoldPadding)
+            modifier = Modifier.padding(scaffoldPadding)
                 .padding(LocalScreenContentPadding.current)
         ) {
             if (state is TitleRelatedUiState.Success) {
-                TitleRelatedContent(state = state, onTitleClick = navEvents.navigateToTitleDetails)
+                TitleRelatedContent(
+                    state = state,
+                    onAnimeClick = onAnimeClick,
+                    onMangaClick = onMangaClick
+                )
             }
         }
     }
@@ -92,13 +100,19 @@ private fun TitleRelatedScreen(
 @Composable
 private fun TitleRelatedContent(
     state: TitleRelatedUiState.Success,
-    onTitleClick: (EntryType, Long) -> Unit
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit
 ) {
     EntryList {
         items(items = state.relatedTitles) { relatedTitle ->
             RelatedTitleItem(
                 relatedTitle = relatedTitle,
-                onClick = onTitleClick
+                onClick = { type, id ->
+                    when (type) {
+                        EntryType.Anime -> onAnimeClick(id)
+                        EntryType.Manga -> onMangaClick(id)
+                    }
+                }
             )
         }
     }

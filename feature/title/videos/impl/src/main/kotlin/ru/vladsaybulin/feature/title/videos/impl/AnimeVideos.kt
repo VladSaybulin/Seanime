@@ -51,30 +51,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.feature.title.videos.navigation.AnimeVideosNavEvents
 import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.anime.VideoKind
 
 @Composable
 fun AnimeVideosRoute(
-    navEvents: AnimeVideosNavEvents,
-    viewModel: AnimeVideosViewModel = hiltViewModel()
+    viewModel: AnimeVideosViewModel,
+    onBackClick: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimeVideosScreen(
         state = state,
-        navEvents = navEvents
+        onBackClick = onBackClick
     )
 }
 
@@ -82,27 +81,28 @@ fun AnimeVideosRoute(
 @Composable
 private fun AnimeVideosScreen(
     state: AnimeVideosUIState,
-    navEvents: AnimeVideosNavEvents
+    onBackClick: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val uriHandler = LocalUriHandler.current
 
     Scaffold(
         topBar = {
             AnimeVideosTopBar(
-                onBackClick = navEvents.navigateUp,
+                onBackClick = onBackClick,
                 scrollBehavior = scrollBehavior
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { scaffoldPadding ->
         Box(
-            modifier = padding(scaffoldPadding)
+            modifier = Modifier.padding(scaffoldPadding)
                 .padding(LocalScreenContentPadding.current)
         ) {
             if (state is AnimeVideosUIState.Success) {
                 AnimeVideosContent(
                     state = state,
-                    onVideoClick = navEvents.navigateToVideo
+                    onVideoClick = { url, name, kind -> uriHandler.openUri(url) }
                 )
             }
         }

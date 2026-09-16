@@ -53,7 +53,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -63,7 +62,7 @@ import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.model.user.UserImage
 
 @Composable
-fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileRoute(viewModel: ProfileViewModel) {
     val isMe by viewModel.isMe.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -117,7 +116,7 @@ private fun ProfileContent(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPaddings ->
         Column(
-            modifier = padding(scaffoldPaddings)
+            modifier = Modifier.padding(scaffoldPaddings)
                 .fillMaxSize()
         ) {
             Box(modifier = Modifier.weight(1f)) {

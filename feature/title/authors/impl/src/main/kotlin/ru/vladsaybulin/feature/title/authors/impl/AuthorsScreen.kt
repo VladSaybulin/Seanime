@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,25 +35,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
-import ru.vladsaybulin.feature.title.authors.navigation.TitleAuthorsNavEvents
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.core.ui2.entry.EntryList
 
 @Composable
 fun AuthorsScreen(
-    navEvents: TitleAuthorsNavEvents,
-    viewModel: AuthorsViewModel = hiltViewModel()
+    viewModel: AuthorsViewModel,
+    onPersonClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AuthorsScreen(
         uiState = uiState,
-        onAuthorClick = { navEvents.navigateToPerson(it.person.id) },
-        onBack = navEvents.navigateUp
+        onPersonClick = onPersonClick,
+        onBackClick = onBackClick
     )
 }
 
@@ -60,8 +60,8 @@ fun AuthorsScreen(
 @Composable
 private fun AuthorsScreen(
     uiState: AuthorsUiState,
-    onAuthorClick: (PersonWithRoles) -> Unit,
-    onBack: () -> Unit,
+    onPersonClick: (Long) -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -70,21 +70,21 @@ private fun AuthorsScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AuthorsTopBar(
-                onBack = onBack,
+                onBackClick = onBackClick,
                 scrollBehavior = scrollBehavior
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { padding ->
         Box(
-            modifier = padding(padding)
+            modifier = Modifier.padding(padding)
         ) {
             when (uiState) {
                 AuthorsUiState.Loading -> Unit
 
                 is AuthorsUiState.Success -> AuthorsContent(
                     uiState = uiState,
-                    onAuthorClick = onAuthorClick
+                    onPersonClick = onPersonClick
                 )
             }
         }
@@ -94,7 +94,7 @@ private fun AuthorsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AuthorsTopBar(
-    onBack: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
@@ -103,7 +103,7 @@ private fun AuthorsTopBar(
             Text(text = stringResource(id = R.string.feature_authors_title))
         },
         navigationIcon = {
-            IconButton(onClick = onBack) {
+            IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = SeanimeIcons.ArrowBack,
                     contentDescription = stringResource(id = R.string.feature_authors_back_icon)
@@ -118,24 +118,24 @@ private fun AuthorsTopBar(
 @Composable
 private fun AuthorsContent(
     uiState: AuthorsUiState.Success,
-    onAuthorClick: (PersonWithRoles) -> Unit
+    onPersonClick: (Long) -> Unit
 ) {
     EntryList {
         authors(
             authors = uiState.authors,
-            onAuthorClick = onAuthorClick
+            onPersonClick = onPersonClick
         )
     }
 }
 
 private fun LazyListScope.authors(
     authors: List<PersonWithRoles>,
-    onAuthorClick: (PersonWithRoles) -> Unit
+    onPersonClick: (Long) -> Unit
 ) {
     items(authors) {
         AuthorItem(
             author = it,
-            onClick = { onAuthorClick(it) },
+            onClick = { onPersonClick(it.person.id) },
             modifier = Modifier.fillMaxWidth()
         )
     }

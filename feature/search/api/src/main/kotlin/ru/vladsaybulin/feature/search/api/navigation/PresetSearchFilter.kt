@@ -26,7 +26,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PresetSearchFilter(
     val field: Field,
-    val id: Int
+    val id: Long
 ) {
     enum class Field {
         Genre, Studio, Publisher

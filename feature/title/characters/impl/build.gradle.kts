@@ -25,4 +25,6 @@ android {
 dependencies {
     implementation(projects.core.ui2.entry)
     implementation(projects.feature.title.characters.api)
+
+    implementation(projects.feature.character.api)
 }

@@ -44,10 +44,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import ru.vladsaybulin.core.designsystem.components.SeanimeHeader
@@ -56,28 +54,39 @@ import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
 import ru.vladsaybulin.core.ui.newstopic.newsTopicsFeed
-import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
-import ru.vladsaybulin.feature.home.navigation.HomeNavEvents
-import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.model.user.BriefUser
-import ru.vladsaybulin.model.userrate.EditableUserRate
-import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.core.ui2.entry.EntryCarousel
 import ru.vladsaybulin.core.ui2.entry.anime.animeCarouselItems
 import ru.vladsaybulin.core.ui2.entry.userrate.UserRateItem
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
+import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.user.BriefUser
+import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun HomeScreen(
-    navEvents: HomeNavEvents,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel,
+    onAllNewsTopicsClick: () -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onTopicClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onMyProfileClick: () -> Unit,
+    onUserClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
+    onExploreAnimeOngoingClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         uiState = uiState,
-        navEvents = navEvents
+        onAllNewsTopicsClick = onAllNewsTopicsClick,
+        onAnimeClick = onAnimeClick,
+        onTopicClick = onTopicClick,
+        onMangaClick = onMangaClick,
+        onMyProfileClick = onMyProfileClick,
+        onUserClick = onUserClick,
+        onRateClick = onRateClick,
+        onExploreAnimeOngoingClick = onExploreAnimeOngoingClick
     )
 }
 
@@ -85,7 +94,14 @@ fun HomeScreen(
 @Composable
 private fun HomeScreen(
     uiState: HomeUiState,
-    navEvents: HomeNavEvents
+    onAllNewsTopicsClick: () -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onTopicClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onMyProfileClick: () -> Unit,
+    onUserClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
+    onExploreAnimeOngoingClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -100,15 +116,21 @@ private fun HomeScreen(
                 HomeTopBar(
                     me = (uiState as? HomeUiState.Success)?.me,
                     scrollBehavior = topBarScrollBehaviour,
-                    onMeClick = navEvents.navigateToMe
+                    onMeClick = onMyProfileClick
                 )
             },
             modifier = Modifier.nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
         ) { scaffoldPadding ->
-            Box(modifier = padding(scaffoldPadding)) {
+            Box(modifier = Modifier.padding(scaffoldPadding)) {
                 HomeContent(
                     uiState = uiState,
-                    navEvents = navEvents
+                    onAllNewsTopicsClick = onAllNewsTopicsClick,
+                    onAnimeClick = onAnimeClick,
+                    onExploreAnimeOngoingClick = onExploreAnimeOngoingClick,
+                    onMangaClick = onMangaClick,
+                    onRateClick = onRateClick,
+                    onTopicClick = onTopicClick,
+                    onUserClick = onUserClick,
                 )
             }
         }
@@ -118,12 +140,24 @@ private fun HomeScreen(
 @Composable
 private fun HomeContent(
     uiState: HomeUiState,
-    navEvents: HomeNavEvents
+    onAllNewsTopicsClick: () -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onExploreAnimeOngoingClick: () -> Unit,
+    onTopicClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
+    onUserClick: (Long) -> Unit
 ) {
     when (uiState) {
         is HomeUiState.Success -> HomeBody(
             uiState = uiState,
-            navEvents = navEvents
+            onAllNewsTopicsClick = onAllNewsTopicsClick,
+            onAnimeClick = onAnimeClick,
+            onExploreAnimeOngoingClick = onExploreAnimeOngoingClick,
+            onMangaClick = onMangaClick,
+            onRateClick = onRateClick,
+            onTopicClick = onTopicClick,
+            onUserClick = onUserClick
         )
 
         is HomeUiState.Error -> FullScreenErrorMessage(throwable = uiState.throwable)
@@ -158,33 +192,38 @@ private fun LoadingHomeBody() {
 @Composable
 private fun HomeBody(
     uiState: HomeUiState.Success,
-    navEvents: HomeNavEvents,
+    onAllNewsTopicsClick: () -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onExploreAnimeOngoingClick: () -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
+    onTopicClick: (Long) -> Unit,
+    onUserClick: (Long) -> Unit
 ) {
-    val uriHandler = LocalUriHandler.current
 
     LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
         inProgressUserRatesPager(
             userRates = uiState.inProgressUserRates,
-            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-            onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
-            onEditClick = navEvents.showUserRateEditor
+            onAnimeClick = onAnimeClick,
+            onMangaClick = onMangaClick,
+            onRateClick = onRateClick
         )
 
 
         animeOngoingCarousel(
             ongoingAnime = uiState.ongoings,
-            onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-            onMoreClick = navEvents.navigateToSearchAnimeOngoing
+            onAnimeClick = onAnimeClick,
+            onMoreClick = onExploreAnimeOngoingClick
         )
 
         newsTopicsHeader()
         newsTopicsFeed(
             newsTopics = uiState.newsTopics,
-            onTopicClick = { uriHandler.openUri("$SHIKIMORI_NEWS_URL/${it.id}") },
-            onUserClick = { navEvents.navigateToUser(it.id) },
+            onTopicClick = { onTopicClick(it.id) },
+            onUserClick = { onUserClick(it.id) },
             key = { "$NewsTopicKeyPrefix${it.id}" }
         )
-        allNewsTopicsButton(onAllNewsTopicsClick = { uriHandler.openUri(SHIKIMORI_NEWS_URL) })
+        allNewsTopicsButton(onAllNewsTopicsClick)
     }
 }
 
@@ -216,7 +255,7 @@ private fun LazyListScope.allNewsTopicsButton(
 
 private fun LazyListScope.animeOngoingCarousel(
     ongoingAnime: ImmutableList<Anime>,
-    onAnimeClick: (Anime) -> Unit,
+    onAnimeClick: (Long) -> Unit,
     onMoreClick: () -> Unit
 ) {
     item(key = OngoingAnimesKey) {
@@ -241,7 +280,7 @@ private fun LazyListScope.animeOngoingCarousel(
                 EntryCarousel {
                     animeCarouselItems(
                         animes = ongoingAnime,
-                        onItemClick = onAnimeClick,
+                        onItemClick = { onAnimeClick(it.id) },
                         itemModifier = Modifier.width(OngoingAnimeWidth)
                     )
                 }
@@ -252,9 +291,9 @@ private fun LazyListScope.animeOngoingCarousel(
 
 private fun LazyListScope.inProgressUserRatesPager(
     userRates: ImmutableList<UserRateWithEntry>,
-    onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit,
-    onEditClick: (EditableUserRate) -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     item(key = InProgressUserRatesKey) {
@@ -268,11 +307,13 @@ private fun LazyListScope.inProgressUserRatesPager(
                 key = { userRates[it].userRate.id },
                 modifier = modifier.let { if (userRates.isNotEmpty()) it.padding(bottom = 24.dp) else it }
             ) {
+                val userRate = userRates[it]
+
                 UserRateItem(
-                    userRateWithEntry = userRates[it],
-                    onAnimeClick = onAnimeClick,
-                    onMangaClick = onMangaClick,
-                    onEditClick = {}
+                    userRateWithEntry = userRate,
+                    onAnimeClick = { onAnimeClick(it.id) },
+                    onMangaClick = { onMangaClick(it.id) },
+                    onEditClick = { onRateClick(userRate.userRate.id) }
                 )
             }
         }
@@ -283,7 +324,5 @@ private const val InProgressUserRatesKey = "user_rates"
 private const val OngoingAnimesKey = "ongoing"
 private const val NewsHeaderKey = "news_header"
 private const val NewsTopicKeyPrefix = "news"
-
-private const val SHIKIMORI_NEWS_URL = "${BuildConfig.BASE_URL}/forum/news"
 
 private val OngoingAnimeWidth = 128.dp

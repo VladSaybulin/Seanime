@@ -26,4 +26,6 @@ dependencies {
     implementation(projects.feature.title.screenshots.api)
 
     implementation(libs.coil.kt.compose)
+
+    implementation(projects.feature.imageview.api)
 }

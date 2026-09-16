@@ -32,4 +32,14 @@ dependencies {
     implementation(libs.coil.kt.compose)
 
     implementation(libs.androidx.activity.compose)
+
+    implementation(projects.feature.title.authors.api)
+    implementation(projects.feature.title.characters.api)
+    implementation(projects.feature.title.related.api)
+    implementation(projects.feature.title.screenshots.api)
+    implementation(projects.feature.title.videos.api)
+    implementation(projects.feature.character.api)
+    implementation(projects.feature.imageview.api)
+    implementation(projects.feature.search.api)
+    implementation(projects.feature.rate.editor.api)
 }

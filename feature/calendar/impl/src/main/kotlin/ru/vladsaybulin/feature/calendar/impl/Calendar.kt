@@ -47,7 +47,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -66,8 +65,6 @@ import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
 import ru.vladsaybulin.core.ui2.entry.EntryCarousel
 import ru.vladsaybulin.core.ui2.entry.anime.AnimeGridItem
-import ru.vladsaybulin.feature.calendar.navigation.CalendarNavEvents
-import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.calendar.previewCalendarItems
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.user.BriefUser
@@ -76,8 +73,9 @@ import ru.vladsaybulin.core.ui.R as uiR
 
 @Composable
 fun CalendarRoute(
-    navEvents: CalendarNavEvents,
-    viewModel: CalendarViewModel = hiltViewModel()
+    viewModel: CalendarViewModel,
+    onAnimeClick: (Long) -> Unit,
+    onMyProfileClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val me by viewModel.me.collectAsStateWithLifecycle()
@@ -85,7 +83,8 @@ fun CalendarRoute(
     CalendarScreen(
         uiState = uiState,
         me = me,
-        navEvents = navEvents,
+        onAnimeClick = onAnimeClick,
+        onMyProfileClick = onMyProfileClick,
         onRefresh = viewModel::refresh
     )
 }
@@ -94,19 +93,20 @@ fun CalendarRoute(
 fun CalendarScreen(
     uiState: CalendarUiState,
     me: BriefUser?,
-    navEvents: CalendarNavEvents,
+    onAnimeClick: (Long) -> Unit,
+    onMyProfileClick: () -> Unit,
     onRefresh: suspend () -> Unit = {},
 ) {
     Scaffold(
         modifier = Modifier.padding(LocalScreenContentPadding.current),
         topBar = {
-            CalendarTopBar(me = me, navigateToMe = navEvents.navigateToMe)
+            CalendarTopBar(me = me, onMyProfileClick = onMyProfileClick)
         }
     ) { scaffoldPadding ->
-        Box(modifier = padding(scaffoldPadding)) {
+        Box(modifier = Modifier.padding(scaffoldPadding)) {
             CalendarContent(
                 state = uiState,
-                navigateToAnimeDetails = navEvents.navigateToAnimeDetails,
+                onAnimeClick = onAnimeClick,
                 onRefresh = onRefresh
             )
         }
@@ -117,12 +117,12 @@ fun CalendarScreen(
 @Composable
 private fun CalendarTopBar(
     me: BriefUser?,
-    navigateToMe: () -> Unit
+    onMyProfileClick: () -> Unit
 ) {
     TopAppBar(
         title = { Text(stringResource(id = R.string.feature_calendar_title)) },
         actions = {
-            ProfileButton(image = me?.image, onClick = navigateToMe)
+            ProfileButton(image = me?.image, onClick = onMyProfileClick)
         }
     )
 }
@@ -130,14 +130,14 @@ private fun CalendarTopBar(
 @Composable
 private fun CalendarContent(
     state: CalendarUiState,
-    navigateToAnimeDetails: (Long) -> Unit,
+    onAnimeClick: (Long) -> Unit,
     onRefresh: suspend () -> Unit
 ) {
     when (state) {
         CalendarUiState.Loading -> CalendarLoadingBody(modifier = Modifier.fillMaxSize())
         is CalendarUiState.Success -> CalendarBody(
             calendarDays = state.calendarDays,
-            onAnimeClick = { navigateToAnimeDetails(it.id) },
+            onAnimeClick = onAnimeClick,
             onRefresh = onRefresh
         )
     }
@@ -148,7 +148,7 @@ private fun CalendarContent(
 fun CalendarBody(
     modifier: Modifier = Modifier,
     calendarDays: List<CalendarDay>,
-    onAnimeClick: (Anime) -> Unit,
+    onAnimeClick: (Long) -> Unit,
     onRefresh: suspend () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -196,7 +196,7 @@ private fun CalendarLoadingBody(modifier: Modifier) {
 private fun CalendarSection(
     calendarDay: CalendarDay,
     modifier: Modifier = Modifier,
-    onAnimeClick: (Anime) -> Unit
+    onAnimeClick: (Long) -> Unit
 ) {
     Column(modifier = modifier) {
         CalendarSectionHeader(date = calendarDay.date)
@@ -209,7 +209,7 @@ private fun CalendarSection(
             ) { calendarItem ->
                 AnimeGridItem(
                     anime = calendarItem.anime,
-                    onClick = { onAnimeClick(calendarItem.anime) },
+                    onClick = { onAnimeClick(calendarItem.anime.id) },
                     modifier = Modifier.width(CalendarItemWidth),
                     additionalContent = {
                         CalendarItemDetails(

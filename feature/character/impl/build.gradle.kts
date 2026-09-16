@@ -26,4 +26,6 @@ dependencies {
     implementation(projects.core.ui2.entry)
     implementation(projects.feature.character.api)
     implementation(libs.coil.kt.compose)
+
+    implementation(projects.feature.title.details.api)
 }

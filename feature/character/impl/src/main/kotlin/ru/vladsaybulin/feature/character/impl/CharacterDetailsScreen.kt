@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -50,7 +51,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.collections.immutable.persistentListOf
@@ -63,7 +63,6 @@ import ru.vladsaybulin.core.ui2.entry.EntryCarousel
 import ru.vladsaybulin.core.ui2.entry.EntryCarouselItem
 import ru.vladsaybulin.core.ui2.entry.anime.animeCarouselItems
 import ru.vladsaybulin.core.ui2.entry.manga.mangaCarouselItems
-import ru.vladsaybulin.feature.character.navigation.CharacterDetailsNavEvents
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterDetails
 import ru.vladsaybulin.model.common.Image
@@ -71,19 +70,23 @@ import ru.vladsaybulin.core.ui.R as coreUiR
 
 @Composable
 fun CharacterDetailsScreen(
-    navEvents: CharacterDetailsNavEvents,
-    viewModel: CharacterDetailsViewModel = hiltViewModel()
+    viewModel: CharacterDetailsViewModel,
+    onAnimeClick: (id: Long) -> Unit,
+    onCharacterClick: (id: Long) -> Unit,
+    onMangaClick: (id: Long) -> Unit,
+    onPersonClick: (id: Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     CharacterDetailsScreen(
         uiState = uiState,
-        onAnimeClick = navEvents.navigateToAnimeDetails,
-        onMangaClick = navEvents.navigateToMangaDetails,
-        onCharacterClick = navEvents.navigateToCharacterDetails,
-        onPersonClick = navEvents.navigateToPersonDetails,
-        onBack = navEvents.navigateUp
+        onAnimeClick = onAnimeClick,
+        onCharacterClick = onCharacterClick,
+        onMangaClick = onMangaClick,
+        onPersonClick = onPersonClick,
+        onBack = onBackClick
     )
 
 }
@@ -92,8 +95,8 @@ fun CharacterDetailsScreen(
 fun CharacterDetailsScreen(
     uiState: CharacterDetailsUiState,
     onAnimeClick: (id: Long) -> Unit,
-    onMangaClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
+    onMangaClick: (id: Long) -> Unit,
     onPersonClick: (id: Long) -> Unit,
     onBack: () -> Unit
 ) {
@@ -109,10 +112,10 @@ fun CharacterDetailsScreen(
             is CharacterDetailsUiState.Success -> CharacterDetailsContent(
                 uiState = uiState,
                 onAnimeClick = onAnimeClick,
-                onMangaClick = onMangaClick,
                 onCharacterClick = onCharacterClick,
+                onMangaClick = onMangaClick,
                 onPersonClick = onPersonClick,
-                onBack = onBack
+                onBackClick = onBack
             )
         }
     }
@@ -122,10 +125,10 @@ fun CharacterDetailsScreen(
 fun CharacterDetailsContent(
     uiState: CharacterDetailsUiState.Success,
     onAnimeClick: (id: Long) -> Unit,
-    onMangaClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
+    onMangaClick: (id: Long) -> Unit,
     onPersonClick: (id: Long) -> Unit,
-    onBack: () -> Unit
+    onBackClick: () -> Unit
 ) {
     val details = uiState.characterDetails
     LazyColumn(
@@ -374,7 +377,7 @@ fun CharacterDetailsContentPreview() {
                 onMangaClick = { },
                 onCharacterClick = { },
                 onPersonClick = { },
-                onBack = { }
+                onBackClick = { }
             )
         }
     }

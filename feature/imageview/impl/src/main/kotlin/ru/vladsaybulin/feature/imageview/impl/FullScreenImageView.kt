@@ -18,6 +18,7 @@ package ru.vladsaybulin.feature.imageview.impl
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -113,7 +114,7 @@ fun FullScreenImageView(
 
 @Composable
 private fun SystemBarsVisible(visible: Boolean) {
-    val window = with(LocalContext.current as Activity) { return@with window }
+    val window = with(LocalActivity.current as Activity) { return@with window }
     val controller = remember { WindowCompat.getInsetsController(window, window.decorView) }
 
     LaunchedEffect(controller, visible) {

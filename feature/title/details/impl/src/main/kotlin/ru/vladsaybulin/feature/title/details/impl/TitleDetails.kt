@@ -51,7 +51,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -63,6 +62,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
+import ru.vladsaybulin.feature.imageview.api.navigation.ImageViewSource
 import ru.vladsaybulin.feature.title.details.impl.content.DetailsTopBar
 import ru.vladsaybulin.feature.title.details.impl.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.impl.content.PreviewUserRateStatusStatistics
@@ -81,8 +81,6 @@ import ru.vladsaybulin.feature.title.details.impl.content.TitleUserRateStatusDia
 import ru.vladsaybulin.feature.title.details.impl.content.TitleVideos
 import ru.vladsaybulin.feature.title.details.impl.content.UserRateFab
 import ru.vladsaybulin.feature.title.details.impl.content.UserRateStatusSelectionBottomSheet
-import ru.vladsaybulin.feature.title.details.navigation.IdleTitleDetailsNavEvents
-import ru.vladsaybulin.feature.title.details.navigation.TitleDetailsNavEvents
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
@@ -110,14 +108,30 @@ import ru.vladsaybulin.model.related.RelatedAnime
 import ru.vladsaybulin.model.related.RelatedManga
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.related.RelationType
+import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.search.SeasonOfYear
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 fun TitleDetailsScreen(
-    navEvents: TitleDetailsNavEvents,
-    viewModel: TitleDetailsViewModel = hiltViewModel(),
+    viewModel: TitleDetailsViewModel,
+    onAllAuthorsClick: () -> Unit,
+    onAllCharactersClick: () -> Unit,
+    onAllRelatedClick: () -> Unit,
+    onAllScreenshotsClick: () -> Unit,
+    onAllVideosClick: () -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onCharacterClick: (Long) -> Unit,
+    onGenreClick: (SearchType, Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onPersonClick: (Long) -> Unit,
+    onPosterClick: (String) -> Unit,
+    onPublisherClick: (SearchType, Long) -> Unit,
+    onRateClick: (Long) -> Unit,
+    onScreenshotClick: (setSize: Int, startIdx: Int, startUrl: String) -> Unit,
+    onStudioClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val detailsState by viewModel.detailsState.collectAsStateWithLifecycle()
     val rolesState by viewModel.rolesState.collectAsStateWithLifecycle()
@@ -132,9 +146,25 @@ fun TitleDetailsScreen(
         userRateState = userRateState,
         enabledAutocorrect = enabledAutocorrect,
         onRetry = viewModel::onRetry,
+        onLogin = { /* viewModel::login */ },
         refresh = viewModel::refresh,
         onCreateUserRate = viewModel::createUserRate,
-        navEvents = navEvents
+        onAllAuthorsClick = onAllAuthorsClick,
+        onAllCharactersClick = onAllCharactersClick,
+        onAllRelatedClick = onAllRelatedClick,
+        onAllScreenshotsClick = onAllScreenshotsClick,
+        onAllVideosClick = onAllVideosClick,
+        onAnimeClick = onAnimeClick,
+        onCharacterClick = onCharacterClick,
+        onGenreClick = onGenreClick,
+        onMangaClick = onMangaClick,
+        onPersonClick = onPersonClick,
+        onPosterClick = onPosterClick,
+        onPublisherClick = onPublisherClick,
+        onRateClick = onRateClick,
+        onScreenshotClick = onScreenshotClick,
+        onStudioClick = onStudioClick,
+        onBackClick = onBackClick
     )
 }
 
@@ -146,9 +176,25 @@ fun DetailsScreen(
     userRateState: UserRateState,
     enabledAutocorrect: Boolean,
     onRetry: () -> Unit,
+    onLogin: () -> Unit,
     refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
-    navEvents: TitleDetailsNavEvents,
+    onAllAuthorsClick: () -> Unit,
+    onAllCharactersClick: () -> Unit,
+    onAllRelatedClick: () -> Unit,
+    onAllScreenshotsClick: () -> Unit,
+    onAllVideosClick: () -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onCharacterClick: (Long) -> Unit,
+    onGenreClick: (SearchType, Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onPersonClick: (Long) -> Unit,
+    onPosterClick: (String) -> Unit,
+    onPublisherClick: (SearchType, Long) -> Unit,
+    onRateClick: (Long) -> Unit,
+    onScreenshotClick: (setSize: Int, startIdx: Int, startUrl: String) -> Unit,
+    onStudioClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -165,9 +211,25 @@ fun DetailsScreen(
                 similarState,
                 userRateState,
                 enabledAutocorrect = enabledAutocorrect,
+                onLogin = onLogin,
                 refresh = refresh,
                 onCreateUserRate = onCreateUserRate,
-                navEvents = navEvents
+                onAllAuthorsClick = onAllAuthorsClick,
+                onAllCharactersClick = onAllCharactersClick,
+                onAllRelatedClick = onAllRelatedClick,
+                onAllScreenshotsClick = onAllScreenshotsClick,
+                onAllVideosClick = onAllVideosClick,
+                onAnimeClick = onAnimeClick,
+                onCharacterClick = onCharacterClick,
+                onGenreClick = onGenreClick,
+                onMangaClick = onMangaClick,
+                onPersonClick = onPersonClick,
+                onPosterClick = onPosterClick,
+                onPublisherClick = onPublisherClick,
+                onRateClick = onRateClick,
+                onScreenshotClick = onScreenshotClick,
+                onStudioClick = onStudioClick,
+                onBackClick = onBackClick
             )
         }
     }
@@ -188,9 +250,25 @@ private fun DetailsContent(
     similarState: SimilarState,
     userRateState: UserRateState,
     enabledAutocorrect: Boolean,
+    onLogin: () -> Unit,
     refresh: suspend () -> Unit,
     onCreateUserRate: (UserRateStatus) -> Unit,
-    navEvents: TitleDetailsNavEvents
+    onAllAuthorsClick: () -> Unit,
+    onAllCharactersClick: () -> Unit,
+    onAllRelatedClick: () -> Unit,
+    onAllScreenshotsClick: () -> Unit,
+    onAllVideosClick: () -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onCharacterClick: (Long) -> Unit,
+    onGenreClick: (SearchType, Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onPersonClick: (Long) -> Unit,
+    onPosterClick: (String) -> Unit,
+    onPublisherClick: (SearchType, Long) -> Unit,
+    onRateClick: (Long) -> Unit,
+    onScreenshotClick: (setSize: Int, startIdx: Int, startUrl: String) -> Unit,
+    onStudioClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) {
     var showUserRateStatusSelection by remember { mutableStateOf(false) }
     val (showRequireAuthDialog, setShowRequireAuthDialog) = remember { mutableStateOf(false) }
@@ -225,7 +303,7 @@ private fun DetailsContent(
                     DetailsTopBar(
                         visibleTopBar = visibleTopBar,
                         title = detailsState.run { russianName ?: name },
-                        onBackClick = navEvents.navigateUp,
+                        onBackClick = onBackClick,
                         scrollBehavior = topAppBarScrollBehavior
                     )
                 },
@@ -237,10 +315,7 @@ private fun DetailsContent(
                         onClick = {
                             when (userRateState) {
                                 is UserRateState.NotAuthorized -> setShowRequireAuthDialog(true)
-                                is UserRateState.Success -> navEvents.showUserRateEditor(
-                                    createEditableUserRate(detailsState, userRateState)
-                                )
-
+                                is UserRateState.Success -> userRate?.id?.let(onRateClick)
                                 is UserRateState.NoUserRate -> if (detailsState.status == Anons) {
                                     onCreateUserRate(UserRateStatus.Planned)
                                 } else showUserRateStatusSelection = true
@@ -263,12 +338,7 @@ private fun DetailsContent(
                         posterUrl = detailsState.poster?.originalUrl,
                         topSpace = scaffoldPadding.calculateTopPadding(),
                         onClick = {
-                            detailsState.poster?.let {
-                                navEvents.showFullScreenImage(
-                                    listOf(it),
-                                    0
-                                )
-                            }
+                            detailsState.poster?.let { onPosterClick(it.originalUrl) }
                         }
                     )
 
@@ -296,25 +366,9 @@ private fun DetailsContent(
                         studios = detailsState.studios,
                         publishers = detailsState.publishers,
                         genres = detailsState.genres,
-                        onStudioClick = {
-                            navEvents.navigateToSearchByStudio(
-                                detailsState.searchType(),
-                                it.id
-                            )
-                        },
-                        onPublisherClick = {
-                            navEvents.navigateToSearchByPublisher(
-                                detailsState.searchType(),
-                                it.id
-                            )
-                        },
-                        onGenreClick = {
-                            navEvents.navigateToSearchByGenre(
-                                detailsState.searchType(),
-                                it.kind,
-                                it.id
-                            )
-                        }
+                        onStudioClick = { onStudioClick(it.id) },
+                        onPublisherClick = { onPublisherClick(detailsState.searchType(), it.id) },
+                        onGenreClick = { onGenreClick(detailsState.searchType(), it.id) }
                     )
 
                     detailsState.description?.takeIf { it.text.isNotEmpty() }
@@ -322,20 +376,10 @@ private fun DetailsContent(
                             gutterSpacer()
                             titleDescription(
                                 description = description,
-                                onAnimeClick = {
-                                    navEvents.navigateToTitleDetails(
-                                        EntryType.Anime,
-                                        it
-                                    )
-                                },
-                                onMangaClick = {
-                                    navEvents.navigateToTitleDetails(
-                                        EntryType.Manga,
-                                        it
-                                    )
-                                },
-                                onCharacterClick = navEvents.navigateToCharacterDetails,
-                                onPersonClick = navEvents.navigateToPersonDetails,
+                                onAnimeClick = onAnimeClick,
+                                onMangaClick = onMangaClick,
+                                onCharacterClick = onCharacterClick,
+                                onPersonClick = onPersonClick,
                                 onUrlClick = uriHandler::openUri
                             )
                         }
@@ -345,13 +389,8 @@ private fun DetailsContent(
                             gutterSpacer()
                             titleAuthors(
                                 authors = authors,
-                                onAuthorClick = { navEvents.navigateToPersonDetails(it.id) },
-                                onMoreClick = {
-                                    navEvents.navigateToTitleAuthors(
-                                        detailsState.entryType,
-                                        detailsState.entryId
-                                    )
-                                }
+                                onAuthorClick = { onPersonClick(it.id) },
+                                onMoreClick = onAllAuthorsClick
                             )
                         }
 
@@ -372,13 +411,13 @@ private fun DetailsContent(
                         gutterSpacer()
                         titleRelated(
                             relatedEntriesSlice = dataSlice,
-                            onTitleClick = navEvents.navigateToTitleDetails,
-                            onMoreClick = {
-                                navEvents.navigateToTitleRelated(
-                                    detailsState.entryType,
-                                    detailsState.entryId
-                                )
-                            }
+                            onTitleClick = { titleType, titleId ->
+                                when (titleType) {
+                                    EntryType.Anime -> onAnimeClick(titleId)
+                                    EntryType.Manga -> onMangaClick(titleId)
+                                }
+                            },
+                            onMoreClick = onAllRelatedClick
                         )
                     }
 
@@ -387,13 +426,8 @@ private fun DetailsContent(
                             gutterSpacer()
                             titleCharacters(
                                 characters = characters,
-                                onCharacterClick = { navEvents.navigateToCharacterDetails(it.id) },
-                                onMoreClick = {
-                                    navEvents.navigateToTitleCharacters(
-                                        detailsState.entryType,
-                                        detailsState.entryId
-                                    )
-                                }
+                                onCharacterClick = { onCharacterClick(it.id) },
+                                onMoreClick = onAllCharactersClick
                             )
                         }
 
@@ -402,17 +436,13 @@ private fun DetailsContent(
                         titleScreenshots(
                             screenshotsSlice = dataSlice,
                             onScreenshotClick = { initialIndex ->
-                                navEvents.showFullScreenImage(
-                                    detailsState.allScreenshots,
-                                    initialIndex
+                                onScreenshotClick(
+                                    detailsState.allScreenshots.size,
+                                    initialIndex,
+                                    detailsState.allScreenshots[initialIndex].originalUrl
                                 )
                             },
-                            onMoreClick = {
-                                navEvents.navigateToTitleScreenshots(
-                                    detailsState.entryType,
-                                    detailsState.entryId
-                                )
-                            }
+                            onMoreClick = onAllScreenshotsClick
                         )
                     }
 
@@ -421,12 +451,7 @@ private fun DetailsContent(
                         titleVideos(
                             videosSlice = videosSlice,
                             onVideoClick = { uriHandler.openUri(it.videoUrl) },
-                            onMoreClick = {
-                                navEvents.navigateToTitleVideos(
-                                    detailsState.entryType,
-                                    detailsState.entryId
-                                )
-                            }
+                            onMoreClick = onAllVideosClick
                         )
                     }
 
@@ -437,12 +462,7 @@ private fun DetailsContent(
                             gutterSpacer()
                             titleSimilarAnimes(
                                 similarAnimes = similarState.animes,
-                                onAnimeClick = {
-                                    navEvents.navigateToTitleDetails(
-                                        EntryType.Anime,
-                                        it.id
-                                    )
-                                }
+                                onAnimeClick = { onAnimeClick(it.id) }
                             )
                         }
 
@@ -450,12 +470,7 @@ private fun DetailsContent(
                             gutterSpacer()
                             titleSimilarMangas(
                                 similarMangas = similarState.mangas,
-                                onMangaClick = {
-                                    navEvents.navigateToTitleDetails(
-                                        EntryType.Manga,
-                                        it.id
-                                    )
-                                }
+                                onMangaClick = { onMangaClick(it.id) }
                             )
                         }
                     }
@@ -480,7 +495,7 @@ private fun DetailsContent(
         if (showRequireAuthDialog) {
             RequireAuthDialog(
                 authWithShikimori = {
-                    navEvents.authWithShikimori()
+                    onLogin()
                     setShowRequireAuthDialog(false)
                 },
                 onDismissRequest = {
@@ -922,9 +937,25 @@ fun EntryDetailsScreenPreview() {
             similarState = SimilarState.Empty,
             userRateState = UserRateState.NoUserRate,
             enabledAutocorrect = false,
+            onLogin = {},
             refresh = {},
             onCreateUserRate = {},
-            navEvents = IdleTitleDetailsNavEvents
+            onAllAuthorsClick = {},
+            onAllCharactersClick = {},
+            onAllRelatedClick = {},
+            onAllScreenshotsClick = {},
+            onAllVideosClick = {},
+            onAnimeClick = {},
+            onCharacterClick = {},
+            onGenreClick = { _, _ -> },
+            onMangaClick = {},
+            onPersonClick = {},
+            onPosterClick = {},
+            onPublisherClick = { _, _ -> },
+            onRateClick = {},
+            onScreenshotClick = { _, _, _ -> },
+            onStudioClick = {},
+            onBackClick = {}
         )
     }
 }
