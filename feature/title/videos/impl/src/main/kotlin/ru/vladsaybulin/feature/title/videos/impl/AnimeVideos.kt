@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.videos
+package ru.vladsaybulin.feature.title.videos.impl
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,7 +34,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -97,8 +96,7 @@ private fun AnimeVideosScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { scaffoldPadding ->
         Box(
-            modifier = Modifier
-                .padding(scaffoldPadding)
+            modifier = padding(scaffoldPadding)
                 .padding(LocalScreenContentPadding.current)
         ) {
             if (state is AnimeVideosUIState.Success) {
