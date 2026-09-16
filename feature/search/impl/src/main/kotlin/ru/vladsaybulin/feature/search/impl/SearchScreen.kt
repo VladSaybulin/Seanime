@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.search
+package ru.vladsaybulin.feature.search.impl
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -75,7 +75,6 @@ import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.core.ui2.entry.EntryGrid
-import ru.vladsaybulin.core.ui2.entry.EntryList
 import ru.vladsaybulin.core.ui2.entry.anime.animeItems
 import ru.vladsaybulin.core.ui2.entry.manga.mangaItems
 import kotlin.math.max

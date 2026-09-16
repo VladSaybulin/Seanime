@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.search
+package ru.vladsaybulin.feature.search.impl
 
-import ru.vladsaybulin.model.search.Filters
+import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.genre.GenreKind
 
-sealed class FiltersLoadingState {
+sealed class SearchTitle {
 
-    data object Loading : FiltersLoadingState()
+    data object Search : SearchTitle()
 
-    data class Success(val filters: Filters) : FiltersLoadingState()
+    data class Status(val entryStatus: EntryStatus) : SearchTitle()
+
+    data class Studio(val studioName: String) : SearchTitle()
+
+    data class Publisher(val publisherName: String) : SearchTitle()
+
+    data class Genre(val genreName: String, val genreKind: GenreKind) : SearchTitle()
 }
