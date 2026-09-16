@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.calendar
+package ru.vladsaybulin.feature.calendar.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,7 +62,6 @@ import kotlinx.datetime.toLocalDateTime
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.domain.calendar.CalendarDay
-import ru.vladsaybulin.core.ui.FullScreenErrorMessage
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui.ProfileButton
 import ru.vladsaybulin.core.ui2.entry.EntryCarousel
@@ -104,7 +103,7 @@ fun CalendarScreen(
             CalendarTopBar(me = me, navigateToMe = navEvents.navigateToMe)
         }
     ) { scaffoldPadding ->
-        Box(modifier = Modifier.padding(scaffoldPadding)) {
+        Box(modifier = padding(scaffoldPadding)) {
             CalendarContent(
                 state = uiState,
                 navigateToAnimeDetails = navEvents.navigateToAnimeDetails,

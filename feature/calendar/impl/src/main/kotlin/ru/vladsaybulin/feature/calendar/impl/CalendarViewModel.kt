@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.calendar
+package ru.vladsaybulin.feature.calendar.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
