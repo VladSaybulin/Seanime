@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.list.title.details.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.model.common.EntryType
 
@@ -27,3 +28,28 @@ import ru.vladsaybulin.model.common.EntryType
  */
 @Serializable
 data class TitleDetailsNavKey(val titleType: EntryType, val titleId: Long) : SeanimeNavKey
+
+/**
+ * Navigates to the title details screen.
+ * @param titleType The type of the title (Anime or Manga).
+ * @param titleId The ID of the title.
+ */
+fun Navigator.navigateToTitle(titleType: EntryType, titleId: Long) {
+    navigateTo(TitleDetailsNavKey(titleType, titleId))
+}
+
+/**
+ * Navigates to the anime details screen.
+ * @param animeId The ID of the anime.
+ */
+fun Navigator.navigateToAnime(animeId: Long) {
+    navigateTo(TitleDetailsNavKey(EntryType.Anime, animeId))
+}
+
+/**
+ * Navigates to the manga details screen.
+ * @param mangaId The ID of the manga.
+ */
+fun Navigator.navigateToManga(mangaId: Long) {
+    navigateTo(TitleDetailsNavKey(EntryType.Manga, mangaId))
+}
