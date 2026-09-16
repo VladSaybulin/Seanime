@@ -16,27 +16,25 @@
 
 package ru.vladsaybulin.feature.title.screenshots.impl
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import ru.vladsaybulin.data.repository.AnimeRepository
-import ru.vladsaybulin.feature.title.screenshots.navigation.AnimeScreenshotsScreenRoute
+import ru.vladsaybulin.core.domain.repository.AnimeRepository
+import ru.vladsaybulin.feature.title.screenshots.api.navigation.AnimeScreenshotsNavKey
 import ru.vladsaybulin.model.common.Image
 import javax.inject.Inject
 
 @HiltViewModel
 class AnimeScreenshotsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
-    animeRepository: AnimeRepository
+    animeRepository: AnimeRepository,
+    @Assisted key: AnimeScreenshotsNavKey
 ) : ViewModel() {
-    private val route = savedStateHandle.toRoute<AnimeScreenshotsScreenRoute>()
 
-    internal val uiState = animeRepository.getAnimeScreenshots(route.animeId)
+    internal val uiState = animeRepository.getAnimeScreenshots(key.animeId)
         .map<List<Image>, AnimeScreenshotsUiState> { AnimeScreenshotsUiState.Success(it) }
         .stateIn(
             scope = viewModelScope,
