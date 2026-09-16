@@ -16,33 +16,36 @@
 
 package ru.vladsaybulin.feature.title.characters.impl
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.data.repository.AnimeRepository
 import ru.vladsaybulin.data.repository.MangaRepository
-import ru.vladsaybulin.feature.title.characters.navigation.TitleCharactersScreenRoute
+import ru.vladsaybulin.feature.title.characters.api.navigation.TitleCharactersNavKey
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryType
 import javax.inject.Inject
 
 @HiltViewModel
 class TitleCharacterViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     animeRepository: AnimeRepository,
-    mangaRepository: MangaRepository
+    mangaRepository: MangaRepository,
+    @Assisted key: TitleCharactersNavKey
 ) : ViewModel() {
 
-    private val route: TitleCharactersScreenRoute = savedStateHandle.toRoute()
+    @AssistedFactory
+    interface Factory {
+        fun create(key: TitleCharactersNavKey): TitleCharacterViewModel
+    }
 
-    internal val uiState = when (route.titleType) {
-        EntryType.Anime -> animeRepository.getAllAnimeCharacters(route.titleId)
-        EntryType.Manga -> mangaRepository.getAllMangaCharacters(route.titleId)
+    internal val uiState = when (key.titleType) {
+        EntryType.Anime -> animeRepository.getAllAnimeCharacters(key.titleId)
+        EntryType.Manga -> mangaRepository.getAllMangaCharacters(key.titleId)
     }
         .map<List<CharacterWithRole>, TitleCharactersUiState> { TitleCharactersUiState.Success(it) }
         .stateIn(
