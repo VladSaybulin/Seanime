@@ -25,16 +25,15 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply {
-                apply("seanime.android.library")
+                apply("seanime.android.feature.api")
                 apply("seanime.android.hilt")
-                apply("org.jetbrains.kotlin.plugin.serialization")
             }
 
             dependencies {
                 "implementation"(project(":core:designsystem"))
                 "implementation"(project(":core:domain"))
                 "implementation"(project(":core:model"))
-                "implementation"(project(":core:ui"))
+                "implementation"(project(":core:ui")) //TODO Remove after splitting ui module
 
                 "implementation"(libs.findLibrary("androidx.navigation.compose").get())
                 "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
