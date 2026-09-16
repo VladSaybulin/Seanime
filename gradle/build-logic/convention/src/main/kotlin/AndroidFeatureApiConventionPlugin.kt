@@ -24,6 +24,7 @@ class AndroidFeatureApiConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply {
                 apply("seanime.android.library")
+                apply("seanime.android.library.compose")
                 apply("org.jetbrains.kotlin.plugin.serialization")
             }
 
