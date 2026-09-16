@@ -16,10 +16,11 @@
 
 package ru.vladsaybulin.feature.character.impl
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
@@ -29,20 +30,22 @@ import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.common.ui.tryRefresh
 import ru.vladsaybulin.core.domain.character.GetCharacterDetailsStreamUseCase
 import ru.vladsaybulin.core.domain.character.RefreshCharacterDetailsUseCase
-import ru.vladsaybulin.feature.character.navigation.CharacterDetailsScreenRoute
+import ru.vladsaybulin.feature.character.api.navigation.CharacterNavKey
 import ru.vladsaybulin.model.character.CharacterDetails
-import javax.inject.Inject
 
-@HiltViewModel
-class CharacterDetailsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = CharacterDetailsViewModel.Factory::class)
+class CharacterDetailsViewModel @AssistedInject constructor(
     characterDetailsStream: GetCharacterDetailsStreamUseCase,
     private val refreshCharacterDetails: RefreshCharacterDetailsUseCase,
+    @Assisted key: CharacterNavKey
 ): ViewModel() {
 
-    private val route = savedStateHandle.toRoute<CharacterDetailsScreenRoute>()
+    @AssistedFactory
+    interface Factory {
+        fun create(key: CharacterNavKey): CharacterDetailsViewModel
+    }
 
-    val uiState = characterDetailsStream(route.characterId)
+    val uiState = characterDetailsStream(key.characterId)
         .onStart { internalRefresh(false) }
         .map<CharacterDetails, CharacterDetailsUiState> { CharacterDetailsUiState.Success(it) }
         .catch {

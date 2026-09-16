@@ -16,33 +16,36 @@
 
 package ru.vladsaybulin.feature.title.related.impl
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import ru.vladsaybulin.data.repository.AnimeRepository
-import ru.vladsaybulin.data.repository.MangaRepository
-import ru.vladsaybulin.feature.title.related.navigation.TitleRelatedScreenRoute
+import ru.vladsaybulin.core.domain.repository.AnimeRepository
+import ru.vladsaybulin.core.domain.repository.MangaRepository
+import ru.vladsaybulin.feature.title.related.api.navigation.TitleRelatedNavKey
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.related.RelatedTitle
-import javax.inject.Inject
 
-@HiltViewModel
-class TitleRelatedViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = TitleRelatedViewModel.Factory::class)
+class TitleRelatedViewModel @AssistedInject constructor(
     animeRepository: AnimeRepository,
-    mangaRepository: MangaRepository
+    mangaRepository: MangaRepository,
+    @Assisted key: TitleRelatedNavKey
 ) : ViewModel() {
 
-    private val route: TitleRelatedScreenRoute = savedStateHandle.toRoute()
+    @AssistedFactory
+    interface Factory {
+        fun create(key: TitleRelatedNavKey): TitleRelatedViewModel
+    }
 
-    val uiState = when (route.titleType) {
-        EntryType.Anime -> animeRepository.getAllAnimeRelatedTitles(route.titleId)
-        EntryType.Manga -> mangaRepository.getAllMangaRelatedTitles(route.titleId)
+    val uiState = when (key.titleType) {
+        EntryType.Anime -> animeRepository.getAllAnimeRelatedTitles(key.titleId)
+        EntryType.Manga -> mangaRepository.getAllMangaRelatedTitles(key.titleId)
     }
         .map<List<RelatedTitle>, TitleRelatedUiState> { TitleRelatedUiState.Success(it) }
         .stateIn(

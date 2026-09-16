@@ -16,28 +16,31 @@
 
 package ru.vladsaybulin.feature.title.authors.impl
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.vladsaybulin.core.domain.GetAuthorsUseCase
-import ru.vladsaybulin.feature.title.authors.navigation.TitleAuthorsScreenRoute
+import ru.vladsaybulin.feature.title.authors.api.navigation.TitleAuthorsNavKey
 import ru.vladsaybulin.model.person.PersonWithRoles
-import javax.inject.Inject
 
-@HiltViewModel
-class AuthorsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
-    getAuthorsUseCase: GetAuthorsUseCase
+@HiltViewModel(assistedFactory = AuthorsViewModel.Factory::class)
+class AuthorsViewModel @AssistedInject constructor(
+    getAuthorsUseCase: GetAuthorsUseCase,
+    @Assisted key: TitleAuthorsNavKey
 ) : ViewModel() {
 
-    private val route = savedStateHandle.toRoute<TitleAuthorsScreenRoute>()
+    @AssistedFactory
+    interface Factory {
+        fun create(key: TitleAuthorsNavKey): AuthorsViewModel
+    }
 
-    val uiState = getAuthorsUseCase(route.titleType, route.titleId)
+    val uiState = getAuthorsUseCase(key.titleType, key.titleId)
         .map { AuthorsUiState.Success(it) }
         .stateIn(
             scope = viewModelScope,
