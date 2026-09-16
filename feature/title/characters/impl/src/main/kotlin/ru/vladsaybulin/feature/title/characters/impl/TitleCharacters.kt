@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.characters
+package ru.vladsaybulin.feature.title.characters.impl
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -77,8 +77,7 @@ private fun TitleCharactersScreen(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPadding ->
         Box(
-            modifier = Modifier
-                .padding(scaffoldPadding)
+            modifier = padding(scaffoldPadding)
                 .padding(LocalScreenContentPadding.current)
         ) {
             if (state is TitleCharactersUiState.Success) {
