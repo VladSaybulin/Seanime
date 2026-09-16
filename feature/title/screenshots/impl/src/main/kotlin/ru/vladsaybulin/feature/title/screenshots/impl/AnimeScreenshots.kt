@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.screenshots
+package ru.vladsaybulin.feature.title.screenshots.impl
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -48,7 +47,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
-import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.feature.title.screenshots.navigation.AnimeScreenshotsNavEvents
 import ru.vladsaybulin.model.common.Image
@@ -83,8 +81,7 @@ private fun AnimeScreenshotsScreen(
         modifier = Modifier.nestedScroll(topBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPadding ->
         Box(
-            modifier = Modifier
-                .padding(scaffoldPadding)
+            modifier = padding(scaffoldPadding)
                 .padding(LocalScreenContentPadding.current)
         ) {
             if (state is AnimeScreenshotsUiState.Success) {
