@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.data.repository.UserRateRepository
+import ru.vladsaybulin.core.domain.repository.UserRateRepository
 import ru.vladsaybulin.model.userrate.UserRateValues
 import javax.inject.Inject
 

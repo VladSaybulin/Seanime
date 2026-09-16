@@ -64,7 +64,7 @@ import ru.vladsaybulin.core.ui2.strings.AnimeStrings
 import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
-import ru.vladsaybulin.feature.title.details.R
+import ru.vladsaybulin.feature.title.details.impl.R
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.anime.Studio
@@ -78,6 +78,7 @@ import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -444,7 +445,7 @@ private fun NextEpisodeDatePanel(nextEpisodeAt: Instant) {
     ) {
         Text(
             text = DateTimeFormatter.ofPattern("dd MMM, hh:mm")
-                .withLocale(Locale.getDefault())
+                .withLocale(LocalLocale.current.platformLocale)
                 .withZone(TimeZone.currentSystemDefault().toJavaZoneId())
                 .format(nextEpisodeAt.toJavaInstant())
         )

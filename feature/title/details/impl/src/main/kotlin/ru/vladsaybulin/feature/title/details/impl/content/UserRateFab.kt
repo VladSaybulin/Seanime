@@ -32,8 +32,8 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
 import ru.vladsaybulin.core.ui2.strings.compose.asString
-import ru.vladsaybulin.feature.title.details.R
-import ru.vladsaybulin.feature.title.details.UserRateState
+import ru.vladsaybulin.feature.title.details.impl.R
+import ru.vladsaybulin.feature.title.details.impl.UserRateState
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable

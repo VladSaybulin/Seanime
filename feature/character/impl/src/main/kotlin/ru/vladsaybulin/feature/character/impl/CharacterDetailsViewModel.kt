@@ -37,7 +37,7 @@ import ru.vladsaybulin.model.character.CharacterDetails
 class CharacterDetailsViewModel @AssistedInject constructor(
     characterDetailsStream: GetCharacterDetailsStreamUseCase,
     private val refreshCharacterDetails: RefreshCharacterDetailsUseCase,
-    @Assisted key: CharacterNavKey
+    @Assisted private val key: CharacterNavKey
 ): ViewModel() {
 
     @AssistedFactory
@@ -62,7 +62,7 @@ class CharacterDetailsViewModel @AssistedInject constructor(
         tryRefresh(
             catch = {  }
         ) {
-            refreshCharacterDetails(route.characterId, forceRefresh)
+            refreshCharacterDetails(key.characterId, forceRefresh)
         }
     }
 }

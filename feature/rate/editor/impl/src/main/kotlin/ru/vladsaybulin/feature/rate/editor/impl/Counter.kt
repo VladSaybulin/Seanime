@@ -702,12 +702,10 @@ private fun computeSizeForDefaultText(
     val paragraph = Paragraph(
         text = text,
         style = style,
-        spanStyles = listOf(),
-        maxLines = maxLines,
-        ellipsis = false,
+        constraints = Constraints(maxWidth = Constraints.Infinity),
         density = density,
         fontFamilyResolver = fontFamilyResolver,
-        constraints = Constraints()
+        maxLines = maxLines
     )
     return IntSize(
         ceil(paragraph.minIntrinsicWidth).roundToInt(),
