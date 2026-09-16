@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-plugins {
-    id("seanime.android.feature.api")
-}
+package ru.vladsaybulin.feature.title.related.api.navigation
 
-android {
-    namespace = "ru.vladsaybulin.feature.title.related.api"
-}
+import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.SeanimeNavKey
+import ru.vladsaybulin.model.common.EntryType
 
-dependencies {
-    implementation(projects.core.model)
-}
+/**
+ * Navigation key for the title related feature.
+ * @param titleType The type of the title (Anime or Manga).
+ * @param titleId The ID of the title.
+ */
+@Serializable
+data class TitleRelatedNavKey(val titleType: EntryType, val titleId: Long) : SeanimeNavKey
