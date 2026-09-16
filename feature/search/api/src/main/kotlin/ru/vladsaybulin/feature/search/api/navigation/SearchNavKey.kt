@@ -17,6 +17,7 @@
 package ru.vladsaybulin.feature.search.api.navigation
 
 import kotlinx.serialization.Serializable
+import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.model.search.SearchType
 
@@ -32,3 +33,23 @@ data class SearchNavKey(
     val presetSearchFilter: PresetSearchFilter?,
     val ongoing: Boolean?
 ) : SeanimeNavKey
+
+/**
+ * Extension function to navigate to the search screen for explore ongoing titles.
+ * @param type The type of search to be performed. If is null then default search will be performed by Anime.
+ */
+fun Navigator.navigateToSearchOngoingTitles(type: SearchType? = null) {
+    navigateTo(SearchNavKey(type, null, true))
+}
+
+/**
+ * Extension function to navigate to the search screen with a preset search filter.
+ * @param type The type of search to be performed. If is null then default search will be performed by Anime.
+ * @param presetSearchFilter The preset search filter to be applied. If is null then no preset filter will be applied.
+ */
+fun Navigator.navigateToSearchByFilter(
+    type: SearchType? = null,
+    presetSearchFilter: PresetSearchFilter? = null
+) {
+    navigateTo(SearchNavKey(type, presetSearchFilter, null))
+}
