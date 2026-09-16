@@ -69,3 +69,4 @@ include(":core:ui2:score")
 include(":core:ui2:entry")
 
 include(":feature:calendar:api")
+include(":feature:calendar:impl")
