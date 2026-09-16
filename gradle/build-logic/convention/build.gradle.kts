@@ -57,9 +57,10 @@ gradlePlugin {
             id = "seanime.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-        register("androidFeature") {
+        register("androidFeature") { //TODO remove after migration to new plugin names
             id = "seanime.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
+            implementationClass = "AndroidFeatureImplConventionPlugin"
         }
         register("androidFeatureApi") {
             id = "seanime.android.feature.api"

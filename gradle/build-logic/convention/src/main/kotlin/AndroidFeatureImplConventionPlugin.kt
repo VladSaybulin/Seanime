@@ -20,7 +20,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import ru.vladsaybulin.seanime.libs
 
-class AndroidFeatureConventionPlugin : Plugin<Project> {
+class AndroidFeatureImplConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
