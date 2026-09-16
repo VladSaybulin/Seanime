@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.related
+package ru.vladsaybulin.feature.title.related.impl
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -36,7 +36,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.feature.title.related.navigation.TitleRelatedNavEvents
-import ru.vladsaybulin.feature.titlerelated.R
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.core.ui2.entry.EntryList
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
@@ -80,8 +79,7 @@ private fun TitleRelatedScreen(
         modifier = Modifier.nestedScroll(topBarScrollBehavior.nestedScrollConnection)
     ) { scaffoldPadding ->
         Box(
-            modifier = Modifier
-                .padding(scaffoldPadding)
+            modifier = padding(scaffoldPadding)
                 .padding(LocalScreenContentPadding.current)
         ) {
             if (state is TitleRelatedUiState.Success) {

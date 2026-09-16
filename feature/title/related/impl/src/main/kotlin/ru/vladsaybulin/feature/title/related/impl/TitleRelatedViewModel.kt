@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.title.related
+package ru.vladsaybulin.feature.title.related.impl
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
