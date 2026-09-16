@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -44,22 +43,20 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriDropdownChip
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.ErrorMessageColumn
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
-import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.core.ui2.entry.EntryList
 import ru.vladsaybulin.core.ui2.entry.userrate.UserRateItem
-import ru.vladsaybulin.feature.list.navigation.ListNavEvents
-import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
+import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun ListScreen(
-    navEvents: ListNavEvents,
-    viewModel: MyListViewModel = hiltViewModel()
+    viewModel: MyListViewModel,
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
 ) {
 
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -68,10 +65,10 @@ fun ListScreen(
         screenState = screenState,
         onEntryTypeChange = viewModel::onEntryTypeChanged,
         onUserRateStatusChange = viewModel::onUserRateStatusChanged,
-        onAnimeClick = { navEvents.navigateToTitleDetails(EntryType.Anime, it.id) },
-        onMangaClick = { navEvents.navigateToTitleDetails(EntryType.Manga, it.id) },
-        onAuthorization = navEvents.startAuthorization,
-        onEditClick = navEvents.showUserRateEditor
+        onAnimeClick = onAnimeClick,
+        onLogin = { /* viewModel.login() */ },
+        onMangaClick = onMangaClick,
+        onRateClick = onRateClick
     )
 }
 
@@ -80,10 +77,10 @@ internal fun MyListScreen(
     screenState: ListScreenState,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
-    onAuthorization: () -> Unit,
-    onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit,
-    onEditClick: (EditableUserRate) -> Unit,
+    onAnimeClick: (Long) -> Unit,
+    onLogin: () -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -97,7 +94,7 @@ internal fun MyListScreen(
                     CircularProgressIndicator()
                 }
 
-            ListScreenState.LoggedOut -> Authorization(onSignIn = onAuthorization)
+            ListScreenState.LoggedOut -> Authorization(onSignIn = onLogin)
 
             is ListScreenState.Success -> ListContent(
                 state = screenState,
@@ -105,7 +102,7 @@ internal fun MyListScreen(
                 onUserRateStatusChange = onUserRateStatusChange,
                 onAnimeClick = onAnimeClick,
                 onMangaClick = onMangaClick,
-                onEditClick = onEditClick
+                onRateClick = onRateClick
             )
         }
     }
@@ -116,9 +113,9 @@ private fun ListContent(
     state: ListScreenState.Success,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
-    onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit,
-    onEditClick: (EditableUserRate) -> Unit
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
 ) {
     ProvideTitleStringsByType(titleType = state.controlPanelState.entryType) {
         Column {
@@ -134,7 +131,7 @@ private fun ListContent(
                 userRates = userRates,
                 onAnimeClick = onAnimeClick,
                 onMangaClick = onMangaClick,
-                onEditClick = onEditClick
+                onRateClick = onRateClick
             )
         }
     }
@@ -198,21 +195,21 @@ private fun ControlPanel(
 @Composable
 private fun UserRatesPaging(
     userRates: LazyPagingItems<UserRateWithEntry>,
-    onAnimeClick: (Anime) -> Unit,
-    onMangaClick: (Manga) -> Unit,
-    onEditClick: (EditableUserRate) -> Unit
+    onAnimeClick: (Long) -> Unit,
+    onMangaClick: (Long) -> Unit,
+    onRateClick: (Long) -> Unit,
 ) {
     EntryList {
         items(
             count = userRates.itemCount,
             key = userRates.itemKey { it.userRate.id },
             contentType = userRates.itemContentType()
-        ) {
-            val userRateWithEntry = userRates[it] ?: return@items
+        ) { index ->
+            val userRateWithEntry = userRates[index] ?: return@items
             UserRateItem(
                 userRateWithEntry = userRateWithEntry,
-                onAnimeClick = onAnimeClick,
-                onMangaClick = onMangaClick,
+                onAnimeClick = { onAnimeClick(it.id) },
+                onMangaClick = { onMangaClick(it.id) },
                 onEditClick = { }
             )
         }

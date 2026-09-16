@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
+
 /*
  * Copyright 2026 Vlad Saybulin
  *
@@ -26,4 +28,7 @@ dependencies {
     implementation(projects.core.ui2.entry)
     implementation(projects.feature.calendar.api)
     implementation(libs.kotlinx.datetime)
+
+    implementation(projects.feature.title.details.api)
+    implementation(projects.feature.profile.api)
 }

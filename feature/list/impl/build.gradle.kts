@@ -29,4 +29,7 @@ dependencies {
 
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
+
+    implementation(projects.feature.title.details.api)
+    implementation(projects.feature.rate.editor.api)
 }
