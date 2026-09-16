@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.imageview
+package ru.vladsaybulin.feature.imageview.impl
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.pager.PagerState

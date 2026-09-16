@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.feature.imageview
+package ru.vladsaybulin.feature.imageview.impl
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
