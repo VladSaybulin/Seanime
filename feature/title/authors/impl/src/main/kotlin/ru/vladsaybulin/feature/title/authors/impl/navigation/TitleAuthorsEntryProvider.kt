@@ -21,7 +21,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.title.authors.api.navigation.TitleAuthorsNavKey
-import ru.vladsaybulin.feature.title.authors.impl.AuthorsScreen
+import ru.vladsaybulin.feature.title.authors.impl.TitleAuthorsScreen
 import ru.vladsaybulin.feature.title.authors.impl.TitleAuthorsViewModel
 
 context(navigator: Navigator)
@@ -30,7 +30,7 @@ fun EntryProviderScope<SeanimeNavKey>.titleAuthorsEntry() = entry<TitleAuthorsNa
         it.create(key)
     }
 
-    AuthorsScreen(
+    TitleAuthorsScreen(
         viewModel = viewModel,
         onPersonClick = { /* TODO navigator::navigateToPerson */ },
         onBackClick = navigator::back

@@ -41,7 +41,7 @@ import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.core.ui2.entry.EntryList
 
 @Composable
-fun AuthorsScreen(
+fun TitleAuthorsScreen(
     viewModel: TitleAuthorsViewModel,
     onPersonClick: (Long) -> Unit,
     onBackClick: () -> Unit
@@ -49,7 +49,7 @@ fun AuthorsScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    AuthorsScreen(
+    TitleAuthorsScreen(
         uiState = uiState,
         onPersonClick = onPersonClick,
         onBackClick = onBackClick
@@ -58,7 +58,7 @@ fun AuthorsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AuthorsScreen(
+private fun TitleAuthorsScreen(
     uiState: AuthorsUiState,
     onPersonClick: (Long) -> Unit,
     onBackClick: () -> Unit,
