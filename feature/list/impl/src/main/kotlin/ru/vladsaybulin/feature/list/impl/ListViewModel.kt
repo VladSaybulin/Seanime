@@ -40,8 +40,8 @@ import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
-@HiltViewModel(assistedFactory = MyListViewModel.Factory::class)
-class MyListViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = ListViewModel.Factory::class)
+class ListViewModel @AssistedInject constructor(
     getPagedUserRatesUseCase: GetPagedUserRatesUseCase,
     getAuthStateStreamUseCase: GetAuthStateStreamUseCase,
     @Assisted key: ListNavKey
@@ -49,7 +49,7 @@ class MyListViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(key: ListNavKey): MyListViewModel
+        fun create(key: ListNavKey): ListViewModel
     }
 
     private val authState = getAuthStateStreamUseCase()

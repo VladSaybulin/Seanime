@@ -53,7 +53,7 @@ import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun ListScreen(
-    viewModel: MyListViewModel,
+    viewModel: ListViewModel,
     onAnimeClick: (Long) -> Unit,
     onMangaClick: (Long) -> Unit,
     onRateClick: (Long) -> Unit,
