@@ -62,7 +62,6 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
-import ru.vladsaybulin.feature.imageview.api.navigation.ImageViewSource
 import ru.vladsaybulin.feature.title.details.impl.content.DetailsTopBar
 import ru.vladsaybulin.feature.title.details.impl.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.impl.content.PreviewUserRateStatusStatistics
