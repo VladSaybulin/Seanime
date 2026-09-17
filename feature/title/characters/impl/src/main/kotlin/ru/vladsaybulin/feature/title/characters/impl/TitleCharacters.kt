@@ -50,7 +50,7 @@ import ru.vladsaybulin.model.character.Character
 
 @Composable
 fun TitleCharactersRoute(
-    viewModel: TitleCharacterViewModel,
+    viewModel: TitleCharactersViewModel,
     onCharacterClick: (Long) -> Unit,
     onBackClick: () -> Unit
 ) {
