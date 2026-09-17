@@ -17,56 +17,57 @@
 package ru.vladsaybulin.feature.imageview.api.navigation
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
 /**
  * Navigation key for the image view feature.
- * If provided [startImageUrl], but [source] is null, the image view will display only that image.
- * @param source The source of the images to be displayed. Can be null if [startImageUrl] is provided.
- * @param imageSetSize The size of the image set which source provides.
- *  If size unknown then 0. If [source] is null, this value is ignored.
- * @param startImageIndex The index of the image to start displaying. If [imageSetSize] is 0, this value is ignored.
- * @param startImageUrl The URL of the image to start displaying. Can be null if [source] is provided.
+ * [loadedImages] is not serialized into a key. To restore it, [source] is used, which specifies how to load images from repositories.
+ * @param source The source of the images to be displayed.
+ * @param loadedImages The loaded set of images to be displayed. May be null if the images have not been loaded yet.
  */
 @Serializable
 data class ImageViewNavKey(
-    val source: ImageViewSource?,
-    val imageSetSize: Int,
+    val source: ImageViewSource,
     val startImageIndex: Int,
-    val startImageUrl: String?,
+    @Transient val loadedImages: List<String>? = emptyList()
 ) : SeanimeNavKey {
-    init {
-        require(source != null || startImageUrl != null) {
-            "Either source or startImageUrl must be provided"
-        }
 
-        require(imageSetSize >= 0) { "imageSetSize must be non-negative" }
-        require(startImageIndex >= 0) { "startImageIndex must be non-negative" }
+    /**
+     * Default implementation of toString that ignores the [loadedImages] property, because navigation should ignore it.
+     */
+    override fun toString(): String {
+        return "ImageViewNavKey(source=$source, startImageIndex=$startImageIndex)"
+    }
+
+    /**
+     * Default implementation of equals that ignores the [loadedImages] property, because navigation should ignore it.
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ImageViewNavKey) return false
+
+        if (source != other.source) return false
+        if (startImageIndex != other.startImageIndex) return false
+
+        return true
+    }
+
+    /**
+     * Default implementation of hashCode that ignores the [loadedImages] property, because navigation should ignore it.
+     */
+    override fun hashCode(): Int {
+        var result = source.hashCode()
+        result = 31 * result + startImageIndex
+        return result
     }
 }
 
-/**
- * Extension function to navigate to the full screen set of images.
- * If [startImageUrl] is not null then this image will be displayed before the source loads.
- * @param source The source of the images to be displayed.
- * @param startImageIndex The index of the image to start displaying.
- * @param imageSetSize The size of the image set which source provides. If size unknown then 0.
- * @param startImageUrl The URL of the image to start displaying
- */
-fun Navigator.showFullScreenImageSet(
+fun Navigator.navigateToImageView(
     source: ImageViewSource,
     startImageIndex: Int,
-    imageSetSize: Int = 0,
-    startImageUrl: String? = null,
+    loadedImages: List<String>? = null
 ) {
-    navigateTo(ImageViewNavKey(source, imageSetSize, startImageIndex, startImageUrl))
-}
-
-/**
- * Extension function to navigate to the full screen single image.
- * @param imageUrl The URL of the image to display.
- */
-fun Navigator.showFullScreenImage(imageUrl: String) {
-    navigateTo(ImageViewNavKey(null, 0, 0, imageUrl))
+    navigateTo(ImageViewNavKey(source, startImageIndex, loadedImages))
 }
