@@ -33,8 +33,8 @@ import ru.vladsaybulin.core.domain.character.RefreshCharacterDetailsUseCase
 import ru.vladsaybulin.feature.character.api.navigation.CharacterNavKey
 import ru.vladsaybulin.model.character.CharacterDetails
 
-@HiltViewModel(assistedFactory = CharacterDetailsViewModel.Factory::class)
-class CharacterDetailsViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = CharacterViewModel.Factory::class)
+class CharacterViewModel @AssistedInject constructor(
     characterDetailsStream: GetCharacterDetailsStreamUseCase,
     private val refreshCharacterDetails: RefreshCharacterDetailsUseCase,
     @Assisted private val key: CharacterNavKey
@@ -42,7 +42,7 @@ class CharacterDetailsViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(key: CharacterNavKey): CharacterDetailsViewModel
+        fun create(key: CharacterNavKey): CharacterViewModel
     }
 
     val uiState = characterDetailsStream(key.characterId)

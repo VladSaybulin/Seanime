@@ -70,7 +70,7 @@ import ru.vladsaybulin.core.ui.R as coreUiR
 
 @Composable
 fun CharacterDetailsScreen(
-    viewModel: CharacterDetailsViewModel,
+    viewModel: CharacterViewModel,
     onAnimeClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
     onMangaClick: (id: Long) -> Unit,
