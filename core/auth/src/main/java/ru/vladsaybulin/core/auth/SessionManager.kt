@@ -57,6 +57,8 @@ class SessionManager @Inject constructor(
 
     private val _userId = MutableStateFlow<Long?>(null)
 
+    private val sessionEpoch = AtomicLong(0L)
+
     /** Completes after the initial restore attempt, even if it failed. */
     private val startupJob = appScope.async { restoreSession() }
 
@@ -68,7 +70,6 @@ class SessionManager @Inject constructor(
 
     // Guards mutable session writes and marks in-flight results as stale after logout.
     private val sessionMutationMutex = Mutex()
-    private val sessionEpoch = AtomicLong(0L)
 
     init {
         authorization.codeResults
