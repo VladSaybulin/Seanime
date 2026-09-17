@@ -22,7 +22,7 @@ import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.character.api.navigation.CharacterNavKey
 import ru.vladsaybulin.feature.character.api.navigation.navigateToCharacter
-import ru.vladsaybulin.feature.character.impl.CharacterDetailsScreen
+import ru.vladsaybulin.feature.character.impl.CharacterScreen
 import ru.vladsaybulin.feature.character.impl.CharacterViewModel
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToManga
@@ -34,7 +34,7 @@ fun EntryProviderScope<SeanimeNavKey>.characterEntry() {
             it.create(key)
         }
 
-        CharacterDetailsScreen(
+        CharacterScreen(
             viewModel = viewModel,
             onAnimeClick = navigator::navigateToAnime,
             onCharacterClick = navigator::navigateToCharacter,

@@ -69,7 +69,7 @@ import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.core.ui.R as coreUiR
 
 @Composable
-fun CharacterDetailsScreen(
+fun CharacterScreen(
     viewModel: CharacterViewModel,
     onAnimeClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
@@ -80,7 +80,7 @@ fun CharacterDetailsScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    CharacterDetailsScreen(
+    CharacterScreen(
         uiState = uiState,
         onAnimeClick = onAnimeClick,
         onCharacterClick = onCharacterClick,
@@ -92,7 +92,7 @@ fun CharacterDetailsScreen(
 }
 
 @Composable
-fun CharacterDetailsScreen(
+fun CharacterScreen(
     uiState: CharacterUiState,
     onAnimeClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
