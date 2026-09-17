@@ -29,15 +29,15 @@ import ru.vladsaybulin.core.domain.GetAuthorsUseCase
 import ru.vladsaybulin.feature.title.authors.api.navigation.TitleAuthorsNavKey
 import ru.vladsaybulin.model.person.PersonWithRoles
 
-@HiltViewModel(assistedFactory = AuthorsViewModel.Factory::class)
-class AuthorsViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = TitleAuthorsViewModel.Factory::class)
+class TitleAuthorsViewModel @AssistedInject constructor(
     getAuthorsUseCase: GetAuthorsUseCase,
     @Assisted key: TitleAuthorsNavKey
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory {
-        fun create(key: TitleAuthorsNavKey): AuthorsViewModel
+        fun create(key: TitleAuthorsNavKey): TitleAuthorsViewModel
     }
 
     val uiState = getAuthorsUseCase(key.titleType, key.titleId)

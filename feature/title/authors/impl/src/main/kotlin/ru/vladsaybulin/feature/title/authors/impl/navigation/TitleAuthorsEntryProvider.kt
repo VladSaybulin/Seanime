@@ -22,11 +22,11 @@ import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.title.authors.api.navigation.TitleAuthorsNavKey
 import ru.vladsaybulin.feature.title.authors.impl.AuthorsScreen
-import ru.vladsaybulin.feature.title.authors.impl.AuthorsViewModel
+import ru.vladsaybulin.feature.title.authors.impl.TitleAuthorsViewModel
 
 context(navigator: Navigator)
 fun EntryProviderScope<SeanimeNavKey>.titleAuthorsEntry() = entry<TitleAuthorsNavKey> { key ->
-    val viewModel = hiltViewModel<AuthorsViewModel, AuthorsViewModel.Factory> {
+    val viewModel = hiltViewModel<TitleAuthorsViewModel, TitleAuthorsViewModel.Factory> {
         it.create(key)
     }
 

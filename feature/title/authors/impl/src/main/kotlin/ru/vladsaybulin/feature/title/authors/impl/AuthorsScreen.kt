@@ -42,7 +42,7 @@ import ru.vladsaybulin.core.ui2.entry.EntryList
 
 @Composable
 fun AuthorsScreen(
-    viewModel: AuthorsViewModel,
+    viewModel: TitleAuthorsViewModel,
     onPersonClick: (Long) -> Unit,
     onBackClick: () -> Unit
 ) {
