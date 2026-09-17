@@ -27,9 +27,12 @@ import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.Default
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
+@Target(VALUE_PARAMETER, FUNCTION)
 annotation class ApplicationScope
 
 @Module

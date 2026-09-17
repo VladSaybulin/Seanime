@@ -32,7 +32,7 @@ import javax.inject.Inject
 class RequestCoordinator @Inject constructor(
     private val deduplicator: RequestDeduplicator,
     private val syncer: RequestSyncer,
-    @param:Dispatcher(ShikiDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+    @Dispatcher(ShikiDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
     /**
      * Executes [block] on IO and deduplicates it by [key].

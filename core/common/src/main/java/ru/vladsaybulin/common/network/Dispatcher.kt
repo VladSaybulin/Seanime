@@ -17,9 +17,12 @@
 package ru.vladsaybulin.common.network
 
 import javax.inject.Qualifier
+import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 
 @Qualifier
 @Retention
+@Target(VALUE_PARAMETER, FUNCTION)
 annotation class Dispatcher(val dispatcher: ShikiDispatchers)
 
 enum class ShikiDispatchers {

@@ -46,7 +46,7 @@ class CalendarRepository @Inject constructor(
     private val calendarDao: CalendarDao,
     private val animeDao: AnimeDao,
     private val coordinator: RequestCoordinator,
-    @param:Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
+    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : DomainCalendarRepository {
     override fun getCalendarItems(): Flow<List<CalendarItem>> =
         calendarDao.getAllCalendarItems()

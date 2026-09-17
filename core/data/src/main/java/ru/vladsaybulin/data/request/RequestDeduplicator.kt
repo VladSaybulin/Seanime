@@ -30,7 +30,7 @@ import javax.inject.Inject
  * in-flight coroutine instead of starting duplicate work.
  */
 class RequestDeduplicator @Inject constructor(
-    @param:ApplicationScope private val coroutineScope: CoroutineScope
+    @ApplicationScope private val coroutineScope: CoroutineScope
 ) {
     private val deferredRequests = ConcurrentHashMap<RequestKey, Deferred<*>>()
 
