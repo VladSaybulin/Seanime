@@ -16,6 +16,8 @@
 
 plugins {
     alias(libs.plugins.seanime.android.library)
+    alias(libs.plugins.seanime.android.library.compose)
+    alias(libs.plugins.seanime.android.hilt)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -27,4 +29,5 @@ dependencies {
     implementation(projects.core.model)
     implementation(libs.kotlinx.serialization.json)
     api(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
 }
