@@ -31,45 +31,53 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
-import ru.vladsaybulin.feature.imageview.FullScreenImageState
-import ru.vladsaybulin.feature.imageview.FullScreenImageView
-import ru.vladsaybulin.feature.userrate.UserRateBottomSheet
+import ru.vladsaybulin.feature.calendar.impl.navigation.calendarEntry
+import ru.vladsaybulin.feature.character.impl.navigation.characterEntry
+import ru.vladsaybulin.feature.home.impl.navigation.homeEntry
+import ru.vladsaybulin.feature.imageview.impl.FullScreenImageState
+import ru.vladsaybulin.feature.imageview.impl.FullScreenImageView
+import ru.vladsaybulin.feature.list.impl.navigation.listEntry
+import ru.vladsaybulin.feature.profile.impl.navigation.profileEntry
+import ru.vladsaybulin.feature.search.impl.navigation.searchEntry
+import ru.vladsaybulin.feature.title.authors.impl.navigation.titleAuthorsEntry
+import ru.vladsaybulin.feature.title.characters.impl.titleCharactersEntry
+import ru.vladsaybulin.feature.title.details.impl.navigation.titleDetailsEntry
+import ru.vladsaybulin.feature.title.related.impl.navigator.titleRelatedEntry
+import ru.vladsaybulin.feature.title.screenshots.impl.navigator.animeScreenshotsEntry
+import ru.vladsaybulin.feature.title.videos.impl.navigation.animeVideosEntry
 import ru.vladsaybulin.model.userrate.EditableUserRate
-import ru.vladsaybulin.seanime.navigation.SeanimeNavEventsFactory
-import ru.vladsaybulin.seanime.navigation.SeanimeNavHost
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination
 
 @Composable
 fun SeanimeApp(
-    appState: SeanimeAppState,
-    onAuth: () -> Unit,
+    appState: SeanimeAppState
 ) {
     SeanimeTheme {
-        val scope = rememberCoroutineScope()
         val fullScreenImageState = remember { FullScreenImageState() }
 
         var editableUserRate by remember {
             mutableStateOf<EditableUserRate?>(null)
         }
 
+        val navigator = appState.navState.navigator
+
         Scaffold(
             bottomBar = {
                 if (appState.shouldShowBottomBar) {
                     SeanimeBottomBar(
-                        destinations = appState.topLevelDestinations,
-                        onNavigateToDestination = appState::navigateToTopLevelDestination,
-                        currentDestination = appState.currentDestination
+                        destinations = TopLevelDestination.entries,
+                        onNavigateToDestination = { navigator.navigateToTopLevel(it.navKey) },
+                        currentDestination = appState.navState.currentTopLevelKey
                     )
                 }
             },
@@ -82,32 +90,52 @@ fun SeanimeApp(
             ) {
                 if (appState.shouldShowNavRail) {
                     SeanimeNavRail(
-                        destinations = appState.topLevelDestinations,
-                        onNavigateToDestination = appState::navigateToTopLevelDestination,
-                        currentDestination = appState.currentDestination
+                        destinations = TopLevelDestination.entries,
+                        onNavigateToDestination = { navigator.navigateToTopLevel(it.navKey) },
+                        currentDestination = appState.navState.currentTopLevelKey
                     )
                 }
 
-                SeanimeNavHost(
-                    navController = appState.navController,
-                    navEventsFactory = SeanimeNavEventsFactory(
-                        navController = appState.navController,
-                        runAuthorization = onAuth,
-                        showUserRateEditor = { editableUserRate = it },
-                        showFullscreenImage = { images, startIndex ->
-                            scope.launch { fullScreenImageState.show(images, startIndex) }
-                        },
-                        uriHandler = LocalUriHandler.current
-                    )
+                val entryProvider = context(navigator) {
+                    entryProvider {
+                        homeEntry()
+                        searchEntry()
+                        listEntry()
+                        calendarEntry()
+
+                        titleDetailsEntry()
+                        titleAuthorsEntry()
+                        titleCharactersEntry()
+                        titleRelatedEntry()
+                        animeScreenshotsEntry()
+                        animeVideosEntry()
+
+                        characterEntry()
+                        profileEntry()
+
+                        //imageViewEntry()
+                        //rateEditorEntry()
+                    }
+                }
+
+                NavDisplay(
+                    backStack = appState.navState.currentSubStack,
+                    modifier = Modifier.weight(1f),
+                    entryDecorators = listOf(
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        rememberViewModelStoreNavEntryDecorator()
+                    ),
+                    entryProvider = entryProvider,
+                    onBack = navigator::back
                 )
             }
         }
 
         if (editableUserRate != null) {
-            UserRateBottomSheet(
-                editableUserRate = checkNotNull(editableUserRate),
-                onDismissRequest = { editableUserRate = null }
-            )
+            //UserRateBottomSheet(
+            //    editableUserRate = checkNotNull(editableUserRate),
+            //    onDismissRequest = { editableUserRate = null }
+            //)
         }
 
         if (fullScreenImageState.isVisible) {
@@ -123,12 +151,12 @@ fun SeanimeApp(
 private fun SeanimeNavRail(
     destinations: List<TopLevelDestination>,
     onNavigateToDestination: (TopLevelDestination) -> Unit,
-    currentDestination: NavDestination?,
+    currentDestination: NavKey,
     modifier: Modifier = Modifier
 ) {
     NavigationRail(modifier = modifier) {
         destinations.fastForEach {
-            val selected = currentDestination.isTopLevelDestinationInHierarchy(it)
+            val selected = currentDestination == it.navKey
             NavigationRailItem(
                 selected = selected,
                 onClick = { onNavigateToDestination(it) },
@@ -155,12 +183,12 @@ private fun SeanimeNavRail(
 private fun SeanimeBottomBar(
     destinations: List<TopLevelDestination>,
     onNavigateToDestination: (TopLevelDestination) -> Unit,
-    currentDestination: NavDestination?,
+    currentDestination: NavKey,
     modifier: Modifier = Modifier
 ) {
     BottomAppBar(modifier = modifier) {
         destinations.fastForEach {
-            val selected = currentDestination.isTopLevelDestinationInHierarchy(it)
+            val selected = it.navKey == currentDestination
             NavigationBarItem(
                 selected = selected,
                 onClick = { onNavigateToDestination(it) },
@@ -182,6 +210,3 @@ private fun SeanimeBottomBar(
         }
     }
 }
-
-private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: TopLevelDestination) =
-    this?.hierarchy?.any { it.hasRoute(destination.graphRoute::class) } ?: false

@@ -17,7 +17,7 @@
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.getByType
 import ru.vladsaybulin.seanime.configureKotlinAndroid
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
@@ -28,7 +28,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 apply("org.jetbrains.kotlin.android")
             }
 
-            extensions.configure<LibraryExtension> {
+            extensions.getByType<LibraryExtension>().apply {
                 configureKotlinAndroid(this)
 
                 // A stub for the AppAuth-Android library. Required to build a specific module.

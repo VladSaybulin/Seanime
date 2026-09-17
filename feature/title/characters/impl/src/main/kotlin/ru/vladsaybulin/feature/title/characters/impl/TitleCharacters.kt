@@ -1,0 +1,187 @@
+/*
+ * Copyright 2026 Vlad Saybulin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ru.vladsaybulin.feature.title.characters.impl
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
+import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
+import ru.vladsaybulin.core.ui.LocalScreenContentPadding
+import ru.vladsaybulin.core.ui2.entry.EntryGrid
+import ru.vladsaybulin.core.ui2.entry.EntryGridItem
+import ru.vladsaybulin.core.ui2.entry.character.CharacterItem
+import ru.vladsaybulin.model.character.Character
+
+@Composable
+fun TitleCharactersRoute(
+    viewModel: TitleCharacterViewModel,
+    onCharacterClick: (Long) -> Unit,
+    onBackClick: () -> Unit
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    TitleCharactersScreen(
+        state = state,
+        onCharacterClick = onCharacterClick,
+        onBackClick = onBackClick
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TitleCharactersScreen(
+    state: TitleCharactersUiState,
+    onCharacterClick: (Long) -> Unit,
+    onBackClick: () -> Unit
+) {
+    val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold(
+        topBar = {
+            TitleCharactersTopBar(
+                onBackClick = onBackClick,
+                scrollBehavior = topAppBarScrollBehavior
+            )
+        },
+        modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+    ) { scaffoldPadding ->
+        Box(
+            modifier = Modifier.padding(scaffoldPadding)
+                .padding(LocalScreenContentPadding.current)
+        ) {
+            if (state is TitleCharactersUiState.Success) {
+                TitleCharactersContent(
+                    state = state,
+                    onCharacterClick = onCharacterClick
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TitleCharactersTopBar(
+    onBackClick: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior
+) {
+    TopAppBar(
+        title = { Text(stringResource(id = R.string.feature_title_characters_title)) },
+        scrollBehavior = scrollBehavior,
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = SeanimeIcons.ArrowBack,
+                    contentDescription = stringResource(id = R.string.feature_title_characters_back)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun TitleCharactersContent(
+    state: TitleCharactersUiState.Success,
+    onCharacterClick: (Long) -> Unit
+) {
+    val characters = state.characters
+    val firstMinorCharacter = characters.indexOfFirst { !it.isMain }
+
+    EntryGrid(
+        columns = GridCells.Adaptive(CharacterCardMinWidth),
+    ) {
+        if (characters.first().isMain) {
+            header {
+                Text(
+                    text = stringResource(id = R.string.feature_title_characters_main_charcaters),
+                    style = SeanimeTheme.typography.labelLarge,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
+
+            items(count = firstMinorCharacter) { index ->
+                val character = characters[index].character
+                CharacterItem(
+                    character = character,
+                    onClick = { onCharacterClick(character.id) }
+                )
+            }
+        }
+
+        if (firstMinorCharacter != -1) {
+            if (characters.first().isMain) {
+                item(span = {GridItemSpan(maxLineSpan)}) { Spacer(modifier = Modifier.height(16.dp)) }
+            }
+
+            header {
+                Text(
+                    text = stringResource(id = R.string.feature_title_characters_main_charcaters),
+                    style = SeanimeTheme.typography.labelLarge,
+                    modifier = Modifier.padding(top = 32.dp, bottom = 4.dp)
+                )
+            }
+
+            items(count = characters.size - firstMinorCharacter) { index ->
+                val character = characters[firstMinorCharacter + index].character
+                CharacterItem(
+                    character = character,
+                    onClick = { onCharacterClick(character.id) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CharacterCard(character: Character, onClick: () -> Unit) {
+    EntryGridItem(
+        name = character.originalName,
+        russianName = character.russianName,
+        poster = character.poster,
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+fun LazyGridScope.header(
+    content: @Composable LazyGridItemScope.() -> Unit
+) {
+    item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+}
+
+private val CharacterCardMinWidth = 96.dp

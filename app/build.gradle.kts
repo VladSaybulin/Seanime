@@ -59,6 +59,7 @@ android {
 
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -84,20 +85,35 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.model)
     implementation(projects.core.ui)
-    implementation(projects.feature.calendar)
-    implementation(projects.feature.home)
-    implementation(projects.feature.list)
-    implementation(projects.feature.imageview)
-    implementation(projects.feature.search)
-    implementation(projects.feature.userrate)
-    implementation(projects.feature.character)
-    implementation(projects.feature.title.authors)
-    implementation(projects.feature.title.details)
-    implementation(projects.feature.title.related)
-    implementation(projects.feature.title.characters)
-    implementation(projects.feature.title.screenshots)
-    implementation(projects.feature.title.videos)
-    implementation(projects.feature.profile)
+
+    implementation(projects.feature.calendar.api)
+    implementation(projects.feature.calendar.impl)
+    implementation(projects.feature.character.api)
+    implementation(projects.feature.character.impl)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.home.impl)
+    implementation(projects.feature.imageview.api)
+    implementation(projects.feature.imageview.impl)
+    implementation(projects.feature.list.api)
+    implementation(projects.feature.list.impl)
+    implementation(projects.feature.profile.api)
+    implementation(projects.feature.profile.impl)
+    implementation(projects.feature.rate.editor.api)
+    implementation(projects.feature.rate.editor.impl)
+    implementation(projects.feature.search.api)
+    implementation(projects.feature.search.impl)
+    implementation(projects.feature.title.authors.api)
+    implementation(projects.feature.title.authors.impl)
+    implementation(projects.feature.title.characters.api)
+    implementation(projects.feature.title.characters.impl)
+    implementation(projects.feature.title.details.api)
+    implementation(projects.feature.title.details.impl)
+    implementation(projects.feature.title.related.api)
+    implementation(projects.feature.title.related.impl)
+    implementation(projects.feature.title.screenshots.api)
+    implementation(projects.feature.title.screenshots.impl)
+    implementation(projects.feature.title.videos.api)
+    implementation(projects.feature.title.videos.impl)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
@@ -108,6 +124,10 @@ dependencies {
     implementation(libs.androidx.foundation.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     implementation(libs.google.oss.licenses)
 
