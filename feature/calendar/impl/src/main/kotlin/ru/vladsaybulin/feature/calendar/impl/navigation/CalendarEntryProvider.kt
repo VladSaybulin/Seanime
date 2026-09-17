@@ -21,7 +21,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.calendar.api.navigation.CalendarNavKey
-import ru.vladsaybulin.feature.calendar.impl.CalendarRoute
+import ru.vladsaybulin.feature.calendar.impl.CalendarScreen
 import ru.vladsaybulin.feature.calendar.impl.CalendarViewModel
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
 import ru.vladsaybulin.feature.profile.api.navigation.navigateToProfile
@@ -34,7 +34,7 @@ fun EntryProviderScope<SeanimeNavKey>.calendarEntry() {
     entry<CalendarNavKey> {
         val viewModel = hiltViewModel<CalendarViewModel>()
 
-        CalendarRoute(
+        CalendarScreen(
             viewModel = viewModel,
             onAnimeClick = navigator::navigateToAnime,
             onMyProfileClick = navigator::navigateToProfile

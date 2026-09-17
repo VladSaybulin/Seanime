@@ -72,7 +72,7 @@ import java.time.format.DateTimeFormatter
 import ru.vladsaybulin.core.ui.R as uiR
 
 @Composable
-fun CalendarRoute(
+fun CalendarScreen(
     viewModel: CalendarViewModel,
     onAnimeClick: (Long) -> Unit,
     onMyProfileClick: () -> Unit
