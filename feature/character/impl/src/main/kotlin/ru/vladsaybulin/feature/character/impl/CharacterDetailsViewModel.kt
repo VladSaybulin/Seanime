@@ -47,15 +47,15 @@ class CharacterDetailsViewModel @AssistedInject constructor(
 
     val uiState = characterDetailsStream(key.characterId)
         .onStart { internalRefresh(false) }
-        .map<CharacterDetails, CharacterDetailsUiState> { CharacterDetailsUiState.Success(it) }
+        .map<CharacterDetails, CharacterUiState> { CharacterUiState.Success(it) }
         .catch {
-            emit(CharacterDetailsUiState.Error(it))
+            emit(CharacterUiState.Error(it))
             it.printStackTrace()
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = CharacterDetailsUiState.Loading
+            initialValue = CharacterUiState.Loading
         )
 
     private suspend fun internalRefresh(forceRefresh: Boolean) {

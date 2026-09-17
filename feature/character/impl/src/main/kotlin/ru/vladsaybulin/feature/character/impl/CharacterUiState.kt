@@ -18,12 +18,12 @@ package ru.vladsaybulin.feature.character.impl
 
 import ru.vladsaybulin.model.character.CharacterDetails
 
-sealed class CharacterDetailsUiState {
+sealed class CharacterUiState {
 
-    data object Loading : CharacterDetailsUiState()
+    data object Loading : CharacterUiState()
 
-    data class Success(val characterDetails: CharacterDetails) : CharacterDetailsUiState()
+    data class Success(val characterDetails: CharacterDetails) : CharacterUiState()
 
-    data class Error(val throwable: Throwable) : CharacterDetailsUiState()
+    data class Error(val throwable: Throwable) : CharacterUiState()
 
 }

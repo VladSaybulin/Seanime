@@ -93,7 +93,7 @@ fun CharacterDetailsScreen(
 
 @Composable
 fun CharacterDetailsScreen(
-    uiState: CharacterDetailsUiState,
+    uiState: CharacterUiState,
     onAnimeClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
     onMangaClick: (id: Long) -> Unit,
@@ -107,9 +107,9 @@ fun CharacterDetailsScreen(
             .fillMaxSize()
     ) {
         when (uiState) {
-            is CharacterDetailsUiState.Error -> Unit
-            CharacterDetailsUiState.Loading -> Unit
-            is CharacterDetailsUiState.Success -> CharacterDetailsContent(
+            is CharacterUiState.Error -> Unit
+            CharacterUiState.Loading -> Unit
+            is CharacterUiState.Success -> CharacterDetailsContent(
                 uiState = uiState,
                 onAnimeClick = onAnimeClick,
                 onCharacterClick = onCharacterClick,
@@ -123,7 +123,7 @@ fun CharacterDetailsScreen(
 
 @Composable
 fun CharacterDetailsContent(
-    uiState: CharacterDetailsUiState.Success,
+    uiState: CharacterUiState.Success,
     onAnimeClick: (id: Long) -> Unit,
     onCharacterClick: (id: Long) -> Unit,
     onMangaClick: (id: Long) -> Unit,
@@ -329,7 +329,7 @@ fun CharacterDetailsContentPreview() {
     SeanimeTheme {
         Surface {
             CharacterDetailsContent(
-                uiState = CharacterDetailsUiState.Success(
+                uiState = CharacterUiState.Success(
                     CharacterDetails(
                         id = 40,
                         name = "Luffy Monkey D.",
