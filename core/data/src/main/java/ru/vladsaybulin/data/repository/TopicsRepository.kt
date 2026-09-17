@@ -51,7 +51,7 @@ class TopicsRepository @Inject constructor(
     private val mangaDao: MangaDao,
     private val userDao: UsersDao,
     private val coordinator: RequestCoordinator,
-    @param:Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
+    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
     private val json: Json,
 ) : DomainTopicsRepository {
     override fun getNewsTopicsStream(): Flow<List<Topic>> = topicsDao.getNewsTopic()

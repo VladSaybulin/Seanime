@@ -97,7 +97,7 @@ class AnimeRepository @Inject constructor(
     private val mangaDao: MangaDao,
     private val genreDao: GenreDao,
     private val coordinator: RequestCoordinator,
-    @param:Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
+    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : DomainAnimeRepository {
     override fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime> =
         SearchPagingSource { page, limit -> loadSearchAnimePage(page, limit, queryMap) }
