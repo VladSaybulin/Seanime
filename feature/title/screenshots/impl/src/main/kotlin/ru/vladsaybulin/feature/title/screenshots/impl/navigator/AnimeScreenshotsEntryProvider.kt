@@ -23,7 +23,7 @@ import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.imageview.api.navigation.ImageViewSource
 import ru.vladsaybulin.feature.imageview.api.navigation.showFullScreenImageSet
 import ru.vladsaybulin.feature.title.screenshots.api.navigation.AnimeScreenshotsNavKey
-import ru.vladsaybulin.feature.title.screenshots.impl.AnimeScreenshotsRoute
+import ru.vladsaybulin.feature.title.screenshots.impl.AnimeScreenshotsScreen
 import ru.vladsaybulin.feature.title.screenshots.impl.AnimeScreenshotsViewModel
 
 context(navigator: Navigator)
@@ -32,7 +32,7 @@ fun EntryProviderScope<SeanimeNavKey>.animeScreenshotsEntry() = entry<AnimeScree
         it.create(key)
     }
 
-    AnimeScreenshotsRoute(
+    AnimeScreenshotsScreen(
         viewModel = viewModel,
         onScreenshotClick = { startIdx: Int, setSize: Int, startUrl: String ->
             val source = ImageViewSource.AnimeScreenshots(key.animeId)
