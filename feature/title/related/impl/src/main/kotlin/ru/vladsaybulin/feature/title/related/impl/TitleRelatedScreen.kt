@@ -39,7 +39,7 @@ import ru.vladsaybulin.core.ui2.entry.EntryList
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 
 @Composable
-fun TitleRelatedRoute(
+fun TitleRelatedScreen(
     viewModel: TitleRelatedViewModel,
     onAnimeClick: (Long) -> Unit,
     onMangaClick: (Long) -> Unit,

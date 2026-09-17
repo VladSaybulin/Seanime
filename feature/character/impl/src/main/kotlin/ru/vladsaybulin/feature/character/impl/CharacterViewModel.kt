@@ -33,8 +33,8 @@ import ru.vladsaybulin.core.domain.character.RefreshCharacterDetailsUseCase
 import ru.vladsaybulin.feature.character.api.navigation.CharacterNavKey
 import ru.vladsaybulin.model.character.CharacterDetails
 
-@HiltViewModel(assistedFactory = CharacterDetailsViewModel.Factory::class)
-class CharacterDetailsViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = CharacterViewModel.Factory::class)
+class CharacterViewModel @AssistedInject constructor(
     characterDetailsStream: GetCharacterDetailsStreamUseCase,
     private val refreshCharacterDetails: RefreshCharacterDetailsUseCase,
     @Assisted private val key: CharacterNavKey
@@ -42,20 +42,20 @@ class CharacterDetailsViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(key: CharacterNavKey): CharacterDetailsViewModel
+        fun create(key: CharacterNavKey): CharacterViewModel
     }
 
     val uiState = characterDetailsStream(key.characterId)
         .onStart { internalRefresh(false) }
-        .map<CharacterDetails, CharacterDetailsUiState> { CharacterDetailsUiState.Success(it) }
+        .map<CharacterDetails, CharacterUiState> { CharacterUiState.Success(it) }
         .catch {
-            emit(CharacterDetailsUiState.Error(it))
+            emit(CharacterUiState.Error(it))
             it.printStackTrace()
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = CharacterDetailsUiState.Loading
+            initialValue = CharacterUiState.Loading
         )
 
     private suspend fun internalRefresh(forceRefresh: Boolean) {

@@ -20,7 +20,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.profile.api.navigation.ProfileNavKey
-import ru.vladsaybulin.feature.profile.impl.ProfileRoute
+import ru.vladsaybulin.feature.profile.impl.ProfileScreen
 import ru.vladsaybulin.feature.profile.impl.ProfileViewModel
 
 fun EntryProviderScope<SeanimeNavKey>.profileEntry() = entry<ProfileNavKey> { key ->
@@ -28,5 +28,5 @@ fun EntryProviderScope<SeanimeNavKey>.profileEntry() = entry<ProfileNavKey> { ke
         it.create(key)
     }
 
-    ProfileRoute(viewModel = viewModel)
+    ProfileScreen(viewModel = viewModel)
 }

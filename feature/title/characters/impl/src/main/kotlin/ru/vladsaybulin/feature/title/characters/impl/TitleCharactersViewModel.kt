@@ -31,8 +31,8 @@ import ru.vladsaybulin.feature.title.characters.api.navigation.TitleCharactersNa
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryType
 
-@HiltViewModel(assistedFactory = TitleCharacterViewModel.Factory::class)
-class TitleCharacterViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = TitleCharactersViewModel.Factory::class)
+class TitleCharactersViewModel @AssistedInject constructor(
     animeRepository: AnimeRepository,
     mangaRepository: MangaRepository,
     @Assisted key: TitleCharactersNavKey
@@ -40,7 +40,7 @@ class TitleCharacterViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(key: TitleCharactersNavKey): TitleCharacterViewModel
+        fun create(key: TitleCharactersNavKey): TitleCharactersViewModel
     }
 
     internal val uiState = when (key.titleType) {

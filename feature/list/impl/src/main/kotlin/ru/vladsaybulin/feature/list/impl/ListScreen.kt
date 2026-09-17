@@ -53,7 +53,7 @@ import ru.vladsaybulin.model.userrate.UserRateWithEntry
 
 @Composable
 fun ListScreen(
-    viewModel: MyListViewModel,
+    viewModel: ListViewModel,
     onAnimeClick: (Long) -> Unit,
     onMangaClick: (Long) -> Unit,
     onRateClick: (Long) -> Unit,
@@ -61,7 +61,7 @@ fun ListScreen(
 
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
-    MyListScreen(
+    ListScreen(
         screenState = screenState,
         onEntryTypeChange = viewModel::onEntryTypeChanged,
         onUserRateStatusChange = viewModel::onUserRateStatusChanged,
@@ -73,7 +73,7 @@ fun ListScreen(
 }
 
 @Composable
-internal fun MyListScreen(
+internal fun ListScreen(
     screenState: ListScreenState,
     onEntryTypeChange: (EntryType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,

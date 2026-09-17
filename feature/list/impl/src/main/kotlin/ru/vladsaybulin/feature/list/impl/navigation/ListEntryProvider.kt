@@ -22,14 +22,14 @@ import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.list.api.navigation.ListNavKey
 import ru.vladsaybulin.feature.list.impl.ListScreen
-import ru.vladsaybulin.feature.list.impl.MyListViewModel
+import ru.vladsaybulin.feature.list.impl.ListViewModel
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToManga
 import ru.vladsaybulin.feature.rate.editor.api.navigation.navigateToRateEditor
 
 context(navigator: Navigator)
 fun EntryProviderScope<SeanimeNavKey>.listEntry() = entry<ListNavKey> { key ->
-    val viewModel = hiltViewModel<MyListViewModel, MyListViewModel.Factory> {
+    val viewModel = hiltViewModel<ListViewModel, ListViewModel.Factory> {
         it.create(key)
     }
 

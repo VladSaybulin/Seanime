@@ -22,19 +22,19 @@ import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.character.api.navigation.CharacterNavKey
 import ru.vladsaybulin.feature.character.api.navigation.navigateToCharacter
-import ru.vladsaybulin.feature.character.impl.CharacterDetailsScreen
-import ru.vladsaybulin.feature.character.impl.CharacterDetailsViewModel
+import ru.vladsaybulin.feature.character.impl.CharacterScreen
+import ru.vladsaybulin.feature.character.impl.CharacterViewModel
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToManga
 
 context(navigator: Navigator)
 fun EntryProviderScope<SeanimeNavKey>.characterEntry() {
     entry<CharacterNavKey> { key ->
-        val viewModel = hiltViewModel<CharacterDetailsViewModel, CharacterDetailsViewModel.Factory>() {
+        val viewModel = hiltViewModel<CharacterViewModel, CharacterViewModel.Factory>() {
             it.create(key)
         }
 
-        CharacterDetailsScreen(
+        CharacterScreen(
             viewModel = viewModel,
             onAnimeClick = navigator::navigateToAnime,
             onCharacterClick = navigator::navigateToCharacter,

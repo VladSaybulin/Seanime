@@ -49,7 +49,7 @@ import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.model.common.Image
 
 @Composable
-fun AnimeScreenshotsRoute(
+fun AnimeScreenshotsScreen(
     viewModel: AnimeScreenshotsViewModel,
     onScreenshotClick: (startIdx: Int, setSize: Int, startUrl: String) -> Unit,
     onBackClick: () -> Unit

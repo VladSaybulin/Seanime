@@ -25,11 +25,11 @@ import ru.vladsaybulin.feature.title.characters.api.navigation.TitleCharactersNa
 
 context(navigator: Navigator)
 fun EntryProviderScope<SeanimeNavKey>.titleCharactersEntry() = entry<TitleCharactersNavKey> { key ->
-    val viewModel = hiltViewModel<TitleCharacterViewModel, TitleCharacterViewModel.Factory> {
+    val viewModel = hiltViewModel<TitleCharactersViewModel, TitleCharactersViewModel.Factory> {
         it.create(key)
     }
 
-    TitleCharactersRoute(
+    TitleCharactersScreen(
         viewModel = viewModel,
         onCharacterClick = navigator::navigateToCharacter,
         onBackClick = navigator::back

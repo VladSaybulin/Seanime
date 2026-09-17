@@ -23,7 +23,7 @@ import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToManga
 import ru.vladsaybulin.feature.title.related.api.navigation.TitleRelatedNavKey
-import ru.vladsaybulin.feature.title.related.impl.TitleRelatedRoute
+import ru.vladsaybulin.feature.title.related.impl.TitleRelatedScreen
 import ru.vladsaybulin.feature.title.related.impl.TitleRelatedViewModel
 
 context(navigator: Navigator)
@@ -32,7 +32,7 @@ fun EntryProviderScope<SeanimeNavKey>.titleRelatedEntry() = entry<TitleRelatedNa
         it.create(key)
     }
 
-    TitleRelatedRoute(
+    TitleRelatedScreen(
         viewModel = viewModel,
         onAnimeClick = navigator::navigateToAnime,
         onMangaClick = navigator::navigateToManga,

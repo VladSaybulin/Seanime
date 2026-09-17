@@ -21,7 +21,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.title.videos.api.navigation.AnimeVideosNavKey
-import ru.vladsaybulin.feature.title.videos.impl.AnimeVideosRoute
+import ru.vladsaybulin.feature.title.videos.impl.AnimeVideosScreen
 import ru.vladsaybulin.feature.title.videos.impl.AnimeVideosViewModel
 
 context(navigator: Navigator)
@@ -30,7 +30,7 @@ fun EntryProviderScope<SeanimeNavKey>.animeVideosEntry() = entry<AnimeVideosNavK
         it.create(key)
     }
 
-    AnimeVideosRoute(
+    AnimeVideosScreen(
         viewModel = viewModel,
         onBackClick = navigator::back
     )

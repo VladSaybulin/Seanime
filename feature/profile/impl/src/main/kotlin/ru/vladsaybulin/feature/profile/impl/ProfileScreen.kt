@@ -62,7 +62,7 @@ import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.model.user.UserImage
 
 @Composable
-fun ProfileRoute(viewModel: ProfileViewModel) {
+fun ProfileScreen(viewModel: ProfileViewModel) {
     val isMe by viewModel.isMe.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
