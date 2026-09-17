@@ -45,7 +45,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             SeanimeApp(
                 appState = rememberSeanimeAppState(windowSizeClass = calculateWindowSizeClass(this)),
-                onAuth = shikimoriAuthorization::login
             )
         }
     }
