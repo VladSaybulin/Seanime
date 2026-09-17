@@ -65,7 +65,7 @@ import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.anime.VideoKind
 
 @Composable
-fun AnimeVideosRoute(
+fun AnimeVideosScreen(
     viewModel: AnimeVideosViewModel,
     onBackClick: () -> Unit
 ) {
