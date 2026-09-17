@@ -49,7 +49,7 @@ import ru.vladsaybulin.core.ui2.entry.character.CharacterItem
 import ru.vladsaybulin.model.character.Character
 
 @Composable
-fun TitleCharactersRoute(
+fun TitleCharactersScreen(
     viewModel: TitleCharactersViewModel,
     onCharacterClick: (Long) -> Unit,
     onBackClick: () -> Unit

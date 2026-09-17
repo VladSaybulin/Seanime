@@ -29,7 +29,7 @@ fun EntryProviderScope<SeanimeNavKey>.titleCharactersEntry() = entry<TitleCharac
         it.create(key)
     }
 
-    TitleCharactersRoute(
+    TitleCharactersScreen(
         viewModel = viewModel,
         onCharacterClick = navigator::navigateToCharacter,
         onBackClick = navigator::back
