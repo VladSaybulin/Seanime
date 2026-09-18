@@ -30,4 +30,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     api(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+
+    testImplementation(libs.junit)
 }
