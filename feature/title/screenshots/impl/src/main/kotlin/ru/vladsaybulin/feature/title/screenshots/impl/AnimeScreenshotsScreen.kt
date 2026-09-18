@@ -51,7 +51,7 @@ import ru.vladsaybulin.model.common.Image
 @Composable
 fun AnimeScreenshotsScreen(
     viewModel: AnimeScreenshotsViewModel,
-    onScreenshotClick: (startIdx: Int, setSize: Int, startUrl: String) -> Unit,
+    onScreenshotClick: (startIdx: Int, images: List<String>) -> Unit,
     onBackClick: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -67,7 +67,7 @@ fun AnimeScreenshotsScreen(
 @Composable
 private fun AnimeScreenshotsScreen(
     state: AnimeScreenshotsUiState,
-    onScreenshotClick: (startIdx: Int, setSize: Int, startUrl: String) -> Unit,
+    onScreenshotClick: (startIdx: Int, images: List<String>) -> Unit,
     onBackClick: () -> Unit
 ) {
     val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -90,8 +90,7 @@ private fun AnimeScreenshotsScreen(
                     onScreenshotClick = { index ->
                         onScreenshotClick(
                             index,
-                            state.screenshots.size,
-                            state.screenshots[index].originalUrl
+                            state.screenshots.map { it.originalUrl }
                         )
                     }
                 )

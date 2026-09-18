@@ -128,7 +128,7 @@ fun TitleDetailsScreen(
     onPosterClick: (String) -> Unit,
     onPublisherClick: (SearchType, Long) -> Unit,
     onRateClick: (Long) -> Unit,
-    onScreenshotClick: (setSize: Int, startIdx: Int, startUrl: String) -> Unit,
+    onScreenshotClick: (images: List<String>, startIndex: Int) -> Unit,
     onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -191,7 +191,7 @@ fun DetailsScreen(
     onPosterClick: (String) -> Unit,
     onPublisherClick: (SearchType, Long) -> Unit,
     onRateClick: (Long) -> Unit,
-    onScreenshotClick: (setSize: Int, startIdx: Int, startUrl: String) -> Unit,
+    onScreenshotClick: (images: List<String>, startIndex: Int) -> Unit,
     onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -265,7 +265,7 @@ private fun DetailsContent(
     onPosterClick: (String) -> Unit,
     onPublisherClick: (SearchType, Long) -> Unit,
     onRateClick: (Long) -> Unit,
-    onScreenshotClick: (setSize: Int, startIdx: Int, startUrl: String) -> Unit,
+    onScreenshotClick: (images: List<String>, startIndex: Int) -> Unit,
     onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -436,9 +436,8 @@ private fun DetailsContent(
                             screenshotsSlice = dataSlice,
                             onScreenshotClick = { initialIndex ->
                                 onScreenshotClick(
-                                    detailsState.allScreenshots.size,
-                                    initialIndex,
-                                    detailsState.allScreenshots[initialIndex].originalUrl
+                                    detailsState.allScreenshots.map(Image::originalUrl),
+                                    initialIndex
                                 )
                             },
                             onMoreClick = onAllScreenshotsClick
@@ -952,7 +951,7 @@ fun EntryDetailsScreenPreview() {
             onPosterClick = {},
             onPublisherClick = { _, _ -> },
             onRateClick = {},
-            onScreenshotClick = { _, _, _ -> },
+            onScreenshotClick = { _, _ -> },
             onStudioClick = {},
             onBackClick = {}
         )

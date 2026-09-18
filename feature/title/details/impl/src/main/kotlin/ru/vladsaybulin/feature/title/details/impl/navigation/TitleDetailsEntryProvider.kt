@@ -22,8 +22,7 @@ import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.character.api.navigation.navigateToCharacter
 import ru.vladsaybulin.feature.imageview.api.navigation.ImageViewSource
-import ru.vladsaybulin.feature.imageview.api.navigation.showFullScreenImage
-import ru.vladsaybulin.feature.imageview.api.navigation.showFullScreenImageSet
+import ru.vladsaybulin.feature.imageview.api.navigation.navigateToImageView
 import ru.vladsaybulin.feature.list.title.details.navigation.TitleDetailsNavKey
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToManga
@@ -61,23 +60,25 @@ fun EntryProviderScope<SeanimeNavKey>.titleDetailsEntry() = entry<TitleDetailsNa
         },
         onMangaClick = navigator::navigateToManga,
         onPersonClick = {},
-        onPosterClick = navigator::showFullScreenImage,
+        onPosterClick = { posterUrl ->
+            val source = ImageViewSource.TitlePoster(key.titleType, key.titleId)
+            navigator.navigateToImageView(source = source, startImageIndex = 0, loadedImages = listOf(posterUrl))
+        },
         onPublisherClick = { searchType, publisherId ->
             val preset = PresetSearchFilter(PresetSearchFilter.Field.Publisher, publisherId)
             navigator.navigateToSearchByFilter(searchType, preset)
         },
         onRateClick = navigator::navigateToRateEditor,
-        onScreenshotClick = { setSize, startIndex, startUrl ->
+        onScreenshotClick = { images, startIndex ->
             val source = if (key.titleType == EntryType.Anime) {
                 ImageViewSource.AnimeScreenshots(key.titleId)
             } else null
 
             source?.let {
-                navigator.showFullScreenImageSet(
+                navigator.navigateToImageView(
                     source = it,
                     startImageIndex = startIndex,
-                    imageSetSize = setSize,
-                    startImageUrl = startUrl
+                    loadedImages = images,
                 )
             }
         },
