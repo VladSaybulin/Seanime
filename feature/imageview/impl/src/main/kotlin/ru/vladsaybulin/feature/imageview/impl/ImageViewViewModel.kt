@@ -53,7 +53,7 @@ class ImageViewViewModel @AssistedInject constructor(
 
     val initialIndex: Int = key.startImageIndex
 
-    private val loadedImageSetOrNull = key.loadedImages
+    private val loadedImageSetOrNull = key.loadedImages.data
     val loadState: StateFlow<ImageViewLoadState> = if (loadedImageSetOrNull.isNullOrEmpty()) {
         imagesFromSourceStream(key.source)
             .map {
