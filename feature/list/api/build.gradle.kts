@@ -19,7 +19,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.vladsaybulin.feature.home.api"
+    namespace = "ru.vladsaybulin.feature.list.api"
 }
 
 dependencies {
