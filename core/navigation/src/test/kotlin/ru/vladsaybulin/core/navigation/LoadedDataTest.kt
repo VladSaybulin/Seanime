@@ -24,8 +24,28 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
+/**
+ * The test covers two main guarantees:
+ * 1) Serialization drops the wrapped value.
+ * The test serializes and deserializes a [LoadedData] instance
+ * and checks that the restored [LoadedData] no longer contains the original payload.
+ * This confirms that [LoadedData] behaves as a non-persistent container for navigation state.
+ * 2) Navigation key identity is not affected by the wrapped value.
+ * The test uses a [TestNavKey] data class
+ * It then checks metadata generation for different combinations:
+ *      - same [TestNavKey.uniqueData], same [TestNavKey.ignoredData] → metadata is built once
+ *      - same [TestNavKey.uniqueData], different [TestNavKey.ignoredData] → metadata is still built once
+ *      - different [TestNavKey.uniqueData] → metadata is built twice
+ *      - different [TestNavKey.uniqueData] and different [TestNavKey.ignoredData] → metadata is built twice
+ *
+ * This confirms that `LoadedData` does not affect key identity and does not break metadata reuse inside the entry provider.
+ */
 class LoadedDataTest {
 
+    /**
+     * @param uniqueData It real navigation key that should affect navigation identity
+     * @param ignoredData It is a wrapped value that should not affect navigation identity
+     */
     data class TestNavKey(
         val uniqueData: String,
         val ignoredData: LoadedData<String>
@@ -67,8 +87,8 @@ class LoadedDataTest {
     @Test
     fun `entryProvider should build metadata once for keys with the same data key`() {
         invokeEntryProvider(
-            key1 = TestNavKey("unique", LoadedData("data")),
-            key2 = TestNavKey("unique", LoadedData("data"))
+            unique = "unique",
+            ignored = "ignored"
         )
 
         assertEquals(1, buildMetadataCount)
@@ -77,8 +97,9 @@ class LoadedDataTest {
     @Test
     fun `entryProvider should build metadata once for keys with the different ignoredData`() {
         invokeEntryProvider(
-            key1 = TestNavKey("unique", LoadedData("data")),
-            key2 = TestNavKey("unique", LoadedData("different_data"))
+            unique = "unique",
+            ignored = "ignored",
+            differentIgnored = "different_data"
         )
 
         assertEquals(1, buildMetadataCount)
@@ -87,8 +108,9 @@ class LoadedDataTest {
     @Test
     fun `entryProvider should build metadata twice for keys with the different uniqueData`() {
         invokeEntryProvider(
-            key1 = TestNavKey("unique", LoadedData("data")),
-            key2 = TestNavKey("different_unique", LoadedData("data"))
+            unique = "unique",
+            ignored = "ignored",
+            differentUnique = "different_data"
         )
 
         assertEquals(2, buildMetadataCount)
@@ -97,17 +119,23 @@ class LoadedDataTest {
     @Test
     fun `entryProvider should build metadata twice for keys with the different data`() {
         invokeEntryProvider(
-            key1  = TestNavKey("unique", LoadedData("data")),
-            key2 = TestNavKey("different_unique", LoadedData("different_data"))
+            unique = "unique",
+            ignored = "ignored",
+            differentUnique = "different_data",
+            differentIgnored = "different_data"
         )
 
         assertEquals(2, buildMetadataCount)
     }
 
     fun invokeEntryProvider(
-        key1: TestNavKey,
-        key2: TestNavKey
+        unique: String,
+        ignored: String,
+        differentUnique: String? = null,
+        differentIgnored: String? = null
     ) {
+        val key1 = TestNavKey(unique, LoadedData(ignored))
+        val key2 = TestNavKey(differentUnique ?: unique, LoadedData(differentIgnored ?: ignored))
         testEntryProvider.invoke(key1)
         testEntryProvider.invoke(key2)
     }
