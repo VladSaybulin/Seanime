@@ -29,6 +29,8 @@ dependencies {
     implementation(projects.core.model)
     implementation(libs.kotlinx.serialization.json)
     api(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
 
     testImplementation(libs.junit)

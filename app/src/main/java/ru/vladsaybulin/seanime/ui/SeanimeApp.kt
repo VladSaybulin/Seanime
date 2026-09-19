@@ -39,8 +39,10 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
+import ru.vladsaybulin.core.navigation.scene.BottomSheetSceneStrategy
 import ru.vladsaybulin.feature.calendar.impl.navigation.calendarEntry
 import ru.vladsaybulin.feature.character.impl.navigation.characterEntry
 import ru.vladsaybulin.feature.home.impl.navigation.homeEntry
@@ -122,6 +124,10 @@ fun SeanimeApp(
                     entryDecorators = listOf(
                         rememberSaveableStateHolderNavEntryDecorator(),
                         rememberViewModelStoreNavEntryDecorator()
+                    ),
+                    sceneStrategies = listOf(
+                        BottomSheetSceneStrategy(),
+                        SinglePaneSceneStrategy(),
                     ),
                     entryProvider = entryProvider,
                     onBack = navigator::back
