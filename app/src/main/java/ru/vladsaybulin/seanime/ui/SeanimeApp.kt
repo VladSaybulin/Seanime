@@ -44,8 +44,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.feature.calendar.impl.navigation.calendarEntry
 import ru.vladsaybulin.feature.character.impl.navigation.characterEntry
 import ru.vladsaybulin.feature.home.impl.navigation.homeEntry
-import ru.vladsaybulin.feature.imageview.impl.FullScreenImageState
-import ru.vladsaybulin.feature.imageview.impl.FullScreenImageView
+import ru.vladsaybulin.feature.imageview.impl.navigation.imageViewEntry
 import ru.vladsaybulin.feature.list.impl.navigation.listEntry
 import ru.vladsaybulin.feature.profile.impl.navigation.profileEntry
 import ru.vladsaybulin.feature.search.impl.navigation.searchEntry
@@ -63,7 +62,6 @@ fun SeanimeApp(
     appState: SeanimeAppState
 ) {
     SeanimeTheme {
-        val fullScreenImageState = remember { FullScreenImageState() }
 
         var editableUserRate by remember {
             mutableStateOf<EditableUserRate?>(null)
@@ -113,7 +111,7 @@ fun SeanimeApp(
                         characterEntry()
                         profileEntry()
 
-                        //imageViewEntry()
+                        imageViewEntry()
                         //rateEditorEntry()
                     }
                 }
@@ -136,13 +134,6 @@ fun SeanimeApp(
             //    editableUserRate = checkNotNull(editableUserRate),
             //    onDismissRequest = { editableUserRate = null }
             //)
-        }
-
-        if (fullScreenImageState.isVisible) {
-            FullScreenImageView(
-                state = fullScreenImageState,
-                onDismissRequest = { }
-            )
         }
     }
 }

@@ -21,3 +21,7 @@ plugins {
 android {
     namespace = "ru.vladsaybulin.feature.imageview.api"
 }
+
+dependencies {
+    implementation(projects.core.model)
+}

@@ -21,7 +21,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.feature.imageview.api.navigation.ImageViewSource
-import ru.vladsaybulin.feature.imageview.api.navigation.showFullScreenImageSet
+import ru.vladsaybulin.feature.imageview.api.navigation.navigateToImageView
 import ru.vladsaybulin.feature.title.screenshots.api.navigation.AnimeScreenshotsNavKey
 import ru.vladsaybulin.feature.title.screenshots.impl.AnimeScreenshotsScreen
 import ru.vladsaybulin.feature.title.screenshots.impl.AnimeScreenshotsViewModel
@@ -34,13 +34,12 @@ fun EntryProviderScope<SeanimeNavKey>.animeScreenshotsEntry() = entry<AnimeScree
 
     AnimeScreenshotsScreen(
         viewModel = viewModel,
-        onScreenshotClick = { startIdx: Int, setSize: Int, startUrl: String ->
+        onScreenshotClick = { startIdx: Int, images: List<String> ->
             val source = ImageViewSource.AnimeScreenshots(key.animeId)
-            navigator.showFullScreenImageSet(
+            navigator.navigateToImageView(
                 source = source,
                 startImageIndex = startIdx,
-                imageSetSize = setSize,
-                startImageUrl = startUrl
+                loadedImages = images
             )
         },
         onBackClick = navigator::back
