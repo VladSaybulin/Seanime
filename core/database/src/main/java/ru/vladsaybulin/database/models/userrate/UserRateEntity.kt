@@ -25,6 +25,7 @@ import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateValues
 
 @Entity(
     tableName = "user_rates",
@@ -66,6 +67,16 @@ fun UserRateEntity.asExternalModel() = UserRate(
     id = id,
     createdAt = createdAt,
     updatedAt = updatedAt,
+    status = status,
+    score = score,
+    episodes = episodes,
+    chapters = chapters,
+    volumes = volumes,
+    rewatches = rewatches,
+    text = text
+)
+
+fun UserRateEntity.asUserRateValues() = UserRateValues(
     status = status,
     score = score,
     episodes = episodes,

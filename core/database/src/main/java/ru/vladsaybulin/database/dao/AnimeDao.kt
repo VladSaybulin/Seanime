@@ -21,6 +21,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
+import ru.vladsaybulin.database.models.userrate.AnimeRateContextDb
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.common.ImagePOJO
@@ -30,6 +31,9 @@ interface AnimeDao {
 
     @Query("SELECT * FROM animes WHERE id = :animeId")
     suspend fun getAnimeById(animeId: Long): AnimeEntity
+
+    @Query("SELECT status, max(episodes, episodes_aired) AS episodes FROM animes WHERE id = :animeId")
+    suspend fun getAnimeRateContext(animeId: Long): AnimeRateContextDb
 
     @Query("SELECT imageoriginal AS original, imagepreview AS preview FROM animes WHERE id = :animeId")
     fun getPosterStream(animeId: Long): Flow<ImagePOJO?>

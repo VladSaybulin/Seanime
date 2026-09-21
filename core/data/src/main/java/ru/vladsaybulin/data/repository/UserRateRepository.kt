@@ -29,6 +29,7 @@ import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -56,10 +57,13 @@ import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.asExternalModel
+import ru.vladsaybulin.database.models.userrate.asUserRateValues
+import ru.vladsaybulin.database.models.userrate.toUserRateEditorContext
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
@@ -307,6 +311,17 @@ class UserRateRepository @Inject constructor(
             userRateDao.insertOrReplaceUserRates(userRatesEntities)
             userRateDao.insertUserRateOrder(order)
         }
+    }
+
+    override suspend fun getRateContext(titleType: EntryType, titleId: Long): UserRateContext {
+        return when (titleType) {
+            EntryType.Anime -> animeDao.getAnimeRateContext(titleId).toUserRateEditorContext()
+            EntryType.Manga -> mangaDao.getMangaContext(titleId).toUserRateEditorContext()
+        }
+    }
+
+    override suspend fun getUserRateValues(rateId: Long): UserRateValues? {
+        return userRateDao.getUserRate(rateId).first()?.asUserRateValues()
     }
 
     companion object {

@@ -21,6 +21,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
+import ru.vladsaybulin.database.models.userrate.MangaRateContextDb
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.database.models.common.ImagePOJO
 import ru.vladsaybulin.database.models.manga.MangaEntity
@@ -30,6 +31,9 @@ interface MangaDao {
 
     @Query("SELECT * FROM mangas WHERE id = :mangaId")
     suspend fun getMangaById(mangaId: Long): MangaEntity
+
+    @Query("SELECT status, chapters, volumes FROM mangas WHERE id = :mangaId")
+    suspend fun getMangaContext(mangaId: Long): MangaRateContextDb
 
     @Query("SELECT imageoriginal AS original, imagepreview AS preview FROM mangas WHERE id = :mangaId")
     fun getPosterStream(mangaId: Long): Flow<ImagePOJO?>
