@@ -40,13 +40,15 @@ fun AuthorItem(
         russianName = author.person.russianName,
         poster = author.person.poster,
         onClick = onClick,
+        nameStyle = SeanimeTheme.typography.titleMedium,
         posterWidth = PersonPosterWidth,
         modifier = modifier,
         colors = EntryItemDefaults.SurfaceColors
     ) {
         Text(
             text = localizedRoles(author.roles),
-            modifier = Modifier.alpha(0.5f)
+            modifier = Modifier.alpha(0.5f),
+            style = SeanimeTheme.typography.bodyMedium,
         )
     }
 }
