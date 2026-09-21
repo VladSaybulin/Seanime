@@ -17,20 +17,47 @@
 package ru.vladsaybulin.feature.rate.editor.api.navigation
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import ru.vladsaybulin.core.navigation.LoadedData
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
+import ru.vladsaybulin.model.userrate.UserRateContext
+import ru.vladsaybulin.model.userrate.UserRateValues
 
 /**
  * Navigation key for the rate editor feature.
  * @param rateId The ID of the rate to be edited.
+ * @param titleReference A reference to the title being rated. Used to get [UserRateContext] or create new rate.
+ * @param initialRateValues The initial rate values to be displayed in the editor.
+ * @param context The user rate context.
  */
 @Serializable
-data class RateEditorNavKey(val rateId: Long) : SeanimeNavKey
+data class RateEditorNavKey(
+    val rateId: Long?,
+    val titleReference: TitleReference,
+    @Transient val initialRateValues: LoadedData<UserRateValues> = LoadedData.ofNull(),
+    @Transient val context: LoadedData<UserRateContext> = LoadedData.ofNull()
+) : SeanimeNavKey
 
 /**
  * Extension function to navigate to the rate editor feature.
  * @param rateId The ID of the rate to be edited.
+ * @param titleReference A reference to the title being rated.
+ * @param rateValues The initial rate values to be displayed in the editor.
+ * @param context The user rate context.
  */
-fun Navigator.navigateToRateEditor(rateId: Long) {
-    navigateTo(RateEditorNavKey(rateId))
+fun Navigator.navigateToRateEditor(
+    rateId: Long?,
+    titleReference: TitleReference,
+    rateValues: UserRateValues?,
+    context: UserRateContext?
+) {
+    navigateTo(
+        RateEditorNavKey(
+            rateId = rateId,
+            titleReference = titleReference,
+            initialRateValues = LoadedData(rateValues),
+            context = LoadedData(context)
+        )
+    )
 }

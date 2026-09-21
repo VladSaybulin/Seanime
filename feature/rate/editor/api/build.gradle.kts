@@ -21,3 +21,7 @@ plugins {
 android {
     namespace = "ru.vladsaybulin.feature.rate.editor.api"
 }
+
+dependencies {
+    api(projects.core.model)
+}
