@@ -25,3 +25,15 @@ class UserRateValues(
     val rewatches: Int? = null,
     val text: String? = null
 )
+
+fun UserRate.toUserRateValues(): UserRateValues {
+    return UserRateValues(
+        status = this.status,
+        score = this.score,
+        episodes = this.episodes,
+        chapters = this.chapters,
+        volumes = this.volumes,
+        rewatches = this.rewatches,
+        text = this.text
+    )
+}
