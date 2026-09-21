@@ -26,6 +26,7 @@ import ru.vladsaybulin.feature.imageview.api.navigation.navigateToImageView
 import ru.vladsaybulin.feature.list.title.details.navigation.TitleDetailsNavKey
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToManga
+import ru.vladsaybulin.feature.rate.editor.api.navigation.TitleReference
 import ru.vladsaybulin.feature.rate.editor.api.navigation.navigateToRateEditor
 import ru.vladsaybulin.feature.search.api.navigation.PresetSearchFilter
 import ru.vladsaybulin.feature.search.api.navigation.navigateToSearchByFilter
@@ -68,7 +69,14 @@ fun EntryProviderScope<SeanimeNavKey>.titleDetailsEntry() = entry<TitleDetailsNa
             val preset = PresetSearchFilter(PresetSearchFilter.Field.Publisher, publisherId)
             navigator.navigateToSearchByFilter(searchType, preset)
         },
-        onRateClick = navigator::navigateToRateEditor,
+        onRateClick = { rateId, values, context ->
+            navigator.navigateToRateEditor(
+                rateId = rateId,
+                titleReference = key.titleReference(),
+                rateValues = values,
+                context = context
+            )
+        },
         onScreenshotClick = { images, startIndex ->
             val source = if (key.titleType == EntryType.Anime) {
                 ImageViewSource.AnimeScreenshots(key.titleId)
@@ -89,3 +97,5 @@ fun EntryProviderScope<SeanimeNavKey>.titleDetailsEntry() = entry<TitleDetailsNa
         onBackClick = navigator::back
     )
 }
+
+private fun TitleDetailsNavKey.titleReference() = TitleReference(titleType, titleId)

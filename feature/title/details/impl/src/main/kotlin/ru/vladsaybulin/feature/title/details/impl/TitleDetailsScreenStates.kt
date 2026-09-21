@@ -43,6 +43,7 @@ import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 sealed class TitleDetailsState {
@@ -218,5 +219,12 @@ internal fun TitleDetailsState.Success.searchType() = when (entryType) {
 }
 
 private fun <T> DataSlice<T>.nullIfEmpty(): DataSlice<T>? = takeIf { it.data.isNotEmpty() }
+
+internal fun TitleDetailsState.Success.extractUserRateContext() = UserRateContext(
+    titleStatus = status,
+    maxEpisodes = if (entryType == EntryType.Anime) episodes else -1,
+    maxChapters = if (entryType == EntryType.Manga) chapters else -1,
+    maxVolumes = if (entryType == EntryType.Manga) volumes else -1
+)
 
 private const val FirstScreenshotsLimit = 5

@@ -58,10 +58,16 @@ import ru.vladsaybulin.core.ui2.entry.EntryCarousel
 import ru.vladsaybulin.core.ui2.entry.anime.animeCarouselItems
 import ru.vladsaybulin.core.ui2.entry.userrate.UserRateItem
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
+import ru.vladsaybulin.feature.rate.editor.api.navigation.TitleReference
+import ru.vladsaybulin.feature.rate.editor.api.navigation.titleReference
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.user.BriefUser
+import ru.vladsaybulin.model.userrate.UserRateContext
+import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
+import ru.vladsaybulin.model.userrate.extractRateContext
+import ru.vladsaybulin.model.userrate.toUserRateValues
 
 @Composable
 fun HomeScreen(
@@ -72,7 +78,7 @@ fun HomeScreen(
     onMangaClick: (Long) -> Unit,
     onMyProfileClick: () -> Unit,
     onUserClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
     onExploreAnimeOngoingClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -100,7 +106,7 @@ private fun HomeScreen(
     onMangaClick: (Long) -> Unit,
     onMyProfileClick: () -> Unit,
     onUserClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
     onExploreAnimeOngoingClick: () -> Unit
 ) {
     Box(
@@ -145,7 +151,7 @@ private fun HomeContent(
     onMangaClick: (Long) -> Unit,
     onExploreAnimeOngoingClick: () -> Unit,
     onTopicClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
     onUserClick: (Long) -> Unit
 ) {
     when (uiState) {
@@ -196,7 +202,7 @@ private fun HomeBody(
     onAnimeClick: (Long) -> Unit,
     onExploreAnimeOngoingClick: () -> Unit,
     onMangaClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
     onTopicClick: (Long) -> Unit,
     onUserClick: (Long) -> Unit
 ) {
@@ -293,7 +299,7 @@ private fun LazyListScope.inProgressUserRatesPager(
     userRates: ImmutableList<UserRateWithEntry>,
     onAnimeClick: (Long) -> Unit,
     onMangaClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     item(key = InProgressUserRatesKey) {
@@ -313,7 +319,23 @@ private fun LazyListScope.inProgressUserRatesPager(
                     userRateWithEntry = userRate,
                     onAnimeClick = { onAnimeClick(it.id) },
                     onMangaClick = { onMangaClick(it.id) },
-                    onEditClick = { onRateClick(userRate.userRate.id) }
+                    onEditClick = {
+                        userRate.anime?.let { anime ->
+                            onRateClick(
+                                userRate.userRate.id,
+                                anime.titleReference(),
+                                userRate.userRate.toUserRateValues(),
+                                anime.extractRateContext())
+                        }
+
+                        userRate.manga?.let { manga ->
+                            onRateClick(
+                                userRate.userRate.id,
+                                manga.titleReference(),
+                                userRate.userRate.toUserRateValues(),
+                                manga.extractRateContext())
+                        }
+                    }
                 )
             }
         }
