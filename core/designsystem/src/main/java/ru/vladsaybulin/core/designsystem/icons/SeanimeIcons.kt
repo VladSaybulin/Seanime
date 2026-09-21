@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Construction
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Groups
@@ -95,6 +96,7 @@ object SeanimeIcons {
     val Schedule = Icons.Default.Schedule
     val ArrowForwardIos = Icons.AutoMirrored.Filled.ArrowForwardIos
     val QuestionMark = Icons.Default.QuestionMark
+    val Delete = Icons.Default.Delete
 }
 
 @Composable

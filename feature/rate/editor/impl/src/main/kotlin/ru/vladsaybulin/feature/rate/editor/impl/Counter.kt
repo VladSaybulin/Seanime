@@ -219,7 +219,7 @@ fun Counter(
 ) {
     val isFocused = interactionSource.collectIsFocusedAsState().value
 
-    val textStyle = SeanimeTheme.typography.bodyLarge.copy(
+    val textStyle = SeanimeTheme.typography.titleLarge.copy(
         color = colors.countColor(enabled, state.isError, isFocused),
         textAlign = TextAlign.Center
     )
@@ -238,7 +238,7 @@ fun Counter(
                 incrementButton = @Composable {
                     CounterButton(
                         icon = SeanimeIcons.Add,
-                        contentDescription = stringResource(id = R.string.feature_user_rate_counter_increment),
+                        contentDescription = stringResource(id = R.string.feature_rate_editor_counter_increment),
                         enabled = { enabled && state.incrementEnabled },
                         onClick = state::onIncrement,
                         colors = colors.iconButtonColors()
@@ -247,7 +247,7 @@ fun Counter(
                 decrementButton = @Composable {
                     CounterButton(
                         icon = SeanimeIcons.Remove,
-                        contentDescription = stringResource(id = R.string.feature_user_rate_counter_decrement),
+                        contentDescription = stringResource(id = R.string.feature_rate_editor_counter_decrement),
                         enabled = { enabled && state.decrementEnabled },
                         onClick = state::onDecrement,
                         colors = colors.iconButtonColors()
@@ -294,7 +294,7 @@ private fun CounterDecorationBox(
         @Composable {
             CounterDecoration(
                 contentColor = limitColor,
-                typography = SeanimeTheme.typography.bodySmall.copy(fontSize = 9.sp),
+                typography = SeanimeTheme.typography.bodySmall.copy(fontSize = 11.sp),
                 content = limit
             )
         }
@@ -499,7 +499,6 @@ class CounterMeasurePolicy(
         //Measure limit
         val limitPlaceable = measurables.fastFirstOrNull { it.layoutId == LimitId }
             ?.measure(looseConstraints.offset(vertical = -occupiedSpaceVertically))
-            ?.also { occupiedSpaceVertically += it.height }
         val limitSizeOrZero = limitPlaceable?.let { Size(it.width.toFloat(), it.height.toFloat()) }
             ?: Size.Zero
 
@@ -618,8 +617,6 @@ fun calculateHeight(
     val middleSectionHeight = (textFieldTopPadding + textFieldHeight + textFieldBottomPadding)
 
     val buttonsHeight = max(incrementButtonHeight, decrementButtonHeight)
-    println(middleSectionHeight)
-    println(buttonsHeight + topPadding + bottomPadding)
     return max(
         constraints.minHeight,
         max(

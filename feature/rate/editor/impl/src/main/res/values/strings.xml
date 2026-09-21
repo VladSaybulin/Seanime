@@ -16,14 +16,17 @@
   -->
 
 <resources>
-    <string name="counter_label_episodes">Эпизоды</string>
-    <string name="counter_label_chapters">Главы</string>
-    <string name="counter_label_volumes">Тома</string>
-    <string name="save">Сохранить</string>
-    <string name="delete">Удалить</string>
-    <string name="text_placeholder">Поделись впечатлениями о данном тайтле</string>
-    <string name="counter_label_rewatches">Перепросмотров</string>
-    <string name="feature_user_rate_counter_increment">Увеличить</string>
-    <string name="feature_user_rate_counter_decrement">Уменьшить</string>
-    <string name="feature_user_rate_counter_default_limit">из %1$d</string>
+    <string name="feature_rate_editor_save">Сохранить</string>
+    <string name="feature_rate_editor_delete">Удалить</string>
+
+    <string name="feature_rate_editor_counter_label_episodes">Эпизоды</string>
+    <string name="feature_rate_editor_counter_label_chapters">Главы</string>
+    <string name="feature_rate_editor_counter_label_volumes">Тома</string>
+    <string name="feature_rate_editor_counter_label_rewatches">Перепросмотры</string>
+
+    <string name="feature_rate_editor_counter_increment">Увеличить</string>
+    <string name="feature_rate_editor_counter_decrement">Уменьшить</string>
+    <string name="feature_rate_editor_counter_limit">из %1$d</string>
+
+    <string name="feature_rate_editor_notes_hint">Твои заметки…</string>
 </resources>
