@@ -56,7 +56,7 @@ import javax.inject.Singleton
 
 private interface UserRateApi {
 
-    @POST("/api/v2/user_rates/")
+    @POST("/api/v2/user_rates")
     @Headers(AUTHORIZED_CALL_HEADER)
     suspend fun createUserRate(@Body userRate: JsonObject): NetworkUserRateWithTitleLink?
 
