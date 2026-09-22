@@ -52,7 +52,6 @@ import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.lastrequest.RequestType
-import ru.vladsaybulin.database.models.userrate.InProgressUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
@@ -160,14 +159,10 @@ class UserRateRepository @Inject constructor(
             }
             if (response != null) {
                 val userRate = response.asEntity()
-                val inProgressUserRateEntityOrNull = if (response.status == UserRateStatus.None) {
-                    InProgressUserRateEntity(userRate.id)
-                } else null
 
                 databaseTransactionRunner {
                     userRateDao.insertOrReplaceUserRate(userRate)
                     userRateDao.deleteOrderUserRateByStatus(userRateValues.status)
-                    inProgressUserRateEntityOrNull?.let { userRateDao.insertOrIgnoreInProgressUserRate(it) }
                 }
             }
         }
@@ -181,11 +176,7 @@ class UserRateRepository @Inject constructor(
                 Log.e("UserRateRepository", "Update user rate failed")
                 return@withContext
             } else {
-                val inProgressUserRateEntityOrNull = if (response.status == UserRateStatus.None) {
-                    InProgressUserRateEntity(userRateId)
-                } else null
                 userRateDao.updateUserRate(response.asEntity())
-                inProgressUserRateEntityOrNull?.let { userRateDao.insertOrIgnoreInProgressUserRate(it) }
             }
         }
     }
@@ -232,16 +223,10 @@ class UserRateRepository @Inject constructor(
         val animeEntities = networkUserRates.mapNotNull { it.networkAnime?.asEntity() }
         val mangasEntities = networkUserRates.mapNotNull { it.networkManga?.asEntity() }
 
-        val inProgressUserRateEntities = networkUserRates.map {
-            InProgressUserRateEntity(userRateId = it.networkUserRate.id)
-        }
-
         write {
-            userRateDao.deleteAllInProgressUserRates()
             animeDao.upsertAnimes(animeEntities)
             mangaDao.upsertMangas(mangasEntities)
             userRateDao.insertOrReplaceUserRates(userRateEntities)
-            userRateDao.insertInProgressUserRates(inProgressUserRateEntities)
         }
     }
 
