@@ -448,7 +448,8 @@ private fun UserButtons(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = SeanimeTheme.colorScheme.primary,
                     contentColor = SeanimeTheme.colorScheme.onPrimary
-                )
+                ),
+                enabled = uiEffect == RateEditorViewModel.UiEffect.Idle
             ) {
                 if (uiEffect == RateEditorViewModel.UiEffect.Saving) {
                     CircularProgressIndicator(
@@ -463,9 +464,10 @@ private fun UserButtons(
 
             FilledTonalIconButton(
                 onClick = onDeleteClick,
-                modifier = Modifier.size(ButtonSize)
+                modifier = Modifier.size(ButtonSize),
+                enabled = uiEffect == RateEditorViewModel.UiEffect.Idle
             ) {
-                if (uiEffect == RateEditorViewModel.UiEffect.Saving) {
+                if (uiEffect == RateEditorViewModel.UiEffect.Deleting) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(InButtonProgressSize),
                         color = SeanimeTheme.colorScheme.onPrimary,
@@ -474,7 +476,7 @@ private fun UserButtons(
                 } else {
                     Icon(
                         imageVector = SeanimeIcons.Delete,
-                        contentDescription = stringResource(R.string.feature_rate_editor_delete)
+                        contentDescription = stringResource(R.string.feature_rate_editor_delete),
                     )
                 }
             }
