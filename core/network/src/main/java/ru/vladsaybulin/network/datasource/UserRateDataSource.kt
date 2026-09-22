@@ -89,7 +89,7 @@ class UserRateDataSource @Inject constructor(
         page: Int,
         limit: Int,
         status: UserRateStatus,
-        field: UserRateOrderField,
+        sortField: UserRateOrderField,
         sortOrder: UserRateOrder,
         userId: Long? = null
     ): List<NetworkUserRateWithTitle> {
@@ -99,7 +99,7 @@ class UserRateDataSource @Inject constructor(
             status = status.asUserRateStatusEnum(),
             userId = Optional.presentIfNotNull(userId),
             orderInput = UserRateOrderInputType(
-                field = field.asUserRateOrderFieldEnum(),
+                field = sortField.asUserRateOrderFieldEnum(),
                 order = sortOrder.asSortOrderEnum()
             )
         )
@@ -114,7 +114,7 @@ class UserRateDataSource @Inject constructor(
         page: Int,
         limit: Int,
         status: UserRateStatus,
-        field: UserRateOrderField,
+        sortField: UserRateOrderField,
         sortOrder: UserRateOrder,
         userId: Long? = null
     ): List<NetworkUserRateWithTitle> {
@@ -124,7 +124,7 @@ class UserRateDataSource @Inject constructor(
             status = status.asUserRateStatusEnum(),
             userId = Optional.presentIfNotNull(userId),
             orderInput = UserRateOrderInputType(
-                field = field.asUserRateOrderFieldEnum(),
+                field = sortField.asUserRateOrderFieldEnum(),
                 order = sortOrder.asSortOrderEnum()
             )
         )

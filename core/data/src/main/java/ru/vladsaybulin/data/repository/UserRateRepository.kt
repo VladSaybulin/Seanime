@@ -206,25 +206,27 @@ class UserRateRepository @Inject constructor(
     }
 
     private suspend fun UpdateScope.updateInProgressRates() = withContext(ioDispatcher) {
-        val watchingDeferred = async(ioDispatcher) {
-            userRateDataSource.getUserRates(
+        val animes = async(ioDispatcher) {
+            userRateDataSource.getAnimeUserRates(
                 page = 1,
                 limit = 50,
                 status = UserRateStatus.Watching,
-                order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
+                sortField = UserRateOrderField.UpdatedAt,
+                sortOrder = UserRateOrder.Desc
             )
         }
 
-        val rewatchingDeferred = async(ioDispatcher) {
-            userRateDataSource.getUserRates(
+        val mangas = async(ioDispatcher) {
+            userRateDataSource.getMangaUserRates(
                 page = 1,
                 limit = 50,
-                status = UserRateStatus.Rewatching,
-                order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
+                status = UserRateStatus.Watching,
+                sortField = UserRateOrderField.UpdatedAt,
+                sortOrder = UserRateOrder.Desc
             )
         }
 
-        val networkUserRates = watchingDeferred.await() + rewatchingDeferred.await()
+        val networkUserRates = animes.await() + mangas.await()
 
         val userRateEntities = networkUserRates.map { it.asEntity() }
         val animeEntities = networkUserRates.mapNotNull { it.networkAnime?.asEntity() }
