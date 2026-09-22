@@ -52,7 +52,6 @@ import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.models.lastrequest.RequestType
-import ru.vladsaybulin.database.models.userrate.InProgressUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
@@ -160,14 +159,10 @@ class UserRateRepository @Inject constructor(
             }
             if (response != null) {
                 val userRate = response.asEntity()
-                val inProgressUserRateEntityOrNull = if (response.status == UserRateStatus.None) {
-                    InProgressUserRateEntity(userRate.id)
-                } else null
 
                 databaseTransactionRunner {
                     userRateDao.insertOrReplaceUserRate(userRate)
                     userRateDao.deleteOrderUserRateByStatus(userRateValues.status)
-                    inProgressUserRateEntityOrNull?.let { userRateDao.insertOrIgnoreInProgressUserRate(it) }
                 }
             }
         }
@@ -181,11 +176,7 @@ class UserRateRepository @Inject constructor(
                 Log.e("UserRateRepository", "Update user rate failed")
                 return@withContext
             } else {
-                val inProgressUserRateEntityOrNull = if (response.status == UserRateStatus.None) {
-                    InProgressUserRateEntity(userRateId)
-                } else null
                 userRateDao.updateUserRate(response.asEntity())
-                inProgressUserRateEntityOrNull?.let { userRateDao.insertOrIgnoreInProgressUserRate(it) }
             }
         }
     }
@@ -206,40 +197,36 @@ class UserRateRepository @Inject constructor(
     }
 
     private suspend fun UpdateScope.updateInProgressRates() = withContext(ioDispatcher) {
-        val watchingDeferred = async(ioDispatcher) {
-            userRateDataSource.getUserRates(
+        val animes = async(ioDispatcher) {
+            userRateDataSource.getAnimeUserRates(
                 page = 1,
                 limit = 50,
                 status = UserRateStatus.Watching,
-                order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
+                sortField = UserRateOrderField.UpdatedAt,
+                sortOrder = UserRateOrder.Desc
             )
         }
 
-        val rewatchingDeferred = async(ioDispatcher) {
-            userRateDataSource.getUserRates(
+        val mangas = async(ioDispatcher) {
+            userRateDataSource.getMangaUserRates(
                 page = 1,
                 limit = 50,
-                status = UserRateStatus.Rewatching,
-                order = UserRateOrderField.UpdatedAt to UserRateOrder.Desc
+                status = UserRateStatus.Watching,
+                sortField = UserRateOrderField.UpdatedAt,
+                sortOrder = UserRateOrder.Desc
             )
         }
 
-        val networkUserRates = watchingDeferred.await() + rewatchingDeferred.await()
+        val networkUserRates = animes.await() + mangas.await()
 
         val userRateEntities = networkUserRates.map { it.asEntity() }
         val animeEntities = networkUserRates.mapNotNull { it.networkAnime?.asEntity() }
         val mangasEntities = networkUserRates.mapNotNull { it.networkManga?.asEntity() }
 
-        val inProgressUserRateEntities = networkUserRates.map {
-            InProgressUserRateEntity(userRateId = it.networkUserRate.id)
-        }
-
         write {
-            userRateDao.deleteAllInProgressUserRates()
             animeDao.upsertAnimes(animeEntities)
             mangaDao.upsertMangas(mangasEntities)
             userRateDao.insertOrReplaceUserRates(userRateEntities)
-            userRateDao.insertInProgressUserRates(inProgressUserRateEntities)
         }
     }
 

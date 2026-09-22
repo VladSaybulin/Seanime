@@ -24,9 +24,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.database.models.userrate.InProgressUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
-import ru.vladsaybulin.database.models.userrate.PopulatedEditableUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
 import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
@@ -107,9 +105,9 @@ interface UserRateDao {
 
     @Query(
         value = """
-            SELECT user_rates.* 
-            FROM in_progress_user_rates 
-                JOIN user_rates ON user_rate_id = user_rates.id
+            SELECT * 
+            FROM user_rates
+            WHERE status = 'watching' OR status = 'rewatching'
             ORDER BY user_rates.updated_at DESC
             LIMIT :limit
         """
@@ -137,12 +135,6 @@ interface UserRateDao {
     @Insert
     suspend fun insertUserRateOrder(userRateOrder: List<PagedUserRateEntity>)
 
-    @Insert
-    suspend fun insertInProgressUserRates(inProgressUserRates: List<InProgressUserRateEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnoreInProgressUserRate(inProgressUserRate: InProgressUserRateEntity)
-
     @Update
     suspend fun updateUserRate(userRate: UserRateEntity)
 
@@ -163,8 +155,5 @@ interface UserRateDao {
 
     @Query("DELETE FROM user_rates")
     suspend fun deleteAllUserRates()
-
-    @Query("DELETE FROM in_progress_user_rates")
-    suspend fun deleteAllInProgressUserRates()
 
 }

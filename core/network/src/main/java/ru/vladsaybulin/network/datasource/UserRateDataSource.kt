@@ -35,24 +35,20 @@ import ru.vladsaybulin.core.network.graphql.AnimeUserRateQuery
 import ru.vladsaybulin.core.network.graphql.AnimeUserRatesQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRateQuery
 import ru.vladsaybulin.core.network.graphql.MangaUserRatesQuery
-import ru.vladsaybulin.core.network.graphql.UserRatesQuery
 import ru.vladsaybulin.core.network.graphql.type.UserRateOrderInputType
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.network.mapper.data.asUserRateOrderInputType
 import ru.vladsaybulin.network.mapper.enums.asSortOrderEnum
 import ru.vladsaybulin.network.mapper.enums.asUserRateOrderFieldEnum
 import ru.vladsaybulin.network.mapper.enums.asUserRateStatusEnum
-import ru.vladsaybulin.network.mapper.enums.asUserRateTargetTypeEnum
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.mapper.queries.asNetworkModels
 import ru.vladsaybulin.network.models.userrate.CreateUserRateRequest
 import ru.vladsaybulin.network.models.userrate.NetworkUserRate
-import ru.vladsaybulin.network.models.userrate.UpdateUserRateRequest
 import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitle
 import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitleLink
+import ru.vladsaybulin.network.models.userrate.UpdateUserRateRequest
 import ru.vladsaybulin.network.util.AUTHORIZED_CALL_HEADER
 import ru.vladsaybulin.network.util.asAuthorizedCall
 import javax.inject.Inject
@@ -89,7 +85,7 @@ class UserRateDataSource @Inject constructor(
         page: Int,
         limit: Int,
         status: UserRateStatus,
-        field: UserRateOrderField,
+        sortField: UserRateOrderField,
         sortOrder: UserRateOrder,
         userId: Long? = null
     ): List<NetworkUserRateWithTitle> {
@@ -99,7 +95,7 @@ class UserRateDataSource @Inject constructor(
             status = status.asUserRateStatusEnum(),
             userId = Optional.presentIfNotNull(userId),
             orderInput = UserRateOrderInputType(
-                field = field.asUserRateOrderFieldEnum(),
+                field = sortField.asUserRateOrderFieldEnum(),
                 order = sortOrder.asSortOrderEnum()
             )
         )
@@ -114,7 +110,7 @@ class UserRateDataSource @Inject constructor(
         page: Int,
         limit: Int,
         status: UserRateStatus,
-        field: UserRateOrderField,
+        sortField: UserRateOrderField,
         sortOrder: UserRateOrder,
         userId: Long? = null
     ): List<NetworkUserRateWithTitle> {
@@ -124,7 +120,7 @@ class UserRateDataSource @Inject constructor(
             status = status.asUserRateStatusEnum(),
             userId = Optional.presentIfNotNull(userId),
             orderInput = UserRateOrderInputType(
-                field = field.asUserRateOrderFieldEnum(),
+                field = sortField.asUserRateOrderFieldEnum(),
                 order = sortOrder.asSortOrderEnum()
             )
         )
@@ -133,29 +129,6 @@ class UserRateDataSource @Inject constructor(
             .execute()
             .dataAssertNoErrors
         return response.userRates.map { it.asNetworkModels() }
-    }
-
-    suspend fun getUserRates(
-        page: Int,
-        limit: Int,
-        status: UserRateStatus,
-        targetType: EntryType? = null,
-        order: Pair<UserRateOrderField, UserRateOrder>?,
-        userId: Long? = null
-    ): List<NetworkUserRateWithTitle> {
-        val query = UserRatesQuery(
-            page = page,
-            limit = limit,
-            targetType = Optional.presentIfNotNull(targetType?.asUserRateTargetTypeEnum()),
-            status = Optional.presentIfNotNull(status.asUserRateStatusEnum()),
-            userId = Optional.presentIfNotNull(userId),
-            order = Optional.presentIfNotNull(order?.asUserRateOrderInputType())
-        )
-        val response = apolloClient.query(query)
-            .asAuthorizedCall()
-            .execute()
-            .dataAssertNoErrors
-        return response.userRates.map { it.asNetworkModel() }
     }
 
     suspend fun getAnimeUserRate(animeId: Long): NetworkUserRate? {
