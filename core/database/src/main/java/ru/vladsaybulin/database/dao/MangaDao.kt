@@ -31,7 +31,7 @@ interface MangaDao {
     @Query("SELECT * FROM mangas WHERE id = :mangaId")
     suspend fun getMangaById(mangaId: Long): MangaEntity
 
-    @Query("SELECT imageoriginal, imagepreview FROM mangas WHERE id = :mangaId")
+    @Query("SELECT imageoriginal AS original, imagepreview AS preview FROM mangas WHERE id = :mangaId")
     fun getPosterStream(mangaId: Long): Flow<ImagePOJO?>
 
     @Upsert

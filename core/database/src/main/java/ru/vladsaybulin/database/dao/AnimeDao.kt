@@ -31,7 +31,7 @@ interface AnimeDao {
     @Query("SELECT * FROM animes WHERE id = :animeId")
     suspend fun getAnimeById(animeId: Long): AnimeEntity
 
-    @Query("SELECT imageoriginal, imagepreview FROM animes WHERE id = :animeId")
+    @Query("SELECT imageoriginal AS original, imagepreview AS preview FROM animes WHERE id = :animeId")
     fun getPosterStream(animeId: Long): Flow<ImagePOJO?>
 
     @Upsert
