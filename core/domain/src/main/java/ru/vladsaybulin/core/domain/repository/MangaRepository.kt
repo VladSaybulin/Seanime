@@ -20,6 +20,7 @@ import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.model.character.CharacterWithRole
+import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.person.PersonWithRoles
@@ -40,6 +41,8 @@ interface MangaRepository {
     fun getSimilarMangasStream(mangaId: Long): Flow<List<Manga>>
 
     fun getAllMangaAuthors(mangaId: Long): Flow<List<PersonWithRoles>>
+
+    fun getMangaPosterStream(mangaId: Long): Flow<Image?>
 
     suspend fun refreshMangaDetails(mangaId: Long, force: Boolean)
 
