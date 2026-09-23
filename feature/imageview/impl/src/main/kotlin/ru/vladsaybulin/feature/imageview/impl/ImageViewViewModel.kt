@@ -83,12 +83,12 @@ class ImageViewViewModel @AssistedInject constructor(
     private fun titlePosterStream(titleType: EntryType, titleId: Long): Flow<List<String>> {
         return when (titleType) {
             EntryType.Anime -> animeRepository.get()
-                .getAnimeDetailsStream(titleId) //TODO create poster only fetch method
-                .map { anime -> listOfNotNull(anime.poster?.originalUrl) }
+                .getAnimePosterStream(titleId)
+                .map { poster -> listOfNotNull(poster?.originalUrl) }
 
             EntryType.Manga -> mangaRepository.get()
-                .getMangaDetailsStream(titleId) //TODO create poster only fetch method
-                .map { manga -> listOfNotNull(manga.poster?.originalUrl) }
+                .getMangaPosterStream(titleId)
+                .map { poster -> listOfNotNull(poster?.originalUrl) }
         }
     }
 }

@@ -21,13 +21,18 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.common.ImagePOJO
 
 @Dao
 interface AnimeDao {
 
     @Query("SELECT * FROM animes WHERE id = :animeId")
     suspend fun getAnimeById(animeId: Long): AnimeEntity
+
+    @Query("SELECT imageoriginal AS original, imagepreview AS preview FROM animes WHERE id = :animeId")
+    fun getPosterStream(animeId: Long): Flow<ImagePOJO?>
 
     @Upsert
     suspend fun upsertAnime(anime: AnimeEntity)

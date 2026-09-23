@@ -43,6 +43,8 @@ interface AnimeRepository {
 
     fun getAnimeScreenshots(animeId: Long): Flow<List<Image>>
 
+    fun getAnimePosterStream(animeId: Long): Flow<Image?>
+
     fun getFirstAnimeVideos(animeId: Long, limit: Int): Flow<List<Video>>
 
     fun getSimilarAnimes(animeId: Long): Flow<List<Anime>>

@@ -50,6 +50,7 @@ import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.UserRateDao
+import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
@@ -60,6 +61,7 @@ import ru.vladsaybulin.database.models.manga.PopulatedSimilarManga
 import ru.vladsaybulin.database.models.manga.asExternalModel
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.model.character.CharacterWithRole
+import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.person.PersonWithRoles
@@ -107,6 +109,9 @@ class MangaRepository @Inject constructor(
     override fun getAllMangaAuthors(mangaId: Long): Flow<List<PersonWithRoles>> =
         mangaDetailsDao.getAllMangaAuthors(mangaId)
             .map { it.map(PopulatedMangaAuthor::asExternalModel) }
+
+    override fun getMangaPosterStream(mangaId: Long): Flow<Image?> =
+        mangaDao.getPosterStream(mangaId).map { it?.asExternalModel() }
 
     override suspend fun refreshMangaDetails(mangaId: Long, force: Boolean) {
         coordinator.sync(
