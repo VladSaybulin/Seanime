@@ -66,6 +66,7 @@ import ru.vladsaybulin.database.models.anime.PopulatedAnimeCharacter
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeRelated
 import ru.vladsaybulin.database.models.anime.PopulatedSimilarAnime
 import ru.vladsaybulin.database.models.anime.asExternalModel
+import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeDetails
@@ -122,6 +123,9 @@ class AnimeRepository @Inject constructor(
 
     override fun getAnimeScreenshots(animeId: Long): Flow<List<Image>> =
         animeDetailsDao.getAnimeScreenshots(animeId).map { it.map(AnimeScreenshotEntity::asExternalModel) }
+
+    override fun getAnimePosterStream(animeId: Long): Flow<Image?> =
+        animeDao.getPosterStream(animeId).map { it?.asExternalModel() }
 
     override fun getFirstAnimeVideos(animeId: Long, limit: Int): Flow<List<Video>> =
         animeDetailsDao.getFirstAnimeVideos(animeId, limit).map { it.map(AnimeVideoEntity::asExternalModel) }
