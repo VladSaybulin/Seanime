@@ -17,7 +17,6 @@
 package ru.vladsaybulin.feature.calendar.api.navigation
 
 import kotlinx.serialization.Serializable
-import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 
 /**

@@ -19,9 +19,6 @@ package ru.vladsaybulin.core.ui2.entry.manga
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.itemContentType
-import androidx.paging.compose.itemKey
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.core.ui2.entry.EntryItemColorsProducer

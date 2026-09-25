@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import coil.compose.rememberAsyncImagePainter
-import ru.vladsaybulin.core.ui2.entry.R
 
 @Composable
 fun EntryPoster(

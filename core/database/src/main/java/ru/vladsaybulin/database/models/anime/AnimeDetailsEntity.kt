@@ -26,7 +26,6 @@ import ru.vladsaybulin.database.models.common.SeasonPOJO
 import ru.vladsaybulin.database.models.stats.StatsProto
 import ru.vladsaybulin.database.models.text.SeanimeTextPOJO
 import ru.vladsaybulin.model.anime.AnimeRating
-import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Entity(

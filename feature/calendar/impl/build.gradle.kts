@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
-
 /*
  * Copyright 2026 Vlad Saybulin
  *

@@ -22,7 +22,6 @@ import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.asExternalModel
 import ru.vladsaybulin.model.related.RelatedAnime
 import ru.vladsaybulin.model.related.RelatedManga
-import ru.vladsaybulin.model.related.RelatedTitle
 
 data class PopulatedMangaRelated(
     @Embedded

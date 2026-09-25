@@ -52,7 +52,6 @@ import ru.vladsaybulin.core.designsystem.components.ShikimoriFilterChip
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.R
-import ru.vladsaybulin.core.ui.score.ScoreInput
 import ru.vladsaybulin.core.ui.strings.durationString
 import ru.vladsaybulin.core.ui.strings.seasonFilterString
 import ru.vladsaybulin.core.ui2.score.Score

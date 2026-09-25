@@ -22,7 +22,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
-import ru.vladsaybulin.database.utils.TextRangesTypeConverter
 
 @Module
 @InstallIn(SingletonComponent::class)
