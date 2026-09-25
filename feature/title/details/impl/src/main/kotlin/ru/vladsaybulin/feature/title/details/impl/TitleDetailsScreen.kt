@@ -110,7 +110,10 @@ import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.search.SeasonOfYear
 import ru.vladsaybulin.model.search.TimePeriodAiring
+import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateValues
+import ru.vladsaybulin.model.userrate.toUserRateValues
 
 @Composable
 fun TitleDetailsScreen(
@@ -127,7 +130,7 @@ fun TitleDetailsScreen(
     onPersonClick: (Long) -> Unit,
     onPosterClick: (String) -> Unit,
     onPublisherClick: (SearchType, Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long?, UserRateValues?, UserRateContext) -> Unit,
     onScreenshotClick: (images: List<String>, startIndex: Int) -> Unit,
     onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit
@@ -190,7 +193,7 @@ fun DetailsScreen(
     onPersonClick: (Long) -> Unit,
     onPosterClick: (String) -> Unit,
     onPublisherClick: (SearchType, Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long?, UserRateValues?, UserRateContext) -> Unit,
     onScreenshotClick: (images: List<String>, startIndex: Int) -> Unit,
     onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit
@@ -264,7 +267,7 @@ private fun DetailsContent(
     onPersonClick: (Long) -> Unit,
     onPosterClick: (String) -> Unit,
     onPublisherClick: (SearchType, Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long?, UserRateValues?, UserRateContext) -> Unit,
     onScreenshotClick: (images: List<String>, startIndex: Int) -> Unit,
     onStudioClick: (Long) -> Unit,
     onBackClick: () -> Unit
@@ -307,17 +310,23 @@ private fun DetailsContent(
                     )
                 },
                 floatingActionButton = {
-                    val userRate = (userRateState as? UserRateState.Success)?.userRate
                     UserRateFab(
                         userRateState = userRateState,
                         expanded = expandedFab,
                         onClick = {
                             when (userRateState) {
                                 is UserRateState.NotAuthorized -> setShowRequireAuthDialog(true)
-                                is UserRateState.Success -> userRate?.id?.let(onRateClick)
-                                is UserRateState.NoUserRate -> if (detailsState.status == Anons) {
-                                    onCreateUserRate(UserRateStatus.Planned)
-                                } else showUserRateStatusSelection = true
+                                is UserRateState.Success -> {
+                                    val rate = userRateState.userRate.id
+                                    onRateClick(
+                                        rate,
+                                        userRateState.userRate.toUserRateValues(),
+                                        detailsState.extractUserRateContext()
+                                    )
+                                }
+                                is UserRateState.NoUserRate -> {
+                                    onRateClick(null, null, detailsState.extractUserRateContext())
+                                }
 
                                 else -> {}
                             }
@@ -950,7 +959,7 @@ fun EntryDetailsScreenPreview() {
             onPersonClick = {},
             onPosterClick = {},
             onPublisherClick = { _, _ -> },
-            onRateClick = {},
+            onRateClick = { _, _, _ -> },
             onScreenshotClick = { _, _ -> },
             onStudioClick = {},
             onBackClick = {}

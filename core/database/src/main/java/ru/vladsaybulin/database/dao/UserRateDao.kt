@@ -120,6 +120,9 @@ interface UserRateDao {
     @Query("SELECT manga_id, status FROM user_rates")
     fun getAllMangaUserRateStatusesStream(): Flow<Map<@MapColumn(columnName = "manga_id") Long, @MapColumn(columnName = "status") UserRateStatus>>
 
+    @Query("SELECT * FROM user_rates WHERE id = :userRateId")
+    fun getUserRate(userRateId: Long): Flow<UserRateEntity?>
+
     @Query("SELECT * FROM user_rates WHERE anime_id = :animeId AND manga_id IS NULL")
     fun getAnimeUserRate(animeId: Long): Flow<UserRateEntity?>
 

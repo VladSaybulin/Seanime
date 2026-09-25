@@ -47,16 +47,22 @@ import ru.vladsaybulin.core.ui2.entry.EntryList
 import ru.vladsaybulin.core.ui2.entry.userrate.UserRateItem
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asString
+import ru.vladsaybulin.feature.rate.editor.api.navigation.TitleReference
+import ru.vladsaybulin.feature.rate.editor.api.navigation.titleReference
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
+import ru.vladsaybulin.model.userrate.extractRateContext
+import ru.vladsaybulin.model.userrate.toUserRateValues
 
 @Composable
 fun ListScreen(
     viewModel: ListViewModel,
     onAnimeClick: (Long) -> Unit,
     onMangaClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
 ) {
 
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
@@ -80,7 +86,7 @@ internal fun ListScreen(
     onAnimeClick: (Long) -> Unit,
     onLogin: () -> Unit,
     onMangaClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -115,7 +121,7 @@ private fun ListContent(
     onUserRateStatusChange: (UserRateStatus) -> Unit,
     onAnimeClick: (Long) -> Unit,
     onMangaClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
 ) {
     ProvideTitleStringsByType(titleType = state.controlPanelState.entryType) {
         Column {
@@ -197,7 +203,7 @@ private fun UserRatesPaging(
     userRates: LazyPagingItems<UserRateWithEntry>,
     onAnimeClick: (Long) -> Unit,
     onMangaClick: (Long) -> Unit,
-    onRateClick: (Long) -> Unit,
+    onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
 ) {
     EntryList {
         items(
@@ -210,7 +216,23 @@ private fun UserRatesPaging(
                 userRateWithEntry = userRateWithEntry,
                 onAnimeClick = { onAnimeClick(it.id) },
                 onMangaClick = { onMangaClick(it.id) },
-                onEditClick = { }
+                onEditClick = {
+                    userRateWithEntry.anime?.let { anime ->
+                        onRateClick(
+                            userRateWithEntry.userRate.id,
+                            anime.titleReference(),
+                            userRateWithEntry.userRate.toUserRateValues(),
+                            anime.extractRateContext()
+                        )
+                    } ?: userRateWithEntry.manga?.let { manga ->
+                        onRateClick(
+                            userRateWithEntry.userRate.id,
+                            manga.titleReference(),
+                            userRateWithEntry.userRate.toUserRateValues(),
+                            manga.extractRateContext()
+                        )
+                    }
+                }
             )
         }
     }

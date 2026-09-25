@@ -27,23 +27,18 @@ import androidx.compose.ui.text.input.TextFieldValue
 /**
  * The state that to control [Counter]
  * @param initialCount the initial count
- * @param limit the max value that count can take. Must be [CounterState.UNLIMITED_LIMIT] if counter is unlimited
+ * @param limit the max value that count can take.
  * It is recommended that this limit be less than 99999 for correct display
  */
 @Stable
 class CounterState(
     initialCount: Int,
-    val limit: Int = UNLIMITED_LIMIT
+    limit: Int = Int.MAX_VALUE
 ) {
-    companion object {
-        const val UNLIMITED_LIMIT = -1
-    }
-
-    init {
-        check(limit == -1 || limit >= 0) {
-            "Limit must be not have negative value, except -1 when it unlimited"
-        }
-    }
+    private val _limit = mutableIntStateOf(limit)
+    var limit: Int
+        get() = _limit.intValue
+        set(value) { _limit.intValue = value }
 
     /**
      * Current state of count as Integer
@@ -138,6 +133,9 @@ class CounterState(
         }
     }
 }
+
+val CounterState.isLimited: Boolean
+    get() = limit != Int.MAX_VALUE
 
 private fun TextFieldValue.selectionAtEnd() =
     selection.length == 0 && selection.start == text.length

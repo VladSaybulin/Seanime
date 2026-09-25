@@ -28,10 +28,6 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
@@ -49,6 +45,7 @@ import ru.vladsaybulin.feature.home.impl.navigation.homeEntry
 import ru.vladsaybulin.feature.imageview.impl.navigation.imageViewEntry
 import ru.vladsaybulin.feature.list.impl.navigation.listEntry
 import ru.vladsaybulin.feature.profile.impl.navigation.profileEntry
+import ru.vladsaybulin.feature.rate.editor.impl.naviagtion.rateEditorEntry
 import ru.vladsaybulin.feature.search.impl.navigation.searchEntry
 import ru.vladsaybulin.feature.title.authors.impl.navigation.titleAuthorsEntry
 import ru.vladsaybulin.feature.title.characters.impl.titleCharactersEntry
@@ -56,7 +53,6 @@ import ru.vladsaybulin.feature.title.details.impl.navigation.titleDetailsEntry
 import ru.vladsaybulin.feature.title.related.impl.navigator.titleRelatedEntry
 import ru.vladsaybulin.feature.title.screenshots.impl.navigator.animeScreenshotsEntry
 import ru.vladsaybulin.feature.title.videos.impl.navigation.animeVideosEntry
-import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.seanime.navigation.TopLevelDestination
 
 @Composable
@@ -64,10 +60,6 @@ fun SeanimeApp(
     appState: SeanimeAppState
 ) {
     SeanimeTheme {
-
-        var editableUserRate by remember {
-            mutableStateOf<EditableUserRate?>(null)
-        }
 
         val navigator = appState.navState.navigator
 
@@ -114,7 +106,7 @@ fun SeanimeApp(
                         profileEntry()
 
                         imageViewEntry()
-                        //rateEditorEntry()
+                        rateEditorEntry()
                     }
                 }
 
@@ -133,13 +125,6 @@ fun SeanimeApp(
                     onBack = navigator::back
                 )
             }
-        }
-
-        if (editableUserRate != null) {
-            //UserRateBottomSheet(
-            //    editableUserRate = checkNotNull(editableUserRate),
-            //    onDismissRequest = { editableUserRate = null }
-            //)
         }
     }
 }

@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.model.userrate
+package ru.vladsaybulin.core.domain.rate
 
-class UserRateValues(
-    val status: UserRateStatus,
-    val score: Int? = null,
-    val episodes: Int? = null,
-    val chapters: Int? = null,
-    val volumes: Int? = null,
-    val rewatches: Int? = null,
-    val text: String? = null
+/**
+ * Represents the changes in progress.
+ * @property episodes The new number of episodes.
+ * @property chapters The new number of chapters.
+ * @property volumes The new number of volumes.
+ */
+data class Progress(
+    val episodes: Int,
+    val chapters: Int,
+    val volumes: Int
 )
-
-fun UserRate.toUserRateValues(): UserRateValues {
-    return UserRateValues(
-        status = this.status,
-        score = this.score,
-        episodes = this.episodes,
-        chapters = this.chapters,
-        volumes = this.volumes,
-        rewatches = this.rewatches,
-        text = this.text
-    )
-}

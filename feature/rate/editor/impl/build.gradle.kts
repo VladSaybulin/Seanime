@@ -24,5 +24,6 @@ android {
 
 dependencies {
     implementation(projects.core.ui2.strings)
+    implementation(projects.core.ui2.score)
     implementation(projects.feature.rate.editor.api)
 }

@@ -23,6 +23,7 @@ import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.model.userrate.UserRateWithEntry
@@ -59,6 +60,10 @@ interface UserRateRepository {
     suspend fun deleteUserRate(userRateId: Long)
 
     suspend fun refreshInProgressRates(force: Boolean)
+
+    suspend fun getRateContext(titleType: EntryType, titleId: Long): UserRateContext
+
+    suspend fun getUserRateValues(rateId: Long): UserRateValues?
 
     companion object {
         val DefaultPagingConfig: PagingConfig
