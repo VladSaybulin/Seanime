@@ -35,7 +35,6 @@ import ru.vladsaybulin.data.model.animeVideoEntityShells
 import ru.vladsaybulin.data.model.asAnimeDetailsEntity
 import ru.vladsaybulin.data.model.asAnimeEntity
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.data.model.characterEntityShells
 import ru.vladsaybulin.data.model.genreEntityShells
 import ru.vladsaybulin.data.model.personEntityShells
@@ -46,7 +45,6 @@ import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
-import ru.vladsaybulin.data.util.AbstractShikimoriPagingSource
 import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.AnimeDetailsDao
@@ -303,41 +301,6 @@ class AnimeRepository @Inject constructor(
         animeEntities.map { it.asExternalModel() }
     }
 
-    private fun getPagedAnimePagingSource(queryMap: Map<QueryMapKey, String>) =
-        object : AbstractShikimoriPagingSource<Anime>() {
-            override suspend fun loadPage(
-                pageNumber: Int,
-                pageSize: Int
-            ): LoadResult<Int, Anime> = try {
-                val networkAnimes = animeDataSource.getAnime(
-                    page = pageNumber,
-                    limit = pageSize,
-                    queryMap = queryMap
-                )
-                val animeEntities = networkAnimes.map { it.asEntity() }
-                val userRatesEntities = networkAnimes.mapNotNull { it.userRateEntityShell() }
-
-                if (animeEntities.isNotEmpty()) {
-                    animeDao.upsertAnimes(animeEntities)
-                }
-
-                if (userRatesEntities.isNotEmpty()) {
-                    userRateDao.insertOrReplaceUserRates(userRatesEntities)
-                }
-
-                val animes = networkAnimes.map { it.asExternalModel() }
-
-                LoadResult.Page(
-                    data = animes,
-                    nextKey = if (animes.size == pageSize) pageNumber + 1 else null,
-                    prevKey = null
-                )
-            } catch (e: Exception) {
-                LoadResult.Error(e)
-            }
-
-        }
-
     private fun List<NetworkAnime>.shuffledAnimeOngoings(): List<NetworkAnime> {
         val seed = Clock.System.now().toEpochMilliseconds() / MILLISECONDS_IN_DAY
         return shuffled(Random(seed))
@@ -345,5 +308,3 @@ class AnimeRepository @Inject constructor(
 }
 
 private const val MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000
-
-private const val INITIAL_PAGE = 1

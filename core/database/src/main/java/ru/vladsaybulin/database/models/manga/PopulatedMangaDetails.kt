@@ -24,8 +24,6 @@ import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.genre.asExternalModel
 import ru.vladsaybulin.database.models.stats.asExternalModel
 import ru.vladsaybulin.database.models.text.asExternalModel
-import ru.vladsaybulin.model.common.DataSlice
-import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.manga.MangaDetails
 
 data class PopulatedMangaDetails(

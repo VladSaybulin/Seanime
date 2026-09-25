@@ -149,25 +149,6 @@ class UserRateDataSource @Inject constructor(
         return manga.userRate?.asNetworkModel()
     }
 
-    suspend fun getAnimeUserRatesByAnimeIds(animeIds: List<Long>): Map<Long, NetworkUserRate?> =
-        apolloClient.query(
-            AnimeUserRateQuery(
-                ids = animeIds.joinToString(separator = ","),
-                limit = animeIds.size
-            )
-        ).asAuthorizedCall()
-            .execute()
-            .dataAssertNoErrors.animes
-            .associate { it.id to it.userRate!!.asNetworkModel() }
-
-    suspend fun getMangaUserRatesByMangaIds(mangaIds: List<Long>): Map<Long, NetworkUserRate?> =
-        apolloClient.query(
-            MangaUserRateQuery(ids = mangaIds.joinToString(separator = ","), limit = mangaIds.size)
-        ).asAuthorizedCall()
-            .execute()
-            .dataAssertNoErrors.mangas
-            .associate { it.id to it.userRate?.asNetworkModel() }
-
     suspend fun createUserRate(createUserRateRequest: CreateUserRateRequest): NetworkUserRateWithTitleLink? {
         val wrappedBody = JsonObject(
             mapOf("user_rate" to json.encodeToJsonElement(createUserRateRequest))

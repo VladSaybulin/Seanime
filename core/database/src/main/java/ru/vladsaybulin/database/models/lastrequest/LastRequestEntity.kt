@@ -17,7 +17,6 @@
 package ru.vladsaybulin.database.models.lastrequest
 
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant

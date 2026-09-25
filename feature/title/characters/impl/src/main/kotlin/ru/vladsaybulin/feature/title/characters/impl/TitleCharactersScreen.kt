@@ -18,7 +18,6 @@ package ru.vladsaybulin.feature.title.characters.impl
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -44,9 +43,7 @@ import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui2.entry.EntryGrid
-import ru.vladsaybulin.core.ui2.entry.EntryGridItem
 import ru.vladsaybulin.core.ui2.entry.character.CharacterItem
-import ru.vladsaybulin.model.character.Character
 
 @Composable
 fun TitleCharactersScreen(
@@ -165,17 +162,6 @@ private fun TitleCharactersContent(
             }
         }
     }
-}
-
-@Composable
-private fun CharacterCard(character: Character, onClick: () -> Unit) {
-    EntryGridItem(
-        name = character.originalName,
-        russianName = character.russianName,
-        poster = character.poster,
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
-    )
 }
 
 fun LazyGridScope.header(

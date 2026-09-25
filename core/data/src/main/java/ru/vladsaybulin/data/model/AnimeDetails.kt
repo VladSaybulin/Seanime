@@ -24,7 +24,6 @@ import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
 import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
 import ru.vladsaybulin.database.models.common.SeasonPOJO
-import ru.vladsaybulin.database.models.stats.StatsProto
 import ru.vladsaybulin.network.models.anime.NetworkAnimeDetails
 
 fun NetworkAnimeDetails.asAnimeDetailsEntity() = AnimeDetailsEntity(

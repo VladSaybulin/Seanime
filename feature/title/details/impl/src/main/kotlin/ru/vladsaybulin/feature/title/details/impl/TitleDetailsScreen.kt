@@ -89,7 +89,6 @@ import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.model.common.DataSlice
 import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryStatus.Anons
 import ru.vladsaybulin.model.common.EntryStatus.Ongoing
 import ru.vladsaybulin.model.common.EntryStatus.Released
 import ru.vladsaybulin.model.common.EntryType
