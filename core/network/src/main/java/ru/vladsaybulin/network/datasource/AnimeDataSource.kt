@@ -23,6 +23,7 @@ import retrofit2.create
 import retrofit2.http.GET
 import retrofit2.http.Path
 import ru.vladsaybulin.common.network.ShikimoriException
+import ru.vladsaybulin.core.network.graphql.AnimeBriefQuery
 import ru.vladsaybulin.core.network.graphql.AnimeDetailsQuery
 import ru.vladsaybulin.core.network.graphql.AnimeQuery
 import ru.vladsaybulin.core.network.graphql.AnimeRolesQuery
@@ -80,19 +81,31 @@ class AnimeDataSource @Inject constructor(
         return response.dataAssertNoErrors.animes.map { it.asNetworkModels() }
     }
 
+    suspend fun getAnimeById(animeId: Long): NetworkAnime {
+        val query = AnimeBriefQuery(id = animeId.toString())
+        val response = apolloClient.query(query).execute()
+        val data = response.dataAssertNoErrors.animes.singleOrNull() ?: throw notFound(animeId)
+        return data.asNetworkModel()
+    }
+
     suspend fun getAnimeDetails(animeId: Long): NetworkAnimeDetails {
-        val response = apolloClient.query(AnimeDetailsQuery(id = animeId.toString())).execute()
-        return response.dataAssertNoErrors.animes.singleOrNull()?.asNetworkModel()
-            ?: throw ShikimoriException("Not found anime where id = $animeId")
+        val query = AnimeDetailsQuery(id = animeId.toString())
+        val response = apolloClient.query(query)
+            .asAuthorizedCall()
+            .execute()
+        val data = response.dataAssertNoErrors.animes.singleOrNull() ?: throw notFound(animeId)
+        return data.asNetworkModel()
     }
 
     suspend fun getAnimeRoles(animeId: Long): NetworkTitleRoles {
-        val response = apolloClient.query(AnimeRolesQuery(id = animeId.toString())).execute()
-        return checkNotNull(response.dataAssertNoErrors.animes.singleOrNull()) {
-            "Not found anime with id = $animeId"
-        }.asNetworkModel()
+        val query = AnimeRolesQuery(id = animeId.toString())
+        val response = apolloClient.query(query).execute()
+        val data = response.dataAssertNoErrors.animes.singleOrNull() ?: throw notFound(animeId)
+        return data.asNetworkModel()
     }
 
     suspend fun getSimilarAnimes(animeId: Long) = api.getSimilarAnime(animeId)
+
+    private fun notFound(animeId: Long) = ShikimoriException("Not found anime where id = $animeId")
 }
 
