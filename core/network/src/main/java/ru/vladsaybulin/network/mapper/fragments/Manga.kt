@@ -16,15 +16,19 @@
 
 package ru.vladsaybulin.network.mapper.fragments
 
+import ru.vladsaybulin.core.network.graphql.fragment.MangaDetailsFragment
 import ru.vladsaybulin.core.network.graphql.fragment.MangaFragment
 import ru.vladsaybulin.core.network.graphql.fragment.MangaWithLocalDateFragment
+import ru.vladsaybulin.core.network.graphql.fragment.PublisherFragment
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.network.mapper.enums.asEntryStatus
 import ru.vladsaybulin.network.mapper.enums.asMangaKind
 import ru.vladsaybulin.network.models.manga.NetworkManga
+import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
+import ru.vladsaybulin.network.models.manga.NetworkPublisher
 import ru.vladsaybulin.network.models.userrate.NetworkUserRate
 
-internal fun MangaFragment.asNetworkModel(userRate: NetworkUserRate? = null) = NetworkManga(
+internal fun MangaFragment.asNetworkModel() = NetworkManga(
     id = baseMangaFragment.id,
     originalName = baseMangaFragment.name,
     russianName = baseMangaFragment.russian,
@@ -35,11 +39,10 @@ internal fun MangaFragment.asNetworkModel(userRate: NetworkUserRate? = null) = N
     chapters = baseMangaFragment.chapters,
     volumes = baseMangaFragment.volumes,
     airedOn = airedOn?.incompleteDateFragment?.asNetworkModel(),
-    releasedOn = releasedOn?.incompleteDateFragment?.asNetworkModel(),
-    userRate = userRate
+    releasedOn = releasedOn?.incompleteDateFragment?.asNetworkModel()
 )
 
-internal fun MangaWithLocalDateFragment.asNetworkModel(userRate: NetworkUserRate? = null) = NetworkManga(
+internal fun MangaWithLocalDateFragment.asNetworkModel() = NetworkManga(
     id = baseMangaFragment.id,
     originalName = baseMangaFragment.name,
     russianName = baseMangaFragment.russian,
@@ -50,6 +53,26 @@ internal fun MangaWithLocalDateFragment.asNetworkModel(userRate: NetworkUserRate
     chapters = baseMangaFragment.chapters,
     volumes = baseMangaFragment.volumes,
     airedOn = airedOn?.date?.asIncompleteDate(),
-    releasedOn = releasedOn?.date?.asIncompleteDate(),
+    releasedOn = releasedOn?.date?.asIncompleteDate()
+)
+
+internal fun MangaDetailsFragment.asNetworkModel(userRate: NetworkUserRate? = null) = NetworkMangaDetails(
+    id = id,
+    nameEn = english,
+    nameJp = japanese,
+    alternativeName = synonyms.joinToString(separator = ", ").takeIf { it.isNotBlank() },
+    licenseNameRu = licenseNameRu,
+    descriptionHtml = descriptionHtml?.takeIf { it.isNotBlank() },
+    descriptionSource = descriptionSource?.takeIf { it.isNotBlank() },
+    genres = genres?.map { it.genreFragment.asNetworkModel() },
+    scoreStats = scoresStats?.map { it.scoreStatFragment.asNetworkModel() },
+    userRateStatusStats = statusesStats?.map { it.statusStatFragment.asNetworkModel() },
+    publishers = publishers.map { it.publisherFragment.asNetworkModel() },
+    related = related?.map { it.relatedEntryFragment.asNetworkModel() },
     userRate = userRate
+)
+
+private fun PublisherFragment.asNetworkModel() = NetworkPublisher(
+    id = id,
+    name = name
 )
