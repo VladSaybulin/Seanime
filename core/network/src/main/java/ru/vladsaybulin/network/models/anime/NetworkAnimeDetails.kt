@@ -27,26 +27,16 @@ import ru.vladsaybulin.network.models.common.NetworkIncompleteDate
 import ru.vladsaybulin.network.models.common.NetworkImage
 import ru.vladsaybulin.network.models.common.NetworkStatisticsItem
 import ru.vladsaybulin.network.models.related.NetworkRelated
+import ru.vladsaybulin.network.models.userrate.NetworkUserRate
 
 data class NetworkAnimeDetails(
     val id: Long,
-    val name: String,
-    val nameRu: String?,
     val nameEn: String?,
     val nameJp: String?,
-    val alternativeName: List<String>,
+    val alternativeName: String?,
     val licenseNameRu: String?,
-    val poster: NetworkImage?,
-    val kind: AnimeKind,
-    val score: Float?,
-    val status: EntryStatus,
-    val rating: AnimeRating,
-    val episodes: Int,
-    val episodesAired: Int,
     val duration: Int?,
     val nextEpisodeAt: Instant?,
-    val airedOn: NetworkIncompleteDate?,
-    val releasedOn: NetworkIncompleteDate?,
     val season: TimePeriodAiring.Season?,
     val descriptionHtml: String?,
     val descriptionSource: String?,
@@ -58,5 +48,6 @@ data class NetworkAnimeDetails(
     val studios: List<NetworkStudio>,
     val related: List<NetworkRelated>?,
     val screenshots: List<NetworkImage>,
-    val videos: List<NetworkVideo>?
+    val videos: List<NetworkVideo>?,
+    val userRate: NetworkUserRate?,
 )
