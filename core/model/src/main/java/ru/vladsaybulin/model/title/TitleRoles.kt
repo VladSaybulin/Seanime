@@ -19,7 +19,7 @@ package ru.vladsaybulin.model.title
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.person.PersonWithRoles
 
-class TitleRoles(
+data class TitleRoles(
     val characters: List<CharacterWithRole>,
     val authors: List<PersonWithRoles>
 )
