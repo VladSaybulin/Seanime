@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.model
+package ru.vladsaybulin.model.title
 
-import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.character.CharacterWithRole
+import ru.vladsaybulin.model.person.PersonWithRoles
 
-data class EntryDetails(
-    val anime: AnimeDetails? = null,
-    val manga: MangaDetails? = null,
-    val similarEntries: List<SimilarEntry>,
-    val userRate: UserRate?
+data class TitleRoles(
+    val characters: List<CharacterWithRole>,
+    val authors: List<PersonWithRoles>
 )
