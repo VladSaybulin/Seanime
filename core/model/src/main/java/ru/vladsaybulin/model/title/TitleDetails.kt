@@ -50,15 +50,15 @@ data class TitleDetails(
     val related: List<RelatedTitle>,
 
     // Anime specific
-    val nextEpisodeAt: Instant?,
-    val rating: AnimeRating,
-    val season: TimePeriodAiring.Season?,
-    val studios: List<Studio>,
-    val subbers: List<String>?,
-    val dubbers: List<String>?,
-    val screenshots: List<Image>?,
-    val videos: List<Video>?,
+    val nextEpisodeAt: Instant? = null,
+    val rating: AnimeRating? = null,
+    val season: TimePeriodAiring.Season? = null,
+    val studios: List<Studio>? = null,
+    val subbers: List<String>? = null,
+    val dubbers: List<String>? = null,
+    val screenshots: List<Image>? = null,
+    val videos: List<Video>? = null,
 
     // Manga specific
-    val publishers: List<Publisher>,
+    val publishers: List<Publisher>? = null,
 )
