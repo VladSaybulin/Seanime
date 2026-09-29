@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id("java-library")
+    alias(libs.plugins.seanime.library.jvm)
     alias(libs.plugins.apollo.graphql)
 }
 

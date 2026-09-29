@@ -73,5 +73,9 @@ gradlePlugin {
             id = "seanime.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
         }
+        register("libraryJvm") {
+            id = "seanime.library.jvm"
+            implementationClass = "LibraryJvmConventionPlugin"
+        }
     }
 }

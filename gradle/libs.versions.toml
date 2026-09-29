@@ -137,4 +137,5 @@ seanime-android-library-compose = { id = "seanime.android.library.compose", vers
 seanime-android-library = { id = "seanime.android.library", version = "unspecified" }
 seanime-android-feature = { id = "seanime.android.feature", version = "unspecified" }
 seanime-android-hilt = { id = "seanime.android.hilt", version = "unspecified" }
+seanime-library-jvm = { id = "seanime.library.jvm", version = "unspecified" }
 
