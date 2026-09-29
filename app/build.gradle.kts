@@ -23,7 +23,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
     alias(libs.plugins.kotlin.serialization)
-    id("com.google.android.gms.oss-licenses-plugin")
+    alias(libs.plugins.google.osslicenses)
 }
 
 android {

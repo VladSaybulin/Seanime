@@ -15,18 +15,14 @@
  */
 
 plugins {
-    alias(libs.plugins.seanime.android.library)
-    alias(libs.plugins.seanime.android.hilt)
+    id("java-library")
     alias(libs.plugins.apollo.graphql)
-}
-
-android {
-    namespace = "ru.vladsaybulin.core.network.graphql"
 }
 
 dependencies {
     implementation(libs.kotlinx.datetime)
-    implementation(libs.apollo.graphql.adapters)
+    implementation(libs.apollo.adapters.core)
+    implementation(libs.apollo.adapters.kotlinx.datetime)
     api(libs.apollo.graphql.runtime)
 }
 

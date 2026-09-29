@@ -14,18 +14,6 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        google()
-    }
-
-    dependencies {
-        classpath(libs.google.oss.licenses.plugin) {
-            exclude(group = "com.google.protobuf")
-        }
-    }
-}
-
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.androidApplication) apply false
