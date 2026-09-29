@@ -21,3 +21,59 @@ fragment AnimeWithLocalDateFragment on Anime {
     airedOn { date }
     releasedOn { date }
 }
+
+fragment AnimeDetailsFragment on Anime {
+    id
+
+    # Shared
+    english
+    japanese
+    licenseNameRu
+    synonyms
+
+    genres { ...GenreFragment }
+
+    descriptionHtml
+    descriptionSource
+
+    scoresStats { ...ScoreStatFragment }
+    statusesStats { ...StatusStatFragment }
+
+    related { ...RelatedEntryFragment }
+
+    # Anime specified
+    duration
+    fandubbers
+    fansubbers
+    nextEpisodeAt
+    rating
+    season
+    screenshots { ...ScreenshotsFragment }
+    studios { ...StudioFragment }
+    videos { ...VideoFragment }
+}
+
+fragment AnimeRolesFragment on Anime {
+    characterRoles { ...CharacterWithRoleFragment }
+    personRoles { ...PersonWithRolesFragment }
+}
+
+fragment ScreenshotsFragment on Screenshot {
+    x332Url
+    x166Url
+    originalUrl
+}
+
+fragment StudioFragment on Studio {
+    id
+    imageUrl
+    name
+}
+
+fragment VideoFragment on Video {
+    url
+    imageUrl
+    playerUrl
+    kind
+    name
+}
