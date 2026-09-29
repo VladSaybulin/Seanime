@@ -135,7 +135,8 @@ seanime-android-application-compose = { id = "seanime.android.application.compos
 seanime-android-application = { id = "seanime.android.application", version = "unspecified" }
 seanime-android-library-compose = { id = "seanime.android.library.compose", version = "unspecified" }
 seanime-android-library = { id = "seanime.android.library", version = "unspecified" }
-seanime-android-feature = { id = "seanime.android.feature", version = "unspecified" }
+seanime-android-feature-api = { id = "seanime.android.feature.api", version = "unspecified" }
+seanime-android-feature-impl = { id = "seanime.android.feature.impl", version = "unspecified" }
 seanime-android-hilt = { id = "seanime.android.hilt", version = "unspecified" }
 seanime-library-jvm = { id = "seanime.library.jvm", version = "unspecified" }
 

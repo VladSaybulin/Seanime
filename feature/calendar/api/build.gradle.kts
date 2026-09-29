@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id("seanime.android.feature.api")
+    alias(libs.plugins.seanime.android.feature.api)
 }
 
 android {
