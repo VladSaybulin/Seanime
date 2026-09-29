@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import ru.vladsaybulin.database.models.person.PersonEntity
 
 @Entity(
@@ -26,7 +27,7 @@ import ru.vladsaybulin.database.models.person.PersonEntity
     primaryKeys = ["anime_id", "person_id"],
     foreignKeys = [
         ForeignKey(
-            entity = AnimeEntity::class,
+            entity = AnimeDetailsEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE
@@ -36,9 +37,10 @@ import ru.vladsaybulin.database.models.person.PersonEntity
             parentColumns = ["id"],
             childColumns = ["person_id"]
         )
-    ]
+    ],
+    indices = [Index(value = ["anime_id"])]
 )
-data class AnimePersonRolesEntity(
+data class AnimePersonReferenceWithRolesEntity(
 
     @ColumnInfo("anime_id")
     val animeId: Long,
@@ -46,9 +48,6 @@ data class AnimePersonRolesEntity(
     @ColumnInfo("person_id")
     val personId: Long,
 
-    @ColumnInfo("roles_en")
-    val roles: List<String>,
-
-    @ColumnInfo("is_main")
-    val isMain: Boolean
+    @ColumnInfo("roles")
+    val roles: List<String>
 )

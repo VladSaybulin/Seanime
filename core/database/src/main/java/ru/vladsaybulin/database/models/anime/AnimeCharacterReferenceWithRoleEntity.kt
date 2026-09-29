@@ -14,41 +14,40 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.database.models.manga
+package ru.vladsaybulin.database.models.anime
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import ru.vladsaybulin.database.models.person.PersonEntity
+import androidx.room.Index
+import ru.vladsaybulin.database.models.character.CharacterEntity
 
 @Entity(
-    tableName = "manga_person_roles",
-    primaryKeys = ["manga_id", "person_id"],
+    tableName = "anime_characters",
+    primaryKeys = ["anime_id", "character_id"],
     foreignKeys = [
         ForeignKey(
-            entity = MangaEntity::class,
+            entity = AnimeDetailsEntity::class,
             parentColumns = ["id"],
-            childColumns = ["manga_id"],
+            childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = PersonEntity::class,
+            entity = CharacterEntity::class,
             parentColumns = ["id"],
-            childColumns = ["person_id"]
+            childColumns = ["character_id"]
         )
-    ]
+    ],
+    indices = [Index(value = ["anime_id"])]
 )
-data class MangaPersonRolesEntity(
+data class AnimeCharacterReferenceWithRoleEntity(
 
-    @ColumnInfo("manga_id")
-    val mangaId: Long,
+    @ColumnInfo("anime_id")
+    val animeId: Long,
 
-    @ColumnInfo("person_id")
-    val personId: Long,
-
-    @ColumnInfo("roles")
-    val roles: List<String>,
+    @ColumnInfo("character_id")
+    val characterId: Long,
 
     @ColumnInfo("is_main")
-    val isMain: Boolean
+    val isMainRole: Boolean
 )

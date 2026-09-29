@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.anime.VideoKind
 
@@ -27,12 +28,13 @@ import ru.vladsaybulin.model.anime.VideoKind
     primaryKeys = ["anime_id", "order"],
     foreignKeys = [
         ForeignKey(
-            entity = AnimeEntity::class,
+            entity = AnimeDetailsEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["anime_id"])]
 )
 data class AnimeVideoEntity(
 

@@ -19,13 +19,14 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "anime_studio",
     primaryKeys = ["anime_id", "studio_id"],
     foreignKeys = [
         ForeignKey(
-            entity = AnimeEntity::class,
+            entity = AnimeDetailsEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE
@@ -33,9 +34,11 @@ import androidx.room.ForeignKey
         ForeignKey(
             entity = StudioEntity::class,
             parentColumns = ["id"],
-            childColumns = ["studio_id"]
+            childColumns = ["studio_id"],
+            onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["anime_id"])]
 )
 class AnimeStudioCrossRef(
 

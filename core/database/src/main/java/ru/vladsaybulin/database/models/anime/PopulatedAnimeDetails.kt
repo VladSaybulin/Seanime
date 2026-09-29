@@ -19,23 +19,12 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.genre.GenreEntity
-import ru.vladsaybulin.database.models.genre.asExternalModel
-import ru.vladsaybulin.database.models.stats.asExternalModel
-import ru.vladsaybulin.database.models.text.asExternalModel
-import ru.vladsaybulin.model.anime.AnimeDetails
 
 data class PopulatedAnimeDetails(
 
-    @Embedded val animeDetailsEntity: AnimeDetailsEntity,
-
-    @Relation(
-        entity = AnimeEntity::class,
-        parentColumn = "id",
-        entityColumn = "id"
-    )
-    val animeEntity: AnimeEntity,
+    @Embedded
+    val animeDetailsEntity: AnimeDetailsEntity,
 
     @Relation(
         entity = GenreEntity::class,
@@ -59,35 +48,19 @@ data class PopulatedAnimeDetails(
             entityColumn = "studio_id"
         )
     )
-    val studios: List<StudioEntity>
-)
+    val studios: List<StudioEntity>,
 
-fun PopulatedAnimeDetails.asExternalModel(): AnimeDetails = AnimeDetails(
-    id = animeEntity.id,
-    originalName = animeEntity.originalName,
-    russianName = animeEntity.russianName,
-    englishName = animeDetailsEntity.nameEn,
-    japaneseName = animeDetailsEntity.nameJp,
-    alternativeName = animeDetailsEntity.altNames,
-    licenseNameRu = animeDetailsEntity.licenseNameRu,
-    poster = animeEntity.poster?.asExternalModel(),
-    kind = animeEntity.kind,
-    score = animeEntity.score,
-    status = animeEntity.status,
-    rating = animeDetailsEntity.rating,
-    episodes = animeEntity.episodes,
-    episodesAired = animeEntity.episodesAired,
-    duration = animeDetailsEntity.duration,
-    nextEpisodeAt = animeDetailsEntity.nextEpisodeAt,
-    airedOn = animeEntity.airedOn?.asExternalModel(),
-    releasedOn = animeEntity.releasedOn?.asExternalModel(),
-    description = animeDetailsEntity.description?.asExternalModel(),
-    descriptionSource = animeDetailsEntity.descriptionSource,
-    genres = genres.map { it.asExternalModel() },
-    subbers = animeDetailsEntity.subbers,
-    dubbers = animeDetailsEntity.dubbers,
-    scoreStats = animeDetailsEntity.scoreStats.asExternalModel(),
-    userRateStatusStats = animeDetailsEntity.statusStats.asExternalModel(),
-    studios = studios.map { it.asExternalModel() },
-    season = animeDetailsEntity.season?.asExternalModel()
+    @Relation(
+        entity = AnimeScreenshotEntity::class,
+        parentColumn = "id",
+        entityColumn = "anime_id"
+    )
+    val screenshots: List<AnimeScreenshotEntity>,
+
+    @Relation(
+        entity = AnimeVideoEntity::class,
+        parentColumn = "id",
+        entityColumn = "anime_id"
+    )
+    val videos: List<AnimeVideoEntity>
 )

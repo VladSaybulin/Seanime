@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.manga
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import ru.vladsaybulin.database.models.genre.GenreEntity
 
 @Entity(
@@ -26,7 +27,7 @@ import ru.vladsaybulin.database.models.genre.GenreEntity
     primaryKeys = ["manga_id", "genre_id"],
     foreignKeys = [
         ForeignKey(
-            entity = MangaEntity::class,
+            entity = MangaDetailsEntity::class,
             parentColumns = ["id"],
             childColumns = ["manga_id"],
             onDelete = ForeignKey.CASCADE
@@ -36,7 +37,8 @@ import ru.vladsaybulin.database.models.genre.GenreEntity
             parentColumns = ["id"],
             childColumns = ["genre_id"]
         )
-    ]
+    ],
+    indices = [Index(value = ["manga_id"])]
 )
 data class MangaGenreCrossRef(
 

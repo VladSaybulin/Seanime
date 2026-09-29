@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.database.models.manga
+package ru.vladsaybulin.database.models.title
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
-import androidx.room.Relation
+import ru.vladsaybulin.database.ANIME_PREFIX
+import ru.vladsaybulin.database.MANGA_PREFIX
+import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.manga.MangaEntity
+import ru.vladsaybulin.model.related.RelationType
 
-class PopulatedSimilarManga(
-    @Embedded
-    private val crossRef: MangaSimilarMangaCrossRef,
+data class PopulatedRelatedTitle(
 
-    @Relation(
-        entity = MangaEntity::class,
-        parentColumn = "similar_id",
-        entityColumn = "id"
-    )
-    val similarManga: MangaEntity
+    @ColumnInfo("relation_type")
+    val relationType: RelationType,
+
+    @Embedded(ANIME_PREFIX)
+    val animeEntity: AnimeEntity?,
+
+    @Embedded(MANGA_PREFIX)
+    val mangaEntity: MangaEntity?
 )
-
-fun PopulatedSimilarManga.asExternalModel() = similarManga.asExternalModel()

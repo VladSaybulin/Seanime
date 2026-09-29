@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.database.models.anime
+package ru.vladsaybulin.database.models.title
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
-import androidx.room.Relation
+import ru.vladsaybulin.database.PERSON_PREFIX
 import ru.vladsaybulin.database.models.person.PersonEntity
-import ru.vladsaybulin.database.models.person.asExternalModel
-import ru.vladsaybulin.model.person.PersonWithRoles
 
-data class PopulatedAnimeAuthor(
+class PopulatedPersonWithRoles(
+    @ColumnInfo("roles")
+    val roles: List<String>,
 
-    @Embedded val animePersonRolesEntity: AnimePersonRolesEntity,
-
-    @Relation(
-        entity = PersonEntity::class,
-        parentColumn = "person_id",
-        entityColumn = "id"
-    )
+    @Embedded(PERSON_PREFIX)
     val person: PersonEntity
-)
-
-fun PopulatedAnimeAuthor.asExternalModel() = PersonWithRoles(
-    person = person.asExternalModel(),
-    roles = animePersonRolesEntity.roles,
-    isMain = animePersonRolesEntity.isMain
 )
