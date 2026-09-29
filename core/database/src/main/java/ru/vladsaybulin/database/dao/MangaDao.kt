@@ -30,12 +30,12 @@ import ru.vladsaybulin.database.models.manga.MangaEntity
 interface MangaDao {
 
     @Query("SELECT * FROM mangas WHERE id = :mangaId")
-    suspend fun getMangaById(mangaId: Long): MangaEntity
+    fun getMangaStreamById(mangaId: Long): Flow<MangaEntity>
 
     @Query("SELECT status, chapters, volumes FROM mangas WHERE id = :mangaId")
     suspend fun getMangaContext(mangaId: Long): MangaRateContextDb
 
-    @Query("SELECT imageoriginal AS original, imagepreview AS preview FROM mangas WHERE id = :mangaId")
+    @Query("SELECT poster_original AS original, poster_preview AS preview FROM mangas WHERE id = :mangaId")
     fun getPosterStream(mangaId: Long): Flow<ImagePOJO?>
 
     @Upsert
