@@ -1,3 +1,7 @@
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import ru.vladsaybulin.seanime.configureKotlinJvm
+
 /*
  * Copyright 2026 Vlad Saybulin
  *
@@ -14,15 +18,10 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.model
+class LibraryJvmConventionPlugin : Plugin<Project> {
+    override fun apply(target: Project) = with(target) {
+        pluginManager.apply("org.jetbrains.kotlin.jvm")
 
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.common.Image
-
-data class SimilarEntry(
-    val entryId: Long,
-    val entryType: EntryType,
-    val originalName: String,
-    val russianName: String?,
-    val poster: Image?,
-)
+        configureKotlinJvm()
+    }
+}

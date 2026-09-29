@@ -41,7 +41,6 @@ import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.search.TimePeriodAiring
-import ru.vladsaybulin.model.userrate.EditableUserRate
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -111,18 +110,6 @@ sealed class UserRateState {
 
     data class Success(val userRate: UserRate) : UserRateState()
 }
-
-internal fun createEditableUserRate(
-    detailsState: TitleDetailsState.Success,
-    userRateState: UserRateState.Success
-) = EditableUserRate(
-        userRate = userRateState.userRate,
-        titleType = detailsState.entryType,
-        entryStatus = detailsState.status,
-        maxEpisodes = if (detailsState.entryType == EntryType.Anime) detailsState.episodes else -1,
-        maxChapters = if (detailsState.entryType == EntryType.Manga) detailsState.chapters else -1,
-        maxVolumes = if (detailsState.entryType == EntryType.Manga) detailsState.volumes else -1
-    )
 
 fun successTitleDetails(
     animeDetails: AnimeDetails,

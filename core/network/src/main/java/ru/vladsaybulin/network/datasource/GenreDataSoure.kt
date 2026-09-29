@@ -16,7 +16,7 @@
 
 package ru.vladsaybulin.network.datasource
 
-import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo.ApolloClient
 import ru.vladsaybulin.core.network.graphql.GenresQuery
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.network.mapper.enums.asGenreEntryTypeEnum
