@@ -24,8 +24,11 @@ import ru.vladsaybulin.database.models.common.ImagePOJO
 import ru.vladsaybulin.database.models.common.IncompleteDatePOJO
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaKind
+import ru.vladsaybulin.model.title.Title
+import ru.vladsaybulin.model.title.toTitleKind
 
 @Entity(tableName = "mangas")
 class MangaEntity(
@@ -35,12 +38,12 @@ class MangaEntity(
     val id: Long,
 
     @ColumnInfo("name")
-    val originalName: String,
+    val name: String,
 
-    @ColumnInfo("russian_name")
-    val russianName: String?,
+    @ColumnInfo("name_ru")
+    val nameRu: String?,
 
-    @Embedded("image")
+    @Embedded("poster_")
     val poster: ImagePOJO?,
 
     @ColumnInfo("kind")
@@ -61,14 +64,14 @@ class MangaEntity(
     @Embedded("aired_on_")
     val airedOn: IncompleteDatePOJO?,
 
-    @Embedded("released_on")
+    @Embedded("released_on_")
     val releasedOn: IncompleteDatePOJO?
 )
 
 fun MangaEntity.asExternalModel() = Manga(
     id = id,
-    name = originalName,
-    russianName = russianName,
+    name = name,
+    russianName = nameRu,
     poster = poster?.asExternalModel(),
     kind = kind,
     status = status,

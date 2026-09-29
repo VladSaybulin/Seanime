@@ -18,125 +18,116 @@ package ru.vladsaybulin.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.database.models.anime.AnimeCharacterEntity
+import ru.vladsaybulin.database.ANIME_ALIAS
+import ru.vladsaybulin.database.ANIME_ROWS
+import ru.vladsaybulin.database.CHARACTER_ALIAS
+import ru.vladsaybulin.database.CHARACTER_ROWS
+import ru.vladsaybulin.database.MANGA_ALIAS
+import ru.vladsaybulin.database.MANGA_ROWS
+import ru.vladsaybulin.database.PERSON_ALIAS
+import ru.vladsaybulin.database.PERSON_ROWS
+import ru.vladsaybulin.database.models.anime.AnimeCharacterReferenceWithRoleEntity
 import ru.vladsaybulin.database.models.anime.AnimeDetailsEntity
+import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.AnimeGenreCrossRef
-import ru.vladsaybulin.database.models.anime.AnimePersonRolesEntity
+import ru.vladsaybulin.database.models.anime.AnimePersonReferenceWithRolesEntity
 import ru.vladsaybulin.database.models.anime.AnimeRelatedEntity
 import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
 import ru.vladsaybulin.database.models.anime.AnimeSimilarAnimeCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeStudioCrossRef
 import ru.vladsaybulin.database.models.anime.AnimeVideoEntity
-import ru.vladsaybulin.database.models.anime.PopulatedAnimeAuthor
-import ru.vladsaybulin.database.models.anime.PopulatedAnimeCharacter
 import ru.vladsaybulin.database.models.anime.PopulatedAnimeDetails
-import ru.vladsaybulin.database.models.anime.PopulatedAnimeRelated
-import ru.vladsaybulin.database.models.anime.PopulatedSimilarAnime
-import ru.vladsaybulin.database.models.anime.StudioEntity
+import ru.vladsaybulin.database.models.title.PopulatedCharacterWithRole
+import ru.vladsaybulin.database.models.title.PopulatedPersonWithRoles
+import ru.vladsaybulin.database.models.title.PopulatedRelatedTitle
 
 @Dao
 interface AnimeDetailsDao {
 
+    // Get methods
+
     @Query("SELECT * FROM anime_details WHERE id = :animeId")
     @Transaction
-    fun getAnimeDetails(animeId: Long): Flow<PopulatedAnimeDetails>
+    fun getDetailsStream(animeId: Long): Flow<PopulatedAnimeDetails>
 
-    @Query("SELECT * FROM anime_characters WHERE anime_id = :animeId AND is_main = 1")
-    @Transaction
-    fun getMainAnimeCharacters(animeId: Long): Flow<List<PopulatedAnimeCharacter>>
+    @Query(
+        value = """
+            SELECT 
+                relation_type,
+                $ANIME_ROWS,
+                $MANGA_ROWS
+            FROM (SELECT * FROM anime_related WHERE anime_id = :animeId) AS anime_related
+            LEFT OUTER JOIN animes AS $ANIME_ALIAS ON anime_related.related_anime_id = $ANIME_ALIAS.id
+            LEFT OUTER JOIN mangas AS $MANGA_ALIAS ON anime_related.related_manga_id = $MANGA_ALIAS.id        
+        """
+    )
+    suspend fun getRelated(animeId: Long): List<PopulatedRelatedTitle>
 
-    @Query("SELECT * FROM anime_person_roles WHERE anime_id = :animeId AND is_main = 1")
-    @Transaction
-    fun getMainAnimeAuthors(animeId: Long): Flow<List<PopulatedAnimeAuthor>>
+    @Query(
+        value = """
+            SELECT
+                ac.is_main,
+                $CHARACTER_ROWS
+            FROM (SELECT character_id, is_main FROM anime_characters WHERE anime_id = :animeId) AS ac
+            INNER JOIN characters AS $CHARACTER_ALIAS ON ac.character_id = $CHARACTER_ALIAS.id
+        """
+    )
+    suspend fun getCharactersWithRole(animeId: Long): List<PopulatedCharacterWithRole>
 
-    @Query("SELECT * FROM anime_related WHERE anime_id = :animeId LIMIT :limit")
-    @Transaction
-    fun getFirstAnimeRelated(animeId: Long, limit: Int): Flow<List<PopulatedAnimeRelated>>
+    @Query(
+        value = """
+            SELECT
+                apr.roles,
+                $PERSON_ROWS
+            FROM (SELECT person_id, roles FROM anime_person_roles WHERE anime_id = :animeId) AS apr
+            INNER JOIN person AS $PERSON_ALIAS ON apr.person_id = $PERSON_ALIAS.id
+        """
+    )
+    suspend fun getAuthorsWithRoles(animeId: Long): List<PopulatedPersonWithRoles>
 
-    @Query("SELECT * FROM anime_screenshots WHERE anime_id = :animeId")
-    fun getAnimeScreenshots(animeId: Long): Flow<List<AnimeScreenshotEntity>>
+    @Query(
+        value = """
+            SELECT $ANIME_ALIAS.*
+            FROM (SELECT similar_id FROM anime_similar_anime WHERE anime_id = :animeId) AS sa
+            INNER JOIN animes AS $ANIME_ALIAS ON sa.similar_id = $ANIME_ALIAS.id
+        """
+    )
+    fun getSimilarStream(animeId: Long): Flow<List<AnimeEntity>>
 
-    @Query("SELECT * FROM anime_videos WHERE anime_id = :animeId LIMIT :limit")
-    fun getFirstAnimeVideos(animeId: Long, limit: Int): Flow<List<AnimeVideoEntity>>
 
-    @Query("SELECT * FROM anime_similar_anime WHERE anime_id = :animeId")
-    @Transaction
-    fun getSimilarAnimes(animeId: Long): Flow<List<PopulatedSimilarAnime>>
+    // Insert methods
 
-    @Query("SELECT * FROM anime_person_roles WHERE anime_id = :animeId ORDER BY is_main")
-    @Transaction
-    fun getAllAnimeAuthors(animeId: Long): Flow<List<PopulatedAnimeAuthor>>
-
-    @Query("SELECT * FROM anime_related WHERE anime_id = :animeId")
-    @Transaction
-    fun getAllAnimeRelatedTitles(animeId: Long): Flow<List<PopulatedAnimeRelated>>
-
-    @Query("SELECT * FROM anime_characters WHERE anime_id = :animeId ORDER BY is_main DESC")
-    fun getAllAnimeCharacters(animeId: Long): Flow<List<PopulatedAnimeCharacter>>
-
-    @Query("SELECT * FROM anime_videos WHERE anime_id = :animeId")
-    fun getAllAnimeVideos(animeId: Long): Flow<List<AnimeVideoEntity>>
-
-    @Insert
-    suspend fun insertAnimeAuthors(authors: List<AnimePersonRolesEntity>)
-
-    @Insert
-    suspend fun insertAnimeCharacters(characters: List<AnimeCharacterEntity>)
-
-    @Insert
-    suspend fun insertAnimeGenreCrossReferences(animeGenre: List<AnimeGenreCrossRef>)
-
-    @Insert
-    suspend fun insertAnimeScreenshots(animeScreenshots: List<AnimeScreenshotEntity>)
-
-    @Insert
-    suspend fun insertAnimeVideos(animeVideos: List<AnimeVideoEntity>)
-
-    @Insert
-    suspend fun insertAnimeRelated(animeRelated: List<AnimeRelatedEntity>)
+    @Insert(onConflict = REPLACE)
+    suspend fun insertOrReplaceDetails(details: AnimeDetailsEntity)
 
     @Insert
-    suspend fun insertAnimeSimilarAnimeCrossReferences(animeSimilarAnimes: List<AnimeSimilarAnimeCrossRef>)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnoreStudios(studios: List<StudioEntity>)
+    suspend fun insertDetailsReferences(
+        relatedTitles: List<AnimeRelatedEntity>,
+        genreReferences: List<AnimeGenreCrossRef>,
+        studioReferences: List<AnimeStudioCrossRef>,
+        screenshots: List<AnimeScreenshotEntity>,
+        videos: List<AnimeVideoEntity>
+    )
 
     @Insert
-    suspend fun insertAnimeStudioCrossReferences(animeStudioEntities: List<AnimeStudioCrossRef>)
+    suspend fun insertRolesReferences(
+        characterReferences: List<AnimeCharacterReferenceWithRoleEntity>,
+        personReferences: List<AnimePersonReferenceWithRolesEntity>
+    )
 
-    @Upsert
-    suspend fun upsertAnimeDetails(animeDetails: AnimeDetailsEntity)
+    @Insert
+    suspend fun insertSimilarReferences(
+        similarReferences: List<AnimeSimilarAnimeCrossRef>
+    )
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceAnimeDetails(animeDetails: AnimeDetailsEntity)
 
-    @Query("DELETE FROM anime_similar_anime WHERE anime_id = :animeId")
-    suspend fun deleteAnimeSimilarAnimeCrossRef(animeId: Long)
+    // Delete methods
 
-    @Query("DELETE FROM anime_characters WHERE anime_id = :animeId")
-    suspend fun deleteAnimeCharacters(animeId: Long)
-
-    @Query("DELETE FROM anime_person_roles WHERE anime_id = :animeId")
-    suspend fun deleteAnimePersonRoles(animeId: Long)
-
-    @Query("DELETE FROM anime_genre WHERE anime_id = :animeId")
-    suspend fun deleteAnimeGenreCrossReferences(animeId: Long)
-
-    @Query("DELETE FROM anime_studio WHERE anime_id = :animeId")
-    suspend fun deleteAnimeStudioCrossReferences(animeId: Long)
-
-    @Query("DELETE FROM anime_related WHERE anime_id = :animeId")
-    suspend fun deleteAnimeRelated(animeId: Long)
-
-    @Query("DELETE FROM anime_screenshots WHERE anime_id = :animeId")
-    suspend fun deleteAnimeScreenshots(animeId: Long)
-
-    @Query("DELETE FROM anime_videos WHERE anime_id = :animeId")
-    suspend fun deleteAnimeVideos(animeId: Long)
+    @Query("DELETE FROM anime_details WHERE id = :animeId")
+    suspend fun deleteDetails(animeId: Long)
 
 }

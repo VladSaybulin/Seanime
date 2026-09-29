@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.manga
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import ru.vladsaybulin.database.models.character.CharacterEntity
 
 @Entity(
@@ -26,7 +27,7 @@ import ru.vladsaybulin.database.models.character.CharacterEntity
     primaryKeys = ["manga_id", "character_id"],
     foreignKeys = [
         ForeignKey(
-            entity = MangaEntity::class,
+            entity = MangaDetailsEntity::class,
             parentColumns = ["id"],
             childColumns = ["manga_id"],
             onDelete = ForeignKey.CASCADE
@@ -36,9 +37,10 @@ import ru.vladsaybulin.database.models.character.CharacterEntity
             parentColumns = ["id"],
             childColumns = ["character_id"]
         )
-    ]
+    ],
+    indices = [Index(value = ["manga_id"])]
 )
-data class MangaCharacterEntity(
+data class MangaCharacterReferenceWithRoleEntity(
 
     @ColumnInfo("manga_id")
     val mangaId: Long,
@@ -47,5 +49,5 @@ data class MangaCharacterEntity(
     val characterId: Long,
 
     @ColumnInfo("is_main")
-    val isMain: Boolean
+    val isMainRole: Boolean
 )

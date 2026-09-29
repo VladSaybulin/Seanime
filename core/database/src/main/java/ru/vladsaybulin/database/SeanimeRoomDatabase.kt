@@ -35,11 +35,11 @@ import ru.vladsaybulin.database.dao.PersonDao
 import ru.vladsaybulin.database.dao.TopicsDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.dao.UsersDao
-import ru.vladsaybulin.database.models.anime.AnimeCharacterEntity
+import ru.vladsaybulin.database.models.anime.AnimeCharacterReferenceWithRoleEntity
 import ru.vladsaybulin.database.models.anime.AnimeDetailsEntity
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.anime.AnimeGenreCrossRef
-import ru.vladsaybulin.database.models.anime.AnimePersonRolesEntity
+import ru.vladsaybulin.database.models.anime.AnimePersonReferenceWithRolesEntity
 import ru.vladsaybulin.database.models.anime.AnimeRelatedEntity
 import ru.vladsaybulin.database.models.anime.AnimeScreenshotEntity
 import ru.vladsaybulin.database.models.anime.AnimeSimilarAnimeCrossRef
@@ -58,11 +58,11 @@ import ru.vladsaybulin.database.models.filters.FilterPublisherEntity
 import ru.vladsaybulin.database.models.filters.FilterStudioEntity
 import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
-import ru.vladsaybulin.database.models.manga.MangaCharacterEntity
+import ru.vladsaybulin.database.models.manga.MangaCharacterReferenceWithRoleEntity
 import ru.vladsaybulin.database.models.manga.MangaDetailsEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.MangaGenreCrossRef
-import ru.vladsaybulin.database.models.manga.MangaPersonRolesEntity
+import ru.vladsaybulin.database.models.manga.MangaPersonReferenceWithRolesEntity
 import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
 import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
 import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
@@ -116,8 +116,8 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         /* Anime details entities */
         AnimeDetailsEntity::class,
         AnimeGenreCrossRef::class,
-        AnimePersonRolesEntity::class,
-        AnimeCharacterEntity::class,
+        AnimePersonReferenceWithRolesEntity::class,
+        AnimeCharacterReferenceWithRoleEntity::class,
         AnimeRelatedEntity::class,
         AnimeStudioCrossRef::class,
         AnimeScreenshotEntity::class,
@@ -127,8 +127,8 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
         /* Manga details entities */
         MangaDetailsEntity::class,
         MangaGenreCrossRef::class,
-        MangaPersonRolesEntity::class,
-        MangaCharacterEntity::class,
+        MangaPersonReferenceWithRolesEntity::class,
+        MangaCharacterReferenceWithRoleEntity::class,
         MangaRelatedEntity::class,
         MangaPublisherCrossRef::class,
         MangaSimilarMangaCrossRef::class,

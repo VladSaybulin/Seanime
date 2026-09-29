@@ -30,12 +30,12 @@ import ru.vladsaybulin.database.models.common.ImagePOJO
 interface AnimeDao {
 
     @Query("SELECT * FROM animes WHERE id = :animeId")
-    suspend fun getAnimeById(animeId: Long): AnimeEntity
+    fun getAnimeStreamById(animeId: Long): Flow<AnimeEntity>
 
     @Query("SELECT status, max(episodes, episodes_aired) AS episodes FROM animes WHERE id = :animeId")
     suspend fun getAnimeRateContext(animeId: Long): AnimeRateContextDb
 
-    @Query("SELECT imageoriginal AS original, imagepreview AS preview FROM animes WHERE id = :animeId")
+    @Query("SELECT poster_original AS original, poster_preview AS preview FROM animes WHERE id = :animeId")
     fun getPosterStream(animeId: Long): Flow<ImagePOJO?>
 
     @Upsert

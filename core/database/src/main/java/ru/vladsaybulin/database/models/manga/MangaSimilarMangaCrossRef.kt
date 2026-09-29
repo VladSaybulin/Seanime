@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.manga
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "manga_similar_manga",
@@ -36,7 +37,8 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    primaryKeys = ["manga_id", "similar_id"]
+    primaryKeys = ["manga_id", "similar_id"],
+    indices = [Index(value = ["manga_id"])]
 )
 class MangaSimilarMangaCrossRef(
     @ColumnInfo("manga_id")
