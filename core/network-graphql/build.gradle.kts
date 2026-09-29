@@ -15,36 +15,39 @@
  */
 
 plugins {
-    alias(libs.plugins.seanime.android.library)
-    alias(libs.plugins.seanime.android.hilt)
+    alias(libs.plugins.seanime.library.jvm)
     alias(libs.plugins.apollo.graphql)
-}
-
-android {
-    namespace = "ru.vladsaybulin.core.network.graphql"
 }
 
 dependencies {
     implementation(libs.kotlinx.datetime)
-    implementation(libs.apollo.graphql.adapters)
+    implementation(libs.apollo.adapters.core)
+    implementation(libs.apollo.adapters.kotlinx.datetime)
     api(libs.apollo.graphql.runtime)
 }
 
 apollo {
     service("service") {
+        generateKotlinModels = true
+
         addTypename = "ifAbstract"
         packageName.set("ru.vladsaybulin.core.network.graphql")
         mapScalarToKotlinLong("ID")
         mapScalar(
             graphQLName = "ISO8601DateTime",
             targetName = "kotlinx.datetime.Instant",
-            expression = "com.apollographql.apollo3.adapter.KotlinxInstantAdapter"
+            expression = "com.apollographql.adapter.datetime.KotlinxInstantAdapter"
         )
         mapScalar(
             graphQLName = "ISO8601Date",
             targetName = "kotlinx.datetime.LocalDate",
-            expression = "com.apollographql.apollo3.adapter.KotlinxLocalDateAdapter"
+            expression = "com.apollographql.adapter.datetime.KotlinxLocalDateAdapter"
         )
         mapScalarToKotlinInt("PositiveInt")
+
+        introspection {
+            endpointUrl.set("https://shikimori.io/api/graphql")
+            schemaFile.set(file("src/main/graphql/ru/vladsaybulin/shikimori/graphql/schema.graphqls"))
+        }
     }
 }

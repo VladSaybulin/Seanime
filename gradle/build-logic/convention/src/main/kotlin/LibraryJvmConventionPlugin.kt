@@ -1,3 +1,7 @@
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import ru.vladsaybulin.seanime.configureKotlinJvm
+
 /*
  * Copyright 2026 Vlad Saybulin
  *
@@ -14,11 +18,10 @@
  * limitations under the License.
  */
 
-plugins {
-    alias(libs.plugins.seanime.library.jvm)
-}
+class LibraryJvmConventionPlugin : Plugin<Project> {
+    override fun apply(target: Project) = with(target) {
+        pluginManager.apply("org.jetbrains.kotlin.jvm")
 
-dependencies {
-    api(libs.kotlinx.datetime)
-    api(libs.kotlinx.collections.immutable)
+        configureKotlinJvm()
+    }
 }

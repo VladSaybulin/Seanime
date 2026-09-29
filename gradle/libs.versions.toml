@@ -12,14 +12,16 @@ androidxDataStore = "1.1.1"
 androidxHiltNavigationCompose = "1.2.0"
 androidxLifecycle = "2.8.1"
 androidxNavigation = "2.8.0-rc01"
-apolloGraphql = "4.0.0-beta.7"
+apolloAdaptersCore = "0.8.0"
+apolloAdaptersKotlinxDatetime = "0.0.6"
+apolloGraphql = "5.2.0"
 appauth = "0.11.1"
 coil = "2.6.0"
 firebaseBom = "33.0.0"
 firebaseCrashlyticsPlugin = "3.0.1"
 foundationAndroid = "1.6.7"
-googleOss = "17.0.1"
-googleOssPlugin = "0.10.6"
+googleOss = "17.1.0"
+googleOssPlugin = "0.12.0"
 googleServices = "4.4.1"
 hilt = "2.60.1"
 hiltLifecycleViewmodelCompose = "1.4.0"
@@ -29,7 +31,7 @@ kotlinxCoroutines = "1.7.3"
 kotlinxDatetime = "0.6.0-RC.2"
 kotlinxImmutableCollections = "0.3.7"
 kotlinxSerialization = "1.10.0"
-ksp = "2.2.10-2.0.2"
+ksp = "2.3.4"
 lifecycleViewmodelNav3 = "2.12.0-alpha03"
 material3AndroidVersion = "1.2.1"
 mockitoInline = "5.2.0"
@@ -40,7 +42,7 @@ paging = "3.3.0"
 pagingCompose = "3.3.0"
 primeTransformer = "2.1.4"
 protobuf = "3.25.2"
-protobufPlugin = "0.9.4"
+protobufPlugin = "0.10.0"
 retrofit = "2.9.0"
 retrofitKotlinxSerializationJson = "1.0.0"
 room = "2.7.2"
@@ -69,8 +71,9 @@ androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecy
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
-apollo-graphql-adapters = { group = "com.apollographql.apollo3", name = "apollo-adapters", version.ref = "apolloGraphql" }
-apollo-graphql-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "apolloGraphql" }
+apollo-adapters-core = { group = "com.apollographql.adapters", name = "apollo-adapters-core", version.ref = "apolloAdaptersCore" }
+apollo-adapters-kotlinx-datetime = { group = "com.apollographql.adapters", name = "apollo-adapters-kotlinx-datetime", version.ref = "apolloAdaptersKotlinxDatetime" }
+apollo-graphql-runtime = { group = "com.apollographql.apollo", name = "apollo-runtime", version.ref = "apolloGraphql" }
 appauth = { group = "net.openid", name = "appauth", version.ref = "appauth" }
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
@@ -78,7 +81,6 @@ google-firebase-analytics = { group = "com.google.firebase", name = "firebase-an
 google-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 google-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 google-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "googleOss" }
-google-oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "googleOssPlugin" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" } # Used in convention plugins
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" } # Used in convention plugins
 # kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -120,12 +122,13 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 androidLibrary = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+google-osslicenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "googleOssPlugin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
-apollo-graphql = { id = "com.apollographql.apollo3", version.ref = "apolloGraphql" }
+apollo-graphql = { id = "com.apollographql.apollo", version.ref = "apolloGraphql" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 
 seanime-android-application-compose = { id = "seanime.android.application.compose", version = "unspecified" }
@@ -134,4 +137,5 @@ seanime-android-library-compose = { id = "seanime.android.library.compose", vers
 seanime-android-library = { id = "seanime.android.library", version = "unspecified" }
 seanime-android-feature = { id = "seanime.android.feature", version = "unspecified" }
 seanime-android-hilt = { id = "seanime.android.hilt", version = "unspecified" }
+seanime-library-jvm = { id = "seanime.library.jvm", version = "unspecified" }
 

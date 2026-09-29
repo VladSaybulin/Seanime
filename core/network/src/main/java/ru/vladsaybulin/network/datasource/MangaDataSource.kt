@@ -16,8 +16,8 @@
 
 package ru.vladsaybulin.network.datasource
 
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.Optional.Companion.presentIfNotNull
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional.Companion.presentIfNotNull
 import retrofit2.Retrofit
 import retrofit2.create
 import retrofit2.http.GET
