@@ -16,8 +16,8 @@
 
 package ru.vladsaybulin.network.util
 
-import com.apollographql.apollo3.ApolloCall
-import com.apollographql.apollo3.api.Operation
+import com.apollographql.apollo.ApolloCall
+import com.apollographql.apollo.api.Operation
 import okhttp3.Request
 
 private const val AUTHORIZED_CALL_HEADER_NAME = "X-Authorized-Call"
