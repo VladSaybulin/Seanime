@@ -16,65 +16,148 @@
 
 package ru.vladsaybulin.data.model
 
+import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.character.CharacterEntity
+import ru.vladsaybulin.database.models.genre.GenreEntity
+import ru.vladsaybulin.database.models.genre.asExternalModel
+import ru.vladsaybulin.database.models.manga.MangaCharacterReferenceWithRoleEntity
 import ru.vladsaybulin.database.models.manga.MangaDetailsEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.manga.MangaGenreCrossRef
+import ru.vladsaybulin.database.models.manga.MangaPersonReferenceWithRolesEntity
 import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
 import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
+import ru.vladsaybulin.database.models.manga.PopulatedMangaDetails
+import ru.vladsaybulin.database.models.manga.PublisherEntity
+import ru.vladsaybulin.database.models.manga.asExternalModel
+import ru.vladsaybulin.database.models.person.PersonEntity
+import ru.vladsaybulin.database.models.stats.asExternalModel
+import ru.vladsaybulin.database.models.text.asExternalModel
+import ru.vladsaybulin.database.models.title.PopulatedRelatedTitle
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleDetails
+import ru.vladsaybulin.network.models.common.NetworkTitleRoles
 import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
 
-fun NetworkMangaDetails.asMangaDetailsEntity() =
-    MangaDetailsEntity(
-        id = id,
-        nameEn = nameEn,
-        nameJp = nameJp,
-        altNames = alternativeName,
-        licenseNameRu = licenseNameRu,
-        description = descriptionHtml?.asSeanimeText()?.asSeanimeTextPOJO(),
-        descriptionSource = descriptionSource,
-        scoreStats = scoreStats.asDbModel(),
-        statusStats = userRateStatusStats.asDbModel()
-    )
+// ==========================================
+// Network -> Database
+// ==========================================
 
-fun NetworkMangaDetails.asMangaEntity() = MangaEntity(
+internal fun NetworkMangaDetails.asEntity() = MangaDetailsEntity(
     id = id,
-    originalName = name,
-    russianName = nameRu,
-    poster = poster?.asPOJO(),
-    kind = kind,
-    status = status,
-    score = score ?: 0f,
-    chapters = chapters,
-    volumes = volumes,
-    airedOn = airedOn?.asPOJO(),
-    releasedOn = releasedOn?.asPOJO()
+    nameEn = nameEn,
+    nameJp = nameJp,
+    altNames = alternativeName ?: "",
+    licenseName = licenseNameRu,
+    description = descriptionHtml?.asSeanimeText()?.asSeanimeTextPOJO(),
+    descriptionSource = descriptionSource,
+    scoreStats = scoreStats.asDatabaseModel(),
+    statusStats = userRateStatusStats.asDatabaseModel()
 )
 
-fun NetworkMangaDetails.genreEntityShells() =
-    genres?.map { it.asEntity() }
+internal fun NetworkMangaDetails.extractGenreEntities(
+    entities: MutableList<GenreEntity>,
+    crossRefs: MutableList<MangaGenreCrossRef>
+) {
+    genres?.forEach { genre ->
+        entities.add(genre.asEntity())
+        crossRefs.add(MangaGenreCrossRef(mangaId = id, genreId = genre.id))
+    }
+}
 
-fun NetworkMangaDetails.mangaGenreCrossReferences() =
-    genres?.map { MangaGenreCrossRef(mangaId = id, genreId = it.id) }
+internal fun NetworkMangaDetails.extractPublisherEntities(
+    entities: MutableList<PublisherEntity>,
+    crossRefs: MutableList<MangaPublisherCrossRef>
+) {
+    publishers.forEach { publisher ->
+        entities.add(publisher.asEntity())
+        crossRefs.add(MangaPublisherCrossRef(mangaId = id, publisherId = publisher.id))
+    }
+}
 
-fun NetworkMangaDetails.relatedAnimeEntityShells() =
-    related?.mapNotNull { it.anime?.asEntity() }
+internal fun NetworkMangaDetails.extractRelatedEntities(
+    mangaEntities: MutableList<MangaEntity>,
+    animeEntities: MutableList<AnimeEntity>,
+    relatedEntities: MutableList<MangaRelatedEntity>
+) {
+    val relatedTitles = related ?: return
+    relatedTitles.forEachIndexed { index, item ->
+        val mangaId = item.manga?.asEntity()
+            ?.also { mangaEntities.add(it) }
+            ?.id
 
-fun NetworkMangaDetails.relatedMangaEntityShells() =
-    related?.mapNotNull { it.manga?.asEntity() }
+        val animeId = item.anime?.asEntity()
+            ?.also { animeEntities.add(it) }
+            ?.id
 
-fun NetworkMangaDetails.mangaRelatedEntities() =
-    related?.mapIndexed { index, it ->
-        MangaRelatedEntity(
-            mangaId = id,
-            relatedMangaId = it.manga?.id,
-            relatedAnimeId = it.anime?.id,
-            relationType = it.relationType,
-            order = index
+        relatedEntities.add(
+            MangaRelatedEntity(
+                mangaId = id,
+                relatedAnimeId = animeId,
+                relatedMangaId = mangaId,
+                relationType = item.relationType,
+                order = index
+            )
         )
     }
+}
 
-fun NetworkMangaDetails.publisherEntityShells() =
-    publishers.map { it.asEntity() }
+internal fun NetworkTitleRoles.extractMangaCharacters(
+    mangaId: Long,
+    characterEntities: MutableList<CharacterEntity>,
+    rolesEntities: MutableList<MangaCharacterReferenceWithRoleEntity>
+) {
+    extractCharacters(
+        roleEntities = rolesEntities,
+        characterEntities = characterEntities
+    ) { characterId, isMain ->
+        MangaCharacterReferenceWithRoleEntity(
+            mangaId = mangaId,
+            characterId = characterId,
+            isMainRole = isMain
+        )
+    }
+}
 
-fun NetworkMangaDetails.mangaPublisherCrossRefs() =
-    publishers.map { MangaPublisherCrossRef(id, it.id) }
+internal fun NetworkTitleRoles.extractMangaPersons(
+    mangaId: Long,
+    personEntities: MutableList<PersonEntity>,
+    rolesEntities: MutableList<MangaPersonReferenceWithRolesEntity>
+) {
+    extractPersons(
+        roleEntities = rolesEntities,
+        personEntities = personEntities
+    ) { personId, roles ->
+        MangaPersonReferenceWithRolesEntity(
+            mangaId = mangaId,
+            personId = personId,
+            roles = roles
+        )
+    }
+}
+
+// ==========================================
+// Database -> Domain
+// ==========================================
+
+internal fun mergeMangaDetailsToExternalModel(
+    mangaDetails: PopulatedMangaDetails,
+    relatedTitles: List<PopulatedRelatedTitle>,
+): TitleDetails = with(mangaDetails.mangaDetailsEntity) {
+    TitleDetails(
+        id = id,
+        type = EntryType.Manga,
+        nameEn = nameEn,
+        nameJp = nameJp,
+        alternativeNames = altNames,
+        licensedName = licenseName,
+        description = description?.asExternalModel(),
+        descriptionSource = descriptionSource,
+        scoreStats = scoreStats.asExternalModel(),
+        userRateStatusStats = statusStats.asExternalModel(),
+        genres = mangaDetails.genres.map { it.asExternalModel() },
+        publishers = mangaDetails.publishers.map { it.asExternalModel() },
+        related = relatedTitles.map { it.asExternalModel() }
+    )
+}
+

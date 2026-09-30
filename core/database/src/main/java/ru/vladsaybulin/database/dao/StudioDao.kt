@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.data.model
+package ru.vladsaybulin.database.dao
 
-import ru.vladsaybulin.core.network.graphql.type.AnimeKindEnum
-import ru.vladsaybulin.model.anime.AnimeKind
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.IGNORE
+import ru.vladsaybulin.database.models.anime.StudioEntity
 
-fun AnimeKindEnum?.asAnimeKind() = when (this) {
-    AnimeKindEnum.tv -> AnimeKind.Tv
-    AnimeKindEnum.movie -> AnimeKind.Movie
-    AnimeKindEnum.ova -> AnimeKind.Ova
-    AnimeKindEnum.ona -> AnimeKind.Ona
-    AnimeKindEnum.special -> AnimeKind.Special
-    AnimeKindEnum.tv_special -> AnimeKind.TvSpecial
-    AnimeKindEnum.music -> AnimeKind.Music
-    AnimeKindEnum.pv -> AnimeKind.Pv
-    AnimeKindEnum.cm -> AnimeKind.Cm
-    else -> AnimeKind.None
+@Dao
+interface StudioDao {
+
+    @Insert(onConflict = IGNORE)
+    fun insertOrIgnore(entities: List<StudioEntity>)
 }

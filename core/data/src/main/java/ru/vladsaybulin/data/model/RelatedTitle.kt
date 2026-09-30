@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.network.mapper.queries
+package ru.vladsaybulin.data.model
 
-import ru.vladsaybulin.core.network.graphql.AnimeQuery
-import ru.vladsaybulin.network.mapper.fragments.asNetworkModel
+import ru.vladsaybulin.database.models.title.PopulatedRelatedTitle
+import ru.vladsaybulin.model.related.RelatedTitle
 
-internal fun AnimeQuery.Anime.asNetworkModels() =
-    animeFragment.asNetworkModel()
+fun PopulatedRelatedTitle.asExternalModel() = RelatedTitle(
+    relationType = relationType,
+    title = animeEntity?.asTitle() ?: mangaEntity?.asTitle()
+        ?: error("Related title must have either anime or manga entity")
+)

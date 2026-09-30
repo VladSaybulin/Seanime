@@ -30,7 +30,6 @@ import ru.vladsaybulin.database.MANGA_ALIAS
 import ru.vladsaybulin.database.MANGA_ROWS
 import ru.vladsaybulin.database.PERSON_ALIAS
 import ru.vladsaybulin.database.PERSON_ROWS
-import ru.vladsaybulin.database.models.anime.AnimeSimilarAnimeCrossRef
 import ru.vladsaybulin.database.models.manga.MangaCharacterReferenceWithRoleEntity
 import ru.vladsaybulin.database.models.manga.MangaDetailsEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
@@ -38,6 +37,7 @@ import ru.vladsaybulin.database.models.manga.MangaGenreCrossRef
 import ru.vladsaybulin.database.models.manga.MangaPersonReferenceWithRolesEntity
 import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
 import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
+import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
 import ru.vladsaybulin.database.models.manga.PopulatedMangaDetails
 import ru.vladsaybulin.database.models.title.PopulatedCharacterWithRole
 import ru.vladsaybulin.database.models.title.PopulatedPersonWithRoles
@@ -75,7 +75,7 @@ interface MangaDetailsDao {
             INNER JOIN characters AS $CHARACTER_ALIAS ON ac.character_id = $CHARACTER_ALIAS.id
         """
     )
-    suspend fun getCharactersWithRole(mangaId: Long): List<PopulatedCharacterWithRole>
+    fun getCharactersWithRoleStream(mangaId: Long): Flow<List<PopulatedCharacterWithRole>>
 
     @Query(
         value = """
@@ -118,7 +118,7 @@ interface MangaDetailsDao {
 
     @Insert
     suspend fun insertSimilarReferences(
-        similarReferences: List<AnimeSimilarAnimeCrossRef>
+        similarReferences: List<MangaSimilarMangaCrossRef>
     )
 
 

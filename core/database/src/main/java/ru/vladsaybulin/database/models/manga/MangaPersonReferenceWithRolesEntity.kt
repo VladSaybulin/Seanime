@@ -49,8 +49,5 @@ data class MangaPersonReferenceWithRolesEntity(
     val personId: Long,
 
     @ColumnInfo("roles")
-    val roles: List<String>,
-
-    @ColumnInfo("is_main")
-    val isMain: Boolean
+    val roles: List<String>
 )

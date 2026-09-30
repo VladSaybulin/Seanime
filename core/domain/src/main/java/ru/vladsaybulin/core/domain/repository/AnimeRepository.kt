@@ -18,41 +18,19 @@ package ru.vladsaybulin.core.domain.repository
 
 import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.core.domain.titledetails.TitleDetailsStreams
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.anime.Video
-import ru.vladsaybulin.model.character.Character
-import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.Image
-import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.QueryMapKey
-import ru.vladsaybulin.model.title.Title
-import ru.vladsaybulin.model.title.TitleDetails
-import ru.vladsaybulin.model.title.TitleRoles
 
 interface AnimeRepository {
-
-    /**
-     * Returns a stream of brief information about an anime.
-     */
-    fun animeBriefStream(animeId: Long): Flow<Title>
 
     /**
      * Returns a stream of detailed information about an anime.
      * This method should trigger update all data (brief, details, roles, similar)
      * @param forceRefresh whether to force a refresh of the data
      */
-    fun animeDetailsStream(animeId: Long, forceRefresh: Boolean): Flow<TitleDetails>
-
-    /**
-     * Returns a stream of roles associated with an anime.
-     */
-    fun animeRolesStream(animeId: Long): Flow<TitleRoles>
-
-    /**
-     * Returns a stream of similar animes to the specified anime.
-     */
-    fun animeSimilarStream(animeId: Long): Flow<List<Title>>
+    fun animeDetailsStreams(animeId: Long, forceRefresh: Boolean): TitleDetailsStreams
 
     fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime>
 

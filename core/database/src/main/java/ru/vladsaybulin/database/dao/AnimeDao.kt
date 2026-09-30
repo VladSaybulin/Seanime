@@ -32,6 +32,9 @@ interface AnimeDao {
     @Query("SELECT * FROM animes WHERE id = :animeId")
     fun getAnimeStreamById(animeId: Long): Flow<AnimeEntity>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM animes WHERE id = :animeId)")
+    suspend fun hasAnime(animeId: Long): Boolean
+
     @Query("SELECT status, max(episodes, episodes_aired) AS episodes FROM animes WHERE id = :animeId")
     suspend fun getAnimeRateContext(animeId: Long): AnimeRateContextDb
 

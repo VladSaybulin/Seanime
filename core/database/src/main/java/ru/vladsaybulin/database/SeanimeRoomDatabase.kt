@@ -32,6 +32,8 @@ import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.OngoingAnimeDao
 import ru.vladsaybulin.database.dao.PersonDao
+import ru.vladsaybulin.database.dao.PublisherDao
+import ru.vladsaybulin.database.dao.StudioDao
 import ru.vladsaybulin.database.dao.TopicsDao
 import ru.vladsaybulin.database.dao.UserRateDao
 import ru.vladsaybulin.database.dao.UsersDao
@@ -188,6 +190,8 @@ abstract class SeanimeRoomDatabase : RoomDatabase() {
     abstract fun animeDetailsDao(): AnimeDetailsDao
     abstract fun mangaDetailsDao(): MangaDetailsDao
     abstract fun lastRequestDao(): LastRequestDao
+    abstract fun studioDao(): StudioDao
+    abstract fun publisherDao(): PublisherDao
 
     abstract fun calendarDao(): CalendarDao
 

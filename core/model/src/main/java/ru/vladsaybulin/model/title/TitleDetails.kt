@@ -51,6 +51,7 @@ data class TitleDetails(
 
     // Anime specific
     val nextEpisodeAt: Instant? = null,
+    val episodeDuration: Int? = null,
     val rating: AnimeRating? = null,
     val season: TimePeriodAiring.Season? = null,
     val studios: List<Studio>? = null,

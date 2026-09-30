@@ -76,7 +76,7 @@ interface AnimeDetailsDao {
             INNER JOIN characters AS $CHARACTER_ALIAS ON ac.character_id = $CHARACTER_ALIAS.id
         """
     )
-    suspend fun getCharactersWithRole(animeId: Long): List<PopulatedCharacterWithRole>
+    fun getCharactersWithRoleStream(animeId: Long): Flow<List<PopulatedCharacterWithRole>>
 
     @Query(
         value = """

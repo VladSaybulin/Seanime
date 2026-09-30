@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.animeCrossRefs
-import ru.vladsaybulin.data.model.animeEntityShells
+import ru.vladsaybulin.data.model.animeEntities
 import ru.vladsaybulin.data.model.asDetailsEntity
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.mangaCrossRefs
@@ -66,7 +66,7 @@ class CharacterRepository @Inject constructor(
 
         val entity = response.asEntity()
         val detailsEntity = response.asDetailsEntity()
-        val animeEntities = response.animeEntityShells()
+        val animeEntities = response.animeEntities()
         val mangaEntities = response.mangaEntityShells()
         val personEntities = response.personEntityShells()
 

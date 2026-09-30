@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.network.mapper.queries
+package ru.vladsaybulin.core.domain.titledetails
 
-import ru.vladsaybulin.core.network.graphql.AnimeQuery
-import ru.vladsaybulin.network.mapper.fragments.asNetworkModel
+import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.model.title.Title
+import ru.vladsaybulin.model.title.TitleDetails
+import ru.vladsaybulin.model.title.TitleRoles
+import ru.vladsaybulin.model.userrate.UserRate
 
-internal fun AnimeQuery.Anime.asNetworkModels() =
-    animeFragment.asNetworkModel()
+class TitleDetailsStreams(
+    val brief: Flow<Title>,
+    val details: Flow<TitleDetails>,
+    val roles: Flow<TitleRoles>,
+    val similar: Flow<List<Title>>,
+    val userRate: Flow<UserRate?>,
+    val errors: Flow<Throwable>
+)

@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.network.mapper.queries
+package ru.vladsaybulin.database.dao
 
-import ru.vladsaybulin.core.network.graphql.AnimeQuery
-import ru.vladsaybulin.network.mapper.fragments.asNetworkModel
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy.Companion.IGNORE
+import ru.vladsaybulin.database.models.manga.PublisherEntity
 
-internal fun AnimeQuery.Anime.asNetworkModels() =
-    animeFragment.asNetworkModel()
+@Dao
+interface PublisherDao {
+
+    @Insert(onConflict = IGNORE)
+    fun insertOrIgnore(entities: List<PublisherEntity>)
+}

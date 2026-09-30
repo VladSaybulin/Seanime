@@ -32,6 +32,9 @@ interface MangaDao {
     @Query("SELECT * FROM mangas WHERE id = :mangaId")
     fun getMangaStreamById(mangaId: Long): Flow<MangaEntity>
 
+    @Query("SELECT EXISTS (SELECT 1 FROM mangas WHERE id = :mangaId)")
+    fun hasManga(mangaId: Long): Boolean
+
     @Query("SELECT status, chapters, volumes FROM mangas WHERE id = :mangaId")
     suspend fun getMangaContext(mangaId: Long): MangaRateContextDb
 

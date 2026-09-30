@@ -22,15 +22,8 @@ import ru.vladsaybulin.database.models.character.CharacterEntity
 import ru.vladsaybulin.database.models.character.CharacterMangaCrossRef
 import ru.vladsaybulin.database.models.character.CharacterSeyuCrossRef
 import ru.vladsaybulin.model.character.Character
-import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.network.models.character.NetworkCharacter
 import ru.vladsaybulin.network.models.character.NetworkCharacterDetails
-import ru.vladsaybulin.network.models.character.NetworkCharacterWithRole
-
-fun NetworkCharacterWithRole.asExternalModel() = CharacterWithRole(
-    character = character.asExternalModel(),
-    isMain = isMain
-)
 
 fun NetworkCharacter.asExternalModel() = Character(
     id = id,
@@ -69,7 +62,7 @@ fun NetworkCharacterDetails.seyuCrossRefs() = seyu.map {
     CharacterSeyuCrossRef(id, it.id)
 }
 
-fun NetworkCharacterDetails.animeEntityShells() = animes.map { it.asEntity() }
+fun NetworkCharacterDetails.animeEntities() = animes.map { it.asEntity() }
 
 fun NetworkCharacterDetails.animeCrossRefs() = animes.map {
     CharacterAnimeCrossRef(id, it.id)
