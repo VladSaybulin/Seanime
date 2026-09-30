@@ -1,0 +1,18 @@
+query MangaBriefQuery($id: String!) {
+    mangas(ids: $id) {
+        ...MangaFragment
+    }
+}
+
+query MangaDetailsQuery($id: String!) {
+    mangas(ids: $id) {
+        ...MangaDetailsFragment
+        userRate { ...UserRateFragment }
+    }
+}
+
+query MangaRolesQuery($id: String!) {
+    mangas(ids: $id) {
+        ...MangaRolesFragment
+    }
+}

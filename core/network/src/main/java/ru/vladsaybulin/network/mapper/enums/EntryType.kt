@@ -23,3 +23,9 @@ fun EntryType.asGenreEntryTypeEnum() = when (this) {
     EntryType.Anime -> GenreEntryTypeEnum.Anime
     EntryType.Manga -> GenreEntryTypeEnum.Manga
 }
+
+fun GenreEntryTypeEnum.asEntryType() = when (this) {
+    GenreEntryTypeEnum.Anime -> EntryType.Anime
+    GenreEntryTypeEnum.Manga -> EntryType.Manga
+    GenreEntryTypeEnum.UNKNOWN__ -> error("Unknown GenreEntryTypeEnum value: $this")
+}

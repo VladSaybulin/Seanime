@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.database.models.manga
+package ru.vladsaybulin.data.model
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import ru.vladsaybulin.database.models.title.PopulatedRelatedTitle
+import ru.vladsaybulin.model.related.RelatedTitle
 
-class PopulatedSimilarManga(
-    @Embedded
-    private val crossRef: MangaSimilarMangaCrossRef,
-
-    @Relation(
-        entity = MangaEntity::class,
-        parentColumn = "similar_id",
-        entityColumn = "id"
-    )
-    val similarManga: MangaEntity
+fun PopulatedRelatedTitle.asExternalModel() = RelatedTitle(
+    relationType = relationType,
+    title = animeEntity?.asTitle() ?: mangaEntity?.asTitle()
+        ?: error("Related title must have either anime or manga entity")
 )
-
-fun PopulatedSimilarManga.asExternalModel() = similarManga.asExternalModel()

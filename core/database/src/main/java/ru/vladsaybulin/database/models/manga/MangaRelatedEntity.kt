@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.manga
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.model.related.RelationType
@@ -42,7 +43,8 @@ import ru.vladsaybulin.model.related.RelationType
             parentColumns = ["id"],
             childColumns = ["related_manga_id"]
         )
-    ]
+    ],
+    indices = [Index(value = ["manga_id"])]
 )
 class MangaRelatedEntity(
 

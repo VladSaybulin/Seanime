@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.network.mapper.queries
+package ru.vladsaybulin.database.models.title
 
-import ru.vladsaybulin.core.network.graphql.AnimeQuery
-import ru.vladsaybulin.network.mapper.fragments.asNetworkModel
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import ru.vladsaybulin.database.ANIME_PREFIX
+import ru.vladsaybulin.database.MANGA_PREFIX
+import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.manga.MangaEntity
+import ru.vladsaybulin.model.related.RelationType
 
-internal fun AnimeQuery.Anime.asNetworkModels() =
-    animeFragment.asNetworkModel()
+data class PopulatedRelatedTitle(
+
+    @ColumnInfo("relation_type")
+    val relationType: RelationType,
+
+    @Embedded(ANIME_PREFIX)
+    val animeEntity: AnimeEntity?,
+
+    @Embedded(MANGA_PREFIX)
+    val mangaEntity: MangaEntity?
+)

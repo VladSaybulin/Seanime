@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.database.models.anime
+package ru.vladsaybulin.core.domain.titledetails
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.model.title.Title
+import ru.vladsaybulin.model.title.TitleDetails
+import ru.vladsaybulin.model.title.TitleRoles
+import ru.vladsaybulin.model.userrate.UserRate
 
-class PopulatedSimilarAnime(
-    @Embedded
-    private val entity: AnimeSimilarAnimeCrossRef,
-
-    @Relation(
-        entity = AnimeEntity::class,
-        parentColumn = "similar_id",
-        entityColumn = "id"
-    )
-    val similarAnimeEntity: AnimeEntity,
+class TitleDetailsStreams(
+    val brief: Flow<Title>,
+    val details: Flow<TitleDetails>,
+    val roles: Flow<TitleRoles>,
+    val similar: Flow<List<Title>>,
+    val userRate: Flow<UserRate?>,
+    val errors: Flow<Throwable>
 )
-
-fun PopulatedSimilarAnime.asExternalModel() = similarAnimeEntity.asExternalModel()

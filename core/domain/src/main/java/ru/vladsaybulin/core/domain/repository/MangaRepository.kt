@@ -18,40 +18,17 @@ package ru.vladsaybulin.core.domain.repository
 
 import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.character.Character
-import ru.vladsaybulin.model.character.CharacterWithRole
+import ru.vladsaybulin.core.domain.titledetails.TitleDetailsStreams
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.model.manga.MangaDetails
-import ru.vladsaybulin.model.person.PersonWithRoles
-import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.QueryMapKey
 
 interface MangaRepository {
+
+    fun getMangaDetailsStreams(mangaId: Long, forceRefresh: Boolean): TitleDetailsStreams
+
     fun mangaSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Manga>
 
-    fun getMangaDetailsStream(mangaId: Long): Flow<MangaDetails>
-
-    fun getFirstMangaRelatedStream(mangaId: Long, limit: Int): Flow<List<RelatedTitle>>
-
-    fun getMangaMainCharactersStream(mangaId: Long): Flow<List<Character>>
-
-    fun getMangaMainAuthorsStream(mangaId: Long): Flow<List<PersonWithRoles>>
-
-    fun getSimilarMangasStream(mangaId: Long): Flow<List<Manga>>
-
-    fun getAllMangaAuthors(mangaId: Long): Flow<List<PersonWithRoles>>
-
     fun getMangaPosterStream(mangaId: Long): Flow<Image?>
-
-    suspend fun refreshMangaDetails(mangaId: Long, force: Boolean)
-
-    suspend fun refreshMangaRoles(mangaId: Long, force: Boolean)
-
-    suspend fun refreshSimilarMangas(mangaId: Long, force: Boolean)
-
-    fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedTitle>>
-
-    fun getAllMangaCharacters(mangaId: Long): Flow<List<CharacterWithRole>>
 }
 

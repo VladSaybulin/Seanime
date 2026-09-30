@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.database.models.manga
+package ru.vladsaybulin.database.models.title
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
-import androidx.room.Relation
+import ru.vladsaybulin.database.CHARACTER_PREFIX
 import ru.vladsaybulin.database.models.character.CharacterEntity
-import ru.vladsaybulin.database.models.character.asExternalModel
-import ru.vladsaybulin.model.character.CharacterWithRole
 
-data class PopulatedMangaCharacter(
-    @Embedded val mangaCharacterEntity: MangaCharacterEntity,
+class PopulatedCharacterWithRole(
+    @ColumnInfo("is_main")
+    val isMainRole: Boolean,
 
-    @Relation(
-        entity = CharacterEntity::class,
-        parentColumn = "character_id",
-        entityColumn = "id"
-    )
+    @Embedded(CHARACTER_PREFIX)
     val character: CharacterEntity
-)
-
-fun PopulatedMangaCharacter.asExternalModel() = CharacterWithRole(
-    character = character.asExternalModel(),
-    isMain = mangaCharacterEntity.isMain
 )

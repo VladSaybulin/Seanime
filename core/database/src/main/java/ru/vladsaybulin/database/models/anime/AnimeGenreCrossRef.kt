@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import ru.vladsaybulin.database.models.genre.GenreEntity
 
 @Entity(
@@ -26,7 +27,7 @@ import ru.vladsaybulin.database.models.genre.GenreEntity
     primaryKeys = ["anime_id", "genre_id"],
     foreignKeys = [
         ForeignKey(
-            entity = AnimeEntity::class,
+            entity = AnimeDetailsEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE
@@ -36,7 +37,8 @@ import ru.vladsaybulin.database.models.genre.GenreEntity
             parentColumns = ["id"],
             childColumns = ["genre_id"]
         )
-    ]
+    ],
+    indices = [Index(value = ["anime_id"])]
 )
 class AnimeGenreCrossRef(
 

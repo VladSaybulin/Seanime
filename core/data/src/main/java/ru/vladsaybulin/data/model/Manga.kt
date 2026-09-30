@@ -16,15 +16,41 @@
 
 package ru.vladsaybulin.data.model
 
+import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.manga.Manga
+import ru.vladsaybulin.model.title.Title
+import ru.vladsaybulin.model.title.toTitleKind
 import ru.vladsaybulin.network.models.manga.NetworkManga
 
-fun Manga.asPOJO() = MangaEntity(
+// ==========================================
+// Network -> Domain
+// ==========================================
+
+internal fun NetworkManga.asExternalModel() = Manga(
     id = id,
-    originalName = name,
+    name = originalName,
     russianName = russianName,
+    poster = poster?.asExternalModel(),
+    kind = kind,
+    status = status,
+    score = score ?: 0f,
+    chapters = chapters,
+    volumes = volumes,
+    airedOn = airedOn?.asExternalModel(),
+    releasedOn = releasedOn?.asExternalModel()
+)
+
+// ==========================================
+// Network -> Database
+// ==========================================
+
+internal fun NetworkManga.asEntity() = MangaEntity(
+    id = id,
+    name = originalName,
+    nameRu = russianName,
     poster = poster?.asPOJO(),
     kind = kind,
     status = status,
@@ -35,21 +61,7 @@ fun Manga.asPOJO() = MangaEntity(
     releasedOn = releasedOn?.asPOJO()
 )
 
-fun NetworkManga.asEntity() = MangaEntity(
-    id = id,
-    originalName = originalName,
-    russianName = russianName,
-    poster = poster?.asPOJO(),
-    kind = kind,
-    status = status,
-    score = score ?: 0f,
-    chapters = chapters,
-    volumes = volumes,
-    airedOn = airedOn?.asPOJO(),
-    releasedOn = releasedOn?.asPOJO()
-)
-
-fun NetworkManga.userRateEntityShell() = userRate?.let { userRate ->
+internal fun NetworkManga.userRateEntityShell() = userRate?.let { userRate ->
     UserRateEntity(
         id = userRate.id,
         animeId = null,
@@ -66,16 +78,23 @@ fun NetworkManga.userRateEntityShell() = userRate?.let { userRate ->
     )
 }
 
-fun NetworkManga.asExternalModel() = Manga(
+// ==========================================
+// Database -> Domain
+// ==========================================
+
+internal fun MangaEntity.asTitle() = Title(
     id = id,
-    name = originalName,
-    russianName = russianName,
+    type = EntryType.Manga,
+    name = name,
+    nameRu = nameRu,
     poster = poster?.asExternalModel(),
-    kind = kind,
+    kind = kind.toTitleKind(),
     status = status,
-    score = score ?: 0f,
+    score = score,
     chapters = chapters,
     volumes = volumes,
     airedOn = airedOn?.asExternalModel(),
-    releasedOn = releasedOn?.asExternalModel()
+    releasedOn = releasedOn?.asExternalModel(),
+    episodes = 0,
+    episodesAired = 0
 )

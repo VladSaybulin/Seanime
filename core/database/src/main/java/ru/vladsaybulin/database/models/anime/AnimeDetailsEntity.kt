@@ -34,7 +34,8 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
         ForeignKey(
             entity = AnimeEntity::class,
             parentColumns = ["id"],
-            childColumns = ["id"]
+            childColumns = ["id"],
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
@@ -44,14 +45,14 @@ class AnimeDetailsEntity(
     @ColumnInfo("id")
     val id: Long,
 
-    @ColumnInfo("english")
+    @ColumnInfo("name_en")
     val nameEn: String?,
 
-    @ColumnInfo("japanese")
+    @ColumnInfo("name_jp")
     val nameJp: String?,
 
-    @ColumnInfo("synonyms")
-    val altNames: List<String>,
+    @ColumnInfo("alt_names")
+    val altNames: String,
 
     @ColumnInfo("license_name")
     val licenseNameRu: String?,

@@ -17,14 +17,41 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.Title
+import ru.vladsaybulin.model.title.toTitleKind
 import ru.vladsaybulin.network.models.anime.NetworkAnime
 
-fun NetworkAnime.asEntity() = AnimeEntity(
+// ==========================================
+// Network -> Domain
+// ==========================================
+
+internal fun NetworkAnime.asExternalModel() = Anime(
     id = id,
-    originalName = originalName,
-    russianName = russianName?.ifEmpty { null },
+    name = originalName,
+    russianName = russianName,
+    poster = poster?.asExternalModel(),
+    kind = kind,
+    status = status,
+    score = score,
+    episodes = episodes,
+    episodesAired = episodesAired,
+    airedOn = airedOn?.asExternalModel(),
+    releasedOn = releasedOn?.asExternalModel(),
+    userRate = userRate?.asExternalModel()
+)
+
+// ==========================================
+// Network -> Database
+// ==========================================
+
+internal fun NetworkAnime.asEntity() = AnimeEntity(
+    id = id,
+    name = originalName,
+    nameRu = russianName?.ifEmpty { null },
     poster = poster?.asPOJO(),
     kind = kind,
     status = status,
@@ -35,7 +62,7 @@ fun NetworkAnime.asEntity() = AnimeEntity(
     releasedOn = releasedOn?.asPOJO()
 )
 
-fun NetworkAnime.userRateEntityShell() = userRate?.let { userRate ->
+internal fun NetworkAnime.userRateEntityShell() = userRate?.let { userRate ->
     UserRateEntity(
         id = userRate.id,
         animeId = id,
@@ -52,31 +79,23 @@ fun NetworkAnime.userRateEntityShell() = userRate?.let { userRate ->
     )
 }
 
-fun NetworkAnime.asExternalModel() = Anime(
+// ==========================================
+// Database -> Domain
+// ==========================================
+
+internal fun AnimeEntity.asTitle() = Title(
     id = id,
-    name = originalName,
-    russianName = russianName,
+    type = EntryType.Anime,
+    name = name,
+    nameRu = nameRu,
     poster = poster?.asExternalModel(),
-    kind = kind,
+    kind = kind.toTitleKind(),
     status = status,
     score = score,
     episodes = episodes,
     episodesAired = episodesAired,
+    volumes = 0,
+    chapters = 0,
     airedOn = airedOn?.asExternalModel(),
     releasedOn = releasedOn?.asExternalModel(),
-    userRate = userRate?.asExternalModel()
-)
-
-fun Anime.asPOJO() = AnimeEntity(
-    id = id,
-    originalName = name,
-    russianName = russianName,
-    poster = poster?.asPOJO(),
-    kind = kind,
-    status = status,
-    score = score ?: 0f,
-    episodes = episodes,
-    episodesAired = episodesAired,
-    airedOn = airedOn?.asPOJO(),
-    releasedOn = releasedOn?.asPOJO()
 )

@@ -19,13 +19,14 @@ package ru.vladsaybulin.database.models.manga
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "manga_publisher",
     primaryKeys = ["manga_id", "publisher_id"],
     foreignKeys = [
         ForeignKey(
-            entity = MangaEntity::class,
+            entity = MangaDetailsEntity::class,
             parentColumns = ["id"],
             childColumns = ["manga_id"],
             onDelete = ForeignKey.CASCADE
@@ -35,7 +36,8 @@ import androidx.room.ForeignKey
             parentColumns = ["id"],
             childColumns = ["publisher_id"]
         )
-    ]
+    ],
+    indices = [Index(value = ["manga_id"])]
 )
 data class MangaPublisherCrossRef(
 

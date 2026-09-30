@@ -31,6 +31,8 @@ type Anime {
   malId: ID
   name: String!
   nextEpisodeAt: ISO8601DateTime
+  opengraphImageUrl: String
+  origin: AnimeOriginEnum
   personRoles: [PersonRole!]
   poster: Poster
   rating: AnimeRatingEnum
@@ -111,6 +113,59 @@ enum AnimeKindEnum {
 #
 # `cm` - Commercial Messages
 scalar AnimeKindString
+
+enum AnimeOriginEnum {
+  # Original
+  original
+
+  # Manga
+  manga
+
+  # Web manga
+  web_manga
+
+  # 4-koma manga
+  four_koma_manga
+
+  # Novel
+  novel
+
+  # Web novel
+  web_novel
+
+  # Visual novel
+  visual_novel
+
+  # Light novel
+  light_novel
+
+  # Game
+  game
+
+  # Card game
+  card_game
+
+  # Music
+  music
+
+  # Radio
+  radio
+
+  # Book
+  book
+
+  # Picture book
+  picture_book
+
+  # Mixed media
+  mixed_media
+
+  # Other
+  other
+
+  # Unknown
+  unknown
+}
 
 enum AnimeRatingEnum {
   # None
@@ -332,6 +387,12 @@ enum ExternalLinkKindEnum {
   # Anime 365
   smotret_anime
 
+  # Shikimori
+  shiki
+
+  # Amediateka
+  amediateka
+
   # Crunchyroll
   crunchyroll
 
@@ -362,17 +423,20 @@ enum ExternalLinkKindEnum {
   # Youtube
   youtube
 
-  # ReadManga
-  readmanga
+  # ReManga
+  remanga
+
+  # Senkuro
+  senkuro
 
   # MangaLib
   mangalib
 
-  # ReManga
-  remanga
-
   # Baka-Updates
   mangaupdates
+
+  # ReadManga
+  readmanga
 
   # MangaDex
   mangadex
@@ -462,6 +526,7 @@ type Manga {
   licensors: [String!]
   malId: ID
   name: String!
+  opengraphImageUrl: String
   personRoles: [PersonRole!]
   poster: Poster
   publishers: [Publisher!]!
@@ -618,7 +683,52 @@ enum OrderEnum {
 
   # created_at_desc
   created_at_desc
+
+  # By field updated_at on entity
+  updated_at
+
+  # updated_at_desc
+  updated_at_desc
 }
+
+# List of values separated by comma.
+# Add `!` before value to apply negative filter.
+#
+#
+# `card_game` - Card game
+#
+# `novel` - Novel
+#
+# `radio` - Radio
+#
+# `game` - Game
+#
+# `unknown` - Unknown
+#
+# `book` - Book
+#
+# `light_novel` - Light novel
+#
+# `web_novel` - Web novel
+#
+# `original` - Original
+#
+# `picture_book` - Picture book
+#
+# `music` - Music
+#
+# `manga` - Manga
+#
+# `visual_novel` - Visual novel
+#
+# `other` - Other
+#
+# `web_manga` - Web manga
+#
+# `four_koma_manga` - 4-koma manga
+#
+# `mixed_media` - Mixed media
+scalar OriginString
 
 type Person {
   birthOn: IncompleteDate
@@ -687,6 +797,7 @@ type Query {
     score: Int
     duration: DurationString
     rating: RatingString
+    origin: OriginString
 
     # List of comma separated genre ids
     genre: String
@@ -713,7 +824,7 @@ type Query {
 
     # Maximum 50
     limit: PositiveInt = 2
-    ids: [ID!]
+    ids: String
     search: String
   ): [Character!]!
   contests(
