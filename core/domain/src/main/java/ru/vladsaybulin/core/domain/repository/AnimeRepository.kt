@@ -30,7 +30,7 @@ interface AnimeRepository {
      * This method should trigger update all data (brief, details, roles, similar)
      * @param forceRefresh whether to force a refresh of the data
      */
-    fun animeDetailsStreams(animeId: Long, forceRefresh: Boolean): TitleDetailsStreams
+    fun getAnimeDetailsStream(animeId: Long, forceRefresh: Boolean): TitleDetailsStreams
 
     fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime>
 

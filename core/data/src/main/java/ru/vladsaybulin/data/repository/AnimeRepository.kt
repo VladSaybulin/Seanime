@@ -106,7 +106,7 @@ class AnimeRepository @Inject constructor(
     @DataScope private val scope: CoroutineScope
 ) : DomainAnimeRepository {
 
-    override fun animeDetailsStreams(
+    override fun getAnimeDetailsStream(
         animeId: Long,
         forceRefresh: Boolean
     ): TitleDetailsStreams {
