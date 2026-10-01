@@ -18,19 +18,17 @@ package ru.vladsaybulin.core.domain.repository
 
 import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.core.domain.titledetails.TitleDetailsStreams
 import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.Video
+import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.Image
+import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.QueryMapKey
+import ru.vladsaybulin.model.title.Title
+import ru.vladsaybulin.model.title.TitleDetails
 
-interface AnimeRepository {
-
-    /**
-     * Returns a stream of detailed information about an anime.
-     * This method should trigger update all data (brief, details, roles, similar)
-     * @param forceRefresh whether to force a refresh of the data
-     */
-    fun getAnimeDetailsStream(animeId: Long, forceRefresh: Boolean): TitleDetailsStreams
+interface AnimeRepository : TitleRepository {
 
     fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime>
 
@@ -38,6 +36,9 @@ interface AnimeRepository {
 
     fun getAnimePosterStream(animeId: Long): Flow<Image?>
 
+    fun getAnimeScreenshotsStream(animeId: Long): Flow<List<Image>>
+
+    fun getAnimeVideos(animeId: Long): Flow<List<Video>>
+
     suspend fun refreshOngoingAnimes(limit: Int, force: Boolean)
 }
-

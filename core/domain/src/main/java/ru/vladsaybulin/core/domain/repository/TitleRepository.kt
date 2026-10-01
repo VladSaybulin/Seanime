@@ -16,19 +16,25 @@
 
 package ru.vladsaybulin.core.domain.repository
 
-import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.common.Image
-import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.model.search.QueryMapKey
+import ru.vladsaybulin.model.character.CharacterWithRole
+import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.title.TitleDetails
-import ru.vladsaybulin.model.title.TitleRoles
 
-interface MangaRepository : TitleRepository {
+interface TitleRepository {
+    fun getTitleBrief(titleId: Long): Flow<Title>
 
-    fun mangaSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Manga>
+    fun getTitleDetails(titleId: Long): Flow<TitleDetails>
 
-    fun getMangaPosterStream(mangaId: Long): Flow<Image?>
+    fun getRelatedTitles(titleId: Long): Flow<List<RelatedTitle>>
+
+    fun getTitleCharacters(titleId: Long): Flow<List<CharacterWithRole>>
+
+    fun getTitleAuthors(titleId: Long): Flow<List<PersonWithRoles>>
+
+    fun getSimilarTitles(titleId: Long): Flow<List<Title>>
+
+    fun refreshTitleDetails(titleId: Long, forceRefresh: Boolean): Flow<Throwable?>
 }
-
