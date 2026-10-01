@@ -30,7 +30,7 @@ import ru.vladsaybulin.database.models.manga.MangaEntity
 interface MangaDao {
 
     @Query("SELECT * FROM mangas WHERE id = :mangaId")
-    fun getMangaStreamById(mangaId: Long): Flow<MangaEntity>
+    fun getMangaStreamById(mangaId: Long): Flow<MangaEntity?>
 
     @Query("SELECT EXISTS (SELECT 1 FROM mangas WHERE id = :mangaId)")
     fun hasManga(mangaId: Long): Boolean

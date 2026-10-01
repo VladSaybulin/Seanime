@@ -20,8 +20,12 @@ import androidx.paging.PagingSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,7 +33,6 @@ import kotlinx.datetime.Clock
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.ui.tryRefresh
-import ru.vladsaybulin.core.domain.titledetails.TitleDetailsStreams
 import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.di.DataScope
 import ru.vladsaybulin.data.model.asEntity
@@ -42,7 +45,6 @@ import ru.vladsaybulin.data.model.extractRelatedEntities
 import ru.vladsaybulin.data.model.extractScreenshotEntities
 import ru.vladsaybulin.data.model.extractStudiosEntities
 import ru.vladsaybulin.data.model.extractVideoEntities
-import ru.vladsaybulin.data.model.mergeAnimeDetailsToExternalModel
 import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
@@ -75,13 +77,17 @@ import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.person.PersonEntity
-import ru.vladsaybulin.database.models.userrate.asExternalModel
 import ru.vladsaybulin.model.anime.Anime
+import ru.vladsaybulin.model.anime.Video
+import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
+import ru.vladsaybulin.model.person.PersonWithRoles
+import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
-import ru.vladsaybulin.model.title.TitleRoles
+import ru.vladsaybulin.model.title.Title
+import ru.vladsaybulin.model.title.TitleDetails
 import ru.vladsaybulin.network.datasource.AnimeDataSource
 import ru.vladsaybulin.network.models.anime.NetworkAnime
 import javax.inject.Inject
@@ -105,36 +111,47 @@ class AnimeRepository @Inject constructor(
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
     @DataScope private val scope: CoroutineScope
 ) : DomainAnimeRepository {
+    override fun getTitleBrief(titleId: Long): Flow<Title> =
+        animeDao.getAnimeStreamById(titleId)
+            .filterNotNull()
+            .map { brief ->
+                brief.asTitle()
+            }
 
-    override fun getAnimeDetailsStream(
-        animeId: Long,
-        forceRefresh: Boolean
-    ): TitleDetailsStreams {
-        val errors = MutableSharedFlow<Throwable>(extraBufferCapacity = 1)
+    override fun getTitleDetails(titleId: Long): Flow<TitleDetails> =
+        animeDetailsDao.getDetailsStream(titleId)
+            .filterNotNull()
+            .map { details ->
+                details.asExternalModel()
+            }
 
-        launchSyncAnimeDetails(animeId, forceRefresh, errors)
+    override fun getRelatedTitles(titleId: Long): Flow<List<RelatedTitle>> =
+        animeDetailsDao.getRelatedStream(titleId).map { relatedEntities ->
+            relatedEntities.map { it.asExternalModel() }
+        }
 
-        return TitleDetailsStreams(
-            brief = animeDao.getAnimeStreamById(animeId).map { it.asTitle() },
-            details = animeDetailsDao.getDetailsStream(animeId).map { details ->
-                val related = animeDetailsDao.getRelated(animeId)
-                mergeAnimeDetailsToExternalModel(details, related)
-            },
-            roles = animeDetailsDao.getCharactersWithRoleStream(animeId)
-                .map { characters ->
-                    val authors = animeDetailsDao.getAuthorsWithRoles(animeId)
-                    TitleRoles(
-                        characters = characters.map { it.asExternalModel() },
-                        authors = authors.map { it.asExternalModel() }
-                    )
-                },
-            similar = animeDetailsDao.getSimilarStream(animeId)
-                .map { entities ->
-                    entities.map { it.asTitle() }
-                },
-            userRate = userRateDao.getUserRate(animeId).map { it?.asExternalModel() },
-            errors = errors
-        )
+    override fun getTitleCharacters(titleId: Long): Flow<List<CharacterWithRole>> =
+        animeDetailsDao.getCharactersWithRoleStream(titleId).map { characters ->
+            characters.map { it.asExternalModel() }
+        }
+
+    override fun getTitleAuthors(titleId: Long): Flow<List<PersonWithRoles>> =
+        animeDetailsDao.getAuthorsWithRolesStream(titleId).map { authors ->
+            authors.map { it.asExternalModel() }
+        }
+
+    override fun getSimilarTitles(titleId: Long): Flow<List<Title>> =
+        animeDetailsDao.getSimilarStream(titleId).map { similarEntities ->
+            similarEntities.map { it.asTitle() }
+        }
+
+    override fun refreshTitleDetails(titleId: Long, forceRefresh: Boolean): Flow<Throwable> = callbackFlow {
+        val monitorJob = launch {
+            launchSyncAnimeDetails(titleId, forceRefresh, ::trySend)
+            close()
+        }
+
+        awaitClose { monitorJob.cancel() }
     }
 
     override fun animeSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Anime> =
@@ -147,6 +164,19 @@ class AnimeRepository @Inject constructor(
     override fun getAnimePosterStream(animeId: Long): Flow<Image?> =
         animeDao.getPosterStream(animeId).map { it?.asExternalModel() }
 
+    override fun getAnimeScreenshotsStream(animeId: Long): Flow<List<Image>> =
+        animeDetailsDao.getScreenshotsStream(animeId)
+            .map { screenshots ->
+                screenshots.map { it.asExternalModel() }
+            }
+
+    override fun getAnimeVideos(animeId: Long): Flow<List<Video>> {
+        return animeDetailsDao.getVideosStream(animeId)
+            .map { videos ->
+                videos.map { it.asExternalModel() }
+            }
+    }
+
     override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.OngoingAnimes),
@@ -158,30 +188,28 @@ class AnimeRepository @Inject constructor(
     private fun launchSyncAnimeDetails(
         animeId: Long,
         forceRefresh: Boolean,
-        errors: MutableSharedFlow<Throwable>
+        catch: (Throwable) -> Unit
     ) = scope.launch {
-        val catching: suspend (Throwable) -> Unit = { errors.emit(it) }
-
         val briefJob = launch {
-            tryRefresh(catch = catching) {
+            tryRefresh(catch = catch) {
                 syncAnimeBrief(animeId, forceRefresh)
             }
         }
 
         val detailsJob = launch {
-            tryRefresh(catch = catching) {
+            tryRefresh(catch = catch) {
                 syncAnimeDetails(animeId, forceRefresh, briefJob)
             }
         }
 
         launch {
-            tryRefresh(catch = catching) {
+            tryRefresh(catch = catch) {
                 syncAnimeRoles(animeId, forceRefresh, detailsJob)
             }
         }
 
         launch {
-            tryRefresh(catch = catching) {
+            tryRefresh(catch = catch) {
                 syncSimilarAnime(animeId, forceRefresh, detailsJob)
             }
         }
@@ -219,7 +247,7 @@ class AnimeRepository @Inject constructor(
         details.extractVideoEntities(videosEntities)
 
         val detailsEntity = details.asEntity()
-        val userRateEntity = details.userRate?.asEntity()
+        val userRateEntity = details.userRate?.asEntity(animeId = animeId)
 
         // Ensure that the brief data is written before writing details to avoid violating relationships
         briefJob.join()
@@ -239,7 +267,7 @@ class AnimeRepository @Inject constructor(
                 videos = videosEntities
             )
 
-            userRateEntity?.let { userRateDao.insertOrReplaceUserRate(it) }
+            userRateEntity?.let { userRateDao.upsertUserRate(it) }
         }
     }
 

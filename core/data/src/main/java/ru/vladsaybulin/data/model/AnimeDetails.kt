@@ -105,15 +105,17 @@ internal fun NetworkAnimeDetails.extractRelatedEntities(
             ?.also { mangaEntities.add(it) }
             ?.id
 
-        relatedEntities.add(
-            AnimeRelatedEntity(
-                animeId = id,
-                relatedAnimeId = animeId,
-                relatedMangaId = mangaId,
-                relationType = item.relationType,
-                order = index
+        if (animeId != null || mangaId != null) {
+            relatedEntities.add(
+                AnimeRelatedEntity(
+                    animeId = id,
+                    relatedAnimeId = animeId,
+                    relatedMangaId = mangaId,
+                    relationType = item.relationType,
+                    order = index
+                )
             )
-        )
+        }
     }
 }
 
@@ -193,10 +195,7 @@ private fun TimePeriodAiring.Season.asDatabaseModel() = SeasonPOJO(
 // Database -> Domain
 // ==========================================
 
-internal fun mergeAnimeDetailsToExternalModel(
-    animeDetails: PopulatedAnimeDetails,
-    relatedTitles: List<PopulatedRelatedTitle>,
-): TitleDetails = with(animeDetails.animeDetailsEntity) {
+internal fun PopulatedAnimeDetails.asExternalModel(): TitleDetails = with(animeDetailsEntity) {
     TitleDetails(
         id = id,
         type = EntryType.Anime,
@@ -214,11 +213,10 @@ internal fun mergeAnimeDetailsToExternalModel(
         scoreStats = scoreStats.asExternalModel(),
         userRateStatusStats = statusStats.asExternalModel(),
         season = season?.asExternalModel(),
-        genres = animeDetails.genres.map { it.asExternalModel() },
-        screenshots = animeDetails.screenshots.map { it.asExternalModel() },
-        videos = animeDetails.videos.map { it.asExternalModel() },
-        studios = animeDetails.studios.map { it.asExternalModel() },
-        related = relatedTitles.map { it.asExternalModel() }
+        genres = genres.map { it.asExternalModel() },
+        screenshots = screenshots.map { it.asExternalModel() },
+        videos = videos.map { it.asExternalModel() },
+        studios = studios.map { it.asExternalModel() }
     )
 }
 

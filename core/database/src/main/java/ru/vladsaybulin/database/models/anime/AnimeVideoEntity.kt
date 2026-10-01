@@ -59,11 +59,3 @@ data class AnimeVideoEntity(
     @ColumnInfo("kind")
     val kind: VideoKind
 )
-
-fun AnimeVideoEntity.asExternalModel() = Video(
-    name = name,
-    previewImageUrl = previewImageUrl,
-    videoUrl = videoUrl,
-    playerUrl = playerUrl,
-    kind = kind
-)

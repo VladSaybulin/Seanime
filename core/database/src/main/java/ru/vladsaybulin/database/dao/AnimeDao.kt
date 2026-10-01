@@ -30,7 +30,7 @@ import ru.vladsaybulin.database.models.common.ImagePOJO
 interface AnimeDao {
 
     @Query("SELECT * FROM animes WHERE id = :animeId")
-    fun getAnimeStreamById(animeId: Long): Flow<AnimeEntity>
+    fun getAnimeStreamById(animeId: Long): Flow<AnimeEntity?>
 
     @Query("SELECT EXISTS(SELECT 1 FROM animes WHERE id = :animeId)")
     suspend fun hasAnime(animeId: Long): Boolean

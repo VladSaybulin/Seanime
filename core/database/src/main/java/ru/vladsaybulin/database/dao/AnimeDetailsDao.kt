@@ -52,7 +52,7 @@ interface AnimeDetailsDao {
 
     @Query("SELECT * FROM anime_details WHERE id = :animeId")
     @Transaction
-    fun getDetailsStream(animeId: Long): Flow<PopulatedAnimeDetails>
+    fun getDetailsStream(animeId: Long): Flow<PopulatedAnimeDetails?>
 
     @Query(
         value = """
@@ -60,12 +60,12 @@ interface AnimeDetailsDao {
                 relation_type,
                 $ANIME_ROWS,
                 $MANGA_ROWS
-            FROM (SELECT * FROM anime_related WHERE anime_id = :animeId) AS anime_related
+            FROM (SELECT related_anime_id, related_manga_id, relation_type FROM anime_related WHERE anime_id = :animeId) AS anime_related
             LEFT OUTER JOIN animes AS $ANIME_ALIAS ON anime_related.related_anime_id = $ANIME_ALIAS.id
             LEFT OUTER JOIN mangas AS $MANGA_ALIAS ON anime_related.related_manga_id = $MANGA_ALIAS.id        
         """
     )
-    suspend fun getRelated(animeId: Long): List<PopulatedRelatedTitle>
+    fun getRelatedStream(animeId: Long): Flow<List<PopulatedRelatedTitle>>
 
     @Query(
         value = """
@@ -87,7 +87,7 @@ interface AnimeDetailsDao {
             INNER JOIN person AS $PERSON_ALIAS ON apr.person_id = $PERSON_ALIAS.id
         """
     )
-    suspend fun getAuthorsWithRoles(animeId: Long): List<PopulatedPersonWithRoles>
+    fun getAuthorsWithRolesStream(animeId: Long): Flow<List<PopulatedPersonWithRoles>>
 
     @Query(
         value = """
@@ -98,6 +98,11 @@ interface AnimeDetailsDao {
     )
     fun getSimilarStream(animeId: Long): Flow<List<AnimeEntity>>
 
+    @Query("SELECT * FROM anime_screenshots WHERE anime_id = :animeId")
+    fun getScreenshotsStream(animeId: Long): Flow<List<AnimeScreenshotEntity>>
+
+    @Query("SELECT * FROM anime_videos WHERE anime_id = :animeId")
+    fun getVideosStream(animeId: Long): Flow<List<AnimeVideoEntity>>
 
     // Insert methods
 

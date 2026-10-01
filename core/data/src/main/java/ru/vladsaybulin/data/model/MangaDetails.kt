@@ -90,15 +90,17 @@ internal fun NetworkMangaDetails.extractRelatedEntities(
             ?.also { animeEntities.add(it) }
             ?.id
 
-        relatedEntities.add(
-            MangaRelatedEntity(
-                mangaId = id,
-                relatedAnimeId = animeId,
-                relatedMangaId = mangaId,
-                relationType = item.relationType,
-                order = index
+        if (animeId != null || mangaId != null) {
+            relatedEntities.add(
+                MangaRelatedEntity(
+                    mangaId = id,
+                    relatedAnimeId = animeId,
+                    relatedMangaId = mangaId,
+                    relationType = item.relationType,
+                    order = index
+                )
             )
-        )
+        }
     }
 }
 
@@ -140,10 +142,7 @@ internal fun NetworkTitleRoles.extractMangaPersons(
 // Database -> Domain
 // ==========================================
 
-internal fun mergeMangaDetailsToExternalModel(
-    mangaDetails: PopulatedMangaDetails,
-    relatedTitles: List<PopulatedRelatedTitle>,
-): TitleDetails = with(mangaDetails.mangaDetailsEntity) {
+internal fun PopulatedMangaDetails.asExternalModel(): TitleDetails = with(mangaDetailsEntity) {
     TitleDetails(
         id = id,
         type = EntryType.Manga,
@@ -155,9 +154,8 @@ internal fun mergeMangaDetailsToExternalModel(
         descriptionSource = descriptionSource,
         scoreStats = scoreStats.asExternalModel(),
         userRateStatusStats = statusStats.asExternalModel(),
-        genres = mangaDetails.genres.map { it.asExternalModel() },
-        publishers = mangaDetails.publishers.map { it.asExternalModel() },
-        related = relatedTitles.map { it.asExternalModel() }
+        genres = genres.map { it.asExternalModel() },
+        publishers = publishers.map { it.asExternalModel() },
     )
 }
 

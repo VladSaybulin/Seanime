@@ -49,9 +49,9 @@ interface MangaDetailsDao {
 
     // Get methods
 
-    @Query("SELECT * FROM anime_details WHERE id = :mangaId")
+    @Query("SELECT * FROM manga_details WHERE id = :mangaId")
     @Transaction
-    fun getDetailsStream(mangaId: Long): Flow<PopulatedMangaDetails>
+    fun getDetailsStream(mangaId: Long): Flow<PopulatedMangaDetails?>
 
     @Query(
         value = """
@@ -59,12 +59,12 @@ interface MangaDetailsDao {
                 relation_type,
                 $ANIME_ROWS,
                 $MANGA_ROWS
-            FROM (SELECT * FROM manga_related WHERE manga_id = :mangaId) AS anime_related
+            FROM (SELECT related_anime_id, related_manga_id, relation_type FROM manga_related WHERE manga_id = :mangaId) AS anime_related
             LEFT OUTER JOIN animes AS $ANIME_ALIAS ON anime_related.related_anime_id = $ANIME_ALIAS.id
             LEFT OUTER JOIN mangas AS $MANGA_ALIAS ON anime_related.related_manga_id = $MANGA_ALIAS.id        
         """
     )
-    suspend fun getRelated(mangaId: Long): List<PopulatedRelatedTitle>
+    fun getRelatedStream(mangaId: Long): Flow<List<PopulatedRelatedTitle>>
 
     @Query(
         value = """
@@ -86,7 +86,7 @@ interface MangaDetailsDao {
             INNER JOIN person AS $PERSON_ALIAS ON apr.person_id = $PERSON_ALIAS.id
         """
     )
-    suspend fun getAuthorsWithRoles(mangaId: Long): List<PopulatedPersonWithRoles>
+    fun getAuthorsWithRolesStream(mangaId: Long): Flow<List<PopulatedPersonWithRoles>>
 
     @Query(
         value = """

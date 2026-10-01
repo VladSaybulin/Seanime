@@ -26,7 +26,6 @@ import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.manga.Publisher
-import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
@@ -47,7 +46,6 @@ data class TitleDetails(
     val scoreStats: List<StatisticsItem<Int>>?,
     val userRateStatusStats: List<StatisticsItem<UserRateStatus>>?,
     val genres: List<Genre>,
-    val related: List<RelatedTitle>,
 
     // Anime specific
     val nextEpisodeAt: Instant? = null,
