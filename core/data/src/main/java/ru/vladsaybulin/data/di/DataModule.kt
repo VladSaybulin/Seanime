@@ -118,6 +118,7 @@ interface DataModule {
 
     companion object {
         @Provides
+        @DataScope
         fun provideDataScope(@Dispatcher(IO) dispatcher: CoroutineDispatcher): CoroutineScope =
             CoroutineScope(SupervisorJob() + dispatcher)
     }
