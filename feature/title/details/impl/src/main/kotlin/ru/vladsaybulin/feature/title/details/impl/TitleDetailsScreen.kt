@@ -104,6 +104,7 @@ import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.title.TitleKind
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
+import ru.vladsaybulin.model.userrate.toUserRateValues
 import kotlin.time.Duration.Companion.days
 
 @Composable
@@ -120,6 +121,8 @@ fun TitleDetailsScreen(
     val animeMediaState = viewModel.animeMediaState.collectAsStateWithLifecycle()
     val userRateState = viewModel.userRateState.collectAsStateWithLifecycle()
 
+    val (showRequireAuthDialog, setShowRequireAuthDialog) = remember { mutableStateOf(false) }
+
     ProvideTitleStringsByType(viewModel.titleType) {
         DetailsScreen(
             type = viewModel.titleType,
@@ -131,7 +134,30 @@ fun TitleDetailsScreen(
             readSimilarState = { similarState.value },
             readAnimeMediaState = { animeMediaState.value },
             readUserRateState = { userRateState.value },
-            navigator = navigator
+            navigator = navigator,
+            onUserRateClick = {
+                if (viewModel.isAuthenticated()) {
+                    navigator.onRateClick(
+                        it?.id,
+                        it?.toUserRateValues(),
+                        viewModel.buildUserRateContext()
+                    )
+                } else {
+                    setShowRequireAuthDialog(true)
+                }
+            }
+        )
+    }
+
+    if (showRequireAuthDialog) {
+        RequireAuthDialog(
+            authWithShikimori = {
+                setShowRequireAuthDialog(false)
+                viewModel.onLoginClick()
+            },
+            onDismissRequest = {
+                setShowRequireAuthDialog(false)
+            }
         )
     }
 }
@@ -147,7 +173,8 @@ fun DetailsScreen(
     readSimilarState: () -> SimilarTitlesState,
     readAnimeMediaState: () -> AnimeMediaState,
     readUserRateState: () -> UserRateState,
-    navigator: TitleDetailsNavigator
+    navigator: TitleDetailsNavigator,
+    onUserRateClick: (UserRate?) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -168,7 +195,8 @@ fun DetailsScreen(
                 readSimilarState = readSimilarState,
                 readAnimeMediaState = readAnimeMediaState,
                 readUserRateState = readUserRateState,
-                navigator = navigator
+                navigator = navigator,
+                onUserRateClick = onUserRateClick
             )
         }
     }
@@ -193,10 +221,9 @@ private fun DetailsContent(
     readSimilarState: () -> SimilarTitlesState,
     readAnimeMediaState: () -> AnimeMediaState,
     readUserRateState: () -> UserRateState,
-    navigator: TitleDetailsNavigator
+    navigator: TitleDetailsNavigator,
+    onUserRateClick: (UserRate?) -> Unit
 ) {
-    val (showRequireAuthDialog, setShowRequireAuthDialog) = remember { mutableStateOf(false) }
-
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val listState = rememberLazyListState()
 
@@ -222,26 +249,7 @@ private fun DetailsContent(
             UserRateFab(
                 readUserRateState = readUserRateState,
                 expanded = expandedFab,
-                onClick = {
-                    TODO()
-                    //when (userRateState) {
-                    //    is UserRateState.NotAuthorized -> setShowRequireAuthDialog(true)
-                    //    is UserRateState.Success -> {
-                    //        val rate = userRateState.userRate.id
-                    //        onRateClick(
-                    //            rate,
-                    //            userRateState.userRate.toUserRateValues(),
-                    //            detailsState.extractUserRateContext()
-                    //        )
-                    //    }
-//
-                    //    is UserRateState.NoUserRate -> {
-                    //        onRateClick(null, null, detailsState.extractUserRateContext())
-                    //    }
-//
-                    //    else -> {}
-                    //}
-                }
+                onClick = onUserRateClick
             )
         }
     ) { scaffoldPadding ->
@@ -280,8 +288,8 @@ private fun DetailsContent(
                 publishers = infoData.publishers,
                 genres = infoData.genres,
                 onStudioClick = { navigator.onStudioClick(it.id) },
-                onPublisherClick = { navigator.onPublisherClick(TODO("SearchType"), it.id) },
-                onGenreClick = { navigator.onGenreClick(TODO("SearchType"), it.id) }
+                onPublisherClick = { navigator.onPublisherClick(infoData.searchType(), it.id) },
+                onGenreClick = { navigator.onGenreClick(infoData.searchType(), it.id) }
             )
 
             infoData.description?.takeIf { it.text.isNotEmpty() }
@@ -366,7 +374,7 @@ private fun DetailsContent(
                 videos.takeIf { it.isNotEmpty() }?.let { videos ->
                     gutterSpacer()
                     titleVideos(
-                        visisbleVideos = videos.take(5),
+                        visibleVideos = videos.take(5),
                         hasMore = videos.size > 5,
                         onVideoClick = { /* TODO navigate to video */ },
                         onMoreClick = navigator.onAllVideosClick
@@ -388,17 +396,6 @@ private fun DetailsContent(
                 )
             }
         }
-    }
-
-    if (showRequireAuthDialog) {
-        RequireAuthDialog(
-            authWithShikimori = {
-                setShowRequireAuthDialog(false)
-            },
-            onDismissRequest = {
-                setShowRequireAuthDialog(false)
-            }
-        )
     }
 }
 
@@ -611,7 +608,7 @@ private fun LazyListScope.titleScreenshots(
 
 
 private fun LazyListScope.titleVideos(
-    visisbleVideos: List<Video>,
+    visibleVideos: List<Video>,
     hasMore: Boolean,
     onVideoClick: (Video) -> Unit,
     onMoreClick: () -> Unit
@@ -624,7 +621,7 @@ private fun LazyListScope.titleVideos(
 
     item {
         TitleVideos(
-            videos = visisbleVideos,
+            videos = visibleVideos,
             onVideoClick = onVideoClick
         )
     }
@@ -693,6 +690,7 @@ fun EntryDetailsScreenPreview() {
 
 
     val info = InfoData(
+        titleType = EntryType.Anime,
         kind = TitleKind.Tv,
         status = Ongoing,
         episodes = 0,
@@ -874,7 +872,8 @@ fun EntryDetailsScreenPreview() {
         readSimilarState = { similar },
         readAnimeMediaState = { media },
         readUserRateState = { userRate },
-        navigator = IdleNavigator
+        navigator = IdleNavigator,
+        onUserRateClick = {}
     )
 }
 

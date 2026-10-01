@@ -52,7 +52,7 @@ class TitleDetailsNavigator(
     val onPersonClick: (Long) -> Unit,
     val onPosterClick: (String) -> Unit,
     val onPublisherClick: (SearchType, Long) -> Unit,
-    val onRateClick: (Long?, UserRateValues?, UserRateContext) -> Unit,
+    val onRateClick: (Long?, UserRateValues?, UserRateContext?) -> Unit,
     val onScreenshotClick: (images: List<String>, startIndex: Int) -> Unit,
     val onStudioClick: (Long) -> Unit,
     val onBackClick: () -> Unit

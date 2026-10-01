@@ -35,19 +35,32 @@ import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.feature.title.details.impl.R
 import ru.vladsaybulin.feature.title.details.impl.TitleDetailsLoadState
 import ru.vladsaybulin.feature.title.details.impl.UserRateState
+import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 internal fun UserRateFab(
     readUserRateState: () -> UserRateState,
     expanded: Boolean,
-    onClick: () -> Unit,
+    onClick: (UserRate?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val userRateStatus = when (val userRateState = readUserRateState()) {
-        is TitleDetailsLoadState.Loading -> null
-        is TitleDetailsLoadState.Success -> userRateState.data?.status ?: UserRateStatus.None
+    val userRate: UserRate?
+    val isLoading: Boolean
+
+    when (val userRateState = readUserRateState()) {
+        is TitleDetailsLoadState.Loading -> {
+            userRate = null
+            isLoading = true
+        }
+
+        is TitleDetailsLoadState.Success -> {
+            userRate = userRateState.data
+            isLoading = false
+        }
     }
+
+    val userRateStatus = if (isLoading) null else userRate?.status ?: UserRateStatus.None
     val transition = updateTransition(targetState = userRateStatus, label = "UserRateStatus")
 
     val animatedContainerColor by transition.animateColor(label = "ContainerColor") { status ->
@@ -81,7 +94,11 @@ internal fun UserRateFab(
                 }
             }
         },
-        onClick = onClick,
+        onClick = {
+            if (!isLoading) {
+                onClick(userRate)
+            }
+        },
         expanded = expanded,
         containerColor = animatedContainerColor,
         contentColor = animatedContentColor,

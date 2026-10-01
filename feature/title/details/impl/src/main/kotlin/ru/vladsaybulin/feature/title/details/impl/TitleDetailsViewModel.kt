@@ -19,6 +19,7 @@ package ru.vladsaybulin.feature.title.details.impl
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.Lazy
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -31,6 +32,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.vladsaybulin.core.domain.app.GetSessionStateStreamUseCase
+import ru.vladsaybulin.core.domain.common.BuildUserRateContextUseCase
+import ru.vladsaybulin.core.domain.shared.LoginViaShikimoriUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetRelatedTitlesStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetSimilarTitlesStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.GetTitleAuthorsStreamUseCase
@@ -41,6 +45,8 @@ import ru.vladsaybulin.core.domain.titledetails.GetUserRateByTitleStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase
 import ru.vladsaybulin.feature.list.title.details.navigation.TitleDetailsNavKey
 import ru.vladsaybulin.model.anime.AnimeRating
+import ru.vladsaybulin.model.auth.SessionState
+import ru.vladsaybulin.model.userrate.UserRateContext
 
 @HiltViewModel(assistedFactory = TitleDetailsViewModel.Factory::class)
 class TitleDetailsViewModel @AssistedInject constructor(
@@ -51,6 +57,9 @@ class TitleDetailsViewModel @AssistedInject constructor(
     getAuthors: GetTitleAuthorsStreamUseCase,
     getSimilarTitles: GetSimilarTitlesStreamUseCase,
     getUserRateByTitle: GetUserRateByTitleStreamUseCase,
+    getSessionState: GetSessionStateStreamUseCase,
+    private val buildUserRateContext: Lazy<BuildUserRateContextUseCase>,
+    private val login: Lazy<LoginViaShikimoriUseCase>,
     private val refreshTitleDetails: RefreshTitleDetailsUseCase,
     @Assisted private val key: TitleDetailsNavKey
 ) : ViewModel() {
@@ -83,6 +92,7 @@ class TitleDetailsViewModel @AssistedInject constructor(
     ) { brief, details ->
         InfoData(
             kind = brief.kind,
+            titleType = brief.type,
             status = brief.status,
             score = brief.score,
             episodes = brief.episodes,
@@ -131,6 +141,8 @@ class TitleDetailsViewModel @AssistedInject constructor(
     val userRateState: StateFlow<UserRateState> = getUserRateByTitle(titleType, titleId)
         .asLoadState()
 
+    val sessionState: StateFlow<SessionState> = getSessionState()
+
     init {
         viewModelScope.launch {
             onRefresh(false)
@@ -144,6 +156,19 @@ class TitleDetailsViewModel @AssistedInject constructor(
                     Log.e("TitleDetailsViewModel", "Refresh error", it)
                 }
         }
+    }
+
+    fun onLoginClick() {
+        login.get().invoke()
+    }
+
+    fun buildUserRateContext(): UserRateContext? {
+        val brief = brief.replayCache.firstOrNull() ?: return null
+        return buildUserRateContext.get().invoke(brief)
+    }
+
+    fun isAuthenticated(): Boolean {
+        return sessionState.value == SessionState.Authenticated
     }
 
     private inline fun <reified T> Flow<T>.asLoadState(): StateFlow<TitleDetailsLoadState<T>> = this

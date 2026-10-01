@@ -23,6 +23,7 @@ import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.StatisticsItem
@@ -30,10 +31,13 @@ import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedTitle
+import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.search.TimePeriodAiring
+import ru.vladsaybulin.model.title.RanobeKindList
 import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.title.TitleKind
 import ru.vladsaybulin.model.userrate.UserRate
+import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 sealed interface TitleDetailsLoadState<T> {
@@ -48,6 +52,7 @@ data class HeaderData(
 )
 
 data class InfoData(
+    val titleType: EntryType,
     val kind: TitleKind,
     val status: EntryStatus,
     val score: Float,
@@ -92,3 +97,9 @@ inline fun <reified T> ExpandableSectionState<T>.asSuccess() = TitleDetailsLoadS
 fun List<Title>.asSuccess() = TitleDetailsLoadState.Success(this)
 fun AnimeMediaData.asSuccess() = TitleDetailsLoadState.Success(this)
 fun UserRate?.asSuccess() = TitleDetailsLoadState.Success(this)
+
+fun InfoData.searchType() = when {
+    titleType == EntryType.Anime -> SearchType.Anime
+    kind in RanobeKindList -> SearchType.Ranobe
+    else -> SearchType.Manga
+}
