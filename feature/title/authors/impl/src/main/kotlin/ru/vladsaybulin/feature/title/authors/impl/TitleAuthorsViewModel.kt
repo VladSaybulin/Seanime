@@ -25,13 +25,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import ru.vladsaybulin.core.domain.GetAuthorsUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetTitleAuthorsStreamUseCase
 import ru.vladsaybulin.feature.title.authors.api.navigation.TitleAuthorsNavKey
 import ru.vladsaybulin.model.person.PersonWithRoles
 
 @HiltViewModel(assistedFactory = TitleAuthorsViewModel.Factory::class)
 class TitleAuthorsViewModel @AssistedInject constructor(
-    getAuthorsUseCase: GetAuthorsUseCase,
+    getAuthorsUseCase: GetTitleAuthorsStreamUseCase,
     @Assisted key: TitleAuthorsNavKey
 ) : ViewModel() {
 
@@ -41,7 +41,7 @@ class TitleAuthorsViewModel @AssistedInject constructor(
     }
 
     val uiState = getAuthorsUseCase(key.titleType, key.titleId)
-        .map { AuthorsUiState.Success(it) }
+        .map { AuthorsUiState.Success(it.items) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),

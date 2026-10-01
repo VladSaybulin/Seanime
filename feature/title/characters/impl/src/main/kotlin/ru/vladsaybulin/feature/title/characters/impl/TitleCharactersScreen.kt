@@ -17,8 +17,6 @@
 package ru.vladsaybulin.feature.title.characters.impl
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -116,22 +114,22 @@ private fun TitleCharactersContent(
     state: TitleCharactersUiState.Success,
     onCharacterClick: (Long) -> Unit
 ) {
-    val characters = state.characters
-    val firstMinorCharacter = characters.indexOfFirst { !it.isMain }
+    val wrapper = state.characters
+    val characters = wrapper.items
 
     EntryGrid(
         columns = GridCells.Adaptive(CharacterCardMinWidth),
     ) {
-        if (characters.first().isMain) {
+        if (wrapper.threshold > 0) {
             header {
                 Text(
                     text = stringResource(id = R.string.feature_title_characters_main_charcaters),
-                    style = SeanimeTheme.typography.labelLarge,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    style = SeanimeTheme.typography.titleMedium,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
 
-            items(count = firstMinorCharacter) { index ->
+            items(count = wrapper.threshold) { index ->
                 val character = characters[index].character
                 CharacterItem(
                     character = character,
@@ -140,21 +138,18 @@ private fun TitleCharactersContent(
             }
         }
 
-        if (firstMinorCharacter != -1) {
-            if (characters.first().isMain) {
-                item(span = {GridItemSpan(maxLineSpan)}) { Spacer(modifier = Modifier.height(16.dp)) }
-            }
-
+        if (wrapper.items.size > wrapper.threshold) {
             header {
                 Text(
-                    text = stringResource(id = R.string.feature_title_characters_main_charcaters),
+                    text = stringResource(id = R.string.feature_title_characters_support_characters),
                     style = SeanimeTheme.typography.labelLarge,
-                    modifier = Modifier.padding(top = 32.dp, bottom = 4.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
 
-            items(count = characters.size - firstMinorCharacter) { index ->
-                val character = characters[firstMinorCharacter + index].character
+            items(count = wrapper.items.size - wrapper.threshold) { offset ->
+                val index = wrapper.threshold + offset
+                val character = characters[index].character
                 CharacterItem(
                     character = character,
                     onClick = { onCharacterClick(character.id) }

@@ -107,10 +107,10 @@ private fun TitleRelatedContent(
         items(items = state.relatedTitles) { relatedTitle ->
             RelatedTitleItem(
                 relatedTitle = relatedTitle,
-                onClick = { type, id ->
-                    when (type) {
-                        EntryType.Anime -> onAnimeClick(id)
-                        EntryType.Manga -> onMangaClick(id)
+                onClick = {
+                    when (relatedTitle.title.type) {
+                        EntryType.Anime -> onAnimeClick(relatedTitle.title.id)
+                        EntryType.Manga -> onMangaClick(relatedTitle.title.id)
                     }
                 }
             )

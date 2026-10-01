@@ -33,20 +33,20 @@ import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.ui.notNoneUserRateStatusIcon
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.feature.title.details.impl.R
+import ru.vladsaybulin.feature.title.details.impl.TitleDetailsLoadState
 import ru.vladsaybulin.feature.title.details.impl.UserRateState
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 internal fun UserRateFab(
-    userRateState: UserRateState,
+    readUserRateState: () -> UserRateState,
     expanded: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val userRateStatus = when (userRateState) {
-        is UserRateState.Loading -> null
-        is UserRateState.NoUserRate, is UserRateState.NotAuthorized -> UserRateStatus.None
-        is UserRateState.Success -> userRateState.userRate.status
+    val userRateStatus = when (val userRateState = readUserRateState()) {
+        is TitleDetailsLoadState.Loading -> null
+        is TitleDetailsLoadState.Success -> userRateState.data?.status ?: UserRateStatus.None
     }
     val transition = updateTransition(targetState = userRateStatus, label = "UserRateStatus")
 

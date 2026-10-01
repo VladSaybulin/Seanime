@@ -17,16 +17,12 @@
 package ru.vladsaybulin.core.domain.titledetails
 
 import kotlinx.coroutines.flow.Flow
+import ru.vladsaybulin.core.domain.common.TitleRepositoryResolver
+import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.title.Title
-import ru.vladsaybulin.model.title.TitleDetails
-import ru.vladsaybulin.model.title.TitleRoles
-import ru.vladsaybulin.model.userrate.UserRate
+import javax.inject.Inject
 
-class TitleDetailsStreams(
-    val brief: Flow<Title>,
-    val details: Flow<TitleDetails>,
-    val roles: Flow<TitleRoles>,
-    val similar: Flow<List<Title>>,
-    val userRate: Flow<UserRate?>,
-    val errors: Flow<Throwable>
-)
+class GetTitleBriefStreamUseCase @Inject constructor(private val repositoryResolver: TitleRepositoryResolver) {
+    operator fun invoke(titleType: EntryType, titleId: Long): Flow<Title> =
+        repositoryResolver(titleType).getTitleBrief(titleId)
+}

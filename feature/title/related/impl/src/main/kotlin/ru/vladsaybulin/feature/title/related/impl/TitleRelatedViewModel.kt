@@ -25,16 +25,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import ru.vladsaybulin.core.domain.repository.AnimeRepository
-import ru.vladsaybulin.core.domain.repository.MangaRepository
+import ru.vladsaybulin.core.domain.titledetails.ExpandableListWrapper
+import ru.vladsaybulin.core.domain.titledetails.GetRelatedTitlesStreamUseCase
 import ru.vladsaybulin.feature.title.related.api.navigation.TitleRelatedNavKey
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.related.RelatedTitle
 
 @HiltViewModel(assistedFactory = TitleRelatedViewModel.Factory::class)
 class TitleRelatedViewModel @AssistedInject constructor(
-    animeRepository: AnimeRepository,
-    mangaRepository: MangaRepository,
+    getRelatedTitlesStreamUseCase: GetRelatedTitlesStreamUseCase,
     @Assisted key: TitleRelatedNavKey
 ) : ViewModel() {
 
@@ -43,17 +41,13 @@ class TitleRelatedViewModel @AssistedInject constructor(
         fun create(key: TitleRelatedNavKey): TitleRelatedViewModel
     }
 
-    val uiState = when (key.titleType) {
-        EntryType.Anime -> animeRepository.getAllAnimeRelatedTitles(key.titleId)
-        EntryType.Manga -> mangaRepository.getAllMangaRelatedTitles(key.titleId)
-    }
-        .map<List<RelatedTitle>, TitleRelatedUiState> { TitleRelatedUiState.Success(it) }
+    val uiState = getRelatedTitlesStreamUseCase(key.titleType, key.titleId)
+        .map<ExpandableListWrapper<RelatedTitle>, TitleRelatedUiState> { TitleRelatedUiState.Success(it.items) }
         .stateIn(
             initialValue = TitleRelatedUiState.Loading,
             started = SharingStarted.WhileSubscribed(5000),
             scope = viewModelScope,
         )
-
 }
 
 sealed class TitleRelatedUiState {

@@ -19,41 +19,16 @@ package ru.vladsaybulin.feature.title.details.impl.content
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.core.ui2.entry.EntryCarousel
-import ru.vladsaybulin.core.ui2.entry.anime.animeCarouselItems
-import ru.vladsaybulin.core.ui2.entry.manga.mangaCarouselItems
+import ru.vladsaybulin.core.ui2.entry.title.titleCarouselItems
+import ru.vladsaybulin.model.title.Title
 
 @Composable
-internal fun TitleSimilarAnimes(animes: List<Anime>, onAnimeClick: (Anime) -> Unit) {
-    CommonTitleSimilar {
-        animeCarouselItems(
-            animes = animes,
-            onItemClick = onAnimeClick,
-            itemModifier = Modifier.width(DefaultSimilarWidth)
-        )
-    }
-}
-
-@Composable
-internal fun TitleSimilarMangas(mangas: List<Manga>, onMangaClick: (Manga) -> Unit) {
-    CommonTitleSimilar {
-        mangaCarouselItems(
-            mangas = mangas,
-            onItemClick = onMangaClick,
-            itemModifier = Modifier.width(DefaultSimilarWidth)
-        )
-    }
-}
-
-@Composable
-private fun CommonTitleSimilar(content: LazyListScope.() -> Unit) {
+internal fun SimilarTitle(titles: List<Title>, onTitleClick: (Title) -> Unit) {
     val listState = rememberLazyListState()
 
     EntryCarousel(
@@ -61,9 +36,14 @@ private fun CommonTitleSimilar(content: LazyListScope.() -> Unit) {
         flingBehavior = rememberSnapFlingBehavior(
             lazyListState = listState,
             snapPosition = SnapPosition.Start
-        ),
-        content = content
-    )
+        )
+    ) {
+        titleCarouselItems(
+            titles = titles,
+            onItemClick = onTitleClick,
+            itemModifier = Modifier.width(DefaultSimilarWidth)
+        )
+    }
 }
 
 private val DefaultSimilarWidth = 96.dp
