@@ -34,10 +34,6 @@ import ru.vladsaybulin.core.ui2.entry.R
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.common.Image
-import ru.vladsaybulin.model.related.RelatedAnime
-import ru.vladsaybulin.model.related.RelatedManga
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -45,35 +41,48 @@ import ru.vladsaybulin.core.ui2.entry.EntryItemDefaults
 import ru.vladsaybulin.core.ui2.entry.EntryListItem
 import ru.vladsaybulin.core.ui2.entry.additional.AdditionalContentKindAndYear
 import ru.vladsaybulin.core.ui2.entry.additional.AdditionalContentStatusTag
+import ru.vladsaybulin.model.title.Title
 
 @Composable
 fun RelatedTitleItem(
     relatedTitle: RelatedTitle,
-    onClick: (EntryType, Long) -> Unit,
+    onClick: (Title) -> Unit,
     modifier: Modifier = Modifier,
     userRateStatus: UserRateStatus = UserRateStatus.None
 ) {
-    val data = when (relatedTitle) {
-        is RelatedAnime -> animeData(relatedTitle)
-        is RelatedManga -> mangaData(relatedTitle)
-    }
+    RelatedTitleItem(
+        title = relatedTitle.title,
+        relationType = relatedTitle.relationType,
+        onClick = onClick,
+        modifier = modifier,
+        userRateStatus = userRateStatus
+    )
+}
 
-    ProvideTitleStringsByType(data.type) {
+@Composable
+private fun RelatedTitleItem(
+    title: Title,
+    relationType: RelationType,
+    onClick: (Title) -> Unit,
+    modifier: Modifier = Modifier,
+    userRateStatus: UserRateStatus = UserRateStatus.None
+) {
+    ProvideTitleStringsByType(title.type) {
         EntryListItem(
-            name = data.name,
-            russianName = data.russianName,
-            poster = data.poster,
+            name = title.name,
+            russianName = title.nameRu,
+            poster = title.poster,
             posterWidth = PosterWidth,
-            onClick = { onClick(data.type, data.id) },
+            onClick = { onClick(title) },
             modifier = modifier,
             userRateStatus = userRateStatus,
             colors = EntryItemDefaults.SurfaceColors,
             additionalContent = {
                 RelatedTitleDetails(
-                    data.kindStr,
-                    data.year,
-                    data.status,
-                    data.relatedType
+                    title.kind.asStringOrNull(),
+                    title.airedOn?.year ?: title.releasedOn?.year,
+                    title.status,
+                    relationType
                 )
             }
         )
@@ -112,52 +121,6 @@ private fun relationTypeString(relationType: RelationType) = when (relationType)
     RelationType.SpinOff -> R.string.core_ui2_entry_relation_type_spin_off
     RelationType.Other -> R.string.core_ui2_entry_relation_type_other
 }.let { stringResource(it) }
-
-@Composable
-@ReadOnlyComposable
-private fun animeData(related: RelatedAnime): RelatedData {
-    val anime = related.anime
-    return RelatedData(
-        type = EntryType.Anime,
-        id = anime.id,
-        name = anime.name,
-        russianName = anime.russianName,
-        poster = anime.poster,
-        kindStr = anime.kind.asStringOrNull(),
-        year = anime.airedOn?.year ?: related.anime.releasedOn?.year,
-        status = anime.status,
-        relatedType = related.relationType
-    )
-}
-
-@Composable
-@ReadOnlyComposable
-private fun mangaData(related: RelatedManga): RelatedData {
-    val manga = related.manga
-    return RelatedData(
-        type = EntryType.Manga,
-        id = manga.id,
-        name = manga.name,
-        russianName = manga.russianName,
-        poster = manga.poster,
-        kindStr = manga.kind.asStringOrNull(),
-        year = manga.airedOn?.year ?: related.manga.releasedOn?.year,
-        status = manga.status,
-        relatedType = related.relationType
-    )
-}
-
-private class RelatedData(
-    val type: EntryType,
-    val id: Long,
-    val name: String,
-    val russianName: String?,
-    val poster: Image?,
-    val kindStr: String?,
-    val year: Int?,
-    val status: EntryStatus,
-    val relatedType: RelationType
-)
 
 private val PosterWidth = 80.dp
 private val TagSpace = 4.dp
