@@ -20,15 +20,16 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.DatePeriod
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.animeShell
 import ru.vladsaybulin.data.model.asEntity
+import ru.vladsaybulin.data.request.NextDayMidnightSyncPolicy
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
-import ru.vladsaybulin.data.withForceStrategy
+import ru.vladsaybulin.data.request.forcedSyncPolicy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CalendarDao
 import ru.vladsaybulin.database.models.calendar.PopulatedCalendarItem
@@ -55,7 +56,7 @@ class CalendarRepository @Inject constructor(
     override suspend fun refreshCalendarItems(force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.Calendar),
-            ttlPolicy = withForceStrategy(force) { TTLStrategies.Calendar },
+            policy = forcedSyncPolicy(force) { CalendarSyncPolicy },
             block = { updateCalendarItems() }
         )
     }
@@ -71,5 +72,9 @@ class CalendarRepository @Inject constructor(
             calendarDao.deleteAllItems()
             calendarDao.insertCalendarItems(calendarItems)
         }
+    }
+
+    companion object {
+        private val CalendarSyncPolicy = NextDayMidnightSyncPolicy(DatePeriod(days = 1))
     }
 }

@@ -32,7 +32,6 @@ import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.ui.tryRefresh
-import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.di.DataScope
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
@@ -45,7 +44,7 @@ import ru.vladsaybulin.data.model.extractRelatedEntities
 import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.cachedKey
-import ru.vladsaybulin.data.withForceStrategy
+import ru.vladsaybulin.data.request.forcedSyncPolicy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CharacterDao
 import ru.vladsaybulin.database.dao.GenreDao
@@ -191,7 +190,7 @@ class MangaRepository @Inject constructor(
 
     private suspend fun syncMangaDetails(mangaId: Long, forceRefresh: Boolean, briefJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.Manga, mangaId),
-        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        policy = forcedSyncPolicy(forceRefresh) { TitleSyncPolicies.DetailsSyncPolicy },
     ) {
         val details = mangaDataSource.getMangaDetailsById(mangaId)
 
@@ -232,7 +231,7 @@ class MangaRepository @Inject constructor(
 
     private suspend fun syncMangaRoles(mangaId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.MangaRoles, mangaId),
-        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        policy = forcedSyncPolicy(forceRefresh) { TitleSyncPolicies.RolesSyncPolicy },
     ) {
         val roles = mangaDataSource.getMangaRolesById(mangaId)
 
@@ -259,7 +258,7 @@ class MangaRepository @Inject constructor(
 
     private suspend fun syncSimilarManga(mangaId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.SimilarMangas, mangaId),
-        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        policy = forcedSyncPolicy(forceRefresh) { TitleSyncPolicies.SimilarSyncPolicy },
     ) {
         val similarMangas = mangaDataSource.getSimilarManga(mangaId)
 

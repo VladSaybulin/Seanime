@@ -47,18 +47,18 @@ class RequestCoordinator @Inject constructor(
     /**
      * Performs cache-aware synchronization for a cached [key].
      *
-     * The refresh runs only when [ttlPolicy] says cached data expired.
-     * To force refresh use [ru.vladsaybulin.data.TTLStrategies.ForceRefresh]
+     * The refresh runs only when [policy] says cached data expired.
+     * To force refresh use [ForceRefresh] policy.
      *
      * @return the result of [block], or `null` if refresh was not required.
      */
     suspend fun <T> sync(
         key: RequestKey.Cached,
-        ttlPolicy: TTLPolicy,
+        policy: SyncPolicy,
         block: suspend UpdateScope.() -> T
     ): T? {
         return request(key) {
-            syncer.sync(key, ttlPolicy, block)
+            syncer.sync(key, policy, block)
         }
     }
 }

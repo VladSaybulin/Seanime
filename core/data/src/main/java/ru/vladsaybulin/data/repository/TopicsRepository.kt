@@ -23,15 +23,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.linkedAnimeEntityShell
 import ru.vladsaybulin.data.model.linkedMangaEntityShell
 import ru.vladsaybulin.data.model.userEntityShell
 import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.TTLSyncPolicy
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
-import ru.vladsaybulin.data.withForceStrategy
+import ru.vladsaybulin.data.request.forcedSyncPolicy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.TopicsDao
@@ -42,6 +42,7 @@ import ru.vladsaybulin.database.models.topic.asExternalModel
 import ru.vladsaybulin.model.topic.Topic
 import ru.vladsaybulin.network.datasource.TopicsDataSource
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.hours
 import ru.vladsaybulin.core.domain.repository.TopicsRepository as DomainTopicsRepository
 
 class TopicsRepository @Inject constructor(
@@ -61,7 +62,7 @@ class TopicsRepository @Inject constructor(
     override suspend fun refreshNewsTopics(force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.News),
-            ttlPolicy = withForceStrategy(force) { TTLStrategies.News },
+            policy = forcedSyncPolicy(force) { NewsTopicsSyncPolicy },
             block = { updateNewsTopics() }
         )
     }
@@ -94,5 +95,9 @@ class TopicsRepository @Inject constructor(
                 }
             }
         }
+    }
+
+    companion object {
+        private val NewsTopicsSyncPolicy = TTLSyncPolicy(1.hours)
     }
 }

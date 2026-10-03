@@ -25,13 +25,33 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration
 
 /**
- * Strategy that decides whether cached data is expired.
+ * Synchronization policy that decides whether cached data is expired.
+ * @see ForceRefresh
+ * @see TTLSyncPolicy
+ * @see NextDayMidnightSyncPolicy
+ * @see forcedSyncPolicy
  */
-fun interface TTLPolicy {
+fun interface SyncPolicy {
     /**
      * Returns `true` when cache should be refreshed.
      */
     fun isExpired(now: Instant, lastRequest: Instant): Boolean
+}
+
+/**
+ * Returns [ForceRefresh] if [force] is `true`, otherwise returns the result of [block].
+ */
+inline fun forcedSyncPolicy(force: Boolean, block: () -> SyncPolicy) = if (force) {
+    ForceRefresh
+} else {
+    block()
+}
+
+/**
+ * Always returns `true`, forcing cache refresh.
+ */
+object ForceRefresh : SyncPolicy {
+    override fun isExpired(now: Instant, lastRequest: Instant): Boolean = true
 }
 
 /**
@@ -40,7 +60,7 @@ fun interface TTLPolicy {
  * Cache is considered stale when the elapsed time since last request is greater than or
  * equal to [ttl].
  */
-class DefaultTTLPolicy(private val ttl: Duration) : TTLPolicy {
+class TTLSyncPolicy(private val ttl: Duration) : SyncPolicy {
     override fun isExpired(now: Instant, lastRequest: Instant): Boolean {
         return now - lastRequest >= ttl
     }
@@ -51,9 +71,9 @@ class DefaultTTLPolicy(private val ttl: Duration) : TTLPolicy {
  *
  * Useful for data that is expected to refresh on day boundaries.
  */
-class NextDayMidnightTTLPolicy(
+class NextDayMidnightSyncPolicy(
     private val datePeriod: DatePeriod
-) : TTLPolicy {
+) : SyncPolicy {
 
     override fun isExpired(now: Instant, lastRequest: Instant): Boolean {
         val timeZone: TimeZone = TimeZone.currentSystemDefault()

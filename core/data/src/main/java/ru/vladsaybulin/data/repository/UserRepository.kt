@@ -23,12 +23,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.asExternalModel
+import ru.vladsaybulin.data.request.ForceRefresh
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.RequestKey
-import ru.vladsaybulin.data.request.TTLPolicy
-import ru.vladsaybulin.data.withForceStrategy
+import ru.vladsaybulin.data.request.TTLSyncPolicy
+import ru.vladsaybulin.data.request.forcedSyncPolicy
 import ru.vladsaybulin.database.dao.UsersDao
 import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.database.models.user.asExternalModel
@@ -36,6 +36,7 @@ import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.network.datasource.UserDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.days
 import ru.vladsaybulin.core.domain.repository.UserRepository as DomainUserRepository
 
 @Singleton
@@ -57,7 +58,7 @@ class UserRepository @Inject constructor(
 
         requestCoordinator.sync(
             RequestKey.Cached(RequestType.User, userEntity.id),
-            TTLStrategies.ForceRefresh
+            ForceRefresh
         ) {
             usersDao.insertOrReplaceUser(userEntity)
             userEntity.asExternalModel() // UserEntity -> BriefUser (domain)
@@ -75,7 +76,7 @@ class UserRepository @Inject constructor(
     private suspend fun refreshUserBrief(id: Long, force: Boolean) = withContext(ioDispatcher) {
         requestCoordinator.sync(
             RequestKey.Cached(RequestType.User, id),
-            withForceStrategy(force) { TTLStrategies.UserBrief }
+            forcedSyncPolicy(force) { UserBriefSyncPolicy }
         ) {
             val userEntity = userDataSource.getUserBriefById(id).asExternalModel()  // NetworkBriefUser -> UserEntity
             usersDao.insertOrReplaceUser(userEntity)
@@ -83,15 +84,7 @@ class UserRepository @Inject constructor(
         }
     }
 
-    class WhoAmIRefreshPolicy : TTLPolicy {
-        private var fetched: Boolean = false
-
-        override fun isExpired(now: kotlinx.datetime.Instant, lastRequest: kotlinx.datetime.Instant): Boolean =
-            if (fetched){
-                TTLStrategies.UserBrief.isExpired(now, lastRequest)
-            } else {
-                fetched = true
-                true
-            }
-        }
+    companion object {
+        private val UserBriefSyncPolicy = TTLSyncPolicy(ttl = 1.days)
+    }
 }
