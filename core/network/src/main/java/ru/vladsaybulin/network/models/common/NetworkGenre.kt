@@ -16,7 +16,7 @@
 
 package ru.vladsaybulin.network.models.common
 
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.genre.GenreKind
 
 data class NetworkGenre(
@@ -24,5 +24,5 @@ data class NetworkGenre(
     val name: String,
     val russianName: String?,
     val kind: GenreKind,
-    val entryType: EntryType
+    val titleType: TitleType
 )

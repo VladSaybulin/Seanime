@@ -33,8 +33,7 @@ import ru.vladsaybulin.database.models.manga.asExternalModel
 import ru.vladsaybulin.database.models.person.PersonEntity
 import ru.vladsaybulin.database.models.stats.asExternalModel
 import ru.vladsaybulin.database.models.text.asExternalModel
-import ru.vladsaybulin.database.models.title.PopulatedRelatedTitle
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.title.TitleDetails
 import ru.vladsaybulin.network.models.common.NetworkTitleRoles
 import ru.vladsaybulin.network.models.manga.NetworkMangaDetails
@@ -145,7 +144,7 @@ internal fun NetworkTitleRoles.extractMangaPersons(
 internal fun PopulatedMangaDetails.asExternalModel(): TitleDetails = with(mangaDetailsEntity) {
     TitleDetails(
         id = id,
-        type = EntryType.Manga,
+        type = TitleType.Manga,
         nameEn = nameEn,
         nameJp = nameJp,
         alternativeNames = altNames,

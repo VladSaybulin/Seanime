@@ -49,7 +49,7 @@ import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.feature.rate.editor.api.navigation.TitleReference
 import ru.vladsaybulin.feature.rate.editor.api.navigation.titleReference
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
@@ -81,7 +81,7 @@ fun ListScreen(
 @Composable
 internal fun ListScreen(
     screenState: ListScreenState,
-    onEntryTypeChange: (EntryType) -> Unit,
+    onEntryTypeChange: (TitleType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
     onAnimeClick: (Long) -> Unit,
     onLogin: () -> Unit,
@@ -117,16 +117,16 @@ internal fun ListScreen(
 @Composable
 private fun ListContent(
     state: ListScreenState.Success,
-    onEntryTypeChange: (EntryType) -> Unit,
+    onEntryTypeChange: (TitleType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit,
     onAnimeClick: (Long) -> Unit,
     onMangaClick: (Long) -> Unit,
     onRateClick: (Long, TitleReference, UserRateValues, UserRateContext) -> Unit,
 ) {
-    ProvideTitleStringsByType(titleType = state.controlPanelState.entryType) {
+    ProvideTitleStringsByType(titleType = state.controlPanelState.titleType) {
         Column {
             ControlPanel(
-                entryType = state.controlPanelState.entryType,
+                titleType = state.controlPanelState.titleType,
                 userRateStatus = state.controlPanelState.userRateStatus,
                 onEntryTypeChange = onEntryTypeChange,
                 onUserRateStatusChange = onUserRateStatusChange
@@ -171,9 +171,9 @@ private fun Authorization(onSignIn: () -> Unit) {
 
 @Composable
 private fun ControlPanel(
-    entryType: EntryType,
+    titleType: TitleType,
     userRateStatus: UserRateStatus,
-    onEntryTypeChange: (EntryType) -> Unit,
+    onEntryTypeChange: (TitleType) -> Unit,
     onUserRateStatusChange: (UserRateStatus) -> Unit
 ) {
     Row(
@@ -181,10 +181,10 @@ private fun ControlPanel(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ShikimoriDropdownChip(
-            items = listOf(EntryType.Anime, EntryType.Manga),
+            items = listOf(TitleType.Anime, TitleType.Manga),
             onItemClick = onEntryTypeChange,
             selected = true,
-            selectedLabel = { Text(entryType.asString()) },
+            selectedLabel = { Text(titleType.asString()) },
             itemLabel = { Text(it.asString()) }
         )
 

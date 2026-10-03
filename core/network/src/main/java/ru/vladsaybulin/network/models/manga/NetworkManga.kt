@@ -19,7 +19,7 @@ package ru.vladsaybulin.network.models.manga
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.network.models.userrate.NetworkUserRate
 import ru.vladsaybulin.network.models.common.NetworkImage
@@ -39,7 +39,7 @@ data class NetworkManga(
     val kind: MangaKind,
     @SerialName("status")
     @Serializable(EntryStatusSerializer::class)
-    val status: EntryStatus,
+    val status: TitleStatus,
     @SerialName("score") val score: Float?,
     @SerialName("chapters") val chapters: Int,
     @SerialName("volumes") val volumes: Int,

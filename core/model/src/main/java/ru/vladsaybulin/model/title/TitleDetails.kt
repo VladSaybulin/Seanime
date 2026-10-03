@@ -21,7 +21,6 @@ import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.StatisticsItem
 import ru.vladsaybulin.model.genre.Genre
@@ -34,7 +33,7 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
  */
 data class TitleDetails(
     val id: Long,
-    val type: EntryType,
+    val type: TitleType,
 
     // Shared fields
     val nameEn: String?,

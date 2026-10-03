@@ -16,21 +16,21 @@
 
 package ru.vladsaybulin.core.domain.common
 
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.userrate.UserRateContext
 import javax.inject.Inject
 
 class BuildUserRateContextUseCase @Inject constructor() {
     operator fun invoke(brief: Title): UserRateContext = when (brief.type) {
-        EntryType.Anime -> buildAnimeRateContext(
+        TitleType.Anime -> buildAnimeRateContext(
             status = brief.status,
             episodes = brief.episodes,
             episodesAired = brief.episodesAired
         )
 
-        EntryType.Manga -> buildMangaRateContext(
+        TitleType.Manga -> buildMangaRateContext(
             status = brief.status,
             chapters = brief.chapters,
             volumes = brief.volumes
@@ -38,7 +38,7 @@ class BuildUserRateContextUseCase @Inject constructor() {
     }
 
     private fun buildAnimeRateContext(
-        status: EntryStatus,
+        status: TitleStatus,
         episodes: Int,
         episodesAired: Int,
     ): UserRateContext =
@@ -46,7 +46,7 @@ class BuildUserRateContextUseCase @Inject constructor() {
             titleStatus = status,
             maxEpisodes = when {
                 status.isFinished() -> maxOf(episodes, episodesAired)
-                status == EntryStatus.Anons -> -1
+                status == TitleStatus.Anons -> -1
                 episodes > episodesAired -> episodes
                 else -> episodesAired
             },
@@ -56,7 +56,7 @@ class BuildUserRateContextUseCase @Inject constructor() {
         )
 
     private fun buildMangaRateContext(
-        status: EntryStatus,
+        status: TitleStatus,
         chapters: Int,
         volumes: Int
     ): UserRateContext = UserRateContext(
@@ -75,5 +75,5 @@ class BuildUserRateContextUseCase @Inject constructor() {
     )
 }
 
-private fun EntryStatus.isFinished(): Boolean =
-    this == EntryStatus.Released || this == EntryStatus.Discontinued || this == EntryStatus.Paused
+private fun TitleStatus.isFinished(): Boolean =
+    this == TitleStatus.Released || this == TitleStatus.Discontinued || this == TitleStatus.Paused

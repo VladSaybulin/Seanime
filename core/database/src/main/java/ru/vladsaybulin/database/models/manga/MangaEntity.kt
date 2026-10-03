@@ -23,12 +23,9 @@ import androidx.room.PrimaryKey
 import ru.vladsaybulin.database.models.common.ImagePOJO
 import ru.vladsaybulin.database.models.common.IncompleteDatePOJO
 import ru.vladsaybulin.database.models.common.asExternalModel
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.manga.MangaKind
-import ru.vladsaybulin.model.title.Title
-import ru.vladsaybulin.model.title.toTitleKind
 
 @Entity(tableName = "mangas")
 class MangaEntity(
@@ -50,7 +47,7 @@ class MangaEntity(
     val kind: MangaKind,
 
     @ColumnInfo("status")
-    val status: EntryStatus,
+    val status: TitleStatus,
 
     @ColumnInfo("score")
     val score: Float,

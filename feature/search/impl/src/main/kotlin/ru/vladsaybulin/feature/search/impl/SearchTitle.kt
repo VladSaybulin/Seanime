@@ -16,14 +16,14 @@
 
 package ru.vladsaybulin.feature.search.impl
 
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.genre.GenreKind
 
 sealed class SearchTitle {
 
     data object Search : SearchTitle()
 
-    data class Status(val entryStatus: EntryStatus) : SearchTitle()
+    data class Status(val titleStatus: TitleStatus) : SearchTitle()
 
     data class Studio(val studioName: String) : SearchTitle()
 

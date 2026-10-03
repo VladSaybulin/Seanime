@@ -37,8 +37,8 @@ import ru.vladsaybulin.core.ui2.score.Score
 import ru.vladsaybulin.core.ui2.score.ScoreDefaults
 import ru.vladsaybulin.core.ui2.score.ScoreFormat
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 
 @Composable
 fun TitleGridItemAdditionalContent(
@@ -53,7 +53,7 @@ fun TitleGridItemAdditionalContent(
 
 @Composable
 fun TitleListItemDefaultAdditionalContent(
-    status: EntryStatus,
+    status: TitleStatus,
     year: Int?,
     kindAndVolumes: String?,
     score: Float = 0f,
@@ -91,9 +91,9 @@ fun TitleListItemDefaultAdditionalContent(
 private fun TitleListItemAdditionalContentMeasurePolicy_Full() {
     SeanimeTheme {
         Surface(color = SeanimeTheme.colorScheme.surfaceContainer) {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 TitleListItemDefaultAdditionalContent(
-                    status = EntryStatus.Ongoing,
+                    status = TitleStatus.Ongoing,
                     year = 2024,
                     kindAndVolumes = "TV, 12 eps"
                 )
@@ -107,9 +107,9 @@ private fun TitleListItemAdditionalContentMeasurePolicy_Full() {
 private fun TitleListItemAdditionalContentMeasurePolicy_WithoutStatus() {
     SeanimeTheme {
         Surface(color = SeanimeTheme.colorScheme.surfaceContainer) {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 TitleListItemDefaultAdditionalContent(
-                    status = EntryStatus.None,
+                    status = TitleStatus.None,
                     year = 2024,
                     kindAndVolumes = "TV, 12 eps"
                 )
@@ -123,9 +123,9 @@ private fun TitleListItemAdditionalContentMeasurePolicy_WithoutStatus() {
 private fun TitleListItemAdditionalContentMeasurePolicy_WithoutYear() {
     SeanimeTheme {
         Surface(color = SeanimeTheme.colorScheme.surfaceContainer) {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 TitleListItemDefaultAdditionalContent(
-                    status = EntryStatus.Ongoing,
+                    status = TitleStatus.Ongoing,
                     year = null,
                     kindAndVolumes = "TV, 12 eps"
                 )
@@ -139,9 +139,9 @@ private fun TitleListItemAdditionalContentMeasurePolicy_WithoutYear() {
 private fun TitleListItemAdditionalContentMeasurePolicy_WithoutKindAndVolumes() {
     SeanimeTheme {
         Surface(color = SeanimeTheme.colorScheme.surfaceContainer) {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 TitleListItemDefaultAdditionalContent(
-                    status = EntryStatus.Ongoing,
+                    status = TitleStatus.Ongoing,
                     year = 2024,
                     kindAndVolumes = null
                 )
@@ -155,9 +155,9 @@ private fun TitleListItemAdditionalContentMeasurePolicy_WithoutKindAndVolumes() 
 private fun TitleListItemAdditionalContentMeasurePolicy_StatusOnly() {
     SeanimeTheme {
         Surface(color = SeanimeTheme.colorScheme.surfaceContainer) {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 TitleListItemDefaultAdditionalContent(
-                    status = EntryStatus.Ongoing,
+                    status = TitleStatus.Ongoing,
                     year = null,
                     kindAndVolumes = null
                 )
@@ -171,9 +171,9 @@ private fun TitleListItemAdditionalContentMeasurePolicy_StatusOnly() {
 private fun TitleListItemAdditionalContentMeasurePolicy_YearOnly() {
     SeanimeTheme {
         Surface(color = SeanimeTheme.colorScheme.surfaceContainer) {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 TitleListItemDefaultAdditionalContent(
-                    status = EntryStatus.None,
+                    status = TitleStatus.None,
                     year = 2024,
                     kindAndVolumes = null
                 )
@@ -187,9 +187,9 @@ private fun TitleListItemAdditionalContentMeasurePolicy_YearOnly() {
 private fun TitleListItemAdditionalContentMeasurePolicy_KindAndEpisodesOnly() {
     SeanimeTheme {
         Surface(color = SeanimeTheme.colorScheme.surfaceContainer) {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 TitleListItemDefaultAdditionalContent(
-                    status = EntryStatus.None,
+                    status = TitleStatus.None,
                     year = null,
                     kindAndVolumes = "TV, 12 eps"
                 )

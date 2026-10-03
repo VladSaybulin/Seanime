@@ -24,7 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.util.fastForEach
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
@@ -68,7 +68,7 @@ fun rememberFiltersState(
 class FiltersState(
     val animeKindOptions: FilterOptionStates<AnimeKind>?,
     val mangaKindOptions: FilterOptionStates<MangaKind>?,
-    val statusOptions: FilterOptionStates<EntryStatus>?,
+    val statusOptions: FilterOptionStates<TitleStatus>?,
     val myListStatusOptions: FilterOptionStates<UserRateStatus>?,
     val durationOptions: FilterOptionStates<Duration>?,
     val timePeriodAiringOptions: FilterOptionStates<TimePeriodAiring>?,

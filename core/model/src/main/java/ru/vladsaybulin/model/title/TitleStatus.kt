@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.database.utils
+package ru.vladsaybulin.model.title
 
-import androidx.room.TypeConverter
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.asEntryType
+enum class TitleStatus(val serializedName: String) {
+    Anons("anons"),
+    Ongoing("ongoing"),
+    Released("released"),
 
-class EntryStatusTypeConverter {
+    //Manga only
+    Paused("paused"),
+    Discontinued("discontinued"),
 
-    @TypeConverter
-    fun entryStatusToString(value: EntryStatus) = value.serializedName
+    None("")
+}
 
-    @TypeConverter
-    fun stringToEntryStatus(value: String) = value.asEntryType()
-
+fun String?.asTitleStatus() = when (this) {
+    null -> TitleStatus.None
+    else -> TitleStatus.entries.firstOrNull { it.serializedName == this } ?: TitleStatus.None
 }

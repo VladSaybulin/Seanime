@@ -20,7 +20,7 @@ import ru.vladsaybulin.database.models.anime.AnimeEntity
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.title.toTitleKind
 import ru.vladsaybulin.network.models.anime.NetworkAnime
@@ -85,7 +85,7 @@ internal fun NetworkAnime.userRateEntityShell() = userRate?.let { userRate ->
 
 internal fun AnimeEntity.asTitle() = Title(
     id = id,
-    type = EntryType.Anime,
+    type = TitleType.Anime,
     name = name,
     nameRu = nameRu,
     poster = poster?.asExternalModel(),

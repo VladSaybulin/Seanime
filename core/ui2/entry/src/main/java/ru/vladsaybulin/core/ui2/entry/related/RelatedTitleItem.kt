@@ -33,7 +33,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui2.entry.R
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.related.RelationType
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -90,7 +90,7 @@ private fun RelatedTitleItem(
 }
 
 @Composable
-fun RelatedTitleDetails(kindStr: String?, year: Int?, status: EntryStatus, relationType: RelationType) {
+fun RelatedTitleDetails(kindStr: String?, year: Int?, status: TitleStatus, relationType: RelationType) {
     ProvideTextStyle(SeanimeTheme.typography.labelSmall) {
         Column {
             AdditionalContentKindAndYear(kindStr, year)

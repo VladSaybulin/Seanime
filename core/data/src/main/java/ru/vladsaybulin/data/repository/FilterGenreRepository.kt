@@ -27,7 +27,7 @@ import ru.vladsaybulin.database.dao.FilterGenreDao
 import ru.vladsaybulin.database.models.filters.FilterGenreEntity
 import ru.vladsaybulin.database.models.filters.asExternalModel
 import ru.vladsaybulin.datastore.SeanimePreferencesDataSource
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.network.datasource.GenreDataSource
@@ -40,35 +40,35 @@ class FilterGenreRepository @Inject constructor(
     private val seanimePreferencesDataSource: SeanimePreferencesDataSource,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : DomainFilterGenreRepository {
-    override suspend fun getGenreById(entryType: EntryType, genreId: Long): Genre? =
+    override suspend fun getGenreById(titleType: TitleType, genreId: Long): Genre? =
         withContext(ioDispatcher) {
-            syncGenres(entryType)
+            syncGenres(titleType)
             filtersGenreDao.getFilterGenreById(genreId)?.asExternalModel()
         }
 
-    override suspend fun getGenres(entryType: EntryType, genreKind: GenreKind): List<Genre> =
+    override suspend fun getGenres(titleType: TitleType, genreKind: GenreKind): List<Genre> =
         withContext(ioDispatcher) {
-            syncGenres(entryType)
-            filtersGenreDao.getFilterGenresByKind(entryType, genreKind)
+            syncGenres(titleType)
+            filtersGenreDao.getFilterGenresByKind(titleType, genreKind)
                 .map(FilterGenreEntity::asExternalModel)
         }
 
 
-    private suspend fun syncGenres(entryType: EntryType) {
+    private suspend fun syncGenres(titleType: TitleType) {
         sync(
             ttl = GENRES_TTL,
-            lastRequestDateFlow = when (entryType) {
-                EntryType.Anime -> seanimePreferencesDataSource.animeGenresLastRequestDate
-                EntryType.Manga -> seanimePreferencesDataSource.mangaGenresLastRequestDate
+            lastRequestDateFlow = when (titleType) {
+                TitleType.Anime -> seanimePreferencesDataSource.animeGenresLastRequestDate
+                TitleType.Manga -> seanimePreferencesDataSource.mangaGenresLastRequestDate
             },
-            updateLastRequest = when (entryType) {
-                EntryType.Anime -> seanimePreferencesDataSource::setLastAnimeGenresRequestDate
-                EntryType.Manga -> seanimePreferencesDataSource::setLastMangaGenresRequestDate
+            updateLastRequest = when (titleType) {
+                TitleType.Anime -> seanimePreferencesDataSource::setLastAnimeGenresRequestDate
+                TitleType.Manga -> seanimePreferencesDataSource::setLastMangaGenresRequestDate
             }
         ) {
-            val response = genreDataSource.getGenres(entryType)
+            val response = genreDataSource.getGenres(titleType)
 
-            filtersGenreDao.deleteFilterGenresByEntryType(entryType)
+            filtersGenreDao.deleteFilterGenresByEntryType(titleType)
             filtersGenreDao.insertOrIgnoreFilterGenres(response.map { it.asFilterEntity() })
         }
     }

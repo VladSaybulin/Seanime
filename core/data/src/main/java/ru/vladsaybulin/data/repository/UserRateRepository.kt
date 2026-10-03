@@ -58,7 +58,7 @@ import ru.vladsaybulin.database.models.userrate.PopulatedUserRate
 import ru.vladsaybulin.database.models.userrate.asExternalModel
 import ru.vladsaybulin.database.models.userrate.asUserRateValues
 import ru.vladsaybulin.database.models.userrate.toUserRateEditorContext
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRate
@@ -131,7 +131,7 @@ class UserRateRepository @Inject constructor(
         userRateDao.getAllMangaUserRateStatusesStream()
 
     override suspend fun createUserRate(
-        entryType: EntryType,
+        titleType: TitleType,
         entryId: Long,
         userRateValues: UserRateValues
     ) {
@@ -142,7 +142,7 @@ class UserRateRepository @Inject constructor(
                 userRateDataSource.createUserRate(
                     CreateUserRateRequest(
                         userId = myId,
-                        entryType = entryType,
+                        titleType = titleType,
                         entryId = entryId,
                         userRateValues = userRateValues
                     )
@@ -303,10 +303,10 @@ class UserRateRepository @Inject constructor(
         }
     }
 
-    override suspend fun getRateContext(titleType: EntryType, titleId: Long): UserRateContext {
+    override suspend fun getRateContext(titleType: TitleType, titleId: Long): UserRateContext {
         return when (titleType) {
-            EntryType.Anime -> animeDao.getAnimeRateContext(titleId).toUserRateEditorContext()
-            EntryType.Manga -> mangaDao.getMangaContext(titleId).toUserRateEditorContext()
+            TitleType.Anime -> animeDao.getAnimeRateContext(titleId).toUserRateEditorContext()
+            TitleType.Manga -> mangaDao.getMangaContext(titleId).toUserRateEditorContext()
         }
     }
 

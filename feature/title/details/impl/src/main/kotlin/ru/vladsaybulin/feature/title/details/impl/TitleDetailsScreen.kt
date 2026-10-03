@@ -84,10 +84,10 @@ import ru.vladsaybulin.model.anime.VideoKind
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.Character
 import ru.vladsaybulin.model.character.CharacterWithRole
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryStatus.Ongoing
-import ru.vladsaybulin.model.common.EntryStatus.Released
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleStatus.Ongoing
+import ru.vladsaybulin.model.title.TitleStatus.Released
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.StatisticsItem
@@ -164,7 +164,7 @@ fun TitleDetailsScreen(
 
 @Composable
 fun DetailsScreen(
-    type: EntryType,
+    type: TitleType,
     headerState: HeaderState,
     readInfoState: () -> InfoState,
     readRelatedState: () -> RelatedTitlesState,
@@ -212,7 +212,7 @@ private fun DetailsLoading(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DetailsContent(
-    type: EntryType,
+    type: TitleType,
     headerData: HeaderData,
     readInfoState: () -> InfoState,
     readRelatedState: () -> RelatedTitlesState,
@@ -384,8 +384,8 @@ private fun DetailsContent(
                     titles = similarState.data,
                     onTitleClick = { type, id ->
                         when (type) {
-                            EntryType.Anime -> navigator.onAnimeClick(id)
-                            EntryType.Manga -> navigator.onMangaClick(id)
+                            TitleType.Anime -> navigator.onAnimeClick(id)
+                            TitleType.Manga -> navigator.onMangaClick(id)
                         }
                     }
                 )
@@ -444,9 +444,9 @@ private fun LazyListScope.titleName(
 }
 
 private fun LazyListScope.titleInfo(
-    type: EntryType,
+    type: TitleType,
     kind: TitleKind,
-    status: EntryStatus,
+    status: TitleStatus,
     episodes: Int,
     episodesAired: Int,
     episodeDuration: Int,
@@ -624,7 +624,7 @@ private fun LazyListScope.titleVideos(
 
 private fun LazyListScope.similarTitles(
     titles: List<Title>,
-    onTitleClick: (EntryType, Long) -> Unit
+    onTitleClick: (TitleType, Long) -> Unit
 ) {
     header(headerTextId = R.string.similar)
 
@@ -685,7 +685,7 @@ fun EntryDetailsScreenPreview() {
 
 
     val info = InfoData(
-        titleType = EntryType.Anime,
+        titleType = TitleType.Anime,
         kind = TitleKind.Tv,
         status = Ongoing,
         episodes = 0,
@@ -705,28 +705,28 @@ fun EntryDetailsScreenPreview() {
                 id = 1,
                 englishName = "Senen",
                 russianName = "Сёнен",
-                entryType = EntryType.Anime,
+                titleType = TitleType.Anime,
                 kind = GenreKind.Demographic
             ),
             Genre(
                 id = 2,
                 englishName = "Action",
                 russianName = "Экшен",
-                entryType = EntryType.Anime,
+                titleType = TitleType.Anime,
                 kind = GenreKind.Genre
             ),
             Genre(
                 id = 3,
                 englishName = "Adventure",
                 russianName = "Приключения",
-                entryType = EntryType.Anime,
+                titleType = TitleType.Anime,
                 kind = GenreKind.Genre
             ),
             Genre(
                 id = 4,
                 englishName = "Fantasy",
                 russianName = "Фэнтези",
-                entryType = EntryType.Anime,
+                titleType = TitleType.Anime,
                 kind = GenreKind.Genre
             ),
         ),
@@ -751,7 +751,7 @@ fun EntryDetailsScreenPreview() {
             RelatedTitle(
                 title = Title(
                     id = 813,
-                    type = EntryType.Anime,
+                    type = TitleType.Anime,
                     name = "Dragon Ball Z",
                     nameRu = "Драконий жемчуг Зет",
                     poster = null,
@@ -771,7 +771,7 @@ fun EntryDetailsScreenPreview() {
             RelatedTitle(
                 title = Title(
                     id = 13,
-                    type = EntryType.Manga,
+                    type = TitleType.Manga,
                     name = "One Piece",
                     nameRu = "Ван пис",
                     poster = null,
@@ -858,7 +858,7 @@ fun EntryDetailsScreenPreview() {
     val userRate = (null as UserRate?).asSuccess()
 
     DetailsContent(
-        type = EntryType.Anime,
+        type = TitleType.Anime,
         headerData = header.data,
         readInfoState = { info },
         readRelatedState = { relatedTitles },

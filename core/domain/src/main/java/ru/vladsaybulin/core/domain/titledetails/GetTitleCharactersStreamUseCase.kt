@@ -20,11 +20,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.vladsaybulin.core.domain.common.TitleRepositoryResolver
 import ru.vladsaybulin.model.character.CharacterWithRole
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import javax.inject.Inject
 
 class GetTitleCharactersStreamUseCase @Inject constructor(private val repositoryResolver: TitleRepositoryResolver) {
-    operator fun invoke(titleType: EntryType, titleId: Long): Flow<ExpandableListWrapper<CharacterWithRole>> {
+    operator fun invoke(titleType: TitleType, titleId: Long): Flow<ExpandableListWrapper<CharacterWithRole>> {
         return repositoryResolver(titleType).getTitleCharacters(titleId)
             .map { characters ->
                 val mainCharacters = mutableListOf<CharacterWithRole>()

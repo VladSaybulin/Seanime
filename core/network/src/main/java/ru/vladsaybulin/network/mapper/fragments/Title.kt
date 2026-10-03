@@ -38,7 +38,7 @@ internal fun GenreFragment.asNetworkModel(): NetworkGenre =
         id = id,
         name = name,
         russianName = russian,
-        entryType = entryType.asEntryType(),
+        titleType = entryType.asEntryType(),
         kind = kind.asGenreKind()
     )
 

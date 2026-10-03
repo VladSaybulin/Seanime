@@ -17,7 +17,7 @@
 package ru.vladsaybulin.data.model
 
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRate
 import ru.vladsaybulin.model.userrate.UserRateValues
 import ru.vladsaybulin.network.models.userrate.CreateUserRateRequest
@@ -84,16 +84,16 @@ fun UserRateValues.asDto() = UpdateUserRateRequest(
 )
 
 fun UserRate.asEntity(
-    entryType: EntryType,
+    titleType: TitleType,
     entryId: Long
 ) = UserRateEntity(
     id = id,
-    animeId = when (entryType) {
-        EntryType.Anime -> entryId
+    animeId = when (titleType) {
+        TitleType.Anime -> entryId
         else -> null
     },
-    mangaId = when (entryType) {
-        EntryType.Anime -> null
+    mangaId = when (titleType) {
+        TitleType.Anime -> null
         else -> entryId
     },
     status = status,
@@ -109,12 +109,12 @@ fun UserRate.asEntity(
 
 fun NetworkUserRateWithTitleLink.asEntity() = UserRateEntity(
     id = id,
-    animeId = when (entryType) {
-        EntryType.Anime -> entryId
+    animeId = when (titleType) {
+        TitleType.Anime -> entryId
         else -> null
     },
-    mangaId = when (entryType) {
-        EntryType.Anime -> null
+    mangaId = when (titleType) {
+        TitleType.Anime -> null
         else -> entryId
     },
     status = status,
@@ -130,13 +130,13 @@ fun NetworkUserRateWithTitleLink.asEntity() = UserRateEntity(
 
 fun CreateUserRateRequest(
     userId: Long,
-    entryType: EntryType,
+    titleType: TitleType,
     entryId: Long,
     userRateValues: UserRateValues
 ) = with(userRateValues) {
     CreateUserRateRequest(
         userId = userId,
-        targetType = entryType,
+        targetType = titleType,
         targetId = entryId,
         status = status,
         score = score,

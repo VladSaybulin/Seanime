@@ -17,7 +17,7 @@
 package ru.vladsaybulin.core.ui2.entry.preview
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.manga.Manga
@@ -38,7 +38,7 @@ private val mangas = listOf(
         russianName = "Цикл историй литературного клуба",
         poster = Image("", ""),
         kind = MangaKind.Novel,
-        status = EntryStatus.None,
+        status = TitleStatus.None,
         score = 8.61f,
         chapters = 0,
         volumes = 0,
@@ -51,7 +51,7 @@ private val mangas = listOf(
         russianName = "Клинок, рассекающий демонов",
         poster = Image("", ""),
         kind = MangaKind.None,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         score = 8.11f,
         chapters = 207,
         volumes = 23,
@@ -64,7 +64,7 @@ private val mangas = listOf(
         russianName = "Мастер меча, охватывающий звёзды",
         poster = Image("", ""),
         kind = MangaKind.Manhwa,
-        status = EntryStatus.Ongoing,
+        status = TitleStatus.Ongoing,
         score = 8.08f,
         chapters = 0,
         volumes = 0,
@@ -77,7 +77,7 @@ private val mangas = listOf(
         russianName = "Орендж",
         poster = null,
         kind = MangaKind.Manga,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         score = 8.28f,
         chapters = 38,
         volumes = 0,
@@ -90,7 +90,7 @@ private val mangas = listOf(
         russianName = "Стеклянная маска",
         poster = Image("", ""),
         kind = MangaKind.Manhwa,
-        status = EntryStatus.Paused,
+        status = TitleStatus.Paused,
         score = 8.42f,
         chapters = 0,
         volumes = 49,

@@ -18,20 +18,20 @@ package ru.vladsaybulin.network.mapper.enums
 
 import ru.vladsaybulin.core.network.graphql.type.AnimeStatusEnum
 import ru.vladsaybulin.core.network.graphql.type.MangaStatusEnum
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 
 fun AnimeStatusEnum?.asEntryStatus() = when (this) {
-    AnimeStatusEnum.anons -> EntryStatus.Anons
-    AnimeStatusEnum.ongoing -> EntryStatus.Ongoing
-    AnimeStatusEnum.released -> EntryStatus.Released
-    else -> EntryStatus.None
+    AnimeStatusEnum.anons -> TitleStatus.Anons
+    AnimeStatusEnum.ongoing -> TitleStatus.Ongoing
+    AnimeStatusEnum.released -> TitleStatus.Released
+    else -> TitleStatus.None
 }
 
 fun MangaStatusEnum?.asEntryStatus() = when (this) {
-    MangaStatusEnum.anons -> EntryStatus.Anons
-    MangaStatusEnum.ongoing -> EntryStatus.Ongoing
-    MangaStatusEnum.released -> EntryStatus.Released
-    MangaStatusEnum.discontinued -> EntryStatus.Discontinued
-    MangaStatusEnum.paused -> EntryStatus.Paused
-    else -> EntryStatus.None
+    MangaStatusEnum.anons -> TitleStatus.Anons
+    MangaStatusEnum.ongoing -> TitleStatus.Ongoing
+    MangaStatusEnum.released -> TitleStatus.Released
+    MangaStatusEnum.discontinued -> TitleStatus.Discontinued
+    MangaStatusEnum.paused -> TitleStatus.Paused
+    else -> TitleStatus.None
 }

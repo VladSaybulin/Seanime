@@ -20,7 +20,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import ru.vladsaybulin.model.anime.AnimeKind
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.network.models.common.NetworkIncompleteDate
 import ru.vladsaybulin.network.models.userrate.NetworkUserRate
 import ru.vladsaybulin.network.models.common.NetworkImage
@@ -39,7 +39,7 @@ data class NetworkAnime(
     val kind: AnimeKind,
     @SerialName("status")
     @Serializable(EntryStatusSerializer::class)
-    val status: EntryStatus,
+    val status: TitleStatus,
     @SerialName("score") val score: Float,
     @SerialName("episodes") val episodes: Int,
     @SerialName("episodes_aired") val episodesAired: Int,

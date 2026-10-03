@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.model.common
+package ru.vladsaybulin.model.title
 
-enum class EntryType(val serializedName: String) {
+enum class TitleType(val serializedName: String) {
     Anime("anime"),
     Manga("manga")
 }
 
-fun String.asEntryType() = EntryType.entries.first {
+fun String.asTitleType() = TitleType.entries.first {
     it.serializedName.equals(this, ignoreCase = true)
 }

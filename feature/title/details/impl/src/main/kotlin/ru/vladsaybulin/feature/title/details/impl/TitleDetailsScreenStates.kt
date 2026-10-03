@@ -22,8 +22,8 @@ import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.annotatedtext.SeanimeText
 import ru.vladsaybulin.model.character.CharacterWithRole
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.StatisticsItem
@@ -51,9 +51,9 @@ data class HeaderData(
 )
 
 data class InfoData(
-    val titleType: EntryType,
+    val titleType: TitleType,
     val kind: TitleKind,
-    val status: EntryStatus,
+    val status: TitleStatus,
     val score: Float,
     val episodes: Int,
     val episodesAired: Int,
@@ -98,7 +98,7 @@ fun AnimeMediaData.asSuccess() = TitleDetailsLoadState.Success(this)
 fun UserRate?.asSuccess() = TitleDetailsLoadState.Success(this)
 
 fun InfoData.searchType() = when {
-    titleType == EntryType.Anime -> SearchType.Anime
+    titleType == TitleType.Anime -> SearchType.Anime
     kind in RanobeKindList -> SearchType.Ranobe
     else -> SearchType.Manga
 }

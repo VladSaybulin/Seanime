@@ -18,7 +18,7 @@ package ru.vladsaybulin.network.datasource
 
 import com.apollographql.apollo.ApolloClient
 import ru.vladsaybulin.core.network.graphql.GenresQuery
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.network.mapper.enums.asGenreEntryTypeEnum
 import ru.vladsaybulin.network.mapper.queries.asNetworkModel
 import ru.vladsaybulin.network.models.common.NetworkGenre
@@ -27,9 +27,9 @@ import javax.inject.Inject
 class GenreDataSource @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
-    suspend fun getGenres(entryType: EntryType): List<NetworkGenre> {
-        val response = apolloClient.query(GenresQuery(entryType.asGenreEntryTypeEnum()))
+    suspend fun getGenres(titleType: TitleType): List<NetworkGenre> {
+        val response = apolloClient.query(GenresQuery(titleType.asGenreEntryTypeEnum()))
             .execute()
-        return response.dataAssertNoErrors.genres.map { it.asNetworkModel(entryType) }
+        return response.dataAssertNoErrors.genres.map { it.asNetworkModel(titleType) }
     }
 }

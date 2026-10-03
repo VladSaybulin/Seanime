@@ -19,7 +19,7 @@ package ru.vladsaybulin.database.models.genre
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
 
@@ -37,7 +37,7 @@ class GenreEntity(
     val nameRu: String?,
 
     @ColumnInfo("entry_type")
-    val entryType: EntryType,
+    val titleType: TitleType,
 
     @ColumnInfo("kind")
     val kind: GenreKind
@@ -47,6 +47,6 @@ fun GenreEntity.asExternalModel() = Genre(
     id = id,
     englishName = name,
     russianName = nameRu,
-    entryType = entryType,
+    titleType = titleType,
     kind = kind
 )

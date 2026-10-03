@@ -66,7 +66,7 @@ import ru.vladsaybulin.core.ui.ProfileButton
 import ru.vladsaybulin.core.ui2.entry.EntryCarousel
 import ru.vladsaybulin.core.ui2.entry.anime.AnimeGridItem
 import ru.vladsaybulin.model.calendar.previewCalendarItems
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.user.BriefUser
 import java.time.format.DateTimeFormatter
 import ru.vladsaybulin.core.ui.R as uiR
@@ -275,7 +275,7 @@ private fun CalendarItemDetails(
         else -> stringResource(id = R.string.feature_calendar_episode, nextEpisode)
     }
 
-    val anonsColor = SeanimeTheme.seanimeColors[EntryStatus.Anons]
+    val anonsColor = SeanimeTheme.seanimeColors[TitleStatus.Anons]
 
     val text = buildAnnotatedString {
         val index = if (isAnons) {

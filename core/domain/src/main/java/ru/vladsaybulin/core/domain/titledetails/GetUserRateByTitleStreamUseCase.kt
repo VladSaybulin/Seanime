@@ -17,12 +17,12 @@
 package ru.vladsaybulin.core.domain.titledetails
 
 import ru.vladsaybulin.core.domain.repository.UserRateRepository
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import javax.inject.Inject
 
 class GetUserRateByTitleStreamUseCase @Inject constructor(private val repository: UserRateRepository) {
-    operator fun invoke(titleType: EntryType, titleId: Long) = when (titleType) {
-        EntryType.Anime -> repository.getAnimeUserRateStream(titleId)
-        EntryType.Manga -> repository.getMangaUserRateStream(titleId)
+    operator fun invoke(titleType: TitleType, titleId: Long) = when (titleType) {
+        TitleType.Anime -> repository.getAnimeUserRateStream(titleId)
+        TitleType.Manga -> repository.getMangaUserRateStream(titleId)
     }
 }

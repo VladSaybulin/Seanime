@@ -19,7 +19,7 @@ package ru.vladsaybulin.core.domain
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.core.domain.repository.UserRateRepository
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -30,13 +30,13 @@ class GetPagedUserRatesUseCase @Inject constructor(
     private val userRateRepository: UserRateRepository
 ) {
     operator fun invoke(
-        entryType: EntryType,
+        titleType: TitleType,
         userRateStatus: UserRateStatus,
         orderField: UserRateOrderField,
         order: UserRateOrder,
     ): Flow<PagingData<UserRateWithEntry>> =
-        when (entryType) {
-            EntryType.Anime -> userRateRepository.getPagedAnimeUserRates(userRateStatus, orderField, order)
-            EntryType.Manga -> userRateRepository.getPagedMangaUserRates(userRateStatus, orderField, order)
+        when (titleType) {
+            TitleType.Anime -> userRateRepository.getPagedAnimeUserRates(userRateStatus, orderField, order)
+            TitleType.Manga -> userRateRepository.getPagedMangaUserRates(userRateStatus, orderField, order)
         }
 }

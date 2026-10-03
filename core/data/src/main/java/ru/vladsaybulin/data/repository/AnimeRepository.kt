@@ -79,7 +79,7 @@ import ru.vladsaybulin.database.models.person.PersonEntity
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.Video
 import ru.vladsaybulin.model.character.CharacterWithRole
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedTitle
@@ -325,7 +325,7 @@ class AnimeRepository @Inject constructor(
             page = 1,
             limit = 50,
             queryMap = mapOf(
-                QueryMapKey.Status to EntryStatus.Ongoing.serializedName,
+                QueryMapKey.Status to TitleStatus.Ongoing.serializedName,
                 QueryMapKey.Order to Order.Popularity.serializedValue
             )
         )

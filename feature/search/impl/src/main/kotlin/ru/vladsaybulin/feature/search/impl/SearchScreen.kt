@@ -69,8 +69,8 @@ import ru.vladsaybulin.core.ui2.entry.manga.mangaItems
 import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.SearchType
@@ -117,8 +117,8 @@ private fun SearchScreen(
     onMangaClick: (Manga) -> Unit
 ) {
     val titleType = when (uiState.selectedSearchType) {
-        SearchType.Manga, SearchType.Ranobe -> EntryType.Manga
-        else -> EntryType.Anime
+        SearchType.Manga, SearchType.Ranobe -> TitleType.Manga
+        else -> TitleType.Anime
     }
     ProvideTitleStringsByType(titleType) {
         Box(
@@ -364,7 +364,7 @@ private fun EmptySearchResult() {
 private fun searchTitleText(title: SearchTitle) = when (title) {
     SearchTitle.Search -> stringResource(id = R.string.feature_search_title)
     is SearchTitle.Genre -> title.genreName
-    is SearchTitle.Status -> statusTitleText(entryStatus = title.entryStatus)
+    is SearchTitle.Status -> statusTitleText(titleStatus = title.titleStatus)
 
     is SearchTitle.Publisher -> stringResource(
         id = R.string.feature_search_title_publisher,
@@ -380,22 +380,22 @@ private fun searchTitleText(title: SearchTitle) = when (title) {
 
 @Composable
 @ReadOnlyComposable
-private fun statusTitleText(entryStatus: EntryStatus) = stringResource(
-    when (entryStatus) {
-        EntryStatus.Anons -> R.string.feature_search_title_status_anonses
+private fun statusTitleText(titleStatus: TitleStatus) = stringResource(
+    when (titleStatus) {
+        TitleStatus.Anons -> R.string.feature_search_title_status_anonses
 
-        EntryStatus.Ongoing -> R.string.feature_search_title_status_ongoings
+        TitleStatus.Ongoing -> R.string.feature_search_title_status_ongoings
 
-        EntryStatus.Released -> when (LocalTitleStrings.current.titleType) {
-            EntryType.Anime -> R.string.feature_search_title_status_anime_releases
-            EntryType.Manga -> R.string.feature_search_title_status_manga_releases
+        TitleStatus.Released -> when (LocalTitleStrings.current.titleType) {
+            TitleType.Anime -> R.string.feature_search_title_status_anime_releases
+            TitleType.Manga -> R.string.feature_search_title_status_manga_releases
         }
 
-        EntryStatus.Paused -> R.string.feature_search_title_status_paused
+        TitleStatus.Paused -> R.string.feature_search_title_status_paused
 
-        EntryStatus.Discontinued -> R.string.feature_search_title_status_discontonued
+        TitleStatus.Discontinued -> R.string.feature_search_title_status_discontonued
 
-        EntryStatus.None -> R.string.feature_search_title
+        TitleStatus.None -> R.string.feature_search_title
     }
 )
 

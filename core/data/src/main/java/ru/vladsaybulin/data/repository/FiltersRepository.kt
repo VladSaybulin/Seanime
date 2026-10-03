@@ -20,8 +20,8 @@ import ru.vladsaybulin.core.domain.repository.FiltersRepository as DomainFilters
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.anime.Studio
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
 import ru.vladsaybulin.model.manga.MangaKind
@@ -98,15 +98,15 @@ class FiltersRepository @Inject constructor(
     private fun ranobeKindOptions() = ranobeKind.map(MangaKind::toOption)
 
     private fun animeStatusOptions() = listOf(
-        EntryStatus.Anons,
-        EntryStatus.Ongoing,
-        EntryStatus.Released
+        TitleStatus.Anons,
+        TitleStatus.Ongoing,
+        TitleStatus.Released
     )
-        .map(EntryStatus::toOption)
+        .map(TitleStatus::toOption)
 
-    private fun mangaStatusOptions() = EntryStatus.entries
-        .filter { it != EntryStatus.None }
-        .map(EntryStatus::toOption)
+    private fun mangaStatusOptions() = TitleStatus.entries
+        .filter { it != TitleStatus.None }
+        .map(TitleStatus::toOption)
 
     private fun myListStatusOptions() = UserRateStatus.entries
         .filter { it != UserRateStatus.None }
@@ -134,27 +134,27 @@ class FiltersRepository @Inject constructor(
         .map(AnimeRating::toOption)
 
     private suspend fun animeGenresOptions() =
-        filterGenreRepository.getGenres(EntryType.Anime, GenreKind.Genre)
+        filterGenreRepository.getGenres(TitleType.Anime, GenreKind.Genre)
             .map(Genre::toOption)
 
     private suspend fun animeThemesOptions() =
-        filterGenreRepository.getGenres(EntryType.Anime, GenreKind.Theme)
+        filterGenreRepository.getGenres(TitleType.Anime, GenreKind.Theme)
             .map(Genre::toOption)
 
     private suspend fun animeDemographicOptions() =
-        filterGenreRepository.getGenres(EntryType.Anime, GenreKind.Demographic)
+        filterGenreRepository.getGenres(TitleType.Anime, GenreKind.Demographic)
             .map(Genre::toOption)
 
     private suspend fun mangaGenresOptions() =
-        filterGenreRepository.getGenres(EntryType.Manga, GenreKind.Genre)
+        filterGenreRepository.getGenres(TitleType.Manga, GenreKind.Genre)
             .map(Genre::toOption)
 
     private suspend fun mangaThemesOptions() =
-        filterGenreRepository.getGenres(EntryType.Manga, GenreKind.Theme)
+        filterGenreRepository.getGenres(TitleType.Manga, GenreKind.Theme)
             .map(Genre::toOption)
 
     private suspend fun mangaDemographicOptions() =
-        filterGenreRepository.getGenres(EntryType.Manga, GenreKind.Demographic)
+        filterGenreRepository.getGenres(TitleType.Manga, GenreKind.Demographic)
             .map(Genre::toOption)
 
     private suspend fun studioOptions() = filterStudioRepository.getFilterStudios()
@@ -174,7 +174,7 @@ private fun MangaKind.toOption() = FilterOption(
     serializedValue = serializedName
 )
 
-private fun EntryStatus.toOption() = FilterOption(
+private fun TitleStatus.toOption() = FilterOption(
     value = this,
     serializedValue = serializedName
 )

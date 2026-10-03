@@ -52,8 +52,8 @@ import ru.vladsaybulin.core.ui.filters.AppliedOptionValues
 import ru.vladsaybulin.core.ui.filters.OptionValue
 import ru.vladsaybulin.feature.search.api.navigation.PresetSearchFilter
 import ru.vladsaybulin.feature.search.api.navigation.SearchNavKey
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.search.FilterType
 import ru.vladsaybulin.model.search.Order
 import ru.vladsaybulin.model.search.QueryMapKey
@@ -89,7 +89,7 @@ class SearchViewModel @AssistedInject constructor(
         }
 
         if (key.ongoing == true) {
-            putAsSelectedIfNotNull(FilterType.Status, EntryStatus.Ongoing)
+            putAsSelectedIfNotNull(FilterType.Status, TitleStatus.Ongoing)
         }
     }
 
@@ -180,7 +180,7 @@ class SearchViewModel @AssistedInject constructor(
         currentSearchType.value = searchType
         appliedFilters.value = buildMap {
             if (key.ongoing == true) {
-                putAsSelectedIfNotNull(FilterType.Status, EntryStatus.Ongoing)
+                putAsSelectedIfNotNull(FilterType.Status, TitleStatus.Ongoing)
             }
         }
         searchParams.update {
@@ -235,7 +235,7 @@ class SearchViewModel @AssistedInject constructor(
 
     private suspend fun getTitle(): SearchTitle {
         if (key.ongoing == true) {
-            return SearchTitle.Status(EntryStatus.Ongoing)
+            return SearchTitle.Status(TitleStatus.Ongoing)
         }
 
         val preset = key.presetSearchFilter ?: return SearchTitle.Search
@@ -262,7 +262,7 @@ class SearchViewModel @AssistedInject constructor(
         searchType: SearchType,
         genreId: Long
     ): SearchTitle {
-        val genre = filterGenreRepositoryProvider.get().getGenreById(searchType.entryType, genreId)
+        val genre = filterGenreRepositoryProvider.get().getGenreById(searchType.titleType, genreId)
             ?: return SearchTitle.Search
 
         return SearchTitle.Genre(genre.russianName ?: genre.englishName, genre.kind)
@@ -306,10 +306,10 @@ fun MutableMap<FilterType, AppliedOptionValues>.putAsSelectedIfNotNull(
     this[filterType] = mapOf(optionValue.toString() to OptionValue.Selected)
 }
 
-val SearchType.entryType: EntryType
+val SearchType.titleType: TitleType
     get() = when (this) {
-        SearchType.Anime -> EntryType.Anime
-        SearchType.Manga, SearchType.Ranobe -> EntryType.Manga
+        SearchType.Anime -> TitleType.Anime
+        SearchType.Manga, SearchType.Ranobe -> TitleType.Manga
         else -> throw IllegalStateException("Can't give EntryType for SearchType.${this.name}")
     }
 

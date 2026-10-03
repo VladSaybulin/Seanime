@@ -22,16 +22,16 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.asEntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.asTitleStatus
 
-internal class EntryStatusSerializer : KSerializer<EntryStatus> {
+internal class EntryStatusSerializer : KSerializer<TitleStatus> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("entry_status", PrimitiveKind.STRING)
 
-    override fun deserialize(decoder: Decoder): EntryStatus =
-        decoder.decodeString().asEntryStatus()
+    override fun deserialize(decoder: Decoder): TitleStatus =
+        decoder.decodeString().asTitleStatus()
 
-    override fun serialize(encoder: Encoder, value: EntryStatus) {
+    override fun serialize(encoder: Encoder, value: TitleStatus) {
         encoder.encodeString(value.serializedName)
     }
 }

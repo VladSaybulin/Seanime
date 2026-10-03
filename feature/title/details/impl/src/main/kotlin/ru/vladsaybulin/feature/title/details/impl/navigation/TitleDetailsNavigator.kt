@@ -35,7 +35,7 @@ import ru.vladsaybulin.feature.title.characters.api.navigation.navigateToTitleCh
 import ru.vladsaybulin.feature.title.related.api.navigation.navigateToTitleRelated
 import ru.vladsaybulin.feature.title.screenshots.api.navigation.navigateToAnimeScreenshots
 import ru.vladsaybulin.feature.title.videos.api.navigation.navigateToAnimeVideos
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.search.SearchType
 import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.userrate.UserRateContext
@@ -97,7 +97,7 @@ fun rememberTitleDetailsNavigator(
             )
         },
         onScreenshotClick = { images, startIndex ->
-            val source = if (key.titleType == EntryType.Anime) {
+            val source = if (key.titleType == TitleType.Anime) {
                 ImageViewSource.AnimeScreenshots(key.titleId)
             } else null
 

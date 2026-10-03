@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.datetime.Clock
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.manga.Manga
@@ -40,7 +40,7 @@ val previewAnimes = listOf(
         poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 8.54f,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         episodes = 25,
         episodesAired = 25,
         airedOn = IncompleteDate(7, 4, 2013),
@@ -54,7 +54,7 @@ val previewAnimes = listOf(
         poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 8.62f,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         episodes = 37,
         episodesAired = 0,
         airedOn = IncompleteDate(day = 4, month = 10, year = 2006),
@@ -68,7 +68,7 @@ val previewAnimes = listOf(
         poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 9.09f,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         episodes = 64,
         episodesAired = 0,
         airedOn = IncompleteDate(day = 5, month = 4, year = 2009),
@@ -82,7 +82,7 @@ val previewAnimes = listOf(
         poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 8.5f,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         episodes = 12,
         episodesAired = 12,
         airedOn = IncompleteDate(day = 5, month = 10, year = 2015),
@@ -96,7 +96,7 @@ val previewAnimes = listOf(
         poster = Image("", ""),
         kind = AnimeKind.Tv,
         score = 7.21f,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         episodes = 25,
         episodesAired = 25,
         airedOn = IncompleteDate(day = 8, month = 7, year = 2012),
@@ -113,7 +113,7 @@ val previewMangas = listOf(
         poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 9.47f,
-        status = EntryStatus.Ongoing,
+        status = TitleStatus.Ongoing,
         chapters = 0,
         volumes = 0,
         airedOn = IncompleteDate(25, 8, 1989),
@@ -126,7 +126,7 @@ val previewMangas = listOf(
         poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 8.55f,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         chapters = 141,
         volumes = 34,
         airedOn = IncompleteDate(9, 9, 2009),
@@ -139,7 +139,7 @@ val previewMangas = listOf(
         poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 9.22f,
-        status = EntryStatus.Ongoing,
+        status = TitleStatus.Ongoing,
         chapters = 0,
         volumes = 0,
         airedOn = IncompleteDate(22, 7, 1997),
@@ -152,7 +152,7 @@ val previewMangas = listOf(
         poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 8.73f,
-        status = EntryStatus.Ongoing,
+        status = TitleStatus.Ongoing,
         chapters = 0,
         volumes = 0,
         airedOn = IncompleteDate(3, 12, 2018),
@@ -165,7 +165,7 @@ val previewMangas = listOf(
         poster = Image("", ""),
         kind = MangaKind.Manga,
         score = 8.53f,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         chapters = 144,
         volumes = 14,
         airedOn = IncompleteDate(8, 9, 2011),

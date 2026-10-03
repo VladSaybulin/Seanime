@@ -77,8 +77,8 @@ import ru.vladsaybulin.core.ui2.score.Score
 import ru.vladsaybulin.core.ui2.score.StarsRowInput
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asString
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
@@ -553,7 +553,7 @@ private class EditorMeasurePolicy : MultiContentMeasurePolicy {
 fun RateEditorSelectedStatusButtonPreview() {
     SeanimeTheme {
         Surface {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 StatusButton(
                     status = UserRateStatus.Watching,
                     selected = true,
@@ -569,7 +569,7 @@ fun RateEditorSelectedStatusButtonPreview() {
 fun RateEditorUnselectedStatusButtonPreview() {
     SeanimeTheme {
         Surface {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 StatusButton(
                     status = UserRateStatus.Watching,
                     selected = false,
@@ -596,16 +596,16 @@ fun RateEditorContentPreview() {
                     text = "This is a sample review text."
                 ),
                 context = UserRateContext(
-                    titleStatus = EntryStatus.Released,
+                    titleStatus = TitleStatus.Released,
                     maxEpisodes = 12,
                     maxChapters = 0,
                     maxVolumes = 0
                 ),
                 availableStatuses = UserRateStatus.entries.toList(),
-                titleType = EntryType.Anime
+                titleType = TitleType.Anime
             )
 
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 EditorContent(
                     state = state,
                     uiEffect = RateEditorViewModel.UiEffect.Idle,

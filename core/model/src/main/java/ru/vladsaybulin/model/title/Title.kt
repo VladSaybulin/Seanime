@@ -16,19 +16,17 @@
 
 package ru.vladsaybulin.model.title
 
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 
 data class Title(
     val id: Long,
-    val type: EntryType,
+    val type: TitleType,
     val name: String,
     val nameRu: String?,
     val poster: Image?,
     val kind: TitleKind,
-    val status: EntryStatus,
+    val status: TitleStatus,
     val score: Float,
     val episodes: Int,
     val episodesAired: Int,

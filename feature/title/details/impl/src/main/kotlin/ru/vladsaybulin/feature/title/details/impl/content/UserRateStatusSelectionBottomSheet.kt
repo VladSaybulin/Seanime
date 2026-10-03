@@ -25,7 +25,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.vladsaybulin.core.ui.UserRateStatusButton
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateStatus.Completed
 import ru.vladsaybulin.model.userrate.UserRateStatus.Dropped
@@ -38,7 +38,7 @@ import ru.vladsaybulin.model.userrate.UserRateStatus.Watching
 @Composable
 internal fun UserRateStatusSelectionBottomSheet(
     enabledAutocorrect: Boolean,
-    entryStatus: EntryStatus,
+    titleStatus: TitleStatus,
     onStatusClick: (UserRateStatus) -> Unit,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
@@ -50,10 +50,10 @@ internal fun UserRateStatusSelectionBottomSheet(
         content = {
             buildList {
                 add(Planned)
-                if (!enabledAutocorrect || entryStatus != EntryStatus.Anons) {
+                if (!enabledAutocorrect || titleStatus != TitleStatus.Anons) {
                     add(Watching)
                     add(Rewatching)
-                    if (!enabledAutocorrect || entryStatus != EntryStatus.Ongoing) {
+                    if (!enabledAutocorrect || titleStatus != TitleStatus.Ongoing) {
                         add(Completed)
                     }
                 }

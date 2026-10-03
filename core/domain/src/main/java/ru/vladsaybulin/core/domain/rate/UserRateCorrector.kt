@@ -21,8 +21,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import ru.vladsaybulin.core.domain.repository.UserRateRepository
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
@@ -34,7 +34,7 @@ import ru.vladsaybulin.model.userrate.UserRateValues
  */
 class UserRateCorrector @AssistedInject constructor(
     private val userRateRepository: Lazy<UserRateRepository>,
-    @Assisted val titleType: EntryType,
+    @Assisted val titleType: TitleType,
     @Assisted val titleId: Long,
     @Assisted loadedContext: UserRateContext?
 ) {
@@ -42,7 +42,7 @@ class UserRateCorrector @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            titleType: EntryType,
+            titleType: TitleType,
             titleId: Long,
             loadedContext: UserRateContext?
         ): UserRateCorrector
@@ -73,7 +73,7 @@ class UserRateCorrector @AssistedInject constructor(
      * Creates a new [UserRateValues] object with default values based on the current context.
      */
     fun newUserRateValues(): UserRateValues {
-        val initialStatus = if (context.titleStatus == EntryStatus.Anons) {
+        val initialStatus = if (context.titleStatus == TitleStatus.Anons) {
             UserRateStatus.Planned
         } else {
             UserRateStatus.None
@@ -156,11 +156,11 @@ class UserRateCorrector @AssistedInject constructor(
         return buildList {
             add(UserRateStatus.Planned)
 
-            if (titleIsFinisher(titleStatus) || titleStatus == EntryStatus.Ongoing) {
+            if (titleIsFinisher(titleStatus) || titleStatus == TitleStatus.Ongoing) {
                 add(UserRateStatus.Watching)
                 add(UserRateStatus.Rewatching)
 
-                if (titleStatus != EntryStatus.Ongoing) {
+                if (titleStatus != TitleStatus.Ongoing) {
                     add(UserRateStatus.Completed)
                 }
             }
@@ -176,7 +176,7 @@ class UserRateCorrector @AssistedInject constructor(
     private fun isStartRewatching(prevStatus: UserRateStatus, newStatus: UserRateStatus) =
         prevStatus == UserRateStatus.Completed || newStatus == UserRateStatus.Rewatching
 
-    private fun titleIsFinisher(titleStatus: EntryStatus) = titleStatus == EntryStatus.Released ||
-            titleStatus == EntryStatus.Paused ||
-            titleStatus == EntryStatus.Discontinued
+    private fun titleIsFinisher(titleStatus: TitleStatus) = titleStatus == TitleStatus.Released ||
+            titleStatus == TitleStatus.Paused ||
+            titleStatus == TitleStatus.Discontinued
 }

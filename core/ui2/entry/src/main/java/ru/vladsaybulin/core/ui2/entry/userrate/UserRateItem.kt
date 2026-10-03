@@ -52,8 +52,8 @@ import ru.vladsaybulin.core.ui2.entry.preview.ListOfAnimesPreviewParameterProvid
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.RatedTitle
@@ -103,7 +103,7 @@ fun UserRateItem(
         is RatedTitle.Anime -> ratedTitle.anime.let { anime ->
             UserRateItem(
                 modifier = modifier,
-                type = EntryType.Anime,
+                type = TitleType.Anime,
                 name = anime.name,
                 russianName = anime.russianName,
                 poster = anime.poster,
@@ -120,7 +120,7 @@ fun UserRateItem(
         is RatedTitle.Manga -> ratedTitle.manga.let { manga ->
             UserRateItem(
                 modifier = modifier,
-                type = EntryType.Manga,
+                type = TitleType.Manga,
                 name = manga.name,
                 russianName = manga.russianName,
                 poster = manga.poster,
@@ -166,7 +166,7 @@ private fun rememberAnimeProgression(ratedTitle: RatedTitle.Anime): Progression?
                 Progression(
                     field = Progression.Field.Episodes,
                     completed = ratedTitle.userRate.episodes,
-                    available = if (anime.status == EntryStatus.Released) total else anime.episodesAired,
+                    available = if (anime.status == TitleStatus.Released) total else anime.episodesAired,
                     total = total
                 )
             } else null
@@ -208,7 +208,7 @@ private fun rememberMangaProgression(ratedTitle: RatedTitle.Manga): Progression?
 @Composable
 private fun UserRateItem(
     modifier: Modifier,
-    type: EntryType,
+    type: TitleType,
     name: String,
     russianName: String?,
     poster: Image?,
