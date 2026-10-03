@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -72,22 +73,27 @@ class TitleDetailsViewModel @AssistedInject constructor(
     val titleType = key.titleType
     val titleId = key.titleId
 
-    private val brief = getTitleBrief(titleType, titleId)
-        .shareIn(viewModelScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
+    private val brief = getTitleBrief(titleType, titleId).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = key.title.data
+    )
 
     private val details = getTitleDetails(titleType, titleId)
         .shareIn(viewModelScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
-    val headerState: StateFlow<HeaderState> = brief.map {
-        HeaderData(
-            poster = it.poster,
-            name = it.name,
-            nameRu = it.nameRu
-        )
-    }.asLoadState()
+    val headerState: StateFlow<HeaderState> = brief
+        .filterNotNull()
+        .map {
+            HeaderData(
+                poster = it.poster,
+                name = it.name,
+                nameRu = it.nameRu
+            )
+        }.asLoadState()
 
     val infoState: StateFlow<InfoState> = combine(
-        brief,
+        brief.filterNotNull(),
         details
     ) { brief, details ->
         InfoData(

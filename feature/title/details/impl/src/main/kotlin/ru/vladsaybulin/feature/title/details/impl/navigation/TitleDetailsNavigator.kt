@@ -25,6 +25,7 @@ import ru.vladsaybulin.feature.imageview.api.navigation.navigateToImageView
 import ru.vladsaybulin.feature.list.title.details.navigation.TitleDetailsNavKey
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
 import ru.vladsaybulin.feature.list.title.details.navigation.navigateToManga
+import ru.vladsaybulin.feature.list.title.details.navigation.navigateToTitle
 import ru.vladsaybulin.feature.rate.editor.api.navigation.TitleReference
 import ru.vladsaybulin.feature.rate.editor.api.navigation.navigateToRateEditor
 import ru.vladsaybulin.feature.search.api.navigation.PresetSearchFilter
@@ -36,6 +37,7 @@ import ru.vladsaybulin.feature.title.screenshots.api.navigation.navigateToAnimeS
 import ru.vladsaybulin.feature.title.videos.api.navigation.navigateToAnimeVideos
 import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.search.SearchType
+import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateValues
 
@@ -55,6 +57,7 @@ class TitleDetailsNavigator(
     val onRateClick: (Long?, UserRateValues?, UserRateContext?) -> Unit,
     val onScreenshotClick: (images: List<String>, startIndex: Int) -> Unit,
     val onStudioClick: (Long) -> Unit,
+    val onTitleClick: (Title) -> Unit,
     val onBackClick: () -> Unit
 )
 
@@ -110,6 +113,7 @@ fun rememberTitleDetailsNavigator(
             val preset = PresetSearchFilter(PresetSearchFilter.Field.Studio, studioId)
             appNavigator.navigateToSearchByFilter(SearchType.Anime, preset)
         },
+        onTitleClick = appNavigator::navigateToTitle,
         onBackClick = appNavigator::back
     )
 }
@@ -130,6 +134,7 @@ val IdleNavigator = TitleDetailsNavigator(
     onRateClick = { _, _, _ -> },
     onScreenshotClick = { _, _ -> },
     onStudioClick = {},
+    onTitleClick = {},
     onBackClick = {}
 )
 

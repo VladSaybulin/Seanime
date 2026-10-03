@@ -60,6 +60,7 @@ import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.title.details.impl.content.DetailsTopBar
+import ru.vladsaybulin.feature.title.details.impl.content.PreviewInfoData
 import ru.vladsaybulin.feature.title.details.impl.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.impl.content.PreviewUserRateStatusStatistics
 import ru.vladsaybulin.feature.title.details.impl.content.RequireAuthDialog
@@ -335,12 +336,7 @@ private fun DetailsContent(
                 titleRelated(
                     visibleTitles = relatedTitlesState.data.visibleItems,
                     hasMore = relatedTitlesState.data.hasMore,
-                    onTitleClick = { type, id ->
-                        when (type) {
-                            EntryType.Anime -> navigator.onAnimeClick(id)
-                            EntryType.Manga -> navigator.onMangaClick(id)
-                        }
-                    },
+                    onTitleClick = navigator.onTitleClick,
                     onMoreClick = navigator.onAllRelatedClick
                 )
             }
@@ -550,7 +546,7 @@ private fun LazyListScope.titleUserRateStatusDiagram(statisticItems: List<Statis
 private fun LazyListScope.titleRelated(
     visibleTitles: List<RelatedTitle>,
     hasMore: Boolean,
-    onTitleClick: (EntryType, Long) -> Unit,
+    onTitleClick: (Title) -> Unit,
     onMoreClick: () -> Unit
 ) {
     sectionHeaderWithMore(
@@ -562,7 +558,7 @@ private fun LazyListScope.titleRelated(
     items(items = visibleTitles) { title ->
         RelatedTitleItem(
             relatedTitle = title,
-            onClick = { onTitleClick(it.type, it.id) },
+            onClick = onTitleClick,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
         )
     }

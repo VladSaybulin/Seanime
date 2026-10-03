@@ -114,6 +114,10 @@ fun TitleInfo(
                 KindPanel(kindString = it)
             }
 
+            if (status != EntryStatus.None) {
+                StatusPanel(status = status)
+            }
+
             if (type == EntryType.Anime) {
                 val episodesFormat = AnimeStrings.getProgressFormat(
                     aired = episodesAired,
