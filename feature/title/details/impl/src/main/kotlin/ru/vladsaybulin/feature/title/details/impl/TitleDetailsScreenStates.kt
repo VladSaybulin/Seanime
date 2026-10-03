@@ -37,7 +37,6 @@ import ru.vladsaybulin.model.title.RanobeKindList
 import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.title.TitleKind
 import ru.vladsaybulin.model.userrate.UserRate
-import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 sealed interface TitleDetailsLoadState<T> {

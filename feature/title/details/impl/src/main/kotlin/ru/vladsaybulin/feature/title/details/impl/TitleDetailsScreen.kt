@@ -60,7 +60,6 @@ import ru.vladsaybulin.core.ui.LocalScreenContentPadding
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.title.details.impl.content.DetailsTopBar
-import ru.vladsaybulin.feature.title.details.impl.content.PreviewInfoData
 import ru.vladsaybulin.feature.title.details.impl.content.PreviewScoreStatistics
 import ru.vladsaybulin.feature.title.details.impl.content.PreviewUserRateStatusStatistics
 import ru.vladsaybulin.feature.title.details.impl.content.RequireAuthDialog
