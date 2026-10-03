@@ -16,16 +16,17 @@
 
 package ru.vladsaybulin.model.anime
 
+import ru.vladsaybulin.model.Entry
 import ru.vladsaybulin.model.common.EntryStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.userrate.UserRate
 
 data class Anime(
-    val id: Long,
-    val name: String,
+    override val id: Long,
+    override val name: String,
     val russianName: String?,
-    val poster: Image?,
+    override val poster: Image?,
     val kind: AnimeKind,
     val status: EntryStatus,
     val score: Float,
@@ -34,7 +35,13 @@ data class Anime(
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?,
     val userRate: UserRate?,
-)
+) : Entry {
+    override val entryType: Entry.Type
+        get() = Entry.Type.Title
+
+    override val nameRu: String?
+        get() = russianName
+}
 
 /**
  * Preview data
