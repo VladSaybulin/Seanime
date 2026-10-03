@@ -16,31 +16,27 @@
 
 package ru.vladsaybulin.data.di
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import ru.vladsaybulin.common.network.Dispatcher
-import ru.vladsaybulin.common.network.ShikiDispatchers.IO
-import javax.inject.Qualifier
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.annotation.AnnotationTarget.FUNCTION
-import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
-
-@Qualifier
-@Retention(RUNTIME)
-@Target(VALUE_PARAMETER, FUNCTION)
-internal annotation class DataScope
+import ru.vladsaybulin.core.auth.OnLogoutCleaner
+import ru.vladsaybulin.core.auth.TokenExchangeGateway
+import ru.vladsaybulin.core.auth.UserIdFetcher
+import ru.vladsaybulin.data.auth.NetworkOAuthTokenExchangeGateway
+import ru.vladsaybulin.data.util.SessionUserIdFetcher
+import ru.vladsaybulin.data.util.ShikimoriOnLogoutCleaner
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DataModule {
+interface AuthModule {
 
-    @Provides
-    @DataScope
-    fun provideDataScope(@Dispatcher(IO) dispatcher: CoroutineDispatcher): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatcher)
+    @Binds
+    fun bindLogoutAction(logoutAction: ShikimoriOnLogoutCleaner): OnLogoutCleaner
+
+    @Binds
+    fun bindUserIdFetcher(fetcher: SessionUserIdFetcher): UserIdFetcher
+
+    @Binds
+    fun bindTokenExchangeGateway(gateway: NetworkOAuthTokenExchangeGateway): TokenExchangeGateway
 }
