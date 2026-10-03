@@ -27,7 +27,7 @@ import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.asExternalModel
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.RequestKey
-import ru.vladsaybulin.data.request.TTLStrategy
+import ru.vladsaybulin.data.request.TTLPolicy
 import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.dao.UsersDao
 import ru.vladsaybulin.database.models.lastrequest.RequestType
@@ -83,7 +83,7 @@ class UserRepository @Inject constructor(
         }
     }
 
-    class WhoAmIRefreshPolicy : TTLStrategy {
+    class WhoAmIRefreshPolicy : TTLPolicy {
         private var fetched: Boolean = false
 
         override fun isExpired(now: kotlinx.datetime.Instant, lastRequest: kotlinx.datetime.Instant): Boolean =

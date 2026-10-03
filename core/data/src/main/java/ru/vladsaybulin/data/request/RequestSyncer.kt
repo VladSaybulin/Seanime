@@ -44,7 +44,7 @@ class RequestSyncer @Inject constructor(
      */
     suspend fun <T> sync(
         key: RequestKey.Cached,
-        strategy: TTLStrategy,
+        strategy: TTLPolicy,
         block: suspend UpdateScope.() -> T
     ): T? {
         return if (strategy == TTLStrategies.ForceRefresh || shouldRefresh(key, strategy)) {
@@ -54,7 +54,7 @@ class RequestSyncer @Inject constructor(
         }
     }
 
-    private suspend fun shouldRefresh(key: RequestKey.Cached, strategy: TTLStrategy): Boolean {
+    private suspend fun shouldRefresh(key: RequestKey.Cached, strategy: TTLPolicy): Boolean {
         val lastRequest = lastRequestDao.getLastRequestDate(key.type, key.targetId)
         return lastRequest == null || strategy.isExpired(clock.now(), lastRequest)
     }

@@ -25,7 +25,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -192,7 +191,7 @@ class MangaRepository @Inject constructor(
 
     private suspend fun syncMangaDetails(mangaId: Long, forceRefresh: Boolean, briefJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.Manga, mangaId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
     ) {
         val details = mangaDataSource.getMangaDetailsById(mangaId)
 
@@ -233,7 +232,7 @@ class MangaRepository @Inject constructor(
 
     private suspend fun syncMangaRoles(mangaId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.MangaRoles, mangaId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
     ) {
         val roles = mangaDataSource.getMangaRolesById(mangaId)
 
@@ -260,7 +259,7 @@ class MangaRepository @Inject constructor(
 
     private suspend fun syncSimilarManga(mangaId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.SimilarMangas, mangaId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
     ) {
         val similarMangas = mangaDataSource.getSimilarManga(mangaId)
 

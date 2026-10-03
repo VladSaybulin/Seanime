@@ -22,10 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -180,7 +178,7 @@ class AnimeRepository @Inject constructor(
     override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.OngoingAnimes),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.OngoingAnimes },
+            ttlPolicy = withForceStrategy(force) { TTLStrategies.OngoingAnimes },
             block = { updateOngoingAnimes(limit) }
         )
     }
@@ -226,7 +224,7 @@ class AnimeRepository @Inject constructor(
 
     private suspend fun syncAnimeDetails(animeId: Long, forceRefresh: Boolean, briefJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.Anime, animeId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
     ) {
         val details = animeDataSource.getAnimeDetails(animeId)
 
@@ -273,7 +271,7 @@ class AnimeRepository @Inject constructor(
 
     private suspend fun syncAnimeRoles(animeId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.AnimeRoles, animeId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
     ) {
         val roles = animeDataSource.getAnimeRoles(animeId)
 
@@ -300,7 +298,7 @@ class AnimeRepository @Inject constructor(
 
     private suspend fun syncSimilarAnime(animeId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.SimilarAnimes, animeId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        ttlPolicy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
     ) {
         val similarAnimes = animeDataSource.getSimilarAnimes(animeId)
 

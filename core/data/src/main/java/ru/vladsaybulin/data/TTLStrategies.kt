@@ -17,9 +17,9 @@
 package ru.vladsaybulin.data
 
 import kotlinx.datetime.DatePeriod
-import ru.vladsaybulin.data.request.DefaultTTLStrategy
-import ru.vladsaybulin.data.request.NextDayMidnightTTLStrategy
-import ru.vladsaybulin.data.request.TTLStrategy
+import ru.vladsaybulin.data.request.DefaultTTLPolicy
+import ru.vladsaybulin.data.request.NextDayMidnightTTLPolicy
+import ru.vladsaybulin.data.request.TTLPolicy
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -29,30 +29,30 @@ import kotlin.time.Duration.Companion.minutes
  */
 object TTLStrategies {
 
-    val ForceRefresh = TTLStrategy { _, _ -> true }
+    val ForceRefresh = TTLPolicy { _, _ -> true }
 
     /** Character details are refreshed at most once per day by default. */
-    val CharacterDetails = DefaultTTLStrategy(ttl = 1.days)
+    val CharacterDetails = DefaultTTLPolicy(ttl = 1.days)
 
     /** Title details are refreshed hourly by default. */
-    val TitleDetails = DefaultTTLStrategy(ttl = 1.hours)
+    val TitleDetails = DefaultTTLPolicy(ttl = 1.hours)
 
     /** Calendar is refreshed after day rollover. */
-    val Calendar = NextDayMidnightTTLStrategy(DatePeriod(days = 1))
+    val Calendar = NextDayMidnightTTLPolicy(DatePeriod(days = 1))
 
     /** In-progress user rates have a short cache window. */
-    val InProgressRates = DefaultTTLStrategy(5.minutes)
+    val InProgressRates = DefaultTTLPolicy(5.minutes)
 
     /** News topics are refreshed hourly by default. */
-    val News = DefaultTTLStrategy(1.hours)
+    val News = DefaultTTLPolicy(1.hours)
 
     /** Ongoing anime list is refreshed after day rollover. */
-    val OngoingAnimes = NextDayMidnightTTLStrategy(DatePeriod(days = 1))
+    val OngoingAnimes = NextDayMidnightTTLPolicy(DatePeriod(days = 1))
 
-    val UserBrief = DefaultTTLStrategy(ttl = 1.days)
+    val UserBrief = DefaultTTLPolicy(ttl = 1.days)
 }
 
-inline fun withForceStrategy(force: Boolean, block: () -> TTLStrategy) = if (force) {
+inline fun withForceStrategy(force: Boolean, block: () -> TTLPolicy) = if (force) {
     TTLStrategies.ForceRefresh
 } else {
     block()

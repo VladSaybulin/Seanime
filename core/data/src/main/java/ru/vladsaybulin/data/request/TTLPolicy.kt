@@ -27,7 +27,7 @@ import kotlin.time.Duration
 /**
  * Strategy that decides whether cached data is expired.
  */
-fun interface TTLStrategy {
+fun interface TTLPolicy {
     /**
      * Returns `true` when cache should be refreshed.
      */
@@ -40,7 +40,7 @@ fun interface TTLStrategy {
  * Cache is considered stale when the elapsed time since last request is greater than or
  * equal to [ttl].
  */
-class DefaultTTLStrategy(private val ttl: Duration) : TTLStrategy {
+class DefaultTTLPolicy(private val ttl: Duration) : TTLPolicy {
     override fun isExpired(now: Instant, lastRequest: Instant): Boolean {
         return now - lastRequest >= ttl
     }
@@ -51,9 +51,9 @@ class DefaultTTLStrategy(private val ttl: Duration) : TTLStrategy {
  *
  * Useful for data that is expected to refresh on day boundaries.
  */
-class NextDayMidnightTTLStrategy(
+class NextDayMidnightTTLPolicy(
     private val datePeriod: DatePeriod
-) : TTLStrategy {
+) : TTLPolicy {
 
     override fun isExpired(now: Instant, lastRequest: Instant): Boolean {
         val timeZone: TimeZone = TimeZone.currentSystemDefault()

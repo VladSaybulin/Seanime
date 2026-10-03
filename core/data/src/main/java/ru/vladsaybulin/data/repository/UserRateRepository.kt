@@ -32,7 +32,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
@@ -185,7 +184,7 @@ class UserRateRepository @Inject constructor(
     override suspend fun refreshInProgressRates(force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.InProgressRates),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.InProgressRates },
+            ttlPolicy = withForceStrategy(force) { TTLStrategies.InProgressRates },
             block = { updateInProgressRates() }
         )
     }

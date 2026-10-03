@@ -55,7 +55,7 @@ class CalendarRepository @Inject constructor(
     override suspend fun refreshCalendarItems(force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.Calendar),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.Calendar },
+            ttlPolicy = withForceStrategy(force) { TTLStrategies.Calendar },
             block = { updateCalendarItems() }
         )
     }

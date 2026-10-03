@@ -61,7 +61,7 @@ class TopicsRepository @Inject constructor(
     override suspend fun refreshNewsTopics(force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.News),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.News },
+            ttlPolicy = withForceStrategy(force) { TTLStrategies.News },
             block = { updateNewsTopics() }
         )
     }

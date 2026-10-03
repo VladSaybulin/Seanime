@@ -57,7 +57,7 @@ class CharacterRepository @Inject constructor(
     override suspend fun refreshCharacterDetails(characterId: Long, force: Boolean){
         requestCoordinator.sync(
             key = cachedKey(RequestType.Character, characterId),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.CharacterDetails }
+            ttlPolicy = withForceStrategy(force) { TTLStrategies.CharacterDetails }
         ) { updateCharacterDetails(characterId) }
     }
 
