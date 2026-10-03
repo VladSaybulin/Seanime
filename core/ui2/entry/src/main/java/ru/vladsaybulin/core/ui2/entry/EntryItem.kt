@@ -53,11 +53,20 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.icons.userRateStatusIcon
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
+import ru.vladsaybulin.core.ui2.strings.localizedName
+import ru.vladsaybulin.model.Entry
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 @NonRestartableComposable
+@Deprecated(
+    message = "Use EntryGridItem(entry: Entry) instead",
+    replaceWith = ReplaceWith(
+        expression = "EntryGridItem(entry, onClick, modifier, userRateStatus, colors, nameStyle, infoPadding, badgeSize, shape, additionalContent)",
+        imports = ["ru.vladsaybulin.core.ui2.entry.EntryGridItem"]
+    )
+)
 fun EntryGridItem(
     name: String,
     russianName: String?,
@@ -72,12 +81,38 @@ fun EntryGridItem(
     shape: Shape = EntryItemDefaults.GridShape,
     additionalContent: (@Composable () -> Unit)? = null,
 ) {
+    EntryGridItem(
+        entry = entry(name, russianName, poster),
+        onClick = onClick,
+        modifier = modifier,
+        userRateStatus = userRateStatus,
+        colors = colors,
+        nameStyle = nameStyle,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
+        additionalContent = additionalContent
+    )
+}
+
+@Composable
+@NonRestartableComposable
+fun EntryGridItem(
+    entry: Entry,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    userRateStatus: UserRateStatus = UserRateStatus.None,
+    colors: EntryItemColors = EntryItemDefaults.basedOnUserRateStatusColors(userRateStatus),
+    nameStyle: TextStyle = EntryItemDefaults.GridNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.GridPadding,
+    badgeSize: Dp = EntryItemDefaults.GridBadgeSize,
+    shape: Shape = EntryItemDefaults.GridShape,
+    additionalContent: (@Composable () -> Unit)? = null,
+) {
     EntryItem(
         modifier = modifier,
         posterModifier = Modifier,
-        name = name,
-        russianName = russianName,
-        poster = poster,
+        entry = entry,
         userRateStatus = userRateStatus,
         onClick = onClick,
         horizontal = false,
@@ -93,6 +128,13 @@ fun EntryGridItem(
 
 @Composable
 @NonRestartableComposable
+@Deprecated(
+    message = "Use EntryListItem(entry: Entry) instead",
+    replaceWith = ReplaceWith(
+        expression = "EntryListItem(entry, onClick, modifier, userRateStatus, colors, posterWidth, nameStyle, infoPadding, badgeSize, shape, additionalContent)",
+        imports = ["ru.vladsaybulin.core.ui2.entry.EntryListItem"]
+    )
+)
 fun EntryListItem(
     name: String,
     russianName: String?,
@@ -111,9 +153,7 @@ fun EntryListItem(
     EntryItem(
         modifier = modifier,
         posterModifier = Modifier.width(posterWidth),
-        name = name,
-        russianName = russianName,
-        poster = poster,
+        entry = entry(name, russianName, poster),
         userRateStatus = userRateStatus,
         onClick = onClick,
         horizontal = true,
@@ -129,6 +169,45 @@ fun EntryListItem(
 
 @Composable
 @NonRestartableComposable
+fun EntryListItem(
+    entry: Entry,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    userRateStatus: UserRateStatus = UserRateStatus.None,
+    colors: EntryItemColors = EntryItemDefaults.SurfaceContainerColors,
+    posterWidth: Dp = EntryItemDefaults.ListItemPosterWidth,
+    nameStyle: TextStyle = EntryItemDefaults.ListNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.ListPadding,
+    badgeSize: Dp = EntryItemDefaults.ListBadgeSize,
+    shape: Shape = EntryItemDefaults.ListShape,
+    additionalContent: (@Composable () -> Unit)? = null,
+) {
+    EntryItem(
+        modifier = modifier,
+        posterModifier = Modifier.width(posterWidth),
+        entry = entry,
+        userRateStatus = userRateStatus,
+        onClick = onClick,
+        horizontal = true,
+        colors = colors,
+        nameStyle = nameStyle,
+        nameMaxLines = ENTRY_LIST_ITEM_NAME_MAX_LINES,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
+        additionalContent = additionalContent
+    )
+}
+
+@Composable
+@NonRestartableComposable
+@Deprecated(
+    message = "Use EntryListItem(entry: Entry) instead",
+    replaceWith = ReplaceWith(
+        expression = "EntryListItem(entry, onClick, modifier, userRateStatus, colors, posterWidth, nameStyle, infoPadding, badgeSize, shape, additionalContent)",
+        imports = ["ru.vladsaybulin.core.ui2.entry.EntryListItem"]
+    )
+)
 fun EntryCarouselItem(
     name: String,
     russianName: String?,
@@ -143,12 +222,38 @@ fun EntryCarouselItem(
     shape: Shape = EntryItemDefaults.CarouselShape,
     additionalContent: (@Composable () -> Unit)? = null,
 ) {
+    EntryCarouselItem(
+        entry = entry(name, russianName, poster),
+        onClick = onClick,
+        modifier = modifier,
+        userRateStatus = userRateStatus,
+        colors = colors,
+        nameStyle = nameStyle,
+        infoPadding = infoPadding,
+        badgeSize = badgeSize,
+        shape = shape,
+        additionalContent = additionalContent
+    )
+}
+
+@Composable
+@NonRestartableComposable
+fun EntryCarouselItem(
+    entry: Entry,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    userRateStatus: UserRateStatus = UserRateStatus.None,
+    colors: EntryItemColors = EntryItemDefaults.SurfaceColors,
+    nameStyle: TextStyle = EntryItemDefaults.CarouselNameStyle,
+    infoPadding: PaddingValues = EntryItemDefaults.CarouselPadding,
+    badgeSize: Dp = EntryItemDefaults.CarouselBadgeSize,
+    shape: Shape = EntryItemDefaults.CarouselShape,
+    additionalContent: (@Composable () -> Unit)? = null,
+) {
     EntryItem(
         modifier = modifier,
         posterModifier = Modifier,
-        name = name,
-        russianName = russianName,
-        poster = poster,
+        entry = entry,
         userRateStatus = userRateStatus,
         onClick = onClick,
         horizontal = false,
@@ -230,9 +335,7 @@ object EntryItemDefaults {
 internal fun EntryItem(
     modifier: Modifier,
     posterModifier: Modifier,
-    name: String,
-    russianName: String?,
-    poster: Image?,
+    entry: Entry,
     userRateStatus: UserRateStatus,
     onClick: () -> Unit,
     horizontal: Boolean = false,
@@ -254,7 +357,7 @@ internal fun EntryItem(
         EntryItemLayout(
             poster = @Composable { m: Modifier ->
                 EntryItemPosterWithStatusBadge(
-                    poster = poster,
+                    poster = entry.poster,
                     userRateStatus = userRateStatus,
                     containerShape = shape,
                     badgeSize = badgeSize,
@@ -264,8 +367,7 @@ internal fun EntryItem(
             info = @Composable { m: Modifier ->
                 Column(modifier = m.padding(infoPadding)) {
                     EntryItemName(
-                        name = name,
-                        russianName = russianName,
+                        name = entry.localizedName(),
                         style = nameStyle,
                         maxLines = nameMaxLines
                     )
@@ -281,14 +383,11 @@ internal fun EntryItem(
 @Composable
 private fun EntryItemName(
     name: String,
-    russianName: String?,
     style: TextStyle,
     maxLines: Int = 2
 ) {
-    val finalName = if (!russianName.isNullOrBlank() && isRussianName()) russianName else name
-
     Text(
-        text = finalName,
+        text = name,
         style = style,
         maxLines = maxLines,
         overflow = TextOverflow.Ellipsis
@@ -355,12 +454,16 @@ private fun EntryItemBadge(
     }
 }
 
-@Composable
-@ReadOnlyComposable
-private fun isRussianName(): Boolean {
-    val locale = LocalConfiguration.current.locales.get(0)
-    val isRussian = locale?.language == "ru"
-    return isRussian
+private fun entry(
+    name: String,
+    nameRu: String?,
+    poster: Image?
+) = object : Entry {
+    override val entryType: Entry.Type get() = Entry.Type.Title
+    override val id: Long = 0
+    override val name: String = name
+    override val nameRu: String? = nameRu
+    override val poster: Image? = poster
 }
 
 private const val ENTRY_GRID_ITEM_NAME_MAX_LINES = 1

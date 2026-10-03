@@ -31,9 +31,7 @@ fun CharacterItem(
     modifier: Modifier = Modifier
 ) {
     EntryCarouselItem(
-        name = character.originalName,
-        russianName = character.russianName,
-        poster = character.poster,
+        entry = character,
         onClick = onClick,
         modifier = modifier,
         colors = EntryItemDefaults.SurfaceColors,

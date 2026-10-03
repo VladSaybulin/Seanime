@@ -69,9 +69,7 @@ private fun RelatedTitleItem(
 ) {
     ProvideTitleStringsByType(title.type) {
         EntryListItem(
-            name = title.name,
-            russianName = title.nameRu,
-            poster = title.poster,
+            entry = title,
             posterWidth = PosterWidth,
             onClick = { onClick(title) },
             modifier = modifier,

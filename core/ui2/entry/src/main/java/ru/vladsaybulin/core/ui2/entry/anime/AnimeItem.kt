@@ -65,9 +65,7 @@ fun AnimeGridItem(
     additionalContent: (@Composable () -> Unit)? = { AnimeGridItemDefaultAdditionalContent(anime) },
 ) {
     EntryGridItem(
-        name = anime.name,
-        russianName = anime.russianName,
-        poster = anime.poster,
+        entry = anime,
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
@@ -100,9 +98,7 @@ fun AnimeListItem(
     },
 ) {
     EntryListItem(
-        name = anime.name,
-        russianName = anime.russianName,
-        poster = anime.poster,
+        entry = anime,
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
@@ -131,9 +127,7 @@ fun AnimeCarouselItem(
     additionalContent: (@Composable () -> Unit)? = null,
 ) {
     EntryCarouselItem(
-        name = anime.name,
-        russianName = anime.russianName,
-        poster = anime.poster,
+        entry = anime,
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
