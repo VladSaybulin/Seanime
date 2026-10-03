@@ -16,10 +16,10 @@
 
 package ru.vladsaybulin.model.userrate
 
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 
 class UserRateWithEntryLink(
-    val entryType: EntryType,
+    val titleType: TitleType,
     val entryId: Long,
     val userRate: UserRate
 )

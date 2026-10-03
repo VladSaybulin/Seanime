@@ -17,13 +17,13 @@
 package ru.vladsaybulin.database.models.userrate
 
 import androidx.room.ColumnInfo
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.userrate.UserRateContext
 
 data class AnimeRateContextDb(
 
     @ColumnInfo("status")
-    val titleStatus: EntryStatus,
+    val titleStatus: TitleStatus,
 
     @ColumnInfo("episodes")
     val maxEpisodes: Int,
@@ -32,7 +32,7 @@ data class AnimeRateContextDb(
 data class MangaRateContextDb(
 
     @ColumnInfo("status")
-    val titleStatus: EntryStatus,
+    val titleStatus: TitleStatus,
 
     @ColumnInfo("chapters")
     val maxChapters: Int,

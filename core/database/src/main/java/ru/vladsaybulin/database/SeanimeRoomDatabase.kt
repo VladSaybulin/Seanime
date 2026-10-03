@@ -76,7 +76,7 @@ import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
 import ru.vladsaybulin.database.utils.AnimeKindTypeConverter
 import ru.vladsaybulin.database.utils.AnimeRatingTypeConverter
-import ru.vladsaybulin.database.utils.EntryStatusTypeConverter
+import ru.vladsaybulin.database.utils.TitleStatusTypeConverter
 import ru.vladsaybulin.database.utils.GenreKindTypeConverter
 import ru.vladsaybulin.database.utils.InstantTypeConverter
 import ru.vladsaybulin.database.utils.IntStatisticsItemsConverter
@@ -154,7 +154,7 @@ import ru.vladsaybulin.database.utils.VideoKindTypeConverter
     value = [
         AnimeKindTypeConverter::class,
         MangaKindTypeConverter::class,
-        EntryStatusTypeConverter::class,
+        TitleStatusTypeConverter::class,
         InstantTypeConverter::class,
         UserRateTypeConverter::class,
         TopicTypeTypeConverter::class,

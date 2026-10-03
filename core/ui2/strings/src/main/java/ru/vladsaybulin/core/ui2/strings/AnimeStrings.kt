@@ -18,20 +18,20 @@ package ru.vladsaybulin.core.ui2.strings
 
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 object AnimeStrings : DependsOnTitleStrings {
-    override val titleType: EntryType = EntryType.Anime
+    override val titleType: TitleType = TitleType.Anime
 
-    override fun titleStatusId(status: EntryStatus): Int = when(status) {
-        EntryStatus.Anons -> R.string.core_ui2_strings_anime_status_anons
-        EntryStatus.Ongoing -> R.string.core_ui2_strings_anime_status_ongoing
-        EntryStatus.Released -> R.string.core_ui2_strings_anime_status_released
-        EntryStatus.Paused -> R.string.core_ui2_strings_anime_status_paused
-        EntryStatus.Discontinued -> R.string.core_ui2_strings_anime_status_discontinued
-        EntryStatus.None -> R.string.core_ui2_strings_none
+    override fun titleStatusId(status: TitleStatus): Int = when(status) {
+        TitleStatus.Anons -> R.string.core_ui2_strings_anime_status_anons
+        TitleStatus.Ongoing -> R.string.core_ui2_strings_anime_status_ongoing
+        TitleStatus.Released -> R.string.core_ui2_strings_anime_status_released
+        TitleStatus.Paused -> R.string.core_ui2_strings_anime_status_paused
+        TitleStatus.Discontinued -> R.string.core_ui2_strings_anime_status_discontinued
+        TitleStatus.None -> R.string.core_ui2_strings_none
     }
 
     override fun userStatusId(status: UserRateStatus): Int = when (status) {

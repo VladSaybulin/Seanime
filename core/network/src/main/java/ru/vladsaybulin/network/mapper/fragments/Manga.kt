@@ -20,7 +20,7 @@ import ru.vladsaybulin.core.network.graphql.fragment.MangaDetailsFragment
 import ru.vladsaybulin.core.network.graphql.fragment.MangaFragment
 import ru.vladsaybulin.core.network.graphql.fragment.MangaWithLocalDateFragment
 import ru.vladsaybulin.core.network.graphql.fragment.PublisherFragment
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.network.mapper.enums.asEntryStatus
 import ru.vladsaybulin.network.mapper.enums.asMangaKind
 import ru.vladsaybulin.network.models.manga.NetworkManga
@@ -34,7 +34,7 @@ internal fun MangaFragment.asNetworkModel() = NetworkManga(
     russianName = baseMangaFragment.russian,
     poster = baseMangaFragment.poster?.posterFragment?.asNetworkModel(),
     kind = baseMangaFragment.kind.asMangaKind(),
-    status = baseMangaFragment.status?.asEntryStatus() ?: EntryStatus.None,
+    status = baseMangaFragment.status?.asEntryStatus() ?: TitleStatus.None,
     score = baseMangaFragment.score?.toFloat() ?: 0f,
     chapters = baseMangaFragment.chapters,
     volumes = baseMangaFragment.volumes,
@@ -48,7 +48,7 @@ internal fun MangaWithLocalDateFragment.asNetworkModel() = NetworkManga(
     russianName = baseMangaFragment.russian,
     poster = baseMangaFragment.poster?.posterFragment?.asNetworkModel(),
     kind = baseMangaFragment.kind.asMangaKind(),
-    status = baseMangaFragment.status?.asEntryStatus() ?: EntryStatus.None,
+    status = baseMangaFragment.status?.asEntryStatus() ?: TitleStatus.None,
     score = baseMangaFragment.score?.toFloat() ?: 0f,
     chapters = baseMangaFragment.chapters,
     volumes = baseMangaFragment.volumes,

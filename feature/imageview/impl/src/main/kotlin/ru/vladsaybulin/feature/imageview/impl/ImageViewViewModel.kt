@@ -33,7 +33,7 @@ import ru.vladsaybulin.core.domain.repository.AnimeRepository
 import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.feature.imageview.api.navigation.ImageViewNavKey
 import ru.vladsaybulin.feature.imageview.api.navigation.ImageViewSource
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.common.Image
 
 /**
@@ -80,13 +80,13 @@ class ImageViewViewModel @AssistedInject constructor(
         }
     }
 
-    private fun titlePosterStream(titleType: EntryType, titleId: Long): Flow<List<String>> {
+    private fun titlePosterStream(titleType: TitleType, titleId: Long): Flow<List<String>> {
         return when (titleType) {
-            EntryType.Anime -> animeRepository.get()
+            TitleType.Anime -> animeRepository.get()
                 .getAnimePosterStream(titleId)
                 .map { poster -> listOfNotNull(poster?.originalUrl) }
 
-            EntryType.Manga -> mangaRepository.get()
+            TitleType.Manga -> mangaRepository.get()
                 .getMangaPosterStream(titleId)
                 .map { poster -> listOfNotNull(poster?.originalUrl) }
         }

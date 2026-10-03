@@ -18,7 +18,7 @@ package ru.vladsaybulin.feature.rate.editor.api.navigation
 
 import kotlinx.serialization.Serializable
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.manga.Manga
 
 /**
@@ -28,11 +28,11 @@ import ru.vladsaybulin.model.manga.Manga
  */
 @Serializable
 data class TitleReference(
-    val titleType: EntryType,
+    val titleType: TitleType,
     val titleId: Long
 ) {
 }
 
-fun Anime.titleReference() = TitleReference(EntryType.Anime, id)
+fun Anime.titleReference() = TitleReference(TitleType.Anime, id)
 
-fun Manga.titleReference() = TitleReference(EntryType.Manga, id)
+fun Manga.titleReference() = TitleReference(TitleType.Manga, id)

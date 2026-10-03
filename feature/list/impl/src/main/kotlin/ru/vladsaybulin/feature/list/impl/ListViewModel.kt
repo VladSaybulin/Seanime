@@ -35,7 +35,7 @@ import ru.vladsaybulin.core.domain.GetPagedUserRatesUseCase
 import ru.vladsaybulin.core.domain.shared.GetAuthStateStreamUseCase
 import ru.vladsaybulin.feature.list.api.navigation.ListNavKey
 import ru.vladsaybulin.model.auth.SessionState
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRateStatus
@@ -56,7 +56,7 @@ class ListViewModel @AssistedInject constructor(
 
     private val controlPanel = MutableStateFlow(
         ListControlPanelState(
-            entryType = key.titleType ?: EntryType.Anime,
+            titleType = key.titleType ?: TitleType.Anime,
             userRateStatus = key.status ?: UserRateStatus.Watching,
             orderField = UserRateOrderField.CreatedAt,
             order = UserRateOrder.Asc
@@ -91,8 +91,8 @@ class ListViewModel @AssistedInject constructor(
     )
 
 
-    fun onEntryTypeChanged(entryType: EntryType) {
-        controlPanel.update { it.copy(entryType = entryType) }
+    fun onEntryTypeChanged(titleType: TitleType) {
+        controlPanel.update { it.copy(titleType = titleType) }
     }
 
     fun onUserRateStatusChanged(userRateStatus: UserRateStatus) {

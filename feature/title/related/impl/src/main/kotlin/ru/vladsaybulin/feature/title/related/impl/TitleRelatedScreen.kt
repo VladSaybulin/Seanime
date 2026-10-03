@@ -34,7 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vladsaybulin.core.designsystem.icons.SeanimeIcons
 import ru.vladsaybulin.core.ui.LocalScreenContentPadding
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.core.ui2.entry.EntryList
 import ru.vladsaybulin.core.ui2.entry.related.RelatedTitleItem
 
@@ -109,8 +109,8 @@ private fun TitleRelatedContent(
                 relatedTitle = relatedTitle,
                 onClick = {
                     when (relatedTitle.title.type) {
-                        EntryType.Anime -> onAnimeClick(relatedTitle.title.id)
-                        EntryType.Manga -> onMangaClick(relatedTitle.title.id)
+                        TitleType.Anime -> onAnimeClick(relatedTitle.title.id)
+                        TitleType.Manga -> onMangaClick(relatedTitle.title.id)
                     }
                 }
             )

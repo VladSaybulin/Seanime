@@ -17,7 +17,7 @@
 package ru.vladsaybulin.feature.imageview.api.navigation
 
 import kotlinx.serialization.Serializable
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 
 /**
  * Represents the pointer to source of images to be displayed in the image view feature.
@@ -32,5 +32,5 @@ sealed class ImageViewSource {
 
     /** Represents a source of anime/manga poster */
     @Serializable
-    data class TitlePoster(val titleType: EntryType, val titleId: Long) : ImageViewSource()
+    data class TitlePoster(val titleType: TitleType, val titleId: Long) : ImageViewSource()
 }

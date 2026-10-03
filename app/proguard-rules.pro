@@ -21,8 +21,8 @@
 #-renamesourcefileattribute SourceFile
 
 # For enumaration classes that used in Compose Navigation with SafeArgs
--keepnames enum ru.vladsaybulin.model.common.EntryType
--keepnames enum ru.vladsaybulin.model.common.EntryStatus
+-keepnames enum ru.vladsaybulin.model.title.TitleType
+-keepnames enum ru.vladsaybulin.model.title.TitleStatus
 -keepnames enum ru.vladsaybulin.model.search.SearchType
 -keepnames enum ru.vladsaybulin.model.genre.GenreKind
 -keepnames enum ru.vladsaybulin.model.userrate.UserRateStatus

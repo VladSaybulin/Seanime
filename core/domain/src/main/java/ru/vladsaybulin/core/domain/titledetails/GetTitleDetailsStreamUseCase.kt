@@ -18,14 +18,14 @@ package ru.vladsaybulin.core.domain.titledetails
 
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.core.domain.common.TitleRepositoryResolver
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.title.TitleDetails
 import javax.inject.Inject
 
 class GetTitleDetailsStreamUseCase @Inject constructor(
     private val repositoryResolver: TitleRepositoryResolver
 ) {
-    operator fun invoke(titleType: EntryType, titleId: Long): Flow<TitleDetails> =
+    operator fun invoke(titleType: TitleType, titleId: Long): Flow<TitleDetails> =
         repositoryResolver(titleType).getTitleDetails(titleId)
 }
 

@@ -22,7 +22,7 @@ import ru.vladsaybulin.core.network.graphql.fragment.AnimeWithLocalDateFragment
 import ru.vladsaybulin.core.network.graphql.fragment.ScreenshotsFragment
 import ru.vladsaybulin.core.network.graphql.fragment.StudioFragment
 import ru.vladsaybulin.core.network.graphql.fragment.VideoFragment
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.search.SeasonOfYear
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.network.mapper.enums.asAnimeKind
@@ -41,7 +41,7 @@ internal fun AnimeFragment.asNetworkModel() = NetworkAnime(
     russianName = baseAnimeFragment.russian,
     poster = baseAnimeFragment.poster?.posterFragment?.asNetworkModel(),
     kind = baseAnimeFragment.kind.asAnimeKind(),
-    status = baseAnimeFragment.status?.asEntryStatus() ?: EntryStatus.None,
+    status = baseAnimeFragment.status?.asEntryStatus() ?: TitleStatus.None,
     score = baseAnimeFragment.score?.toFloat() ?: 0f,
     episodes = baseAnimeFragment.episodes,
     episodesAired = baseAnimeFragment.episodesAired,
@@ -55,7 +55,7 @@ internal fun AnimeWithLocalDateFragment.asNetworkModel() = NetworkAnime(
     russianName = baseAnimeFragment.russian,
     poster = baseAnimeFragment.poster?.posterFragment?.asNetworkModel(),
     kind = baseAnimeFragment.kind.asAnimeKind(),
-    status = baseAnimeFragment.status?.asEntryStatus() ?: EntryStatus.None,
+    status = baseAnimeFragment.status?.asEntryStatus() ?: TitleStatus.None,
     score = baseAnimeFragment.score?.toFloat() ?: 0f,
     episodes = baseAnimeFragment.episodes,
     episodesAired = baseAnimeFragment.episodesAired,

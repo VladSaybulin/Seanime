@@ -17,15 +17,15 @@
 package ru.vladsaybulin.network.mapper.enums
 
 import ru.vladsaybulin.core.network.graphql.type.GenreEntryTypeEnum
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 
-fun EntryType.asGenreEntryTypeEnum() = when (this) {
-    EntryType.Anime -> GenreEntryTypeEnum.Anime
-    EntryType.Manga -> GenreEntryTypeEnum.Manga
+fun TitleType.asGenreEntryTypeEnum() = when (this) {
+    TitleType.Anime -> GenreEntryTypeEnum.Anime
+    TitleType.Manga -> GenreEntryTypeEnum.Manga
 }
 
 fun GenreEntryTypeEnum.asEntryType() = when (this) {
-    GenreEntryTypeEnum.Anime -> EntryType.Anime
-    GenreEntryTypeEnum.Manga -> EntryType.Manga
+    GenreEntryTypeEnum.Anime -> TitleType.Anime
+    GenreEntryTypeEnum.Manga -> TitleType.Manga
     GenreEntryTypeEnum.UNKNOWN__ -> error("Unknown GenreEntryTypeEnum value: $this")
 }

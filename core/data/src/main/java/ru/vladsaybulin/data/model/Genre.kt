@@ -25,7 +25,7 @@ fun NetworkGenre.asFilterEntity() = FilterGenreEntity(
     id = id,
     name = name,
     nameRu = russianName,
-    entryType = entryType,
+    titleType = titleType,
     kind = kind
 )
 
@@ -33,7 +33,7 @@ fun NetworkGenre.asEntity() = GenreEntity(
     id = id,
     name = name,
     nameRu = russianName,
-    entryType = entryType,
+    titleType = titleType,
     kind = kind
 )
 
@@ -41,6 +41,6 @@ fun NetworkGenre.asExternalModel() = Genre(
     id = id,
     englishName = name,
     russianName = russianName,
-    entryType = entryType,
+    titleType = titleType,
     kind = kind
 )

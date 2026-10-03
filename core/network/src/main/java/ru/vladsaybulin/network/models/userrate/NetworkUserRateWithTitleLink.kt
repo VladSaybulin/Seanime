@@ -19,7 +19,7 @@ package ru.vladsaybulin.network.models.userrate
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.network.util.serializers.UserRateStatusSerializer
 
@@ -27,7 +27,7 @@ import ru.vladsaybulin.network.util.serializers.UserRateStatusSerializer
 class NetworkUserRateWithTitleLink(
     @SerialName("id") val id: Long,
     @SerialName("target_id") val entryId: Long,
-    @SerialName("target_type") val entryType: EntryType,
+    @SerialName("target_type") val titleType: TitleType,
     @SerialName("score") val score: Int,
     @Serializable(UserRateStatusSerializer::class)
     @SerialName("status")

@@ -17,7 +17,7 @@
 package ru.vladsaybulin.model.anime
 
 import ru.vladsaybulin.model.Entry
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.userrate.UserRate
@@ -28,7 +28,7 @@ data class Anime(
     val russianName: String?,
     override val poster: Image?,
     val kind: AnimeKind,
-    val status: EntryStatus,
+    val status: TitleStatus,
     val score: Float,
     val episodes: Int,
     val episodesAired: Int,
@@ -54,7 +54,7 @@ val previewAnimes = listOf(
         poster = Image("", ""),
         kind = AnimeKind.Ova,
         score = 5.8f,
-        status = EntryStatus.Released,
+        status = TitleStatus.Released,
         episodes = 3,
         episodesAired = 0,
         airedOn = IncompleteDate(22, 12, 1998),
@@ -68,7 +68,7 @@ val previewAnimes = listOf(
         poster = Image("", ""),
         kind = AnimeKind.None,
         score = 7.16f,
-        status = EntryStatus.Ongoing,
+        status = TitleStatus.Ongoing,
         episodes = 2,
         episodesAired = 2,
         airedOn = IncompleteDate(16, 8, 2020),
@@ -82,7 +82,7 @@ val previewAnimes = listOf(
         poster = null,
         kind = AnimeKind.Ona,
         score = 0f,
-        status = EntryStatus.None,
+        status = TitleStatus.None,
         episodes = 85,
         episodesAired = 0,
         airedOn = IncompleteDate(3, 9, 2001),
@@ -96,7 +96,7 @@ val previewAnimes = listOf(
         poster= Image("", ""),
         kind = AnimeKind.Movie,
         score = 5.43f,
-        status = EntryStatus.Anons,
+        status = TitleStatus.Anons,
         episodes = 1,
         episodesAired = 0,
         airedOn = null,
@@ -110,7 +110,7 @@ val previewAnimes = listOf(
         poster= Image("", ""),
         kind = AnimeKind.None,
         score = 4.63f,
-        status = EntryStatus.None,
+        status = TitleStatus.None,
         episodes = 1,
         episodesAired = 0,
         airedOn = null,

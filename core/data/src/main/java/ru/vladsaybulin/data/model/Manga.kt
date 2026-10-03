@@ -19,7 +19,7 @@ package ru.vladsaybulin.data.model
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.userrate.UserRateEntity
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.title.Title
 import ru.vladsaybulin.model.title.toTitleKind
@@ -84,7 +84,7 @@ internal fun NetworkManga.userRateEntityShell() = userRate?.let { userRate ->
 
 internal fun MangaEntity.asTitle() = Title(
     id = id,
-    type = EntryType.Manga,
+    type = TitleType.Manga,
     name = name,
     nameRu = nameRu,
     poster = poster?.asExternalModel(),

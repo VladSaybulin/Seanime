@@ -36,11 +36,10 @@ import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.database.models.person.PersonEntity
 import ru.vladsaybulin.database.models.stats.asExternalModel
 import ru.vladsaybulin.database.models.text.asExternalModel
-import ru.vladsaybulin.database.models.title.PopulatedRelatedTitle
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.anime.Video
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.search.TimePeriodAiring
 import ru.vladsaybulin.model.title.TitleDetails
@@ -198,7 +197,7 @@ private fun TimePeriodAiring.Season.asDatabaseModel() = SeasonPOJO(
 internal fun PopulatedAnimeDetails.asExternalModel(): TitleDetails = with(animeDetailsEntity) {
     TitleDetails(
         id = id,
-        type = EntryType.Anime,
+        type = TitleType.Anime,
         nameEn = nameEn,
         nameJp = nameJp,
         alternativeNames = altNames,

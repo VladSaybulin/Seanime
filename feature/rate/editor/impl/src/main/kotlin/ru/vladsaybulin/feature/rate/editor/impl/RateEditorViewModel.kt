@@ -161,7 +161,7 @@ class RateEditorViewModel @AssistedInject constructor(
                     userRateValues = newValues
                 )
             } ?: userRateRepository.get().createUserRate(
-                entryType = key.titleReference.titleType,
+                titleType = key.titleReference.titleType,
                 entryId = key.titleReference.titleId,
                 userRateValues = newValues
             )

@@ -18,11 +18,11 @@ package ru.vladsaybulin.core.domain.titledetails
 
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.core.domain.common.TitleRepositoryResolver
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.title.Title
 import javax.inject.Inject
 
 class GetSimilarTitlesStreamUseCase @Inject constructor(private val repositoryResolver: TitleRepositoryResolver) {
-    operator fun invoke(titleType: EntryType, titleId: Long): Flow<List<Title>> =
+    operator fun invoke(titleType: TitleType, titleId: Long): Flow<List<Title>> =
         repositoryResolver(titleType).getSimilarTitles(titleId)
 }

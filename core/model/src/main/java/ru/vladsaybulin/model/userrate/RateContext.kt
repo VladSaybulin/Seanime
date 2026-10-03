@@ -17,11 +17,11 @@
 package ru.vladsaybulin.model.userrate
 
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.manga.Manga
 
 class UserRateContext(
-    val titleStatus: EntryStatus,
+    val titleStatus: TitleStatus,
     val maxEpisodes: Int,
     val maxChapters: Int,
     val maxVolumes: Int

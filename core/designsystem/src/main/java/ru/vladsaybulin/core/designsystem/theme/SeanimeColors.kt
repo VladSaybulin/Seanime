@@ -18,12 +18,12 @@ package ru.vladsaybulin.core.designsystem.theme
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 data class SeanimeColors(
     val userRateStatusColors: Map<UserRateStatus, UserRateStatusColors>,
-    val entryStatusColors: Map<EntryStatus, Color>,
+    val titleStatusColors: Map<TitleStatus, Color>,
     val posterScrim: Color,
     val onPosterScrim: Color,
 )
@@ -226,12 +226,12 @@ fun SeanimeColors(
                 onContainer = onDroppedContainer
             )
         ),
-        entryStatusColors = mapOf(
-            EntryStatus.Anons to anons,
-            EntryStatus.Ongoing to ongoing,
-            EntryStatus.Released to released,
-            EntryStatus.Paused to paused,
-            EntryStatus.Discontinued to discontinued
+        titleStatusColors = mapOf(
+            TitleStatus.Anons to anons,
+            TitleStatus.Ongoing to ongoing,
+            TitleStatus.Released to released,
+            TitleStatus.Paused to paused,
+            TitleStatus.Discontinued to discontinued
         )
     )
 }
@@ -243,5 +243,5 @@ val LocalSeanimeColors = staticCompositionLocalOf<SeanimeColors> {
 operator fun SeanimeColors.get(status: UserRateStatus) =
     userRateStatusColors[status] ?: UserRateStatusColors.Unspecified
 
-operator fun SeanimeColors.get(status: EntryStatus) =
-    entryStatusColors[status] ?: Color.Unspecified
+operator fun SeanimeColors.get(status: TitleStatus) =
+    titleStatusColors[status] ?: Color.Unspecified

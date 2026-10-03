@@ -21,7 +21,7 @@ import kotlinx.serialization.Transient
 import ru.vladsaybulin.core.navigation.LoadedData
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.title.Title
 
 /**
@@ -32,7 +32,7 @@ import ru.vladsaybulin.model.title.Title
  */
 @Serializable
 data class TitleDetailsNavKey(
-    val titleType: EntryType,
+    val titleType: TitleType,
     val titleId: Long,
     @Transient val title: LoadedData<Title> = LoadedData.ofNull()
 ) : SeanimeNavKey
@@ -42,7 +42,7 @@ data class TitleDetailsNavKey(
  * @param titleType The type of the title (Anime or Manga).
  * @param titleId The ID of the title.
  */
-fun Navigator.navigateToTitle(titleType: EntryType, titleId: Long) {
+fun Navigator.navigateToTitle(titleType: TitleType, titleId: Long) {
     navigateTo(TitleDetailsNavKey(titleType, titleId, title = LoadedData.ofNull()))
 }
 
@@ -51,7 +51,7 @@ fun Navigator.navigateToTitle(titleType: EntryType, titleId: Long) {
  * @param animeId The ID of the anime.
  */
 fun Navigator.navigateToAnime(animeId: Long) {
-    navigateTo(TitleDetailsNavKey(EntryType.Anime, animeId, title = LoadedData.ofNull()))
+    navigateTo(TitleDetailsNavKey(TitleType.Anime, animeId, title = LoadedData.ofNull()))
 }
 
 /**
@@ -59,7 +59,7 @@ fun Navigator.navigateToAnime(animeId: Long) {
  * @param mangaId The ID of the manga.
  */
 fun Navigator.navigateToManga(mangaId: Long) {
-    navigateTo(TitleDetailsNavKey(EntryType.Manga, mangaId, title = LoadedData.ofNull()))
+    navigateTo(TitleDetailsNavKey(TitleType.Manga, mangaId, title = LoadedData.ofNull()))
 }
 
 /**

@@ -19,7 +19,7 @@ package ru.vladsaybulin.feature.title.related.api.navigation
 import kotlinx.serialization.Serializable
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 
 /**
  * Navigation key for the title related feature.
@@ -27,8 +27,8 @@ import ru.vladsaybulin.model.common.EntryType
  * @param titleId The ID of the title.
  */
 @Serializable
-data class TitleRelatedNavKey(val titleType: EntryType, val titleId: Long) : SeanimeNavKey
+data class TitleRelatedNavKey(val titleType: TitleType, val titleId: Long) : SeanimeNavKey
 
-fun Navigator.navigateToTitleRelated(titleType: EntryType, titleId: Long) {
+fun Navigator.navigateToTitleRelated(titleType: TitleType, titleId: Long) {
     navigateTo(TitleRelatedNavKey(titleType, titleId))
 }
