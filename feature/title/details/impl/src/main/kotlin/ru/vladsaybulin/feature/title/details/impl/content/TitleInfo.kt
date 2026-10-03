@@ -69,8 +69,8 @@ import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.feature.title.details.impl.R
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.anime.Studio
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.isNullOrEmpty
 import ru.vladsaybulin.model.genre.Genre
@@ -82,9 +82,9 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TitleInfo(
-    type: EntryType,
+    type: TitleType,
     kind: TitleKind,
-    status: EntryStatus,
+    status: TitleStatus,
     episodes: Int,
     episodesAired: Int,
     episodeDuration: Int,
@@ -114,15 +114,15 @@ fun TitleInfo(
                 KindPanel(kindString = it)
             }
 
-            if (status != EntryStatus.None) {
+            if (status != TitleStatus.None) {
                 StatusPanel(status = status)
             }
 
-            if (type == EntryType.Anime) {
+            if (type == TitleType.Anime) {
                 val episodesFormat = AnimeStrings.getProgressFormat(
                     aired = episodesAired,
                     total = episodes,
-                    isOngoing = status == EntryStatus.Ongoing,
+                    isOngoing = status == TitleStatus.Ongoing,
                     isMovie = kind == TitleKind.Movie
                 )
 
@@ -147,7 +147,7 @@ fun TitleInfo(
             }
 
             when {
-                status == EntryStatus.Anons && airedOn != null -> AirDatePanel(airedOn)
+                status == TitleStatus.Anons && airedOn != null -> AirDatePanel(airedOn)
                 season != null -> SeasonPanel(
                     timePeriodAiring = season,
                     airedOn = airedOn,
@@ -194,7 +194,7 @@ private fun KindPanel(kindString: String) {
 }
 
 @Composable
-private fun StatusPanel(status: EntryStatus) {
+private fun StatusPanel(status: TitleStatus) {
     InfoPanel(
         label = { Text(stringResource(id = R.string.feature_details_info_label_status)) }
     ) {
@@ -290,8 +290,8 @@ private fun VolumesPanel(volumes: Int) {
 @Composable
 fun AirDatePanel(airedOn: IncompleteDate) {
     val labelId = when (LocalTitleStrings.current.titleType) {
-        EntryType.Anime -> R.string.feature_title_details_info_label_anime_anons_date
-        EntryType.Manga -> R.string.feature_title_details_info_label_manga_anons_data
+        TitleType.Anime -> R.string.feature_title_details_info_label_anime_anons_date
+        TitleType.Manga -> R.string.feature_title_details_info_label_manga_anons_data
     }
     InfoPanel(
         label = { Text(stringResource(id = labelId)) }

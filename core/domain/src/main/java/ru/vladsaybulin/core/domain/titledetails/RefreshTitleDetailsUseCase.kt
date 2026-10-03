@@ -17,10 +17,10 @@
 package ru.vladsaybulin.core.domain.titledetails
 
 import ru.vladsaybulin.core.domain.common.TitleRepositoryResolver
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import javax.inject.Inject
 
 class RefreshTitleDetailsUseCase @Inject constructor(private val repositoryResolver: TitleRepositoryResolver) {
-    operator fun invoke(titleType: EntryType, titleId: Long, forceRefresh: Boolean) =
+    operator fun invoke(titleType: TitleType, titleId: Long, forceRefresh: Boolean) =
         repositoryResolver(titleType).refreshTitleDetails(titleId, forceRefresh = forceRefresh)
 }

@@ -37,8 +37,8 @@ import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.core.ui2.entry.EntryCarouselItem
 import ru.vladsaybulin.core.ui2.entry.EntryGridItem
@@ -175,14 +175,14 @@ private fun kindAndEpisodesFormatted(
     kind: AnimeKind,
     episodes: Int,
     episodesAired: Int,
-    status: EntryStatus
+    status: TitleStatus
 ): String? {
     val kindStr = kind.asStringOrNull()
     val episodesStr =
         AnimeStrings.getProgressFormat(
             aired = episodesAired,
             total = episodes,
-            isOngoing = status == EntryStatus.Ongoing,
+            isOngoing = status == TitleStatus.Ongoing,
             isMovie = kind == AnimeKind.Movie
         )?.asString()
 
@@ -203,7 +203,7 @@ private fun AnimeListItemPreview(
     @PreviewParameter(AnimeItemPreviewParameterProvider::class) anime: Anime
 ) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Anime) {
+        ProvideTitleStringsByType(TitleType.Anime) {
             AnimeListItem(
                 anime = anime,
                 onClick = {}
@@ -216,7 +216,7 @@ private fun AnimeListItemPreview(
 @Preview
 fun AnimeGridItemPreview(@PreviewParameter(AnimeItemPreviewParameterProvider::class) anime: Anime) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Anime) {
+        ProvideTitleStringsByType(TitleType.Anime) {
             AnimeGridItem(
                 modifier = Modifier.width(150.dp),
                 anime = anime,
@@ -230,7 +230,7 @@ fun AnimeGridItemPreview(@PreviewParameter(AnimeItemPreviewParameterProvider::cl
 @Preview
 fun AnimeCarouselItemPreview(@PreviewParameter(AnimeItemPreviewParameterProvider::class) anime: Anime) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Anime) {
+        ProvideTitleStringsByType(TitleType.Anime) {
             AnimeGridItem(
                 modifier = Modifier.width(150.dp),
                 anime = anime,
@@ -246,7 +246,7 @@ private fun AnimeGridItemPreview_WithUserRateStatus(
     @PreviewParameter(ListOfAnimesPreviewParameterProvider::class) animes: List<Anime>
 ) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Anime) {
+        ProvideTitleStringsByType(TitleType.Anime) {
             AnimeGridItem(
                 anime = animes[0],
                 onClick = {},
@@ -263,7 +263,7 @@ private fun AnimeListItemPreview_WithUserRateStatus(
     @PreviewParameter(ListOfAnimesPreviewParameterProvider::class) animes: List<Anime>
 ) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Anime) {
+        ProvideTitleStringsByType(TitleType.Anime) {
             AnimeListItem(
                 anime = animes[0],
                 onClick = {},
@@ -279,7 +279,7 @@ private fun AnimeCarouselItemPreview_WithUserRateStatus(
     @PreviewParameter(ListOfAnimesPreviewParameterProvider::class) animes: List<Anime>
 ) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Anime) {
+        ProvideTitleStringsByType(TitleType.Anime) {
             AnimeCarouselItem(
                 anime = animes[0],
                 onClick = {},

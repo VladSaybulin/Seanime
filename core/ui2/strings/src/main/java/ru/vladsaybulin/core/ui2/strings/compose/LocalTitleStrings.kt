@@ -24,19 +24,19 @@ import androidx.compose.ui.res.stringResource
 import ru.vladsaybulin.core.ui2.strings.AnimeStrings
 import ru.vladsaybulin.core.ui2.strings.DependsOnTitleStrings
 import ru.vladsaybulin.core.ui2.strings.MangaStrings
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 @Composable
 @ReadOnlyComposable
-fun EntryStatus.asString() =
+fun TitleStatus.asString() =
     stringResource(id = LocalTitleStrings.current.titleStatusId(this))
 
 @Composable
 @ReadOnlyComposable
-fun EntryStatus.asStringOrNull(): String? {
-    if (this == EntryStatus.None) return null
+fun TitleStatus.asStringOrNull(): String? {
+    if (this == TitleStatus.None) return null
     return asString()
 }
 
@@ -58,12 +58,12 @@ val LocalTitleStrings = staticCompositionLocalOf<DependsOnTitleStrings> {
 
 @Composable
 fun ProvideTitleStringsByType(
-    titleType: EntryType,
+    titleType: TitleType,
     content: @Composable () -> Unit
 ) {
     val strings: DependsOnTitleStrings = when (titleType) {
-        EntryType.Anime -> AnimeStrings
-        EntryType.Manga -> MangaStrings
+        TitleType.Anime -> AnimeStrings
+        TitleType.Manga -> MangaStrings
     }
 
     CompositionLocalProvider(

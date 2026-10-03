@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
 import ru.vladsaybulin.feature.title.details.impl.R
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,8 +66,8 @@ fun RequireAuthDialog(
                     val titleName = stringResource(
                         id =
                         when (LocalTitleStrings.current.titleType) {
-                            EntryType.Anime -> R.string.feature_title_details_require_auth_anime
-                            EntryType.Manga -> R.string.feature_title_details_require_auth_manga
+                            TitleType.Anime -> R.string.feature_title_details_require_auth_anime
+                            TitleType.Manga -> R.string.feature_title_details_require_auth_manga
                         }
                     )
                     Text(

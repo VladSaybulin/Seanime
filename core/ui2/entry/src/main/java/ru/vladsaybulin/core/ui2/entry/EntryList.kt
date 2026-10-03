@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.core.ui2.entry.anime.animeItems
 import ru.vladsaybulin.core.ui2.entry.preview.ListOfAnimesPreviewParameterProvider
 
@@ -90,7 +90,7 @@ private val DefaultArrangeSpace = 8.dp
 fun EntryGridPreview_Animes(@PreviewParameter(ListOfAnimesPreviewParameterProvider::class) animes: List<Anime>) {
     SeanimeTheme {
         Surface {
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 EntryList {
                     animeItems(animes, {})
                 }

@@ -19,7 +19,7 @@ package ru.vladsaybulin.feature.list.api.navigation
 import kotlinx.serialization.Serializable
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateStatus
 
 /**
@@ -31,7 +31,7 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
 @Serializable
 data class ListNavKey(
     val userId: Long?,
-    val titleType: EntryType?,
+    val titleType: TitleType?,
     val status: UserRateStatus?
 ) : SeanimeNavKey
 
@@ -43,7 +43,7 @@ data class ListNavKey(
  */
 fun Navigator.navigateToList(
     userId: Long? = null,
-    titleType: EntryType? = null,
+    titleType: TitleType? = null,
     status: UserRateStatus? = null
 ) {
     navigateTo(ListNavKey(userId, titleType, status))

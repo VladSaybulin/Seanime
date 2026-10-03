@@ -20,7 +20,7 @@ import dagger.Lazy
 import ru.vladsaybulin.core.domain.repository.AnimeRepository
 import ru.vladsaybulin.core.domain.repository.MangaRepository
 import ru.vladsaybulin.core.domain.repository.TitleRepository
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,10 +29,10 @@ class TitleRepositoryResolver @Inject constructor(
     private val animeRepository: Lazy<AnimeRepository>,
     private val mangaRepository: Lazy<MangaRepository>
 ) {
-    operator fun invoke(titleType: EntryType): TitleRepository {
+    operator fun invoke(titleType: TitleType): TitleRepository {
         return when (titleType) {
-            EntryType.Anime -> animeRepository.get()
-            EntryType.Manga -> mangaRepository.get()
+            TitleType.Anime -> animeRepository.get()
+            TitleType.Manga -> mangaRepository.get()
         }
     }
 }

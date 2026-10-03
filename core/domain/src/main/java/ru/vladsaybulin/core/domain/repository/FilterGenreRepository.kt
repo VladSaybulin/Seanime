@@ -16,13 +16,13 @@
 
 package ru.vladsaybulin.core.domain.repository
 
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.genre.GenreKind
 
 interface FilterGenreRepository {
-    suspend fun getGenreById(entryType: EntryType, genreId: Long): Genre?
+    suspend fun getGenreById(titleType: TitleType, genreId: Long): Genre?
 
-    suspend fun getGenres(entryType: EntryType, genreKind: GenreKind): List<Genre>
+    suspend fun getGenres(titleType: TitleType, genreKind: GenreKind): List<Genre>
 }
 

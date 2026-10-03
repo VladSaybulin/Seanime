@@ -19,13 +19,13 @@ package ru.vladsaybulin.core.domain.titledetails
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.vladsaybulin.core.domain.common.TitleRepositoryResolver
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.related.RelationType
 import javax.inject.Inject
 
 class GetRelatedTitlesStreamUseCase @Inject constructor(private val repositoryResolver: TitleRepositoryResolver) {
-    operator fun invoke(titleType: EntryType, titleId: Long): Flow<ExpandableListWrapper<RelatedTitle>> =
+    operator fun invoke(titleType: TitleType, titleId: Long): Flow<ExpandableListWrapper<RelatedTitle>> =
         repositoryResolver(titleType).getRelatedTitles(titleId)
             .map { titles ->
                 val sequels = mutableListOf<RelatedTitle>()

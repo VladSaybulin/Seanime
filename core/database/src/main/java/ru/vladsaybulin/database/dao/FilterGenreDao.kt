@@ -21,7 +21,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import ru.vladsaybulin.database.models.filters.FilterGenreEntity
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.genre.GenreKind
 
 @Dao
@@ -30,13 +30,13 @@ interface FilterGenreDao {
     @Query("SELECT * FROM filter_genres WHERE id = :genreId")
     suspend fun getFilterGenreById(genreId: Long): FilterGenreEntity?
 
-    @Query("SELECT * FROM filter_genres WHERE entry_type = :entryType AND kind = :genreKind")
-    fun getFilterGenresByKind(entryType: EntryType, genreKind: GenreKind): List<FilterGenreEntity>
+    @Query("SELECT * FROM filter_genres WHERE entry_type = :titleType AND kind = :genreKind")
+    fun getFilterGenresByKind(titleType: TitleType, genreKind: GenreKind): List<FilterGenreEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertOrIgnoreFilterGenres(genres: List<FilterGenreEntity>)
 
-    @Query("DELETE FROM filter_genres WHERE entry_type = :entryType")
-    fun deleteFilterGenresByEntryType(entryType: EntryType)
+    @Query("DELETE FROM filter_genres WHERE entry_type = :titleType")
+    fun deleteFilterGenresByEntryType(titleType: TitleType)
 
 }

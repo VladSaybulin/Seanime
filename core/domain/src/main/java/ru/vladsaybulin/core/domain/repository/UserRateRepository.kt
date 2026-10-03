@@ -19,7 +19,7 @@ package ru.vladsaybulin.core.domain.repository
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.list.UserRateOrder
 import ru.vladsaybulin.model.list.UserRateOrderField
 import ru.vladsaybulin.model.userrate.UserRate
@@ -53,7 +53,7 @@ interface UserRateRepository {
 
     fun getAllMangaUserRateStatusesStream(): Flow<Map<Long, UserRateStatus>>
 
-    suspend fun createUserRate(entryType: EntryType, entryId: Long, userRateValues: UserRateValues)
+    suspend fun createUserRate(titleType: TitleType, entryId: Long, userRateValues: UserRateValues)
 
     suspend fun updateUserRate(userRateId: Long, userRateValues: UserRateValues)
 
@@ -61,7 +61,7 @@ interface UserRateRepository {
 
     suspend fun refreshInProgressRates(force: Boolean)
 
-    suspend fun getRateContext(titleType: EntryType, titleId: Long): UserRateContext
+    suspend fun getRateContext(titleType: TitleType, titleId: Long): UserRateContext
 
     suspend fun getUserRateValues(rateId: Long): UserRateValues?
 

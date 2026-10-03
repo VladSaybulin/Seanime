@@ -19,7 +19,7 @@ package ru.vladsaybulin.feature.title.authors.api.navigation
 import kotlinx.serialization.Serializable
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 
 /**
  * Navigation key for the title authors feature.
@@ -27,8 +27,8 @@ import ru.vladsaybulin.model.common.EntryType
  * @param titleId The ID of the title.
  */
 @Serializable
-data class TitleAuthorsNavKey(val titleType: EntryType, val titleId: Long) : SeanimeNavKey
+data class TitleAuthorsNavKey(val titleType: TitleType, val titleId: Long) : SeanimeNavKey
 
-fun Navigator.navigateToTitleAuthors(titleType: EntryType, titleId: Long) {
+fun Navigator.navigateToTitleAuthors(titleType: TitleType, titleId: Long) {
     navigateTo(TitleAuthorsNavKey(titleType, titleId))
 }

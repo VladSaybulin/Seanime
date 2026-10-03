@@ -25,10 +25,7 @@ import ru.vladsaybulin.database.models.common.IncompleteDatePOJO
 import ru.vladsaybulin.database.models.common.asExternalModel
 import ru.vladsaybulin.model.anime.Anime
 import ru.vladsaybulin.model.anime.AnimeKind
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.title.Title
-import ru.vladsaybulin.model.title.toTitleKind
+import ru.vladsaybulin.model.title.TitleStatus
 
 @Entity(tableName = "animes")
 data class AnimeEntity(
@@ -50,7 +47,7 @@ data class AnimeEntity(
     val kind: AnimeKind,
 
     @ColumnInfo("status")
-    val status: EntryStatus,
+    val status: TitleStatus,
 
     @ColumnInfo("score")
     val score: Float,

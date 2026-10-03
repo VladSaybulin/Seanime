@@ -22,7 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import ru.vladsaybulin.core.domain.rate.Progress
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.model.userrate.UserRateValues
@@ -38,7 +38,7 @@ import ru.vladsaybulin.model.userrate.UserRateValues
  */
 @Composable
 fun rememberRateEditorState(
-    titleType: EntryType,
+    titleType: TitleType,
     rateValues: UserRateValues,
     context: UserRateContext,
     availableStatuses: List<UserRateStatus>
@@ -47,9 +47,9 @@ fun rememberRateEditorState(
         RateEditorState(
             allStatuses = availableStatuses,
             initialStatusIndex = availableStatuses.indexOf(rateValues.status),
-            initialEpisodes = counterInitialValue(EntryType.Anime, titleType, rateValues.episodes),
-            initialChapters = counterInitialValue(EntryType.Manga, titleType, rateValues.chapters),
-            initialVolumes = counterInitialValue(EntryType.Manga, titleType, rateValues.volumes),
+            initialEpisodes = counterInitialValue(TitleType.Anime, titleType, rateValues.episodes),
+            initialChapters = counterInitialValue(TitleType.Manga, titleType, rateValues.chapters),
+            initialVolumes = counterInitialValue(TitleType.Manga, titleType, rateValues.volumes),
             initialRewatchingCount = rateValues.rewatches ?: 0,
             initialScore = rateValues.score ?: 0,
             text = rateValues.text ?: "",
@@ -164,6 +164,6 @@ fun RateEditorState.setProgress(progress: Progress) {
     volumes?.value = progress.volumes
 }
 
-private fun counterInitialValue(expectedType: EntryType, actualType: EntryType, value: Int?): Int? {
+private fun counterInitialValue(expectedType: TitleType, actualType: TitleType, value: Int?): Int? {
     return if (expectedType == actualType) value ?: 0 else null
 }

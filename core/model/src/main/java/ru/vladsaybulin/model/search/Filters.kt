@@ -18,7 +18,7 @@ package ru.vladsaybulin.model.search
 
 import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 import ru.vladsaybulin.model.genre.Genre
 import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
@@ -28,7 +28,7 @@ import ru.vladsaybulin.model.userrate.UserRateStatus
 data class Filters(
     val animeKindOptions: List<FilterOption<AnimeKind>>? = null,
     val mangaKindOptions: List<FilterOption<MangaKind>>? = null,
-    val statusOptions: List<FilterOption<EntryStatus>>? = null,
+    val statusOptions: List<FilterOption<TitleStatus>>? = null,
     val timePeriodAiringFilterOptions: List<FilterOption<TimePeriodAiring>>? = null,
     val myListStatus: List<FilterOption<UserRateStatus>>? = null,
     val duration: List<FilterOption<Duration>>? = null,

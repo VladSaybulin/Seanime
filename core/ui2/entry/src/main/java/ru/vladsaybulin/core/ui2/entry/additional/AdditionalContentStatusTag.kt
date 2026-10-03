@@ -24,14 +24,14 @@ import ru.vladsaybulin.core.designsystem.components.TagDefaults
 import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.designsystem.theme.get
 import ru.vladsaybulin.core.ui2.strings.compose.asString
-import ru.vladsaybulin.model.common.EntryStatus
+import ru.vladsaybulin.model.title.TitleStatus
 
 @Composable
 internal fun AdditionalContentStatusTag(
-    status: EntryStatus,
+    status: TitleStatus,
     modifier: Modifier = Modifier
 ) {
-    if (status != EntryStatus.None) {
+    if (status != TitleStatus.None) {
         val color = SeanimeTheme.seanimeColors[status]
         SeanimeTag(
             border = TagDefaults.border(color = color),

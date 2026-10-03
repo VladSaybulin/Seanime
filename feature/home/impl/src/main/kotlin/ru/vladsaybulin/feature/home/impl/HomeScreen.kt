@@ -61,7 +61,7 @@ import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.feature.rate.editor.api.navigation.TitleReference
 import ru.vladsaybulin.feature.rate.editor.api.navigation.titleReference
 import ru.vladsaybulin.model.anime.Anime
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.user.BriefUser
 import ru.vladsaybulin.model.userrate.UserRateContext
 import ru.vladsaybulin.model.userrate.UserRateValues
@@ -282,7 +282,7 @@ private fun LazyListScope.animeOngoingCarousel(
             ) {
                 Text(text = stringResource(id = R.string.feature_home_on_air_now))
             }
-            ProvideTitleStringsByType(EntryType.Anime) {
+            ProvideTitleStringsByType(TitleType.Anime) {
                 EntryCarousel {
                     animeCarouselItems(
                         animes = ongoingAnime,

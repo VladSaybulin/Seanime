@@ -60,8 +60,8 @@ import ru.vladsaybulin.core.ui2.score.StarsRowInput
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.model.anime.AnimeKind
-import ru.vladsaybulin.model.common.EntryStatus
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleStatus
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.search.FilterOption
 import ru.vladsaybulin.model.search.FilterType
 import ru.vladsaybulin.model.search.Filters
@@ -420,7 +420,7 @@ fun ExcludedIcon() {
 @Composable
 @Preview
 fun FiltersContentPreview() {
-    ProvideTitleStringsByType(titleType = EntryType.Anime) {
+    ProvideTitleStringsByType(titleType = TitleType.Anime) {
         SeanimeTheme {
             Surface {
                 FiltersContent(
@@ -429,8 +429,8 @@ fun FiltersContentPreview() {
                             animeKindOptions = AnimeKind.entries
                                 .filter { it != AnimeKind.None }
                                 .map { FilterOption(it, it.serializedName) },
-                            statusOptions = EntryStatus.entries
-                                .filter { it != EntryStatus.None }
+                            statusOptions = TitleStatus.entries
+                                .filter { it != TitleStatus.None }
                                 .map { FilterOption(it, it.serializedName) },
                         ),
                         appliedFilters = mapOf(FilterType.Score to mapOf("7" to OptionValue.Selected))

@@ -33,7 +33,7 @@ import ru.vladsaybulin.core.designsystem.theme.SeanimeTheme
 import ru.vladsaybulin.core.ui2.entry.R
 import ru.vladsaybulin.core.ui2.strings.compose.ProvideTitleStringsByType
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
-import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.TitleType
 import ru.vladsaybulin.model.manga.Manga
 import ru.vladsaybulin.model.userrate.UserRateStatus
 import ru.vladsaybulin.core.ui2.entry.EntryCarouselItem
@@ -173,7 +173,7 @@ private fun chaptersAndVolumesFormatted(
 @Composable
 fun MangaListItemPreview(@PreviewParameter(MangaItemPreviewParameterProvider::class) manga: Manga) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Manga) {
+        ProvideTitleStringsByType(TitleType.Manga) {
             MangaListItem(
                 manga = manga,
                 onClick = {}
@@ -186,7 +186,7 @@ fun MangaListItemPreview(@PreviewParameter(MangaItemPreviewParameterProvider::cl
 @Preview
 fun MangaGridItemPreview(@PreviewParameter(MangaItemPreviewParameterProvider::class) manga: Manga) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Manga) {
+        ProvideTitleStringsByType(TitleType.Manga) {
             MangaGridItem(
                 modifier = Modifier.width(150.dp),
                 manga = manga,
@@ -200,7 +200,7 @@ fun MangaGridItemPreview(@PreviewParameter(MangaItemPreviewParameterProvider::cl
 @Preview
 fun MangaCarouselItemPreview(@PreviewParameter(MangaItemPreviewParameterProvider::class) manga: Manga) {
     SeanimeTheme {
-        ProvideTitleStringsByType(EntryType.Manga) {
+        ProvideTitleStringsByType(TitleType.Manga) {
             MangaCarouselItem(
                 modifier = Modifier.width(150.dp),
                 manga = manga,
