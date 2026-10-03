@@ -21,3 +21,37 @@ fragment MangaWithLocalDateFragment on Manga {
     airedOn { date }
     releasedOn { date }
 }
+
+fragment MangaDetailsFragment on Manga {
+    id
+
+    # Shared
+    english
+    japanese
+    licenseNameRu
+    synonyms
+
+    genres { ...GenreFragment }
+
+    descriptionHtml
+    descriptionSource
+
+    scoresStats { ...ScoreStatFragment }
+    statusesStats { ...StatusStatFragment }
+
+    related { ...RelatedEntryFragment }
+
+
+    # Manga specified
+    publishers { ...PublisherFragment }
+}
+
+fragment MangaRolesFragment on Manga {
+    characterRoles { ...CharacterWithRoleFragment }
+    personRoles { ...PersonWithRolesFragment }
+}
+
+fragment PublisherFragment on Publisher {
+    id
+    name
+}

@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import ru.vladsaybulin.database.models.manga.MangaEntity
 import ru.vladsaybulin.model.related.RelationType
@@ -27,7 +28,7 @@ import ru.vladsaybulin.model.related.RelationType
     tableName = "anime_related",
     foreignKeys = [
         ForeignKey(
-            entity = AnimeEntity::class,
+            entity = AnimeDetailsEntity::class,
             parentColumns = ["id"],
             childColumns = ["anime_id"],
             onDelete = ForeignKey.CASCADE
@@ -42,7 +43,8 @@ import ru.vladsaybulin.model.related.RelationType
             parentColumns = ["id"],
             childColumns = ["related_manga_id"]
         )
-    ]
+    ],
+    indices = [Index("anime_id")]
 )
 class AnimeRelatedEntity(
 

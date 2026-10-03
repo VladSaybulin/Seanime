@@ -20,25 +20,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
-import ru.vladsaybulin.feature.character.api.navigation.navigateToCharacter
-import ru.vladsaybulin.feature.imageview.api.navigation.ImageViewSource
-import ru.vladsaybulin.feature.imageview.api.navigation.navigateToImageView
 import ru.vladsaybulin.feature.list.title.details.navigation.TitleDetailsNavKey
-import ru.vladsaybulin.feature.list.title.details.navigation.navigateToAnime
-import ru.vladsaybulin.feature.list.title.details.navigation.navigateToManga
-import ru.vladsaybulin.feature.rate.editor.api.navigation.TitleReference
-import ru.vladsaybulin.feature.rate.editor.api.navigation.navigateToRateEditor
-import ru.vladsaybulin.feature.search.api.navigation.PresetSearchFilter
-import ru.vladsaybulin.feature.search.api.navigation.navigateToSearchByFilter
-import ru.vladsaybulin.feature.title.authors.api.navigation.navigateToTitleAuthors
-import ru.vladsaybulin.feature.title.characters.api.navigation.navigateToTitleCharacters
 import ru.vladsaybulin.feature.title.details.impl.TitleDetailsScreen
 import ru.vladsaybulin.feature.title.details.impl.TitleDetailsViewModel
-import ru.vladsaybulin.feature.title.related.api.navigation.navigateToTitleRelated
-import ru.vladsaybulin.feature.title.screenshots.api.navigation.navigateToAnimeScreenshots
-import ru.vladsaybulin.feature.title.videos.api.navigation.navigateToAnimeVideos
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.search.SearchType
 
 context(navigator: Navigator)
 fun EntryProviderScope<SeanimeNavKey>.titleDetailsEntry() = entry<TitleDetailsNavKey> { key ->
@@ -48,54 +32,6 @@ fun EntryProviderScope<SeanimeNavKey>.titleDetailsEntry() = entry<TitleDetailsNa
 
     TitleDetailsScreen(
         viewModel = viewModel,
-        onAllAuthorsClick = { navigator.navigateToTitleAuthors(key.titleType, key.titleId) },
-        onAllCharactersClick = { navigator.navigateToTitleCharacters(key.titleType, key.titleId) },
-        onAllRelatedClick = { navigator.navigateToTitleRelated(key.titleType, key.titleId) },
-        onAllScreenshotsClick = { navigator.navigateToAnimeScreenshots(key.titleId) },
-        onAllVideosClick = { navigator.navigateToAnimeVideos(key.titleId) },
-        onAnimeClick = navigator::navigateToAnime,
-        onCharacterClick = navigator::navigateToCharacter,
-        onGenreClick = { searchType, genreId ->
-            val preset = PresetSearchFilter(PresetSearchFilter.Field.Genre, genreId)
-            navigator.navigateToSearchByFilter(searchType, preset)
-        },
-        onMangaClick = navigator::navigateToManga,
-        onPersonClick = {},
-        onPosterClick = { posterUrl ->
-            val source = ImageViewSource.TitlePoster(key.titleType, key.titleId)
-            navigator.navigateToImageView(source = source, startImageIndex = 0, loadedImages = listOf(posterUrl))
-        },
-        onPublisherClick = { searchType, publisherId ->
-            val preset = PresetSearchFilter(PresetSearchFilter.Field.Publisher, publisherId)
-            navigator.navigateToSearchByFilter(searchType, preset)
-        },
-        onRateClick = { rateId, values, context ->
-            navigator.navigateToRateEditor(
-                rateId = rateId,
-                titleReference = key.titleReference(),
-                rateValues = values,
-                context = context
-            )
-        },
-        onScreenshotClick = { images, startIndex ->
-            val source = if (key.titleType == EntryType.Anime) {
-                ImageViewSource.AnimeScreenshots(key.titleId)
-            } else null
-
-            source?.let {
-                navigator.navigateToImageView(
-                    source = it,
-                    startImageIndex = startIndex,
-                    loadedImages = images,
-                )
-            }
-        },
-        onStudioClick = { studioId ->
-            val preset = PresetSearchFilter(PresetSearchFilter.Field.Studio, studioId)
-            navigator.navigateToSearchByFilter(SearchType.Anime, preset)
-        },
-        onBackClick = navigator::back
+        navigator = rememberTitleDetailsNavigator(navigator, key)
     )
 }
-
-private fun TitleDetailsNavKey.titleReference() = TitleReference(titleType, titleId)

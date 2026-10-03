@@ -72,7 +72,7 @@ class ImageViewViewModel @AssistedInject constructor(
         return when (source) {
             is ImageViewSource.AnimeScreenshots ->
                 animeRepository.get()
-                    .getAnimeScreenshots(source.animeId)
+                    .getAnimeScreenshotsStream(source.animeId)
                     .map { images -> images.map(Image::originalUrl) }
 
             is ImageViewSource.TitlePoster ->

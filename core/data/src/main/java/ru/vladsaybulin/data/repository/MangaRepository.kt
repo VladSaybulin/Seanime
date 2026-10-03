@@ -16,31 +16,35 @@
 
 package ru.vladsaybulin.data.repository
 
+import android.util.Log
 import androidx.paging.PagingSource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
+import ru.vladsaybulin.common.ui.tryRefresh
 import ru.vladsaybulin.data.TTLStrategies
+import ru.vladsaybulin.data.di.DataScope
 import ru.vladsaybulin.data.model.asEntity
-import ru.vladsaybulin.data.model.asMangaDetailsEntity
-import ru.vladsaybulin.data.model.asMangaEntity
-import ru.vladsaybulin.data.model.characterEntityShells
-import ru.vladsaybulin.data.model.genreEntityShells
-import ru.vladsaybulin.data.model.mangaCharacterEntities
-import ru.vladsaybulin.data.model.mangaGenreCrossReferences
-import ru.vladsaybulin.data.model.mangaPersonRolesEntities
-import ru.vladsaybulin.data.model.mangaPublisherCrossRefs
-import ru.vladsaybulin.data.model.mangaRelatedEntities
-import ru.vladsaybulin.data.model.personEntityShells
-import ru.vladsaybulin.data.model.publisherEntityShells
-import ru.vladsaybulin.data.model.relatedAnimeEntityShells
-import ru.vladsaybulin.data.model.relatedMangaEntityShells
+import ru.vladsaybulin.data.model.asExternalModel
+import ru.vladsaybulin.data.model.asTitle
+import ru.vladsaybulin.data.model.extractGenreEntities
+import ru.vladsaybulin.data.model.extractMangaCharacters
+import ru.vladsaybulin.data.model.extractMangaPersons
+import ru.vladsaybulin.data.model.extractPublisherEntities
+import ru.vladsaybulin.data.model.extractRelatedEntities
 import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.request.RequestCoordinator
-import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
 import ru.vladsaybulin.data.withForceStrategy
 import ru.vladsaybulin.database.dao.AnimeDao
@@ -49,24 +53,31 @@ import ru.vladsaybulin.database.dao.GenreDao
 import ru.vladsaybulin.database.dao.MangaDao
 import ru.vladsaybulin.database.dao.MangaDetailsDao
 import ru.vladsaybulin.database.dao.PersonDao
+import ru.vladsaybulin.database.dao.PublisherDao
 import ru.vladsaybulin.database.dao.UserRateDao
+import ru.vladsaybulin.database.models.anime.AnimeEntity
+import ru.vladsaybulin.database.models.character.CharacterEntity
 import ru.vladsaybulin.database.models.common.asExternalModel
+import ru.vladsaybulin.database.models.genre.GenreEntity
 import ru.vladsaybulin.database.models.lastrequest.RequestType
+import ru.vladsaybulin.database.models.manga.MangaCharacterReferenceWithRoleEntity
 import ru.vladsaybulin.database.models.manga.MangaEntity
+import ru.vladsaybulin.database.models.manga.MangaGenreCrossRef
+import ru.vladsaybulin.database.models.manga.MangaPersonReferenceWithRolesEntity
+import ru.vladsaybulin.database.models.manga.MangaPublisherCrossRef
+import ru.vladsaybulin.database.models.manga.MangaRelatedEntity
 import ru.vladsaybulin.database.models.manga.MangaSimilarMangaCrossRef
-import ru.vladsaybulin.database.models.manga.PopulatedMangaAuthor
-import ru.vladsaybulin.database.models.manga.PopulatedMangaCharacter
-import ru.vladsaybulin.database.models.manga.PopulatedMangaRelated
-import ru.vladsaybulin.database.models.manga.PopulatedSimilarManga
+import ru.vladsaybulin.database.models.manga.PublisherEntity
 import ru.vladsaybulin.database.models.manga.asExternalModel
-import ru.vladsaybulin.model.character.Character
+import ru.vladsaybulin.database.models.person.PersonEntity
 import ru.vladsaybulin.model.character.CharacterWithRole
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.manga.Manga
-import ru.vladsaybulin.model.manga.MangaDetails
 import ru.vladsaybulin.model.person.PersonWithRoles
 import ru.vladsaybulin.model.related.RelatedTitle
 import ru.vladsaybulin.model.search.QueryMapKey
+import ru.vladsaybulin.model.title.Title
+import ru.vladsaybulin.model.title.TitleDetails
 import ru.vladsaybulin.network.datasource.MangaDataSource
 import javax.inject.Inject
 import ru.vladsaybulin.core.domain.repository.MangaRepository as DomainMangaRepository
@@ -80,135 +91,193 @@ class MangaRepository @Inject constructor(
     private val characterDao: CharacterDao,
     private val mangaDao: MangaDao,
     private val genreDao: GenreDao,
+    private val publisherDao: PublisherDao,
     private val coordinator: RequestCoordinator,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
+    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
+    @DataScope private val scope: CoroutineScope
 ) : DomainMangaRepository {
+
+    override fun getTitleBrief(titleId: Long): Flow<Title> =
+        mangaDao.getMangaStreamById(titleId)
+            .filterNotNull()
+            .map {
+                it.asTitle()
+            }
+
+    override fun getTitleDetails(titleId: Long): Flow<TitleDetails> =
+        mangaDetailsDao.getDetailsStream(titleId)
+            .onEach { Log.i("MangaRepository", "$it") }
+            .filterNotNull()
+            .map { details ->
+                Log.i("MangaRepository", "getTitleDetails: details for titleId $titleId retrieved and mapped to external model")
+                details.asExternalModel()
+            }
+
+    override fun getRelatedTitles(titleId: Long): Flow<List<RelatedTitle>> =
+        mangaDetailsDao.getRelatedStream(titleId).map { related ->
+            related.map { it.asExternalModel() }
+        }
+
+    override fun getTitleCharacters(titleId: Long): Flow<List<CharacterWithRole>> =
+        mangaDetailsDao.getCharactersWithRoleStream(titleId).map { characters ->
+            characters.map { it.asExternalModel() }
+        }
+
+    override fun getTitleAuthors(titleId: Long): Flow<List<PersonWithRoles>> =
+        mangaDetailsDao.getAuthorsWithRolesStream(titleId).map { authors ->
+            authors.map { it.asExternalModel() }
+        }
+
+    override fun getSimilarTitles(titleId: Long): Flow<List<Title>> =
+        mangaDetailsDao.getSimilarStream(titleId).map { similar ->
+            similar.map { it.asTitle() }
+        }
+
+    override fun refreshTitleDetails(
+        titleId: Long,
+        forceRefresh: Boolean
+    ): Flow<Throwable?> = callbackFlow {
+        val monitorJob = launch {
+            launchSyncMangaDetails(titleId, forceRefresh, ::trySend).join()
+            close()
+        }
+
+        awaitClose { monitorJob.cancel() }
+    }
 
     override fun mangaSearchPagingSource(queryMap: Map<QueryMapKey, String>): PagingSource<Int, Manga> =
         SearchPagingSource { page, limit -> loadMangaSearchPage(page, limit, queryMap) }
 
-    override fun getMangaDetailsStream(mangaId: Long): Flow<MangaDetails> =
-        mangaDetailsDao.getMangaDetails(mangaId).map { it.asExternalModel() }
-
-    override fun getFirstMangaRelatedStream(mangaId: Long, limit: Int): Flow<List<RelatedTitle>> =
-        mangaDetailsDao.getFirstMangaRelated(mangaId, limit)
-            .map { it.map(PopulatedMangaRelated::asExternalModel) }
-
-    override fun getMangaMainCharactersStream(mangaId: Long): Flow<List<Character>> =
-        mangaDetailsDao.getMainMangaCharacters(mangaId)
-            .map { entities -> entities.map { it.asExternalModel().character } }
-
-    override fun getMangaMainAuthorsStream(mangaId: Long): Flow<List<PersonWithRoles>> =
-        mangaDetailsDao.getMainMangaAuthors(mangaId)
-            .map { it.map(PopulatedMangaAuthor::asExternalModel) }
-
-    override fun getSimilarMangasStream(mangaId: Long): Flow<List<Manga>> =
-        mangaDetailsDao.getSimilarMangas(mangaId)
-            .map { it.map(PopulatedSimilarManga::asExternalModel) }
-
-    override fun getAllMangaAuthors(mangaId: Long): Flow<List<PersonWithRoles>> =
-        mangaDetailsDao.getAllMangaAuthors(mangaId)
-            .map { it.map(PopulatedMangaAuthor::asExternalModel) }
-
     override fun getMangaPosterStream(mangaId: Long): Flow<Image?> =
         mangaDao.getPosterStream(mangaId).map { it?.asExternalModel() }
 
-    override suspend fun refreshMangaDetails(mangaId: Long, force: Boolean) {
-        coordinator.sync(
-            key = cachedKey(RequestType.Manga, mangaId),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
-            block = { updateMangaDetails(mangaId) }
-        )
-    }
+    private fun launchSyncMangaDetails(
+        mangaId: Long,
+        forceRefresh: Boolean,
+        catch: (Throwable) -> Unit
+    ) = scope.launch {
+        val briefJob = launch {
+            tryRefresh(catch = catch) {
+                syncMangaBrief(mangaId, forceRefresh)
+            }
+        }
 
-    override suspend fun refreshMangaRoles(mangaId: Long, force: Boolean) {
-        coordinator.sync(
-            key = cachedKey(RequestType.MangaRoles, mangaId),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
-            block = { updateMangaRoles(mangaId) }
-        )
-    }
+        val detailsJob = launch {
+            tryRefresh(catch = catch) {
+                syncMangaDetails(mangaId, forceRefresh, briefJob)
+            }
+        }
 
-    override suspend fun refreshSimilarMangas(mangaId: Long, force: Boolean) {
-        coordinator.sync(
-            key = cachedKey(RequestType.SimilarMangas, mangaId),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.TitleDetails },
-            block = { updateSimilarMangas(mangaId) }
-        )
-    }
+        launch {
+            tryRefresh(catch = catch) {
+                syncMangaRoles(mangaId, forceRefresh, detailsJob)
+            }
+        }
 
-    private suspend fun UpdateScope.updateMangaDetails(mangaId: Long) {
-        withContext(ioDispatcher) {
-            val response = mangaDataSource.getMangaDetails(mangaId)
-
-            val mangaEntity = response.asMangaEntity()
-            val mangaDetailsEntity = response.asMangaDetailsEntity()
-
-            val genresEntities = response.genreEntityShells()
-            val publishersEntities = response.publisherEntityShells()
-            val relatedAnimesEntities = response.relatedAnimeEntityShells()
-            val relatedMangasEntities = response.relatedMangaEntityShells()
-
-            val genreCrossRefs = response.mangaGenreCrossReferences()
-            val studioCrossRefs = response.mangaPublisherCrossRefs()
-            val mangaRelatedEntities = response.mangaRelatedEntities()
-
-            write {
-                mangaDao.upsertManga(mangaEntity)
-                mangaDetailsDao.upsertMangaDetails(mangaDetailsEntity)
-
-                mangaDetailsDao.deleteMangaGenreCrossReferences(mangaId)
-                mangaDetailsDao.deleteMangaPublisherCrossReferences(mangaId)
-                mangaDetailsDao.deleteMangaRelated(mangaId)
-
-                genresEntities?.let { genreDao.insertOrIgnoreGenres(it) }
-                genreCrossRefs?.let { mangaDetailsDao.insertMangaGenreCrossReferences(it) }
-
-                mangaDetailsDao.insertOrIgnorePublishers(publishersEntities)
-                mangaDetailsDao.insertMangaPublisherCrossReferences(studioCrossRefs)
-
-                relatedAnimesEntities?.let { animeDao.upsertAnimes(it) }
-                relatedMangasEntities?.let { mangaDao.upsertMangas(it) }
-                mangaRelatedEntities?.let { mangaDetailsDao.insertMangaRelated(it) }
+        launch {
+            tryRefresh(catch = catch) {
+                syncSimilarManga(mangaId, forceRefresh, detailsJob)
             }
         }
     }
 
-    private suspend fun UpdateScope.updateMangaRoles(mangaId: Long) {
-        withContext(ioDispatcher) {
-            val response = mangaDataSource.getMangaRoles(mangaId)
+    private suspend fun syncMangaBrief(mangaId: Long, forceRefresh: Boolean) {
+        val needRefresh = forceRefresh || mangaDao.hasManga(mangaId)
+        if (!needRefresh) return
 
-            val personEntities = response.personEntityShells()
-            val authorRolesEntities = response.mangaPersonRolesEntities(mangaId)
+        val networkManga = mangaDataSource.getMangaById(mangaId)
+        val mangaEntity = networkManga.asEntity()
+        mangaDao.upsertManga(mangaEntity)
+    }
 
-            val characterEntities = response.characterEntityShells()
-            val animeCharacterEntities = response.mangaCharacterEntities(mangaId)
+    private suspend fun syncMangaDetails(mangaId: Long, forceRefresh: Boolean, briefJob: Job) = coordinator.sync(
+        key = cachedKey(RequestType.Manga, mangaId),
+        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+    ) {
+        val details = mangaDataSource.getMangaDetailsById(mangaId)
 
-            write {
-                mangaDetailsDao.deleteMangaPersonRoles(mangaId)
-                mangaDetailsDao.deleteMangaCharacters(mangaId)
+        val genreEntities = mutableListOf<GenreEntity>()
+        val genreCrossReferences = mutableListOf<MangaGenreCrossRef>()
+        val publisherEntities = mutableListOf<PublisherEntity>()
+        val publisherCrossReferences = mutableListOf<MangaPublisherCrossRef>()
+        val animeEntities = mutableListOf<AnimeEntity>()
+        val mangaEntities = mutableListOf<MangaEntity>()
+        val relatedTitleReferences = mutableListOf<MangaRelatedEntity>()
 
-                personEntities?.let { personDao.insertOrReplacePersons(it) }
-                authorRolesEntities?.let { mangaDetailsDao.insertMangaAuthors(it) }
-                characterEntities?.let { characterDao.insertOrReplaceCharacters(it) }
-                animeCharacterEntities?.let { mangaDetailsDao.insertMangaCharacters(it) }
-            }
+        details.extractGenreEntities(genreEntities, genreCrossReferences)
+        details.extractPublisherEntities(publisherEntities, publisherCrossReferences)
+        details.extractRelatedEntities(mangaEntities, animeEntities, relatedTitleReferences)
+
+        val detailsEntity = details.asEntity()
+        val userRateEntity = details.userRate?.asEntity(mangaId = mangaId)
+
+        // Ensure that the brief data is written before writing details to avoid violating relationships
+        briefJob.join()
+
+        write {
+            animeDao.upsertAnimes(animeEntities)
+            mangaDao.upsertMangas(mangaEntities)
+            genreDao.insertOrIgnoreGenres(genreEntities)
+            publisherDao.insertOrIgnore(publisherEntities)
+
+            mangaDetailsDao.insertOrReplaceDetails(detailsEntity)
+            mangaDetailsDao.insertDetailsReferences(
+                relatedTitles = relatedTitleReferences,
+                genreReferences = genreCrossReferences,
+                publisherReferences = publisherCrossReferences
+            )
+
+            userRateEntity?.let { userRateDao.upsertUserRate(it) }
         }
     }
 
-    private suspend fun UpdateScope.updateSimilarMangas(mangaId: Long) {
-        withContext(ioDispatcher) {
-            val response = mangaDataSource.getSimilarManga(mangaId)
+    private suspend fun syncMangaRoles(mangaId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
+        key = cachedKey(RequestType.MangaRoles, mangaId),
+        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+    ) {
+        val roles = mangaDataSource.getMangaRolesById(mangaId)
 
-            val mangas = response.map { it.asEntity() }
-            val crossRefs = response.map { MangaSimilarMangaCrossRef(mangaId, it.id) }
+        val characterEntities = mutableListOf<CharacterEntity>()
+        val mangaCharacterEntities = mutableListOf<MangaCharacterReferenceWithRoleEntity>()
+        val personEntities = mutableListOf<PersonEntity>()
+        val mangaPersonEntities = mutableListOf<MangaPersonReferenceWithRolesEntity>()
 
-            write {
-                mangaDetailsDao.deleteMangaSimilarMangaCrossRef(mangaId)
+        roles.extractMangaCharacters(mangaId, characterEntities, mangaCharacterEntities)
+        roles.extractMangaPersons(mangaId, personEntities, mangaPersonEntities)
 
-                mangaDao.insertOrIgnoreMangas(mangas)
-                mangaDetailsDao.insertMangaSimilarMangaCrossReferences(crossRefs)
-            }
+        // Ensure that the details data is written before writing similar animes to avoid violating relationships
+        detailsJob.join()
+
+        write {
+            characterDao.insertOrReplaceCharacters(characterEntities)
+            personDao.insertOrReplacePersons(personEntities)
+            mangaDetailsDao.insertRolesReferences(
+                characterReferences = mangaCharacterEntities,
+                personReferences = mangaPersonEntities
+            )
+        }
+    }
+
+    private suspend fun syncSimilarManga(mangaId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
+        key = cachedKey(RequestType.SimilarMangas, mangaId),
+        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+    ) {
+        val similarMangas = mangaDataSource.getSimilarManga(mangaId)
+
+        val mangaEntities = similarMangas.map { it.asEntity() }
+        val similarReferences = similarMangas.map { manga ->
+            MangaSimilarMangaCrossRef(
+                mangaId = mangaId,
+                similarMangaId = manga.id
+            )
+        }
+
+        // Ensure that the details data is written before writing similar animes to avoid violating relationships
+        detailsJob.join()
+
+        write {
+            mangaDao.insertOrReplaceMangas(mangaEntities)
+            mangaDetailsDao.insertSimilarReferences(similarReferences)
         }
     }
 
@@ -216,7 +285,7 @@ class MangaRepository @Inject constructor(
         page: Int,
         limit: Int,
         queryMap: Map<QueryMapKey, String>
-    ): List<Manga> {
+    ): List<Manga> = withContext(ioDispatcher) {
         val networkMangas = mangaDataSource.getManga(
             page = page,
             limit = limit,
@@ -233,14 +302,6 @@ class MangaRepository @Inject constructor(
             userRateDao.insertOrReplaceUserRates(userRatesEntities)
         }
 
-        return mangaEntities.map(MangaEntity::asExternalModel)
+        mangaEntities.map(MangaEntity::asExternalModel)
     }
-
-    override fun getAllMangaRelatedTitles(mangaId: Long): Flow<List<RelatedTitle>> =
-        mangaDetailsDao.getAllMangaRelatedTitles(mangaId)
-            .map { it.map(PopulatedMangaRelated::asExternalModel) }
-
-    override fun getAllMangaCharacters(mangaId: Long): Flow<List<CharacterWithRole>> =
-        mangaDetailsDao.getAllMangaCharacters(mangaId)
-            .map { it.map(PopulatedMangaCharacter::asExternalModel) }
 }

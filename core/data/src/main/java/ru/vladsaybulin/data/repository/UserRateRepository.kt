@@ -118,20 +118,10 @@ class UserRateRepository @Inject constructor(
 
     override fun getAnimeUserRateStream(animeId: Long): Flow<UserRate?> =
         userRateDao.getAnimeUserRate(animeId)
-            .onStart {
-                userRateDataSource.getAnimeUserRate(animeId)?.run {
-                    userRateDao.insertOrReplaceUserRate(asEntity(animeId = animeId))
-                }
-            }
             .map { it?.asExternalModel() }
 
     override fun getMangaUserRateStream(mangaId: Long): Flow<UserRate?> =
         userRateDao.getMangaUserRate(mangaId)
-            .onStart {
-                userRateDataSource.getMangaUserRate(mangaId)?.run {
-                    userRateDao.insertOrReplaceUserRate(asEntity(mangaId = mangaId))
-                }
-            }
             .map { it?.asExternalModel() }
 
     override fun getAllAnimeUserRateStatusesStream(): Flow<Map<Long, UserRateStatus>> =

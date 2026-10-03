@@ -23,6 +23,7 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import ru.vladsaybulin.database.models.userrate.PagedUserRateEntity
 import ru.vladsaybulin.database.models.userrate.PopulatedPagedUserRate
@@ -140,6 +141,9 @@ interface UserRateDao {
 
     @Update
     suspend fun updateUserRate(userRate: UserRateEntity)
+
+    @Upsert
+    suspend fun upsertUserRate(userRate: UserRateEntity)
 
     @Query("DELETE FROM paged_user_rates")
     suspend fun deleteAllOrderedUserRates()

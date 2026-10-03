@@ -19,4 +19,5 @@
     <string name="feature_title_characters_title">Персонажи</string>
     <string name="feature_title_characters_back">Назад</string>
     <string name="feature_title_characters_main_charcaters">Главные</string>
+    <string name="feature_title_characters_support_characters">Второстепенные</string>
 </resources>

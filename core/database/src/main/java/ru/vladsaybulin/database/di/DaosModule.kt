@@ -103,4 +103,14 @@ class DaosModule {
     @Provides
     fun provideOngoingAnimesDao(database: SeanimeRoomDatabase): OngoingAnimeDao =
         database.ongoingAnimeDao()
+
+    @Provides
+    fun provideStudioDao(database: SeanimeRoomDatabase) =
+        database.studioDao()
+
+    @Provides
+    fun providePublisherDao(database: SeanimeRoomDatabase) =
+        database.publisherDao()
+
+
 }

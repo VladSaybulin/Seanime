@@ -67,7 +67,6 @@ import ru.vladsaybulin.core.ui2.strings.compose.LocalTitleStrings
 import ru.vladsaybulin.core.ui2.strings.compose.asString
 import ru.vladsaybulin.core.ui2.strings.compose.asStringOrNull
 import ru.vladsaybulin.feature.title.details.impl.R
-import ru.vladsaybulin.model.anime.AnimeKind
 import ru.vladsaybulin.model.anime.AnimeRating
 import ru.vladsaybulin.model.anime.Studio
 import ru.vladsaybulin.model.common.EntryStatus
@@ -75,16 +74,16 @@ import ru.vladsaybulin.model.common.EntryType
 import ru.vladsaybulin.model.common.IncompleteDate
 import ru.vladsaybulin.model.common.isNullOrEmpty
 import ru.vladsaybulin.model.genre.Genre
-import ru.vladsaybulin.model.manga.MangaKind
 import ru.vladsaybulin.model.manga.Publisher
 import ru.vladsaybulin.model.search.TimePeriodAiring
+import ru.vladsaybulin.model.title.TitleKind
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TitleInfo(
-    animeKind: AnimeKind,
-    mangaKind: MangaKind,
+    type: EntryType,
+    kind: TitleKind,
     status: EntryStatus,
     episodes: Int,
     episodesAired: Int,
@@ -111,42 +110,40 @@ fun TitleInfo(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            animeKind.asStringOrNull()?.let {
+            kind.asStringOrNull()?.let {
                 KindPanel(kindString = it)
             }
 
-            mangaKind.asStringOrNull()?.let {
-                KindPanel(kindString = it)
-            }
-
-            status.asStringOrNull()?.let {
+            if (status != EntryStatus.None) {
                 StatusPanel(status = status)
             }
 
-            val episodesFormat = AnimeStrings.getProgressFormat(
-                aired = episodesAired,
-                total = episodes,
-                isOngoing = status == EntryStatus.Ongoing,
-                isMovie = animeKind == AnimeKind.Movie
-            )
-
-            episodesFormat?.let {
-                EpisodesPanel(it)
-            }
-
-            if (episodeDuration != 0) {
-                EpisodeDurationPanel(
-                    duration = episodeDuration,
-                    isSingleEpisode = episodesFormat == null
+            if (type == EntryType.Anime) {
+                val episodesFormat = AnimeStrings.getProgressFormat(
+                    aired = episodesAired,
+                    total = episodes,
+                    isOngoing = status == EntryStatus.Ongoing,
+                    isMovie = kind == TitleKind.Movie
                 )
-            }
 
-            if (chapters != 0) {
-                ChaptersPanel(chapters = chapters)
-            }
+                episodesFormat?.let {
+                    EpisodesPanel(it)
+                }
 
-            if (volumes != 0) {
-                VolumesPanel(volumes = volumes)
+                if (episodeDuration != 0) {
+                    EpisodeDurationPanel(
+                        duration = episodeDuration,
+                        isSingleEpisode = episodesFormat == null
+                    )
+                }
+            } else {
+                if (chapters != 0) {
+                    ChaptersPanel(chapters = chapters)
+                }
+
+                if (volumes != 0) {
+                    VolumesPanel(volumes = volumes)
+                }
             }
 
             when {

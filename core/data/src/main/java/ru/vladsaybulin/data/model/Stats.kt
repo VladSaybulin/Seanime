@@ -20,5 +20,5 @@ import ru.vladsaybulin.database.models.stats.StatsItemProto
 import ru.vladsaybulin.database.models.stats.StatsProto
 import ru.vladsaybulin.network.models.common.NetworkStatisticsItem
 
-fun <V> List<NetworkStatisticsItem<V>>?.asDbModel() =
+fun <V> List<NetworkStatisticsItem<V>>?.asDatabaseModel(): StatsProto<V> =
     StatsProto(this?.map { StatsItemProto(it.values, it.count) } ?: emptyList())

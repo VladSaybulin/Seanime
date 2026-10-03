@@ -1,0 +1,18 @@
+query AnimeBriefQuery($id: String!) {
+    animes(ids: $id) {
+        ...AnimeFragment
+    }
+}
+
+query AnimeDetailsQuery($id: String!) {
+    animes(ids: $id) {
+        ...AnimeDetailsFragment
+        userRate { ...UserRateFragment }
+    }
+}
+
+query AnimeRolesQuery($id: String!) {
+    animes(ids: $id) {
+        ...AnimeRolesFragment
+    }
+}

@@ -19,6 +19,7 @@ package ru.vladsaybulin.database.models.anime
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "anime_similar_anime",
@@ -36,7 +37,8 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    primaryKeys = ["anime_id", "similar_id"]
+    primaryKeys = ["anime_id", "similar_id"],
+    indices = [Index(value = ["anime_id"])]
 )
 class AnimeSimilarAnimeCrossRef(
 

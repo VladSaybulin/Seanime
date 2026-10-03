@@ -25,16 +25,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import ru.vladsaybulin.core.domain.repository.AnimeRepository
-import ru.vladsaybulin.core.domain.repository.MangaRepository
+import ru.vladsaybulin.core.domain.titledetails.ExpandableListWrapper
+import ru.vladsaybulin.core.domain.titledetails.GetTitleCharactersStreamUseCase
 import ru.vladsaybulin.feature.title.characters.api.navigation.TitleCharactersNavKey
 import ru.vladsaybulin.model.character.CharacterWithRole
-import ru.vladsaybulin.model.common.EntryType
 
 @HiltViewModel(assistedFactory = TitleCharactersViewModel.Factory::class)
 class TitleCharactersViewModel @AssistedInject constructor(
-    animeRepository: AnimeRepository,
-    mangaRepository: MangaRepository,
+    getTitleCharactersStream: GetTitleCharactersStreamUseCase,
     @Assisted key: TitleCharactersNavKey
 ) : ViewModel() {
 
@@ -43,11 +41,8 @@ class TitleCharactersViewModel @AssistedInject constructor(
         fun create(key: TitleCharactersNavKey): TitleCharactersViewModel
     }
 
-    internal val uiState = when (key.titleType) {
-        EntryType.Anime -> animeRepository.getAllAnimeCharacters(key.titleId)
-        EntryType.Manga -> mangaRepository.getAllMangaCharacters(key.titleId)
-    }
-        .map<List<CharacterWithRole>, TitleCharactersUiState> { TitleCharactersUiState.Success(it) }
+    internal val uiState = getTitleCharactersStream(key.titleType, key.titleId)
+        .map<ExpandableListWrapper<CharacterWithRole>, TitleCharactersUiState> { TitleCharactersUiState.Success(it) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -59,5 +54,5 @@ class TitleCharactersViewModel @AssistedInject constructor(
 internal sealed class TitleCharactersUiState {
     data object Loading : TitleCharactersUiState()
 
-    class Success(val characters: List<CharacterWithRole>) : TitleCharactersUiState()
+    class Success(val characters: ExpandableListWrapper<CharacterWithRole>) : TitleCharactersUiState()
 }

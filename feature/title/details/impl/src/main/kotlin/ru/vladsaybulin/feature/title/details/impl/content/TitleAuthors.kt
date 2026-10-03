@@ -166,8 +166,7 @@ fun AuthorCardPreview() {
                     russianName = "Author russian name",
                     poster = Image("", ""),
                 ),
-                roles = listOf("Director"),
-                isMain = true
+                roles = listOf("Director")
             ),
             onClick = { }
         )
@@ -186,8 +185,7 @@ fun AuthorCardWithoutPosterPreview() {
                     russianName = "Author russian name",
                     poster = null
                 ),
-                roles = listOf("Director"),
-                isMain = true
+                roles = listOf("Director")
             ),
             onClick = { }
         )
@@ -206,8 +204,7 @@ fun AuthorCardManyRolesPreview() {
                     russianName = "Author russian name",
                     poster = Image("", ""),
                 ),
-                roles = listOf("Director"),
-                isMain = true
+                roles = listOf("Director")
             ),
             onClick = { }
         )
@@ -226,8 +223,7 @@ fun AuthorCardShortNamePreview() {
                     russianName = "Author",
                     poster = Image("", ""),
                 ),
-                roles = listOf("Director", "Original Creator"),
-                isMain = true
+                roles = listOf("Director", "Original Creator")
             ),
             onClick = { }
         )

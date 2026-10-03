@@ -17,17 +17,25 @@
 package ru.vladsaybulin.feature.list.title.details.navigation
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import ru.vladsaybulin.core.navigation.LoadedData
 import ru.vladsaybulin.core.navigation.Navigator
 import ru.vladsaybulin.core.navigation.SeanimeNavKey
 import ru.vladsaybulin.model.common.EntryType
+import ru.vladsaybulin.model.title.Title
 
 /**
  * Navigation key for the title details feature.
  * @param titleType The type of the title (Anime or Manga).
  * @param titleId The ID of the title.
+ * @param title The loaded data of the title. Can be null.
  */
 @Serializable
-data class TitleDetailsNavKey(val titleType: EntryType, val titleId: Long) : SeanimeNavKey
+data class TitleDetailsNavKey(
+    val titleType: EntryType,
+    val titleId: Long,
+    @Transient val title: LoadedData<Title> = LoadedData.ofNull()
+) : SeanimeNavKey
 
 /**
  * Navigates to the title details screen.
@@ -35,7 +43,7 @@ data class TitleDetailsNavKey(val titleType: EntryType, val titleId: Long) : Sea
  * @param titleId The ID of the title.
  */
 fun Navigator.navigateToTitle(titleType: EntryType, titleId: Long) {
-    navigateTo(TitleDetailsNavKey(titleType, titleId))
+    navigateTo(TitleDetailsNavKey(titleType, titleId, title = LoadedData.ofNull()))
 }
 
 /**
@@ -43,7 +51,7 @@ fun Navigator.navigateToTitle(titleType: EntryType, titleId: Long) {
  * @param animeId The ID of the anime.
  */
 fun Navigator.navigateToAnime(animeId: Long) {
-    navigateTo(TitleDetailsNavKey(EntryType.Anime, animeId))
+    navigateTo(TitleDetailsNavKey(EntryType.Anime, animeId, title = LoadedData.ofNull()))
 }
 
 /**
@@ -51,5 +59,12 @@ fun Navigator.navigateToAnime(animeId: Long) {
  * @param mangaId The ID of the manga.
  */
 fun Navigator.navigateToManga(mangaId: Long) {
-    navigateTo(TitleDetailsNavKey(EntryType.Manga, mangaId))
+    navigateTo(TitleDetailsNavKey(EntryType.Manga, mangaId, title = LoadedData.ofNull()))
+}
+
+/**
+ * Navigates to the title details screen about [title].
+ */
+fun Navigator.navigateToTitle(title: Title) {
+    navigateTo(TitleDetailsNavKey(title.type, title.id, title = LoadedData(title)))
 }

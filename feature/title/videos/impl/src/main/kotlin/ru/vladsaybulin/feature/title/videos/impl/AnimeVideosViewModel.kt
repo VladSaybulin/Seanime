@@ -42,7 +42,7 @@ class AnimeVideosViewModel @AssistedInject constructor(
         fun create(key: AnimeVideosNavKey): AnimeVideosViewModel
     }
 
-    internal val uiState = animeRepository.getAllAnimeVideos(key.animeId)
+    internal val uiState = animeRepository.getAnimeVideos(key.animeId)
         .map { AnimeVideosUIState.Success(it) }
         .stateIn(
             scope = viewModelScope,

@@ -16,6 +16,7 @@
 
 package ru.vladsaybulin.feature.title.details.impl
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.Lazy
@@ -23,46 +24,44 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.vladsaybulin.core.domain.GetEnableAutocorrectUserRateUseCase
-import ru.vladsaybulin.core.domain.titledetails.GetFirstAnimeVideosStreamUseCase
-import ru.vladsaybulin.core.domain.titledetails.GetFirstTitleRelatedStreamUseCase
-import ru.vladsaybulin.core.domain.titledetails.GetUserRateStreamUseCase
+import ru.vladsaybulin.core.domain.app.GetSessionStateStreamUseCase
+import ru.vladsaybulin.core.domain.common.BuildUserRateContextUseCase
+import ru.vladsaybulin.core.domain.shared.LoginViaShikimoriUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetRelatedTitlesStreamUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetSimilarTitlesStreamUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetTitleAuthorsStreamUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetTitleBriefStreamUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetTitleCharactersStreamUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetTitleDetailsStreamUseCase
+import ru.vladsaybulin.core.domain.titledetails.GetUserRateByTitleStreamUseCase
 import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase
-import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted
-import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted.Details
-import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted.Roles
-import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted.Similar
-import ru.vladsaybulin.core.domain.titledetails.RefreshTitleDetailsUseCase.RefreshCompleted.SkipRefresh
-import ru.vladsaybulin.core.domain.titledetails.UserRateResult
-import ru.vladsaybulin.core.domain.repository.AnimeRepository
-import ru.vladsaybulin.core.domain.repository.MangaRepository
-import ru.vladsaybulin.core.domain.repository.UserRateRepository
 import ru.vladsaybulin.feature.list.title.details.navigation.TitleDetailsNavKey
-import ru.vladsaybulin.model.common.EntryType
-import ru.vladsaybulin.model.userrate.UserRateStatus
-import ru.vladsaybulin.model.userrate.UserRateValues
+import ru.vladsaybulin.model.anime.AnimeRating
+import ru.vladsaybulin.model.auth.SessionState
+import ru.vladsaybulin.model.userrate.UserRateContext
 
 @HiltViewModel(assistedFactory = TitleDetailsViewModel.Factory::class)
 class TitleDetailsViewModel @AssistedInject constructor(
-    animeRepository: Lazy<AnimeRepository>,
-    mangaRepository: Lazy<MangaRepository>,
-    private val userRateRepository: UserRateRepository,
-    private val refreshTitleDetailsUseCase: RefreshTitleDetailsUseCase,
-    getFirstTitleRelatedStreamUseCase: GetFirstTitleRelatedStreamUseCase,
-    getFirstAnimeVideosStreamUseCase: Lazy<GetFirstAnimeVideosStreamUseCase>,
-    getEnableAutocorrectUserRateUseCase: GetEnableAutocorrectUserRateUseCase,
-    getUserRateStreamUseCase: GetUserRateStreamUseCase,
+    getTitleBrief: GetTitleBriefStreamUseCase,
+    getTitleDetails: GetTitleDetailsStreamUseCase,
+    getRelatedTitles: GetRelatedTitlesStreamUseCase,
+    getCharacters: GetTitleCharactersStreamUseCase,
+    getAuthors: GetTitleAuthorsStreamUseCase,
+    getSimilarTitles: GetSimilarTitlesStreamUseCase,
+    getUserRateByTitle: GetUserRateByTitleStreamUseCase,
+    getSessionState: GetSessionStateStreamUseCase,
+    private val buildUserRateContext: Lazy<BuildUserRateContextUseCase>,
+    private val login: Lazy<LoginViaShikimoriUseCase>,
+    private val refreshTitleDetails: RefreshTitleDetailsUseCase,
     @Assisted private val key: TitleDetailsNavKey
 ) : ViewModel() {
 
@@ -71,121 +70,118 @@ class TitleDetailsViewModel @AssistedInject constructor(
         fun create(key: TitleDetailsNavKey): TitleDetailsViewModel
     }
 
-    val enabledAutocorrectStatus = getEnableAutocorrectUserRateUseCase()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = false
-        )
+    val titleType = key.titleType
+    val titleId = key.titleId
 
-    private val initialRefreshing = refreshTitleDetailsUseCase(key.titleType, key.titleId, false)
-        .shareIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily
-        )
-
-    val detailsState: StateFlow<TitleDetailsState> = when (key.titleType) {
-        EntryType.Anime -> combine(
-            animeRepository.get().getAnimeDetailsStream(key.titleId),
-            getFirstTitleRelatedStreamUseCase(key.titleType, key.titleId),
-            animeRepository.get().getAnimeScreenshots(key.titleId),
-            getFirstAnimeVideosStreamUseCase.get().invoke(key.titleId)
-        ) { details, relatedSlice, screenshots, videosSlice ->
-            successTitleDetails(
-                animeDetails = details,
-                relatedSlice = relatedSlice,
-                screenshots = screenshots,
-                videosSlice = videosSlice
-            )
-        }
-
-        EntryType.Manga -> combine(
-            mangaRepository.get().getMangaDetailsStream(key.titleId),
-            getFirstTitleRelatedStreamUseCase(key.titleType, key.titleId)
-        ) { details, relatedSlice ->
-            successTitleDetails(
-                mangaDetails = details,
-                relatedSlice = relatedSlice
-            )
-        }
-    }
-        //Await complete Details refreshing
-        .onStart { initialRefreshing.first { it.equalsOrSkipped(Details) } }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = TitleDetailsState.Loading
-        )
-
-    val rolesState: StateFlow<RolesState> = when (key.titleType) {
-        EntryType.Anime -> combine(
-            animeRepository.get().getAnimeMainCharactersStream(key.titleId),
-            animeRepository.get().getAnimeMainAuthorsStream(key.titleId),
-            RolesState::Success
-        )
-
-        EntryType.Manga -> combine(
-            mangaRepository.get().getMangaMainCharactersStream(key.titleId),
-            mangaRepository.get().getMangaMainAuthorsStream(key.titleId),
-            RolesState::Success
-        )
-    }
-        //Await complete Roles refreshing
-        .onStart { initialRefreshing.first { it.equalsOrSkipped(Roles) } }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = RolesState.Loading
-        )
-
-    val similarState: StateFlow<SimilarState> = when (key.titleType) {
-        EntryType.Anime -> animeRepository.get().getSimilarAnimes(key.titleId)
-            .map { if (it.isEmpty()) SimilarState.Empty else SimilarState.Animes(it) }
-
-        EntryType.Manga -> mangaRepository.get().getSimilarMangasStream(key.titleId)
-            .map { if (it.isEmpty()) SimilarState.Empty else SimilarState.Mangas(it) }
-    }
-        //Await complete Similar refreshing
-        .onStart { initialRefreshing.first { it.equalsOrSkipped(Similar) } }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SimilarState.Loading
-        )
-
-    val userRateState = getUserRateStreamUseCase(key.titleType, key.titleId).map {
-        when (it) {
-            UserRateResult.NotAuthorized -> UserRateState.NotAuthorized
-            is UserRateResult.Success -> it.userRate?.let(UserRateState::Success) ?: UserRateState.NoUserRate
-        }
-    }.stateIn(
+    private val brief = getTitleBrief(titleType, titleId).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = UserRateState.Loading
+        initialValue = key.title.data
     )
 
-    suspend fun refresh() {
-        refreshJob().join()
-    }
+    private val details = getTitleDetails(titleType, titleId)
+        .shareIn(viewModelScope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
 
-    fun onRetry() {
-        refreshJob()
-    }
-
-    fun createUserRate(status: UserRateStatus) {
-        viewModelScope.launch {
-            userRateRepository.createUserRate(
-                entryType = key.titleType,
-                entryId = key.titleId,
-                userRateValues = UserRateValues(status = status)
+    val headerState: StateFlow<HeaderState> = brief
+        .filterNotNull()
+        .map {
+            HeaderData(
+                poster = it.poster,
+                name = it.name,
+                nameRu = it.nameRu
             )
+        }.asLoadState()
+
+    val infoState: StateFlow<InfoState> = combine(
+        brief.filterNotNull(),
+        details
+    ) { brief, details ->
+        InfoData(
+            kind = brief.kind,
+            titleType = brief.type,
+            status = brief.status,
+            score = brief.score,
+            episodes = brief.episodes,
+            episodesAired = brief.episodesAired,
+            episodeDuration = details.episodeDuration ?: 0,
+            chapters = brief.chapters,
+            volumes = brief.volumes,
+            airedOn = brief.airedOn,
+            releasedOn = brief.releasedOn,
+            season = details.season,
+            rating = details.rating ?: AnimeRating.None,
+            nextEpisodeAt = details.nextEpisodeAt,
+            studios = details.studios ?: emptyList(),
+            publishers = details.publishers ?: emptyList(),
+            genres = details.genres,
+            description = details.description,
+            descriptionSource = details.descriptionSource,
+            scoreStats = details.scoreStats ?: emptyList(),
+            statusStats = details.userRateStatusStats ?: emptyList()
+        )
+    }.asLoadState()
+
+    val authorsState: StateFlow<AuthorsState> = getAuthors(titleType, titleId)
+        .map { ExpandableSectionState(it) }
+        .asLoadState()
+
+    val charactersState = getCharacters(titleType, titleId)
+        .map { ExpandableSectionState(it) }
+        .asLoadState()
+
+    val relatedTitlesState: StateFlow<RelatedTitlesState> = getRelatedTitles(titleType, titleId)
+        .map { ExpandableSectionState(it) }
+        .asLoadState()
+
+    val similarTitlesState: StateFlow<SimilarTitlesState> = getSimilarTitles(titleType, titleId)
+        .asLoadState()
+
+    val animeMediaState: StateFlow<AnimeMediaState> = details
+        .map { details ->
+            AnimeMediaData(
+                screenshots = details.screenshots ?: emptyList(),
+                videos = details.videos ?: emptyList()
+            )
+        }.asLoadState()
+
+    val userRateState: StateFlow<UserRateState> = getUserRateByTitle(titleType, titleId)
+        .asLoadState()
+
+    val sessionState: StateFlow<SessionState> = getSessionState()
+
+    init {
+        viewModelScope.launch {
+            onRefresh(false)
         }
     }
 
-    private fun refreshJob(): Job =
-        refreshTitleDetailsUseCase(key.titleType, key.titleId, true).launchIn(viewModelScope)
+    fun onRefresh(forceRefresh: Boolean = true) {
+        viewModelScope.launch {
+            refreshTitleDetails(titleType, titleId, forceRefresh)
+                .collect {
+                    Log.e("TitleDetailsViewModel", "Refresh error", it)
+                }
+        }
+    }
 
+    fun onLoginClick() {
+        login.get().invoke()
+    }
+
+    fun buildUserRateContext(): UserRateContext? {
+        val brief = brief.replayCache.firstOrNull() ?: return null
+        return buildUserRateContext.get().invoke(brief)
+    }
+
+    fun isAuthenticated(): Boolean {
+        return sessionState.value == SessionState.Authenticated
+    }
+
+    private inline fun <reified T> Flow<T>.asLoadState(): StateFlow<TitleDetailsLoadState<T>> = this
+        .map { TitleDetailsLoadState.Success(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = TitleDetailsLoadState.Loading()
+        )
 }
-
-private fun RefreshCompleted.equalsOrSkipped(refreshCompleted: RefreshCompleted) =
-    this == SkipRefresh || this == refreshCompleted

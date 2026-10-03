@@ -75,7 +75,6 @@ fun AuthorItemPreview() {
                     "Chief Animation Director",
                     "Animation Director"
                 ),
-                isMain = false
             ),
             onClick = { }
         )

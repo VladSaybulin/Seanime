@@ -23,6 +23,7 @@ import retrofit2.create
 import retrofit2.http.GET
 import retrofit2.http.Path
 import ru.vladsaybulin.common.network.ShikimoriException
+import ru.vladsaybulin.core.network.graphql.MangaBriefQuery
 import ru.vladsaybulin.core.network.graphql.MangaDetailsQuery
 import ru.vladsaybulin.core.network.graphql.MangaQuery
 import ru.vladsaybulin.core.network.graphql.MangaRolesQuery
@@ -75,22 +76,30 @@ class MangaDataSource @Inject constructor(
         return response.dataAssertNoErrors.mangas.map { it.asNetworkModel() }
     }
 
-    suspend fun getMangaDetails(mangaId: Long): NetworkMangaDetails {
-        val response = apolloClient.query(MangaDetailsQuery(id = mangaId.toString()))
-            .asAuthorizedCall()
-            .execute()
-        return response.dataAssertNoErrors.mangas.singleOrNull()?.asNetworkModel()
-            ?: throw ShikimoriException("Not found manga where id = $mangaId")
+    suspend fun getMangaById(mangaId: Long): NetworkManga {
+        val query = MangaBriefQuery(id = mangaId.toString())
+        val response = apolloClient.query(query).execute()
+        val data = response.dataAssertNoErrors.mangas.singleOrNull() ?: throw notFound(mangaId)
+        return data.asNetworkModel()
     }
 
-    suspend fun getMangaRoles(animeId: Long): NetworkTitleRoles {
-        val response = apolloClient.query(MangaRolesQuery(id = animeId.toString()))
+    suspend fun getMangaDetailsById(mangaId: Long): NetworkMangaDetails {
+        val query = MangaDetailsQuery(id = mangaId.toString())
+        val response = apolloClient.query(query)
             .asAuthorizedCall()
             .execute()
-        return checkNotNull(response.dataAssertNoErrors.mangas.singleOrNull()) {
-            "Not found manga with id = $animeId"
-        }.asNetworkModel()
+        val data = response.dataAssertNoErrors.mangas.singleOrNull() ?: throw notFound(mangaId)
+        return data.asNetworkModel()
+    }
+
+    suspend fun getMangaRolesById(mangaId: Long): NetworkTitleRoles {
+        val query = MangaRolesQuery(id = mangaId.toString())
+        val response = apolloClient.query(query).execute()
+        val data = response.dataAssertNoErrors.mangas.singleOrNull() ?: throw notFound(mangaId)
+        return data.asNetworkModel()
     }
 
     suspend fun getSimilarManga(mangaId: Long): List<NetworkManga> = api.getSimilarManga(mangaId)
+
+    private fun notFound(mangaId: Long) = ShikimoriException("Not found manga where id = $mangaId")
 }

@@ -87,4 +87,28 @@
     <string name="core_ui2_strings_title_type_anime">Аниме</string>
     <string name="core_ui2_strings_title_type_manga">Манга</string>
 
+    <!-- Title strings -->
+
+    <!-- Anime kind -->
+    <string name="core_ui2_strings_title_kind_tv">TV-сериал</string>
+    <string name="core_ui2_strings_title_kind_movie">Фильм</string>
+    <string name="core_ui2_strings_title_kind_ona">ONA</string>
+    <string name="core_ui2_strings_title_kind_ova">OVA</string>
+    <string name="core_ui2_strings_title_kind_music">Клип</string>
+    <string name="core_ui2_strings_title_kind_special">Спешл</string>
+    <string name="core_ui2_strings_title_kind_pv">Промо</string>
+    <string name="core_ui2_strings_title_kind_cm">Реклама</string>
+    <string name="core_ui2_strings_title_kind_tv_special">ТВ-спешл</string>
+
+    <!-- Manga kind -->
+    <string name="core_ui2_strings_title_kind_manga">Манга</string>
+    <string name="core_ui2_strings_title_kind_manhwa">Манхва</string>
+    <string name="core_ui2_strings_title_kind_manhua">Маньхуа</string>
+    <string name="core_ui2_strings_title_kind_oneshot">Ваншот</string>
+    <string name="core_ui2_strings_title_kind_doujin">Додзинси</string>
+
+    <!-- Ranobe kind -->
+    <string name="core_ui2_strings_title_kind_light_novel">Ранобэ</string>
+    <string name="core_ui2_strings_title_kind_novel">Новелла</string>
+
 </resources>

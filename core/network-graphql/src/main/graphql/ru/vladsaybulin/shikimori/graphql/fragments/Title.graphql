@@ -1,0 +1,33 @@
+fragment GenreFragment on Genre {
+    entryType
+    id
+    kind
+    name
+    russian
+}
+
+fragment ScoreStatFragment on ScoreStat {
+    score
+    count
+}
+
+fragment StatusStatFragment on StatusStat {
+    status
+    count
+}
+
+fragment RelatedEntryFragment on Related {
+    anime { ...AnimeFragment }
+    manga { ...MangaFragment }
+    relationKind
+}
+
+fragment CharacterWithRoleFragment on CharacterRole {
+    character { ...CharacterFragment }
+    rolesEn
+}
+
+fragment PersonWithRolesFragment on PersonRole {
+    person { ...PersonFragment }
+    rolesEn
+}

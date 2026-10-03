@@ -40,7 +40,7 @@ class AnimeScreenshotsViewModel @AssistedInject constructor(
         fun create(key: AnimeScreenshotsNavKey): AnimeScreenshotsViewModel
     }
 
-    internal val uiState = animeRepository.getAnimeScreenshots(key.animeId)
+    internal val uiState = animeRepository.getAnimeScreenshotsStream(key.animeId)
         .map<List<Image>, AnimeScreenshotsUiState> { AnimeScreenshotsUiState.Success(it) }
         .stateIn(
             scope = viewModelScope,
