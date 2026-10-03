@@ -16,15 +16,16 @@
 
 package ru.vladsaybulin.model.title
 
+import ru.vladsaybulin.model.Entry
 import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 
 data class Title(
-    val id: Long,
+    override val id: Long,
     val type: TitleType,
-    val name: String,
-    val nameRu: String?,
-    val poster: Image?,
+    override val name: String,
+    override val nameRu: String?,
+    override val poster: Image?,
     val kind: TitleKind,
     val status: TitleStatus,
     val score: Float,
@@ -34,4 +35,6 @@ data class Title(
     val volumes: Int,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?
-)
+) : Entry {
+    override val entryType: Entry.Type = Entry.Type.Title
+}

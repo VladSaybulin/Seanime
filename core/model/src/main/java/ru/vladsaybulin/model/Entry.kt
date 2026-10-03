@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-package ru.vladsaybulin.model.manga
+package ru.vladsaybulin.model
 
-import ru.vladsaybulin.model.title.TitleStatus
-import ru.vladsaybulin.model.Entry
 import ru.vladsaybulin.model.common.Image
-import ru.vladsaybulin.model.common.IncompleteDate
 
-class Manga(
-    override val id: Long,
-    override val name: String,
-    val russianName: String?,
-    override val poster: Image?,
-    val kind: MangaKind,
-    val status: TitleStatus,
-    val score: Float,
-    val chapters: Int,
-    val volumes: Int,
-    val airedOn: IncompleteDate?,
-    val releasedOn: IncompleteDate?
-) : Entry {
-    override val entryType: Entry.Type
-        get() = Entry.Type.Title
+interface Entry {
+    val entryType: Type
+    val id: Long
+    val name: String
+    val nameRu: String?
+    val poster: Image?
 
-    override val nameRu: String?
-        get() = russianName
+    enum class Type {
+        Title, Person, Character
+    }
 }

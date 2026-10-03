@@ -16,11 +16,21 @@
 
 package ru.vladsaybulin.model.person
 
+import ru.vladsaybulin.model.Entry
 import ru.vladsaybulin.model.common.Image
 
 data class Person(
-    val id: Long,
+    override val id: Long,
     val originalName: String,
     val russianName: String?,
-    val poster: Image?
-)
+    override val poster: Image?
+) : Entry {
+    override val entryType: Entry.Type
+        get() = Entry.Type.Person
+
+    override val name: String
+        get() = originalName
+
+    override val nameRu: String?
+        get() = russianName
+}
