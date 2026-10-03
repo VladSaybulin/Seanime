@@ -21,7 +21,6 @@ import ru.vladsaybulin.model.common.Image
 import ru.vladsaybulin.model.common.IncompleteDate
 
 data class Title(
-    override val entryType: Entry.Type,
     override val id: Long,
     val type: TitleType,
     override val name: String,
@@ -36,4 +35,6 @@ data class Title(
     val volumes: Int,
     val airedOn: IncompleteDate?,
     val releasedOn: IncompleteDate?
-) : Entry
+) : Entry {
+    override val entryType: Entry.Type = Entry.Type.Title
+}
