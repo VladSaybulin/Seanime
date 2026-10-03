@@ -59,9 +59,7 @@ fun MangaGridItem(
     additionalContent: (@Composable () -> Unit)? = { MangaGridItemDefaultAdditionalContent(manga) },
 ) {
     EntryGridItem(
-        name = manga.name,
-        russianName = manga.russianName,
-        poster = manga.poster,
+        entry = manga,
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
@@ -89,9 +87,7 @@ fun MangaListItem(
     additionalContent: (@Composable () -> Unit)? = { MangaListItemDefaultAdditionalContent(manga) },
 ) {
     EntryListItem(
-        name = manga.name,
-        russianName = manga.russianName,
-        poster = manga.poster,
+        entry = manga,
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
@@ -119,9 +115,7 @@ fun MangaCarouselItem(
     additionalContent: (@Composable () -> Unit)? = null,
 ) {
     EntryCarouselItem(
-        name = manga.name,
-        russianName = manga.russianName,
-        poster = manga.poster,
+        entry = manga,
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,

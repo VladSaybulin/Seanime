@@ -42,9 +42,7 @@ fun TitleGridItem(
     additionalContent: (@Composable () -> Unit)? = null,
 ) {
     EntryGridItem(
-        name = title.name,
-        russianName = title.nameRu,
-        poster = title.poster,
+        entry = title,
         onClick = onClick,
         modifier = modifier,
         userRateStatus = userRateStatus,
