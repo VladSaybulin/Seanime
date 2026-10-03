@@ -18,7 +18,6 @@ package ru.vladsaybulin.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.animeCrossRefs
 import ru.vladsaybulin.data.model.animeEntities
 import ru.vladsaybulin.data.model.asDetailsEntity
@@ -28,9 +27,10 @@ import ru.vladsaybulin.data.model.mangaEntityShells
 import ru.vladsaybulin.data.model.personEntityShells
 import ru.vladsaybulin.data.model.seyuCrossRefs
 import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.TTLSyncPolicy
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
-import ru.vladsaybulin.data.withForceStrategy
+import ru.vladsaybulin.data.request.forcedSyncPolicy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.CharacterDao
 import ru.vladsaybulin.database.dao.MangaDao
@@ -40,6 +40,7 @@ import ru.vladsaybulin.database.models.lastrequest.RequestType
 import ru.vladsaybulin.model.character.CharacterDetails
 import ru.vladsaybulin.network.datasource.CharacterDataSource
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.days
 import ru.vladsaybulin.core.domain.repository.CharacterRepository as DomainCharacterRepository
 
 class CharacterRepository @Inject constructor(
@@ -57,7 +58,7 @@ class CharacterRepository @Inject constructor(
     override suspend fun refreshCharacterDetails(characterId: Long, force: Boolean){
         requestCoordinator.sync(
             key = cachedKey(RequestType.Character, characterId),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.CharacterDetails }
+            policy = forcedSyncPolicy(force) { characterSyncPolicy }
         ) { updateCharacterDetails(characterId) }
     }
 
@@ -86,5 +87,9 @@ class CharacterRepository @Inject constructor(
             characterDao.insertCharacterMangaCrossReferences(mangaCrossRefs)
             characterDao.insertCharacterSeyuCrossReferences(seyuCrossRef)
         }
+    }
+
+    companion object {
+        private val characterSyncPolicy = TTLSyncPolicy(ttl = 1.days)
     }
 }

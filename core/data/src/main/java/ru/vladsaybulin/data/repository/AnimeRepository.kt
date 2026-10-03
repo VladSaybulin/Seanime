@@ -22,18 +22,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.common.ui.tryRefresh
-import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.di.DataScope
 import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.asExternalModel
@@ -46,10 +44,11 @@ import ru.vladsaybulin.data.model.extractScreenshotEntities
 import ru.vladsaybulin.data.model.extractStudiosEntities
 import ru.vladsaybulin.data.model.extractVideoEntities
 import ru.vladsaybulin.data.model.userRateEntityShell
+import ru.vladsaybulin.data.request.NextDayMidnightSyncPolicy
 import ru.vladsaybulin.data.request.RequestCoordinator
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
-import ru.vladsaybulin.data.withForceStrategy
+import ru.vladsaybulin.data.request.forcedSyncPolicy
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.AnimeDetailsDao
 import ru.vladsaybulin.database.dao.CharacterDao
@@ -180,7 +179,7 @@ class AnimeRepository @Inject constructor(
     override suspend fun refreshOngoingAnimes(limit: Int, force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.OngoingAnimes),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.OngoingAnimes },
+            policy = forcedSyncPolicy(force) { OngoingAnimesSyncPolicy },
             block = { updateOngoingAnimes(limit) }
         )
     }
@@ -226,7 +225,7 @@ class AnimeRepository @Inject constructor(
 
     private suspend fun syncAnimeDetails(animeId: Long, forceRefresh: Boolean, briefJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.Anime, animeId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        policy = forcedSyncPolicy(forceRefresh) { TitleSyncPolicies.DetailsSyncPolicy },
     ) {
         val details = animeDataSource.getAnimeDetails(animeId)
 
@@ -273,7 +272,7 @@ class AnimeRepository @Inject constructor(
 
     private suspend fun syncAnimeRoles(animeId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.AnimeRoles, animeId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        policy = forcedSyncPolicy(forceRefresh) { TitleSyncPolicies.RolesSyncPolicy },
     ) {
         val roles = animeDataSource.getAnimeRoles(animeId)
 
@@ -300,7 +299,7 @@ class AnimeRepository @Inject constructor(
 
     private suspend fun syncSimilarAnime(animeId: Long, forceRefresh: Boolean, detailsJob: Job) = coordinator.sync(
         key = cachedKey(RequestType.SimilarAnimes, animeId),
-        ttlStrategy = withForceStrategy(forceRefresh) { TTLStrategies.TitleDetails },
+        policy = forcedSyncPolicy(forceRefresh) { TitleSyncPolicies.SimilarSyncPolicy },
     ) {
         val similarAnimes = animeDataSource.getSimilarAnimes(animeId)
 
@@ -370,6 +369,10 @@ class AnimeRepository @Inject constructor(
     private fun List<NetworkAnime>.shuffledAnimeOngoings(): List<NetworkAnime> {
         val seed = Clock.System.now().toEpochMilliseconds() / MILLISECONDS_IN_DAY
         return shuffled(Random(seed))
+    }
+
+    companion object {
+        private val OngoingAnimesSyncPolicy = NextDayMidnightSyncPolicy(DatePeriod(days = 1))
     }
 }
 

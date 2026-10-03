@@ -17,7 +17,6 @@
 package ru.vladsaybulin.data.request
 
 import kotlinx.datetime.Clock
-import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.LastRequestDao
 import ru.vladsaybulin.database.models.lastrequest.LastRequestEntity
@@ -37,26 +36,26 @@ class RequestSyncer @Inject constructor(
     /**
      * Executes [block] when refresh is required for [key].
      *
-     * Refresh is required when [strategy] reports expired cache.
-     * To force refresh use [ru.vladsaybulin.data.TTLStrategies.ForceRefresh]
+     * Refresh is required when [policy] reports expired cache.
+     * To force refresh use [ForceRefresh]
      *
      * @return the result of [block], or `null` if refresh was not required.
      */
     suspend fun <T> sync(
         key: RequestKey.Cached,
-        strategy: TTLStrategy,
+        policy: SyncPolicy,
         block: suspend UpdateScope.() -> T
     ): T? {
-        return if (strategy == TTLStrategies.ForceRefresh || shouldRefresh(key, strategy)) {
+        return if (policy == ForceRefresh || shouldRefresh(key, policy)) {
             UpdateScopeImpl(key).block()
         } else {
             null
         }
     }
 
-    private suspend fun shouldRefresh(key: RequestKey.Cached, strategy: TTLStrategy): Boolean {
+    private suspend fun shouldRefresh(key: RequestKey.Cached, policy: SyncPolicy): Boolean {
         val lastRequest = lastRequestDao.getLastRequestDate(key.type, key.targetId)
-        return lastRequest == null || strategy.isExpired(clock.now(), lastRequest)
+        return lastRequest == null || policy.isExpired(clock.now(), lastRequest)
     }
 
     private inner class UpdateScopeImpl(private val key: RequestKey.Cached) : UpdateScope {

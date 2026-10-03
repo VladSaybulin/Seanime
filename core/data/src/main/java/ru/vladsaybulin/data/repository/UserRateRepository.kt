@@ -32,12 +32,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import ru.vladsaybulin.common.network.Dispatcher
 import ru.vladsaybulin.common.network.ShikiDispatchers.IO
 import ru.vladsaybulin.core.auth.SessionManager
-import ru.vladsaybulin.data.TTLStrategies
 import ru.vladsaybulin.data.model.CreateUserRateRequest
 import ru.vladsaybulin.data.model.animeEntityOrNullShells
 import ru.vladsaybulin.data.model.asDto
@@ -45,9 +43,10 @@ import ru.vladsaybulin.data.model.asEntity
 import ru.vladsaybulin.data.model.mangaEntityOrNullShells
 import ru.vladsaybulin.data.model.userRateEntityShell
 import ru.vladsaybulin.data.request.RequestCoordinator
+import ru.vladsaybulin.data.request.TTLSyncPolicy
 import ru.vladsaybulin.data.request.UpdateScope
 import ru.vladsaybulin.data.request.cachedKey
-import ru.vladsaybulin.data.withForceStrategy
+import ru.vladsaybulin.data.request.forcedSyncPolicy
 import ru.vladsaybulin.database.DatabaseTransactionRunner
 import ru.vladsaybulin.database.dao.AnimeDao
 import ru.vladsaybulin.database.dao.MangaDao
@@ -70,6 +69,7 @@ import ru.vladsaybulin.model.userrate.UserRateWithEntry
 import ru.vladsaybulin.network.datasource.UserRateDataSource
 import ru.vladsaybulin.network.models.userrate.NetworkUserRateWithTitle
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 import ru.vladsaybulin.core.domain.repository.UserRateRepository as DomainUserRateRepository
 
 class UserRateRepository @Inject constructor(
@@ -185,7 +185,7 @@ class UserRateRepository @Inject constructor(
     override suspend fun refreshInProgressRates(force: Boolean) {
         coordinator.sync(
             key = cachedKey(RequestType.InProgressRates),
-            ttlStrategy = withForceStrategy(force) { TTLStrategies.InProgressRates },
+            policy = forcedSyncPolicy(force) { InProgressRatesSyncPolicy },
             block = { updateInProgressRates() }
         )
     }
@@ -322,6 +322,8 @@ class UserRateRepository @Inject constructor(
             pageSize = USER_RATES_PAGE_SIZE,
             initialLoadSize = USER_RATES_PAGE_SIZE
         )
+
+        val InProgressRatesSyncPolicy = TTLSyncPolicy(5.minutes)
     }
 }
 
