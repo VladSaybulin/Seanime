@@ -17,6 +17,7 @@
 package ru.vladsaybulin.data.request
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import ru.vladsaybulin.common.network.di.ApplicationScope
@@ -39,7 +40,7 @@ class RequestDeduplicator @Inject constructor(
      */
     suspend fun <T> request(key: RequestKey, block: suspend () -> T): T {
         val deferred = deferredRequests.computeIfAbsent(key) {
-            coroutineScope.async { block() }.removeOnCompletion(key)
+            coroutineScope.async(start = CoroutineStart.LAZY) { block() }.removeOnCompletion(key)
         }
 
         @Suppress("UNCHECKED_CAST")
