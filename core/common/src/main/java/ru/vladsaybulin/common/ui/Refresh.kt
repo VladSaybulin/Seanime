@@ -17,18 +17,21 @@
 package ru.vladsaybulin.common.ui
 
 import android.util.Log
-import kotlinx.coroutines.CancellationException
+import ru.vladsaybulin.common.runCatchingCancellable
 
+@Deprecated(
+    message = "Use runCatchingCancellable instead",
+    replaceWith = ReplaceWith("runCatchingCancellable(catch, block)")
+)
 suspend inline fun tryRefresh(
     noinline catch: suspend (Throwable) -> Unit = { throw it },
     block: suspend () -> Unit
 ) {
-    try {
-        block()
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: Throwable) {
-        Log.e("tryRefresh", "Error during refresh", e)
-        catch(e)
-    }
+    runCatchingCancellable(
+        catch = {
+            Log.e("tryRefresh", "Error during refresh", it)
+            catch(it)
+        },
+        block
+    )
 }
